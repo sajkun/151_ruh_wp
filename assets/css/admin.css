@@ -1,0 +1,11 @@
+.fullwidth{
+  width: 100%!important;
+  max-width: 100%;
+}
+
+.leads-block__data td:first-child{
+  width: 48px!important;
+}
+.leads-block__data td:nth-child(2){
+  width: 164px!important;
+}

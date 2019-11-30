@@ -169,6 +169,14 @@ class velesh_init_theme{
    */
   public function enqueue_scripts_styles_admin(){
 
+    wp_enqueue_style( 'theme-datetimepicker-ui-css', THEME_URL.'/assets/libs/datetimepicker/build/jquery.datetimepicker.min.css', THEME_VERSION );
+
+    wp_enqueue_script('theme-date-time-picker', THEME_URL.'/assets/libs/datetimepicker/build/jquery.datetimepicker.full.min.js', array('jquery'), THEME_VERSION, true);
+
+    wp_enqueue_style( $this->main_style_slug, THEME_URL.$this->main_style, THEME_VERSION );
+
+    add_svg_sprite($this->svg_sprite_slug, THEME_URL.'/assets/svg_sprite/symbol_sprite.html');
+
     wp_enqueue_script('theme-script', THEME_URL.'/assets/script/admin.js', array('jquery'), THEME_VERSION, true);
 
     wp_enqueue_style( 'theme-admin-style', THEME_URL.'/assets/css/admin.css', THEME_VERSION );

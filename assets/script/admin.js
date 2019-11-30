@@ -43,3 +43,14 @@ jQuery( function( $ ) {
     }
   }
 });
+
+
+jQuery(document).ready(function(){
+    jQuery('.datetimepicker').datetimepicker({
+      format:'M d Y H:i',
+    });
+})
+
+function clear_input(obj){
+  jQuery(obj).siblings('input').val('')
+}
