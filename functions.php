@@ -715,10 +715,9 @@ class velesh_init_theme{
   */
   public function add_option_pages(){
     $options = array(
-      'about_us_page'        => __('About Us Page', 'theme-translations'),
-      'prizes_page'          => __('Prize\'s Page', 'theme-translations'),
-      'contact_page'         => __('Contacts Page', 'theme-translations'),
-      'faq_page'             => __('F.A.Q Page', 'theme-translations'),
+      'dashboard'        => __('Dashboard Page', 'theme-translations'),
+      'leads'          => __('Leads Page', 'theme-translations'),
+      'create_leads'         => __('Blank Lead Page', 'theme-translations'),
     );
 
     foreach ($options as $key => $name) {

@@ -9,3 +9,11 @@
 .leads-block__data td:nth-child(2){
   width: 164px!important;
 }
+.image-placeholder.user{
+  width: 100px;
+}
+
+.image-placeholder.user img{
+  width: 100px;
+  height: auto;
+}

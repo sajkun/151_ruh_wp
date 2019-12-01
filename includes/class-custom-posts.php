@@ -234,7 +234,23 @@ class velesh_theme_posts {
           </td>
           <td><p class="leads-block__label">Source</p></td>
           <td>
-            <input type="text" name="patient_data[sourse]" placeholder="Add" class="leads-block__input fullwidth"  value="<?php echo isset($meta['sourse'])? $meta['sourse'] : ''; ?>">
+            <?php
+              $sourses = array(
+                'live-chat' => 'Live Chat',
+                'instagram' => 'Instagram',
+                'google-ppc' => 'Google PPC',
+                'website' => 'Website',
+                'phone' => 'Phone',
+                'walk-in' => 'Walk In',
+                'other' => 'Other',
+              );
+            ?>
+            <select name="patient_data[sourse]" id="patient_data[sourse]" class="fullwidth">
+              <option value="-1">Select</option>
+              <?php foreach ($sourses as $key => $s): ?>
+              <option value="<?php echo $key ?>" <?php echo isset($meta['sourse']) && $key == $meta['sourse']?'selected="selected"' : ''; ?>><?php echo $s ?></option>
+              <?php endforeach ?>
+            </select>
           </td>
         </tr>
         <tr>
@@ -394,8 +410,36 @@ class velesh_theme_posts {
    * @param $post - WP_Post object
    */
   public static function lead_documents_cb($post){
-    $meta = get_post_meta($post->ID, '_product_cat', true);
+    $meta = get_post_meta($post->ID, '_lead_files', true);
+    $count = 0;
     ?>
+    <div class="uploaded-documents">
+
+      <?php foreach ($meta as $key => $m):
+        if(empty($m['name']) && empty($m['url'])) continue;
+        ?>
+         <div class="document-block">
+           <svg class="icon svg-icon-doc"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-doc"></use> </svg>
+
+           <p class="document-block__text">
+             <span class="name"><?php echo $m['name'] ?></span>
+             <san class="date"><?php echo $m['date'] ?></span>
+           </p>           <p class="document-block__actions">
+             <a href="<?php echo $m['url'] ?>" download style="text-decoration: none;"><svg class="icon svg-icon-download"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-download"></use> </svg> </a>
+             <svg class="icon svg-icon-trash" onclick="delete_file(this)"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use> </svg>
+           </p>
+
+           <input type="hidden" name="lead_files[<?php echo $count;?>][name]" value="<?php echo $m['name'] ?>">
+           <input type="hidden" name="lead_files[<?php echo $count;?>][date]" value="<?php echo $m['date'] ?>">
+           <input type="hidden" name="lead_files[<?php echo $count;?>][url]" value="<?php echo $m['url'] ?>">
+         </div>
+      <?php
+        $count++;
+        endforeach ?>
+    </div>
+
+    <a href="javascript:void(0)" class="button" onclick="upload_document(this)">Upload Document</a>
+    <input type="hidden" id="files_count" value="<?php echo $count; ?>">
     <input type="hidden" name="save_theme_meta" value="yes">
     <?php
   }
@@ -407,9 +451,48 @@ class velesh_theme_posts {
    * @param $post - WP_Post object
    */
   public static function lead_notes_cb($post){
-    $meta = get_post_meta($post->ID, '_product_cat', true);
+    $meta = get_post_meta($post->ID, '_lead_notes', true);
+    $count=0;
+
+    $id = get_current_user_id();
+    $user = get_user_by('ID',$id);
     ?>
+    <div class="notes-block">
+
+
+      <?php foreach ($meta as $key => $m):
+        if(empty($m['name']) && empty($m['note'])) continue;
+
+        $_user = get_user_by('ID',(int)$m['user_id']);
+        ?>
+      <div class="note-block">
+        <div class="note-block__header clearfix">
+          <span class="name"><?php echo $_user->data->display_name; ?></span>
+          <span class="date"><?php echo $m['date'] ?></span>
+        </div>
+
+        <div class="note-block__body">
+          <?php echo $m['note'] ?>
+        </div>
+
+        <a href="javascript:void(0)" onclick="remove_note(this)"> Remove Note</a>
+
+        <input type="hidden" name="lead_notes[<?php echo $count ?>][user_id]" value="<?php echo $m['user_id'] ?>}">
+        <input type="hidden" name="lead_notes[<?php echo $count ?>][note]" value="<?php echo $m['note'] ?>">
+        <input type="hidden" name="lead_notes[<?php echo $count ?>][date]" value="<?php echo $m['date'] ?>">
+      </div>
+      <br>
+    <?php
+      $count++;
+      endforeach ?>
+    </div>
+
+    <textarea class="fullwidth" id="lead_note" rows="10"></textarea>
+    <a href="javascript:void(0)" class="button" onclick="add_note(this, <?php echo $id;?>)">Add Notes</a>
+    <input type="hidden" id="notes_count" value="<?php echo $count; ?>">
     <input type="hidden" name="save_theme_meta" value="yes">
+    <input type="hidden" id="user_nice_name" value="<?php echo $user->data->display_name; ?>">
+
     <?php
   }
 
@@ -420,8 +503,36 @@ class velesh_theme_posts {
    * @param $post - WP_Post object
    */
   public static function lead_specialists_cb($post){
-    $meta = get_post_meta($post->ID, '_product_cat', true);
+    $meta = get_post_meta($post->ID, '_lead_specialists', true);
+    $users = get_users(array());
     ?>
+    <table class="team-leads">
+      <tbody>
+        <?php foreach ($users as $key => $user):
+           $last_name     =  get_the_author_meta('last_name', $user->ID);
+           $first_name    = get_the_author_meta('first_name', $user->ID);
+           $user_position = get_the_author_meta('user_position', $user->ID);
+           $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
+           $image =  wp_get_attachment_url( $user_photo_id );
+           $image = ($image) ? $image : DUMMY_ADMIN;
+           $name = $first_name  . ' '. $last_name ;
+           $name = trim($name)? $name : $user->data->display_name;
+          ?>
+        <tr>
+         <td><div class="team-leads__photo"><img src="<?php echo $image ?>" alt=""></div></td>
+        <td colspan="3">
+          <div class="clearfix">
+            <span class="team-leads__name"><?php echo $name?></span>
+            <span class="team-leads__post"><?php echo $user_position?></span>
+          </div>
+        </td>
+        <td>
+          <input type="hidden" name="lead_specialists[<?php echo $user->ID ?>]" value="no">
+          <input type="checkbox" name="lead_specialists[<?php echo $user->ID ?>]" value="yes" <?php echo $meta[$user->ID] === 'yes'? 'checked="checked"' : '' ?>>
+        </td>
+     </tr>
+    <?php endforeach ?>
+    </tbody></table>
     <input type="hidden" name="save_theme_meta" value="yes">
     <?php
   }
@@ -452,10 +563,15 @@ class velesh_theme_posts {
       ['name' => 'treatment_value', 'unique' => true],
       ['name' => 'treatment_coordinator', 'unique' => true],
       ['name' => 'reminder', 'unique' => true],
+      ['name' => 'lead_files', 'unique' => true],
+      ['name' => 'lead_notes', 'unique' => true],
+      ['name' => 'lead_specialists', 'unique' => true],
     );
 
-    // print_r($_POST);
-    // exit();
+    // echo "<pre>";
+    //     print_r($_POST);
+    // echo "</pre>";
+    //     exit();
 
     foreach ($data as $_id => $_d) {
       if(isset($_POST[$_d['name']]) && !empty($_POST[$_d['name']])){
