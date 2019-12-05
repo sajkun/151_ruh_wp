@@ -775,6 +775,7 @@ class velesh_init_theme{
 }
 
 /* init theme*/
+global $theme_init;
 $theme_init = new velesh_init_theme();
 
 

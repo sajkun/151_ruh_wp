@@ -24,13 +24,14 @@ if(!function_exists('clog')){
 }
 
 if(!function_exists('dlog')){
+
   /**
  * prints an inline script with output in console
  *
  * @param mixed $content - obj|array|string
  */
   function dlog($content, $start=false, $end=false){
-    if(THEME_DEBUG === true){
+    if(THEME_DEBUG === true && (!defined('DOING_AJAX'))){
 
       if ($start) {
         printf( '<script> console.groupCollapsed("%s")</script>', $content);
@@ -265,8 +266,6 @@ if(!function_exists('exec_upload')){
         );
       }
 
-      clog($_FILES);
-
       try {
         $file      = & $_FILES[$file_name];
         $dir       = wp_upload_dir();
@@ -371,6 +370,311 @@ if(!function_exists('exec_upload')){
 
     //   return false;
     // }
+
+  }
+}
+
+
+
+if(!function_exists('get_posts_by_dates')){
+
+
+  /**
+  * Gets WP posts between dates
+  *
+  * @param From - srting, date string, start date
+  * @param to - srting, date string, end date
+  *
+  * @return array
+  */
+
+  function get_posts_by_dates($from=false, $to=false, $post_type = false){
+    dlog('Get Posts by Date', true, false);
+    $post_type = (! $post_type )? velesh_theme_posts::$lead :  $post_type ;
+
+    $args = array(
+      'post_type' => $post_type,
+      'posts_per_page' => -1,
+      'limit' => -1,
+      'date_query' => array(
+        array(
+          'column' => 'post_date_gmt',
+          'after'     => '',
+          'before'    => '',
+          'inclusive' => true,
+        ),
+      ),
+    );
+
+    if(!$from){
+      unset($args['date_query']['after']);
+    }else{
+      $date = new DateTime($from);
+      $args['date_query'][0]['after'] = $date->format('Y-m-d');
+      dlog('from: '.  $args['date_query'][0]['after']);
+    }
+
+    if(!$to){
+      unset($args['date_query']['before']);
+    }else{
+      $date = new DateTime($to);
+      $args['date_query'][0]['before'] = $date->format('Y-m-d');
+      dlog('to: '.  $args['date_query'][0]['before']);
+    }
+
+
+    if(!$from && !$to){
+       unset($args['date_query']);
+    }
+
+    dlog($args);
+
+    $posts = get_posts($args);
+    dlog($posts);
+    dlog('-------------', false, true);
+
+    return $posts;
+  }
+}
+
+if(!function_exists('get_leads_meta')){
+
+  function get_leads_meta($leads){
+    dlog('Get Leads Meta', true, false);
+
+
+      $sourses = array(
+          'live-chat'  => 'Live Chat',
+          'instagram'  => 'Instagram',
+          'google-ppc' => 'Google PPC',
+          'website'    => 'Website',
+          'phone'      => 'Phone',
+          'walk-in'    => 'Walk In',
+          'other'      => 'Other',
+        );
+
+    foreach ($leads as $lead_id => $post) {
+    // get all metadata;
+      $meta = array(
+        'lead_notes'            => get_post_meta($post->ID, '_lead_notes', true),
+        'lead_files'            => get_post_meta($post->ID, '_lead_files', true),
+        'treatment_coordinator' => get_post_meta($post->ID, '_treatment_coordinator', true),
+        'treatment_value'       => get_post_meta($post->ID, '_treatment_value', true),
+        'patient_data'          => get_post_meta($post->ID, '_patient_data', true),
+        'reminder'              => get_post_meta($post->ID, '_reminder', true),
+      );
+
+      $meta['patient_data']['sourse'] =  $sourses[$meta['patient_data']['sourse']];
+
+      //prepare data for filtering
+      $filter_data = array(
+        'clinics'    => $meta['patient_data']['clinic'],
+        'treatments' => $meta['patient_data']['treatment'] ,
+        'campaigns'  => '',
+        'sourses'    => $meta['patient_data']['sourse'],
+        'team'       => array(),
+      );
+
+      //get array of specialists assigned
+
+      $lead_specialists  = get_post_meta($post->ID, '_lead_specialists', true);
+      $specialists       = array();
+
+
+      foreach ($lead_specialists as $user_id => $assigned) {
+        if('yes' === $assigned){
+          $user = get_user_by('id', $user_id);
+          $name =  theme_get_user_name($user);
+          $user_position = get_the_author_meta('user_position', $user->ID);
+
+          array_push($filter_data['team'] , trim($name));
+
+          array_push($specialists , array(
+            'user_id'  => $user_id,
+            'name'     => trim($name),
+            'position' => $user_position,
+          ));
+        }
+      }
+
+      $meta['lead_specialists'] =  $specialists;
+
+      // add meta field to lead
+      $leads[$lead_id]->meta = $meta;
+
+      // add filter field to lead
+      $leads[$lead_id]->filter_data = $filter_data;
+    }
+    dlog($leads);
+    dlog('-------------', false, true);
+    return $leads;
+  }
+}
+
+
+if(!function_exists('theme_get_user_name')){
+   function theme_get_user_name($user){
+     if(is_integer($user)){
+      $user = get_user_by('ID', $user);
+     }
+
+     if(is_string($user)){
+       $user = get_user_by('slug', $user);
+     }
+
+     $last_name     = get_the_author_meta('last_name', $user->ID);
+     $first_name    = get_the_author_meta('first_name', $user->ID);
+     $name = $first_name  . ' '. $last_name ;
+     $name = trim($name)? $name : $user->data->display_name;
+
+     return trim($name);
+   }
+
+}
+
+if(!function_exists('get_filters_by_leads')){
+
+
+  /**
+  * Gets WP posts between dates
+  *
+  * @param leads - array of formatted leads
+  *
+  * @return array
+  */
+  function get_filters_by_leads($leads = false){
+    if(!$leads) return array();
+
+    dlog('Get filter data by leads', true, false);
+
+    $data = array(
+      'clinics'    => array('All Clinics'),
+      'treatments' => array('All Treatments'),
+      'campaigns'  => array('All Campaigns'),
+      'sourses'    => array('All Sourses'),
+      'team'       => array('All Team'),
+    );
+
+    foreach ($leads as $key => $lead) {
+      $meta      = $lead->meta;
+
+      $clinic    = $meta['patient_data']['clinic'];
+      $treatment = $meta['patient_data']['treatment'];
+      $sourse    = $meta['patient_data']['sourse'];
+      $team      = $meta['lead_specialists'];
+
+      if(!in_array( $clinic ,$data['clinics']) && !empty(trim( $clinic))){
+        array_push($data['clinics'], $clinic);
+      }
+      if(!in_array( $treatment , $data['treatments']) && !empty(trim( $treatment))){
+        array_push($data['treatments'], $treatment);
+      }
+
+      if(!in_array($sourse ,$data['sourses']) &&  $sourse != '-1' && !empty(trim( $sourse))){
+        array_push($data['sourses'], $sourse);
+      }
+
+      foreach ($team as $member_id => $member) {
+        if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
+          array_push($data['team'], $member['name']);
+        }
+
+      }
+    }
+
+    dlog($data);
+    dlog('-------------', false, true);
+
+    return $data;
+  }
+}
+
+if(!function_exists('get_users_leads')){
+
+  /**
+  * gets data about leads ans sorts it by use
+  * data get by daterange
+  *
+  *
+  * @return array;
+  */
+  function get_users_leads($from = false, $to=false){
+    dlog('Get Users leads', true, false);
+    $data = array();
+    $posistions = array('all');
+
+    foreach (get_users() as $key => $user) {
+      $name = theme_get_user_name($user);
+      $user_position = strtolower(get_the_author_meta('user_position', $user->ID));
+      $assigned_posts = get_the_author_meta('_leads_assigned', $user->ID);
+      $photo_id = get_the_author_meta('user_photo_id', $user->ID);
+
+      $image =  wp_get_attachment_url( $photo_id );
+      $image = ($image) ? $image : DUMMY_ADMIN;
+
+      // default args fo wp query
+      $args = array(
+        'post_type' => velesh_theme_posts::$lead,
+        'post__in'  => $assigned_posts,
+        'posts_per_page' => -1,
+        'limit' => -1,
+        'date_query' => array(
+
+          array(
+            'column' => 'post_date_gmt',
+            'after'     => '',
+            'before'    => '',
+            'inclusive' => true,
+          ),
+        ),
+      );
+
+      // check if data is set
+
+      if(!$from){
+        unset($args['date_query']['after']);
+      }else{
+        $date = new DateTime($from);
+        $args['date_query'][0]['after'] = $date->format('Y-m-d');
+      }
+
+      if(!$to){
+        unset($args['date_query']['before']);
+      }else{
+        $date = new DateTime($to);
+        $args['date_query'][0]['before'] = $date->format('Y-m-d');
+      }
+
+      if(!$from && !$to){
+         unset($args['date_query']);
+      }
+
+      $posts = get_posts($args);
+
+
+      if(!in_array($user_position, $posistions)){
+        array_push($posistions, $user_position );
+      }
+
+      $data[$name] = array(
+        'user_position' => $user_position,
+        'leads'         => get_leads_meta($posts),
+        'total_leads'   => count($posts),
+        'converted'     => 0,
+        'image'     => $image ,
+      );
+    }
+
+    dlog($data);
+    dlog($posistions);
+
+    dlog('-------------', false, true);
+
+    return array(
+      'team' => $data,
+      'positions' => $posistions,
+    );
+
 
   }
 }

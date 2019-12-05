@@ -13,8 +13,11 @@ class theme_user_settings{
   public function __construct(){
     add_action( 'show_user_profile', array($this,  'custom_user_fields' ));
     add_action( 'edit_user_profile',  array($this, 'custom_user_fields' ));
+    add_action( 'user_new_form',  array($this, 'custom_user_fields' ));
+
     add_action( 'personal_options_update', array($this, 'edit_user_fields') );
     add_action( 'edit_user_profile_update', array($this, 'edit_user_fields') );
+    add_action( 'user_register', array($this, 'edit_user_fields') );
   }
 
   public static function custom_user_fields( $user ){

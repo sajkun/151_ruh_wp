@@ -149,159 +149,9 @@ jQuery('[name=show_overdue_only]').on('change',function(e){
 
   }
 })
-jQuery.fn.theme_select = function(options) {
-
-  if( is_mobile.anyphone() ) { return; }
-
-  var html_output = '', html_dropdown = '', search ={};
-
-  var select_options = options;
-
-  var $instance = this;
-  if($instance.length > 1) return true;
-
-  select_options.class = (select_options.class)? select_options.class + ' '+  $instance.attr('class') :  $instance.attr('class') ;
-
-
-  var tmpl_select = '<input id="{select_id}" v-on:change="{change}" type="hidden" name="{select_name}" value="{select_value}" class="select-imitation__value  "/><span class="select-imitation__view {class}" onclick="imitate_select_expand(this)">{select_text}</span><span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span><div class="select-imitation__dropdown"><ul class="select-imitation__list">{html_dropdown}</ul></div>';
-
-  var tmpl_select_row = '<li data-value="{data_value}" class="{is_selected}" onclick="imitate_select_option(this)"><span>{data_text}</span></li>';
-
-
-  var $options = $instance.find('option');
-
-  if($options.length === 0) return false;
-
-  $options.each(function(ind_option , el_option){
-
-    search = {
-      data_value: jQuery(el_option).val(),
-      data_text: jQuery(el_option).text(),
-      is_selected: jQuery(el_option).prop('selected') === true? 'selected' : '',
-    };
-
-    html_dropdown += str_replace(search, tmpl_select_row);
-
-  });
-
-  search = {
-    html_dropdown: html_dropdown,
-    class        : options.class || '',
-    select_id    : $instance.attr('id') || '',
-    select_name  : $instance.attr('name') || '',
-    select_text  : $instance.find(':selected').text() || '',
-    select_value : $instance.val() || '',
-    change       : $instance.data('action'),
-  };
-
-  html_output = str_replace(search, tmpl_select);
-
-  this.after(html_output);
-  this.addClass('hidden').addClass('trigger-click');
-};
-
-
-jQuery.fn.theme_select_ul = function(){
-    var $instance = this;
-
-    var tmpl_select =  '<div class="select-imitation" ><span class="select-imitation__view {class}" onclick="imitate_select_expand(this)">{select_text}</span><span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span><div class="select-imitation__dropdown"><ul class="select-imitation__list">{html_dropdown}</ul></div></div>';
-
-    var dropdown = $instance;
-
-    var text = '';
-    $instance.find('li').each( function(index, el) {
-      jQuery(el).attr({'onclick' : 'imitate_select_option_2(this)' });
-
-      if(jQuery(el).find('input').prop('checked') === true){
-         text = jQuery(el).find('label').text();
-         jQuery(el).addClass('class_name');
-      }
-    });
-
-    search = {
-      html_dropdown: $instance.html(),
-      select_text: text,
-    };
-
-     html_output = str_replace(search, tmpl_select);
-
-     this.after(html_output);
-     this.remove();
-};
-
-function imitate_select_expand(obj){
-  var position_class = 'bottom';
-
-  jQuery('.select-imitation').removeClass('expanded');
-
-  var position = jQuery(obj).closest('.select-imitation').offset().top;
-
-  var bottom_screen = jQuery(window).scrollTop() + 3 *(jQuery(window).height()/4);
-
-  position_class = position > bottom_screen? 'top' : 'bottom';
-
-  jQuery(obj).closest('.select-imitation').toggleClass('expanded');
-  jQuery(obj).closest('.select-imitation').addClass(position_class).find('.select-imitation__dropdown').addClass(position_class);
-}
-
-function imitate_select_option(obj){
-  var $instance = jQuery(obj);
-  var $parent = jQuery(obj).closest('.select-imitation');
-  var $text   = $parent.find('.select-imitation__view');
-  var $value  = $parent.find('.select-imitation__value');
-  var $select = $parent.find('select');
-  var value   = $instance.data('value');
-  var text    = $instance.text();
-
-  $instance.addClass('selected').siblings('li').removeClass('selected');
-  $text.text(text);
-  $value.val(value);
-  $parent.removeClass('expanded').removeClass('top').removeClass('bottom');
-  $parent.find('.select-imitation__dropdown').removeClass('top').removeClass('bottom');
-
-  $parent.find('select.trigger-click').val(value).trigger('change');
-
-  var trigger = $select.data('action');
-
-  if(trigger){
-    jQuery(document.body).trigger(trigger);
-  }
-
-}
-
-function imitate_select_option_2(obj){
-  var $instance = jQuery(obj);
-  var $parent = jQuery(obj).closest('.select-imitation');
-  var $text   = $parent.find('.select-imitation__view');
-  var text    = $instance.find('label').text();
-
-  $instance.addClass('selected').siblings('li').removeClass('selected');
-  $text.text(text);
-  $parent.removeClass('expanded');
-  $parent.removeClass('expanded').removeClass('top').removeClass('bottom');
-  $parent.find('.select-imitation__dropdown').removeClass('top').removeClass('bottom');
-
-  $parent.siblings('select.trigger-click').val(value).trigger('change');
-}
-
-jQuery('.site-inner').click(function(e){
-  if(!jQuery(e.target).closest('.select-imitation').length){
-    jQuery('.select-imitation').removeClass('expanded')
-  }
-})
 jQuery('.search-open').click(function(){
   jQuery('.search__wrapper').toggleClass('shown');
 });
-// jQuery(document).ready(function(){
-//   jQuery('.select-imitation').theme_select({});
-// })
-
-jQuery(document).ready(function(){
-  jQuery('.select-imitation select').each(function(ind, el){
-    jQuery(el).theme_select({});
-  })
-})
-
 jQuery(document).ready(function(){
     jQuery('.reminder input').datetimepicker({
       format:'M d Y H:i',
@@ -316,182 +166,6 @@ jQuery('.reminder .icon').click(function(){
 jQuery('.reminder .label').click(function(){
     jQuery('.reminder input').datetimepicker('show');
 })
-
-  // component that displays total revenue on dahsboard page
-
-  var icon_encr = '<svg class="icon svg-icon-up"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-up"></use> </svg>';
-
-  var icon_decr = '<svg class="icon svg-icon-down"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-down"></use> </svg>';
-
-  var blank_html = ''
-  var total_revenue = new Vue({
-    el: '#total_revenue',
-
-    mounted: function(){
-    },
-
-    data: {
-      rev            : '£0.00',
-      change_type    : 'encr', // decr || encr
-      icon           :  icon_encr,
-      up_down        : 'up', // up || down
-      percent_change :  25,
-    },
-
-    methods: {
-      change : function(value, percent_change, shange_type){
-        this.rev = value;
-        this.percent_change = percent_change;
-
-        if(shange_type === 'encr'){
-          this.icon = icon_encr;
-          this.change_type = 'encr';
-          this.up_down = 'up';
-        }
-
-        if(shange_type === 'decr'){
-          this.icon = icon_decr;
-          this.change_type = 'decr';
-          this.up_down = 'down';
-        }
-      }
-    }
-  })
-var total_leads =  new Vue({
-    el: '#total_leads',
-
-    mounted: function(){
-    },
-
-    data: {
-      leads            : 168,
-      percents         : 94, // decr || encr
-    },
-
-    methods: {
-      change : function(leads, percents){
-        this.leads = leads;
-        this.percents = percents;
-      }
-    }
-  })
-
-var total_average =  new Vue({
-  el: '#total_average',
-
-  mounted: function(){
-  },
-
-  data: {
-    avg            : '£0.00',
-  },
-
-  methods: {
-    change : function(avg){
-      this.avg = avg;
-    }
-  }
-})
-  var top_clinic = new Vue({
-    el: '#top_clinic',
-
-    mounted: function(){
-    },
-
-    data: {
-      name      : 'Notting Hill Gate',
-      val       :  7, // decr || encr
-      label     : 'leads',
-      revenue   :  '£'+ formatMoney(1154, 2, ".", ","), // up || down
-      rate      :  3,
-    },
-
-    methods: {
-      change : function(name, val, label, revenue, rate){
-        this.name    = name;
-        this.val     = val;
-        this.label   = label;
-        this.revenue = revenue;
-        this.revenue = revenue;
-        this.rate    = rate;
-      },
-    },
-  })
-  var top_source = new Vue({
-    el: '#top_source',
-
-    mounted: function(){
-    },
-
-    data: {
-      name      : 'Instagramm',
-      val       : 77, // decr || encr
-      label     : 'leads',
-      revenue   :  '£'+ formatMoney(11254, 2, ".", ","), // up || down
-      rate      :  34,
-    },
-
-    methods: {
-      change : function(name, val, label, revenue, rate){
-        this.name    = name;
-        this.val     = val;
-        this.label   = label;
-        this.revenue = revenue;
-        this.revenue = revenue;
-        this.rate    = rate;
-      },
-    },
-  })
-  var top_treatment = new Vue({
-    el: '#top_treatment',
-
-    mounted: function(){
-    },
-
-    data: {
-      name      : 'Composite Bonding',
-      val       :  7, // decr || encr
-      label     : 'leads',
-      revenue   :  '£'+ formatMoney(1154, 2, ".", ","), // up || down
-      rate      :  34,
-    },
-
-    methods: {
-      change : function(name, val, label, revenue, rate){
-        this.name    = name;
-        this.val     = val;
-        this.label   = label;
-        this.revenue = revenue;
-        this.revenue = revenue;
-        this.rate    = rate;
-      },
-    },
-  })
-  var top_campaign = new Vue({
-    el: '#top_campaign',
-
-    mounted: function(){
-    },
-
-    data: {
-      name      : 'Free Smile Trial',
-      val       :  122, // decr || encr
-      label     : 'leads',
-      revenue   :  '£'+ formatMoney(1154, 2, ".", ","), // up || down
-      rate      :  34,
-    },
-
-    methods: {
-      change : function(name, val, label, revenue, rate){
-        this.name    = name;
-        this.val     = val;
-        this.label   = label;
-        this.revenue = revenue;
-        this.revenue = revenue;
-        this.rate    = rate;
-      },
-    },
-  })
 
   var randomScalingFactor = function() {
     return Math.round(Math.random() * 100);
@@ -646,16 +320,49 @@ jQuery(document).ready(function(){
     "startDate": month_first_day,
     "endDate": today_str
   }, function(start, end, label) {
-    console.log('New date range selected: ' + start.format('YYYY-MMM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
 
     var text = start.format('MMM DD YYYY') + ' → ' + end.format('MMM DD YYYY');
 
     jQuery('.range-datepicker__text').text(text);
     jQuery('.range-datepicker__label').text(label);
 
-    jQuery(document.body).trigger('update_app');
+    jQuery(document.body).trigger('get_leads_by_dates', {from: start.format('MMM DD YYYY') , to: end.format('MMM DD YYYY')});
   });
 })
+
+
+  jQuery(document.body).on('get_leads_by_dates', function(e, data){
+
+    data.action = 'get_leads_by_dates';
+
+    jQuery.ajax({
+      url: WP_URLS.wp_ajax_url,
+      type: 'POST',
+      dataType: 'json',
+      data: data,
+      complete: function(xhr, textStatus) {
+        //called when complete
+      },
+
+      success: function(data, textStatus, xhr) {
+        console.log(data);
+        dashboard_leads_data = data.leads;
+        team_perfomance      = data.team_perfomance;
+        update_filters(data.filter_data);
+        update_dashboard_totals();
+        update_top_sourses();
+        update_team_perfomance();
+
+        console.log('time range updated');
+      },
+
+      error: function(xhr, textStatus, errorThrown) {
+        console.log('error');
+        console.log(errorThrown);
+       }
+    });
+
+  })
 var chart = document.getElementById('gistogramm-year').getContext('2d');
 var current_year = '2019';
 var currency     = '£';
@@ -861,8 +568,674 @@ var options_chart_test = {
 }
 
 jQuery(document).on('update_app',function(){
-  total_revenue.change('£'+ formatMoney(100, 2, ".", ","), 44, 'encr');
-  total_leads.change(11, 14);
-  total_average.change('£'+ formatMoney(14, 2, ".", ","));
-  chart_income = new Chart(chart, options_chart_test);
+
 })
+
+
+// class to work with leads
+
+var parse_leads = {
+  leads: {},
+
+  construct: function(){
+    this.filter();
+    return this;
+  },
+
+  /**
+  *
+  */
+  filter: function(){
+    var dashboard_leads_data_filtered_new = [];
+
+    for(lead_id in dashboard_leads_data){
+      if(this.filter_lead(dashboard_leads_data[lead_id])){
+        dashboard_leads_data_filtered_new.push(dashboard_leads_data[lead_id]);
+      }
+    }
+
+    dashboard_leads_data_filtered = dashboard_leads_data_filtered_new;
+
+    this.leads = dashboard_leads_data_filtered_new;
+
+    return dashboard_leads_data_filtered_new;
+  },
+
+
+  // check if passed lead mathces current filter values
+  filter_lead: function(lead){
+    var filter_value = {};
+    var lead_filter  = lead.filter_data;
+    var is_match     = true;
+
+    for(id in vue_selects){
+      var value = vue_selects[id].get_value();
+     if(value.search('All') !== 0){
+        filter_value[vue_selects[id].get_name()] = value;
+      }
+    }
+
+    for(filter_id in filter_value){
+      switch(typeof(lead_filter[filter_id])){
+        case 'object':
+          is_match = (lead_filter[filter_id].indexOf(filter_value[filter_id]) < 0)? false : is_match;
+         break;
+        default:
+          is_match = (lead_filter[filter_id] !== filter_value[filter_id])? false : is_match;
+         break;
+      }
+    }
+
+    return is_match;
+  },
+
+  /**
+  *
+  */
+  get_total_revenue : function(){
+    revenue = 0;
+
+    for(id in this.leads){
+      revenue += parseInt(this.leads[id].meta.treatment_value.value);
+    }
+
+    return revenue;
+  },
+
+  get_total_leads: function(){
+    return this.leads.length;
+  },
+
+  get_average_leads: function(formatted){
+    var revenue = this.get_total_revenue();
+    var total   = this.get_total_leads();
+
+    if(formatted){
+      return formatMoney(revenue/total, 2, ".", ",") ;
+    }else{
+      return revenue/total;
+    }
+  },
+
+  prepare_sorted_data_by: function(get_by){
+    var sorted = {};
+    var index;
+    switch(get_by){
+      case 'sourse':
+        for(_i in this.leads){
+          index = this.leads[_i].meta.patient_data.sourse;
+          if(index){
+            if('undefined' === typeof(sorted[index])){
+              sorted[index] = {
+                leads : 0,
+                revenue : 0,
+                rate : 0,
+                name: index,
+              };
+            }
+
+            sorted[index].leads++;
+            sorted[index].revenue += parseInt(this.leads[_i].meta.treatment_value.value);
+          }
+        }
+
+        break;
+      case 'campaign':
+        for(_i in this.leads){
+          index = this.leads[_i].meta.patient_data.campaign;
+
+          if(index){
+            if('undefined' === typeof(sorted[index])){
+              sorted[index] = {
+                leads : 0,
+                revenue : 0,
+                rate : 0,
+                name: index,
+              };
+            }
+
+            sorted[index].leads++;
+            sorted[index].revenue += parseInt(this.leads[_i].meta.treatment_value.value);
+          }
+        }
+       break
+      case 'treatment':
+        for(_i in this.leads){
+          index = this.leads[_i].meta.patient_data.treatment;
+          if(index){
+            if('undefined' === typeof(sorted[index])){
+              sorted[index] = {
+                leads : 0,
+                revenue : 0,
+                rate : 0,
+                name: index,
+              };
+            }
+
+            sorted[index].leads++;
+            sorted[index].revenue += parseInt(this.leads[_i].meta.treatment_value.value);
+          }
+        }
+       break
+      case 'clinic':
+        for(_i in this.leads){
+          index = this.leads[_i].meta.patient_data.clinic;
+          if(index){
+            if('undefined' === typeof(sorted[index])){
+              sorted[index] = {
+                leads : 0,
+                revenue : 0,
+                rate : 0,
+                name: index,
+              };
+            }
+
+            sorted[index].leads++;
+            sorted[index].revenue += parseInt(this.leads[_i].meta.treatment_value.value);
+          }
+        }
+       break
+    }
+
+    return sorted;
+  },
+
+  get_leads_data_by: function(get_by, type){
+    var sorted = this.prepare_sorted_data_by(get_by);
+
+
+    if(Object.keys(sorted).length === 0){
+      return {
+        leads : 'no',
+        revenue :  '-',
+        rate :  '-',
+        name: 'Unavailable',
+      };
+    }
+
+    switch(type){
+      case 'Leads':
+        var max = 0;
+        var index = '';
+
+        for(id in sorted){
+          if(sorted[id].leads > max){
+            index = id;
+            max = sorted[id].leads;
+          }
+        }
+
+        return sorted[index];
+        break;
+
+      case 'Revenue':
+        var max = 0;
+        var index = '';
+
+        for(id in sorted){
+          if(sorted[id].revenue > max){
+            index = id;
+            max = sorted[id].revenue;
+          }
+        }
+
+        return sorted[index];
+        break;
+    }
+  }
+}
+
+
+// jQuery(document).ready(function(){
+//   jQuery(document.body).trigger('update_app');
+// })
+
+  // component that displays total revenue on dahsboard page
+
+  var icon_encr = '<svg class="icon svg-icon-up"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-up"></use> </svg>';
+
+  var icon_decr = '<svg class="icon svg-icon-down"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-down"></use> </svg>';
+
+  var blank_html = ''
+var vue_selects = {};
+
+function init_filters(filter_data){
+  if('undefined' !== typeof(is_dashboard)){
+    for( select_name in dashboard_filter_data){
+      vue_selects['vue_'+select_name+'_select'] = new Vue({
+        el: '#'+select_name+'-select',
+
+        data: {
+          select_name : select_name,
+          options: filter_data[select_name],
+          selected:filter_data[select_name][0],
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+        },
+
+        mounted: function(){
+          this.update_selected_option();
+          this.isHiddenSelect = jQuery(window).width()   > 768 ? true : false;
+          this.isHiddenImitation = jQuery(window).width() > 768 ? false : true;
+        },
+
+        methods: {
+
+          // toggles state of expanded list initation
+          expand_select: function(){
+            this.isExpanded = 'expanded';
+            collapse_filters(this.select_name);
+            collapse_top_lists('');
+          },
+
+          // toggles select in expanded dropdown
+          update_selected_option: function(){
+            for(id in this.options){
+              this.isSelected[this.options[id]] = false;
+            }
+
+            this.isSelected[this.selected] = true;
+          },
+
+          // changes data on option click
+          imitate_select_option: function(value){
+            this.selected = value;
+            this.isExpanded = '';
+            this.update_selected_option();
+            vue_dashboard_totals.update();
+          },
+
+           // closes select
+          discard_select:function(){
+            this.isExpanded = '';
+          },
+
+           // updates options of a select
+          update_options: function(options){
+            this.options = options;
+            this.selected = options[0];
+            this.isExpanded = '';
+            this.update_selected_option();
+          },
+
+          change: function(){
+          },
+
+          // sets value for a select
+          set_value: function(value){
+            this.selected = value;
+          },
+
+          // gets value of a select
+          get_value: function(){
+            return this.selected;
+          },
+
+          // gets name of a select
+          get_name: function(){
+            return this.select_name;
+          }
+        }
+      });
+    }
+  }
+}
+
+function collapse_filters(select_name){
+  if('undefined' !== typeof(is_dashboard)){
+    for( _select_name in dashboard_filter_data){
+      if(_select_name != select_name){
+        vue_selects['vue_'+_select_name+'_select'].discard_select();
+      }
+    }
+  }
+}
+
+
+function update_filters(filter_data){
+  if('undefined' !== typeof(is_dashboard)){
+    var values = {};
+    for(select_name in filter_data){
+       vue_selects['vue_'+select_name+'_select'].update_options(filter_data[select_name]);
+       values['vue_'+select_name+'_select'] = filter_data[select_name];
+    }
+
+    jQuery('#dashboard').find('.select-imitation').find('span').remove();
+    jQuery('#dashboard').find('.select-imitation').find('div').remove();
+    jQuery('#dashboard').find('.select-imitation').find('select').removeClass('hidden');
+    jQuery('#dashboard').find('select').each(function(ind, el){
+
+      var id = jQuery(el).data('vue-id');
+
+      jQuery(this).theme_select({
+        values: values[id],
+      });
+    })
+  }
+}
+
+jQuery('.site-inner').click(function(e){
+  if(!jQuery(e.target).closest('.select-imitation').length){
+   collapse_filters('');
+   collapse_top_lists('');
+  }
+})
+
+
+init_filters(dashboard_filter_data);
+if('undefined' !== typeof(is_dashboard)){
+  var icon_encr = '<svg class="icon svg-icon-up"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-up"></use> </svg>';
+  var icon_decr = '<svg class="icon svg-icon-down"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-down"></use> </svg>';
+
+  var vue_dashboard_totals = new Vue({
+    el: '#dashboard_totals',
+
+    data:{
+      rev:  0,
+      leads: 0,
+      avg: 0,
+      up_down: '',
+      percent_change: '',
+      percents: '',
+      icon: '',
+      change_type: '',
+    },
+
+    mounted: function(){
+      this.update();
+    },
+
+    methods:{
+      set_value: function(key, value){
+        this[key] = value;
+      },
+
+      update: function(){
+        var leads = parse_leads.construct();
+        this.rev   = '£'+ formatMoney(leads.get_total_revenue(), 2, ".", ",");
+        this.leads = leads.get_total_leads();
+        this.avg   = '£'+ formatMoney(leads.get_average_leads(), 2, ".", ",");
+      }
+    },
+  })
+}
+
+function update_dashboard_totals(){
+  if('undefined' !== typeof(is_dashboard)){
+    vue_dashboard_totals.update();
+  }
+}
+
+if('undefined' !== typeof(is_dashboard)){
+  var top_items = ['sourse', 'treatment', 'clinic', 'campaign'];
+
+  var vue_top_items = {};
+
+  for(top_type in top_items){
+    vue_top_items[top_items[top_type]] = new Vue({
+      el: '#top_'+top_items[top_type],
+
+      mounted: function(){
+      },
+
+      data: {
+        name              : 'Unavailable',
+        item_name         :  top_items[top_type],
+        leads             :  0,
+        label             : 'leads',
+        revenue           :  '£'+ formatMoney(00, 2, ".", ","), // up || down
+        rate              :  0,
+        isExpanded        : '',
+        isHiddenSelect    : true,
+        isHiddenImitation : false,
+        isSelected        : [],
+        selected          :  'Leads',
+        options           : ['Leads', 'Revenue']
+      },
+
+      mounted: function(){
+        this.update_selected_option();
+        this.isHiddenSelect = jQuery(window).width()   > 768 ? true : false;
+        this.isHiddenImitation = jQuery(window).width() > 768 ? false : true;
+        this.change();
+      },
+
+
+      methods: {
+        change: function(){
+          var leads = parse_leads.construct();
+          var data  = leads.get_leads_data_by(this.item_name, this.selected);
+
+          this.leads = data.leads;
+          this.rate  = data.rate;
+          this.name  = data.name;
+          this.revenue = '£'+ formatMoney(data.revenue, 2, ".", ",");
+          this.label  = (this.leads === 1)? 'lead' : 'leads';
+        },
+
+        // toggles state of expanded list initation
+        expand_select: function(){
+          this.isExpanded = 'expanded';
+           collapse_filters('');
+           collapse_top_lists(this.item_name);
+        },
+
+        // toggles select in expanded dropdown
+        update_selected_option: function(){
+          for(id in this.options){
+            this.isSelected[this.options[id]] = false;
+          }
+
+          this.isSelected[this.selected] = true;
+        },
+
+        // changes data on option click
+        imitate_select_option: function(value){
+          this.selected = value;
+          this.isExpanded = '';
+          this.update_selected_option();
+          this.change();
+        },
+
+         // closes select
+        discard_select:function(){
+          this.isExpanded = '';
+        },
+
+         // updates options of a select
+        update_options: function(options){
+          this.options = options;
+          this.selected = options[0];
+          this.isExpanded = '';
+          this.update_selected_option();
+        },
+
+        // sets value for a select
+        set_value: function(value){
+          this.selected = value;
+        },
+
+        // gets value of a select
+        get_value: function(){
+          return this.selected;
+        },
+
+        // gets name of a select
+        get_name: function(){
+          return this.select_name;
+        }
+      },
+    })
+  }
+}
+
+
+function update_top_sourses(){
+  if('undefined' !== typeof(is_dashboard)){
+    for(top_type in top_items){
+      vue_top_items[top_items[top_type]].change();
+    }
+  }
+}
+
+function collapse_top_lists(name){
+  if('undefined' !== typeof(is_dashboard)){
+    for(top_type in top_items){
+      if(name !== top_items[top_type]){
+        vue_top_items[top_items[top_type]].discard_select();
+      }
+    }
+  }
+}
+
+
+var select_imitation = Vue.component('select-imitation', {
+  data: function () {
+    return {
+      select_name : this._select_name,
+      options: this._options,
+      selected:this._selected,
+      isExpanded: this._isExpanded,
+      isSelected: this._isSelected,
+      isHiddenSelect: this._isHiddenSelect,
+      isHiddenImitation: this._isHiddenImitation,
+    }
+  },
+
+  props:{
+    _select_name : String,
+    _options: Array,
+    _selected: String,
+    _isExpanded: String,
+    _isSelected: Array,
+    _isHiddenSelect: Boolean,
+    _isHiddenImitation: Boolean,
+  },
+
+  created: function(){
+    this.$emit('update_list', this.selected);
+  },
+
+  mounted:function(){
+
+  },
+
+  methods: {
+    change: function(){
+      this.$emit('update_list', this.selected);
+    },
+
+    // toggles state of expanded list initation
+    expand_select: function(){
+      this.isExpanded = 'expanded';
+       collapse_filters('');
+       collapse_top_lists(this.item_name);
+    },
+
+    // toggles select in expanded dropdown
+    update_selected_option: function(){
+      for(id in this.options){
+        this.isSelected[this.options[id]] = false;
+      }
+
+      this.isSelected[this.selected] = true;
+    },
+
+    // changes data on option click
+    imitate_select_option: function(value){
+      this.selected = value;
+      this.isExpanded = '';
+      this.update_selected_option();
+      this.change();
+    },
+
+     // closes select
+    discard_select:function(){
+      this.isExpanded = '';
+    },
+
+     // updates options of a select
+    update_options: function(options){
+      this.options = options;
+      this.selected = options[0];
+      this.isExpanded = '';
+      this.update_selected_option();
+    },
+
+    // sets value for a select
+    set_value: function(key, value){
+      this[key] = value;
+    },
+
+    // gets value of a select
+    get_value: function(){
+      return this.selected;
+    },
+
+    // gets name of a select
+    get_name: function(){
+      return this.select_name;
+    }
+  },
+
+  template: '<div class="select-imitation" v-bind:class="{ expanded: isExpanded}" > <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="data in options" v-bind:value="data">{{data}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)"> <span>{{data}}</span> </li> </ul> </div> </div>',
+})
+
+if('undefined' !== typeof(is_dashboard)){
+  var vue_team_perfomance = new Vue({
+    el: '#team_perfomance',
+
+    data:{
+      team: team_perfomance.team,
+    },
+
+    components: {
+      dropdown: select_imitation,
+    },
+
+    mounted: function(){
+      var props =  {
+        select_name: 'team_perfomance_list',
+        options: team_perfomance.positions,
+        selected: team_perfomance.positions[0],
+        isExpanded: '',
+        isSelected: [],
+        isHiddenSelect: true,
+        isHiddenImitation: false,
+      };
+
+
+      for( id in props){
+        this.$refs.posts_list.set_value(id, props[id]);
+      }
+    },
+
+    methods:{
+      run_update_list: function(val){
+        if(val){
+          if(val === 'all'){
+            this.team = team_perfomance.team;
+          }else{
+            var new_team = {};
+            for(id in team_perfomance.team){
+              if(team_perfomance.team[id].user_position === val){
+                new_team[id] = team_perfomance.team[id];
+              }
+            }
+
+            this.team = new_team;
+          }
+        }
+      },
+    },
+  })
+}
+
+
+function update_team_perfomance(){
+  if('undefined' !== typeof(is_dashboard)){
+    vue_team_perfomance.run_update_list('all');
+  }
+}

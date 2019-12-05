@@ -19,166 +19,101 @@ class theme_content_output{
   * @hookedto
   */
   public static function print_header(){
+    $obj     = get_queried_object();
+    $user_id = get_current_user_id();
+    $user = get_user_by('id', $user_id);
 
-    $custom_logo_id = get_theme_mod( 'custom_logo' );
-    $custom_logo_url = wp_get_attachment_image_url( $custom_logo_id , 'full' );
+    $last_name     = get_the_author_meta('last_name',  $user_id );
+    $first_name    = get_the_author_meta('first_name', $user_id );
+    $name = $first_name  . ' '. $last_name ;
+    $name = trim($name)? $name : $user->data->display_name;
 
-    $custom_logo_url = ($custom_logo_url)? $custom_logo_url : THEME_URL.'/images/logo.svg';
+    $photo_id = get_the_author_meta('user_photo_id',   $user_id );
+    $photo_url =  wp_get_attachment_url( $photo_id );
+    $photo_url = ($photo_url) ? $photo_url : '';
 
-    $logo = (!is_front_page())? sprintf('<a href="%s" class="logo"><img src="%s" alt="eGamer"></a>', home_url() , $custom_logo_url) : sprintf('<span class="logo"><img src="%s" alt="eGamer"></span>', $custom_logo_url) ;
+    $dashboard_id  = (int)get_option('theme_page_dashboard');
+    $leads_id      = (int)get_option('theme_page_leads');
+    $new_lead_id = (int)get_option('theme_page_create_leads');
 
-    $main_menu = wp_nav_menu( array(
-      'theme_location'  => 'main_menu',
-      'menu'            => '',
-      'container'       => '',
-      'container_class' => '',
-      'container_id'    => '',
-      'menu_class'      => 'menu',
-      'menu_id'         => '',
-      'echo'            => false,
-      'fallback_cb'     => '',
-      'before'          => '',
-      'after'           => '',
-      'link_before'     => '',
-      'link_after'      => '',
-      'items_wrap'      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-      'depth'           => 1,
-    ) );
 
-    $social_menu = wp_nav_menu( array(
-      'theme_location'  => 'social_menu',
-      'menu'            => '',
-      'container'       => '',
-      'container_class' => '',
-      'container_id'    => '',
-      'menu_class'      => 'menu',
-      'menu_id'         => '',
-      'echo'            => false,
-      'fallback_cb'     => '',
-      'before'          => '',
-      'after'           => '',
-      'link_before'     => '',
-      'link_after'      => '',
-      'items_wrap'      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-      'depth'           => 1,
-    ) );
+    $leads_menu_class = ($obj->ID === $leads_id || $obj->ID === $new_lead_id ||  velesh_theme_posts::$lead === $obj->post_type )? 'active' : '';
+
+    $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
 
     $args = array(
-      'logo'        => $logo,
-      'main_menu'   => $main_menu,
-      'social_menu' => $social_menu,
+      'leads_menu_class'     => $leads_menu_class,
+      'dashboard_menu_class' => $dashboard_menu_class,
+      'dashboard_url'        => get_permalink($dashboard_id),
+      'lead_url'             => get_permalink($leads_id),
+      'new_lead_url'         => get_permalink($new_lead_id),
+      'photo_url'            => $photo_url,
+      'name'                 => $name,
     );
+
     print_theme_template_part('header', 'globals', $args);
   }
 
 
   /**
-  * Prints page content
+  * prints header
   *
-  * @hookedto do_theme_header 10
-  *
-  * @see  [theme_folder]/includes/class-page-constructor.php line 22
+  * @hookedto
   */
-  public static function print_page_content(){}
+  public static function print_dashboard(){
+
+    // Get date range default
+
+     global $theme_init;
+
+      $today = new DateTime();
+
+      wp_localize_script($theme_init->main_script_slug, 'is_dashboard', 'yes');
+
+      $current_month = $today->format('m');
+      $current_year  = $today->format('Y');
+
+      $today_formated = $today->format('M d Y');
+
+      $today->setDate($current_year, $current_month, 1);
+
+      $months_first_day = $today->format('M d Y');
+
+    // Get leads by dates dates a
+
+      $leads = get_posts_by_dates( $months_first_day , $today_formated );
+
+      $leads = get_leads_meta($leads);
 
 
-  /**
-  * Prints page footer
-  *
-  * @hookedto do_theme_footer 10
-  *
-* @see  [theme_folder]/includes/class-page-constructor.php line 23
-  */
-  public static function print_footer(){
+      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
 
-    $custom_logo_id = get_theme_mod( 'custom_logo' );
-    $custom_logo_url = wp_get_attachment_image_url( $custom_logo_id , 'full' );
+      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
 
-    $custom_logo_url = ($custom_logo_url)? $custom_logo_url : THEME_URL.'/images/logo.svg';
+    // prepare data for filters
 
-    $logo = (!is_front_page())? sprintf('<a href="%s" class="logo"><img src="%s" alt="eGamer"></a>', home_url() , $custom_logo_url) : sprintf('<span class="logo"><img src="%s" alt="eGamer"></span>', $custom_logo_url) ;
+      $filter_data = get_filters_by_leads( $leads );
 
-    $main_menu = wp_nav_menu( array(
-      'theme_location'  => 'main_menu',
-      'menu'            => '',
-      'container'       => '',
-      'container_class' => '',
-      'container_id'    => '',
-      'menu_class'      => 'menu',
-      'menu_id'         => '',
-      'echo'            => false,
-      'fallback_cb'     => '',
-      'before'          => '',
-      'after'           => '',
-      'link_before'     => '',
-      'link_after'      => '',
-      'items_wrap'      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-      'depth'           => 1,
-    ) );
+      wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
 
-    $social_menu = wp_nav_menu( array(
-      'theme_location'  => 'social_menu',
-      'menu'            => '',
-      'container'       => '',
-      'container_class' => '',
-      'container_id'    => '',
-      'menu_class'      => 'menu',
-      'menu_id'         => '',
-      'echo'            => false,
-      'fallback_cb'     => '',
-      'before'          => '',
-      'after'           => '',
-      'link_before'     => '',
-      'link_after'      => '',
-      'items_wrap'      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-      'depth'           => 1,
-    ) );
+    // gistogram ????
 
-    $terms_menu = wp_nav_menu( array(
-      'theme_location'  => 'terms_menu',
-      'menu'            => '',
-      'container'       => '',
-      'container_class' => '',
-      'container_id'    => '',
-      'menu_class'      => 'menu',
-      'menu_id'         => '',
-      'echo'            => false,
-      'fallback_cb'     => '',
-      'before'          => '',
-      'after'           => '',
-      'link_before'     => '',
-      'link_after'      => '',
-      'items_wrap'      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-      'depth'           => 1,
-    ) );
+    // convertions????
 
-    $copyrights = get_option('theme_footer_copyrights');
+    // team perfomance
+
+      $user_data = get_users_leads( $months_first_day , $today_formated);
+
+      wp_localize_script($theme_init->main_script_slug, 'team_perfomance', $user_data);
 
     $args = array(
-      'logo'        => $logo,
-      'main_menu'   => $main_menu,
-      'social_menu' => $social_menu,
-      'terms_menu'  => $terms_menu,
-      'copyrights'  => $copyrights,
+      'daterange' => array(
+        'from' => $mont_first_day,
+        'to'   => $today_formated
+      ),
     );
 
-    print_theme_template_part('footer', 'globals', $args);
+    print_theme_template_part('dashboard', 'globals', $args);
   }
 
-
-
-  /**
-  * Prints contentof a page
-  *
-  * @hookedto do_theme_content 10
-  *
-  * @see  [theme_folder]/includes/class-page-constructor.php line 24
-  */
-  public static function print_content_page(){
-    if ( have_posts() ) :
-      while ( have_posts() ) : the_post();
-        the_content();
-      endwhile;
-    endif;
-  }
 }

@@ -23,13 +23,18 @@ class velesh_theme_posts {
     add_action( 'init', array( __CLASS__, 'support_jetpack_omnisearch' ) );
     add_filter( 'rest_api_allowed_post_types', array( __CLASS__, 'rest_api_allowed_post_types' ) );
     add_action( 'velesh_theme_after_register_post_type', array( __CLASS__, 'maybe_flush_rewrite_rules' ) );
-
     add_filter( 'gutenberg_can_edit_post_type', array( __CLASS__, 'gutenberg_can_edit_post_type' ), 10, 2 );
     add_filter( 'use_block_editor_for_post_type', array( __CLASS__, 'gutenberg_can_edit_post_type' ), 10, 2 );
-
     add_action( 'add_meta_boxes', array( __CLASS__, 'add_metaboxes' ) );
-
     add_action( 'save_post' ,array( __CLASS__, 'save_meta' ) , 99999);
+    add_action( 'delete_post', array(__CLASS__, 'remove_assigned_leads') );
+    add_action( 'wp_trash_post', array(__CLASS__, 'remove_assigned_leads') );
+    add_action( 'publish_to_trash', array(__CLASS__, 'remove_assigned_leads') );
+    add_action( 'draft_to_trash', array(__CLASS__, 'remove_assigned_leads') );
+    add_action( 'future_to_trash', array(__CLASS__, 'remove_assigned_leads') );
+
+    add_action( 'wp_untrash_post', array(__CLASS__, 'restore_assigned_leads') );
+    add_action( 'untrash_post', array(__CLASS__, 'restore_assigned_leads') );
   }
 
   public static function register_taxonomies(){
@@ -277,7 +282,11 @@ class velesh_theme_posts {
           </td>
           <td><p class="leads-block__label">Date / Time</p></td>
           <td>
-            <input type="text" name="patient_data[date_time]" placeholder="Add" class="leads-block__input fullwidth datetimepicker"  value="<?php echo isset($meta['date_time'])? $meta['date_time'] : ''; ?>">
+            <?php
+               $date = new DateTime($post->post_modified);
+             ?>
+            <input type="text" readonly name="patient_data[date_time]" placeholder="Add" class="leads-block__input fullwidth"  value="<?php echo $date->format('M d Y H:i') ?>">
+
           </td>
         </tr>
       </tbody></table>
@@ -296,9 +305,9 @@ class velesh_theme_posts {
     $meta = get_post_meta($post->ID, '_treatment_value', true);
     ?>
     <div class="leads-block__row">
-      <h4>Treatment Value</h4>
+      <h4>Treatment Value (£)</h4>
       <div class="leads-block__price">
-        <input type="text" name="treatment_value[value]" placeholder="£00.00" class="leads-block__input xxl"  value="<?php echo isset($meta['value']) ? $meta['value'] : ''; ?>">
+        <input type="number" name="treatment_value[value]" placeholder="£00.00" class="leads-block__input xxl"  value="<?php echo isset($meta['value']) ? $meta['value'] : ''; ?>">
       </div>
     </div>
     <br>
@@ -415,27 +424,31 @@ class velesh_theme_posts {
     ?>
     <div class="uploaded-documents">
 
-      <?php foreach ($meta as $key => $m):
-        if(empty($m['name']) && empty($m['url'])) continue;
-        ?>
-         <div class="document-block">
-           <svg class="icon svg-icon-doc"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-doc"></use> </svg>
-
-           <p class="document-block__text">
-             <span class="name"><?php echo $m['name'] ?></span>
-             <san class="date"><?php echo $m['date'] ?></span>
-           </p>           <p class="document-block__actions">
-             <a href="<?php echo $m['url'] ?>" download style="text-decoration: none;"><svg class="icon svg-icon-download"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-download"></use> </svg> </a>
-             <svg class="icon svg-icon-trash" onclick="delete_file(this)"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use> </svg>
-           </p>
-
-           <input type="hidden" name="lead_files[<?php echo $count;?>][name]" value="<?php echo $m['name'] ?>">
-           <input type="hidden" name="lead_files[<?php echo $count;?>][date]" value="<?php echo $m['date'] ?>">
-           <input type="hidden" name="lead_files[<?php echo $count;?>][url]" value="<?php echo $m['url'] ?>">
-         </div>
       <?php
-        $count++;
-        endforeach ?>
+        if($meta):
+          foreach ($meta as $key => $m):
+            if(empty($m['name']) && empty($m['url'])) continue;
+            ?>
+             <div class="document-block">
+               <svg class="icon svg-icon-doc"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-doc"></use> </svg>
+
+               <p class="document-block__text">
+                 <span class="name"><?php echo $m['name'] ?></span>
+                 <san class="date"><?php echo $m['date'] ?></span>
+               </p>           <p class="document-block__actions">
+                 <a href="<?php echo $m['url'] ?>" download style="text-decoration: none;"><svg class="icon svg-icon-download"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-download"></use> </svg> </a>
+                 <svg class="icon svg-icon-trash" onclick="delete_file(this)"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use> </svg>
+               </p>
+
+               <input type="hidden" name="lead_files[<?php echo $count;?>][name]" value="<?php echo $m['name'] ?>">
+               <input type="hidden" name="lead_files[<?php echo $count;?>][date]" value="<?php echo $m['date'] ?>">
+               <input type="hidden" name="lead_files[<?php echo $count;?>][url]" value="<?php echo $m['url'] ?>">
+             </div>
+            <?php
+            $count++;
+          endforeach;
+        endif;
+         ?>
     </div>
 
     <a href="javascript:void(0)" class="button" onclick="upload_document(this)">Upload Document</a>
@@ -454,13 +467,16 @@ class velesh_theme_posts {
     $meta = get_post_meta($post->ID, '_lead_notes', true);
     $count=0;
 
+
     $id = get_current_user_id();
     $user = get_user_by('ID',$id);
     ?>
     <div class="notes-block">
 
 
-      <?php foreach ($meta as $key => $m):
+      <?php
+      if($meta):
+      foreach ($meta as $key => $m):
         if(empty($m['name']) && empty($m['note'])) continue;
 
         $_user = get_user_by('ID',(int)$m['user_id']);
@@ -484,7 +500,9 @@ class velesh_theme_posts {
       <br>
     <?php
       $count++;
-      endforeach ?>
+      endforeach ;
+    endif;
+      ?>
     </div>
 
     <textarea class="fullwidth" id="lead_note" rows="10"></textarea>
@@ -505,18 +523,18 @@ class velesh_theme_posts {
   public static function lead_specialists_cb($post){
     $meta = get_post_meta($post->ID, '_lead_specialists', true);
     $users = get_users(array());
+
+    if(!$users) return;
     ?>
     <table class="team-leads">
       <tbody>
         <?php foreach ($users as $key => $user):
-           $last_name     =  get_the_author_meta('last_name', $user->ID);
-           $first_name    = get_the_author_meta('first_name', $user->ID);
-           $user_position = get_the_author_meta('user_position', $user->ID);
+
            $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
            $image =  wp_get_attachment_url( $user_photo_id );
            $image = ($image) ? $image : DUMMY_ADMIN;
-           $name = $first_name  . ' '. $last_name ;
-           $name = trim($name)? $name : $user->data->display_name;
+           $name = theme_get_user_name($user);
+           $user_position = get_the_author_meta('user_position', $user->ID);
           ?>
         <tr>
          <td><div class="team-leads__photo"><img src="<?php echo $image ?>" alt=""></div></td>
@@ -568,11 +586,62 @@ class velesh_theme_posts {
       ['name' => 'lead_specialists', 'unique' => true],
     );
 
-    // echo "<pre>";
-    //     print_r($_POST);
-    // echo "</pre>";
-    //     exit();
+    // sets post name
+    if(isset($_POST['patient_data'])){
 
+      $name = array();
+
+      $patient_data = $_POST['patient_data'];
+
+      foreach (array('name', 'treatment', 'clinic') as  $post_key) {
+
+        if(isset($patient_data[ $post_key])){
+          $name[] = $patient_data[ $post_key];
+        }
+      }
+
+      $post = get_post($post_id);
+
+      if(count($name) > 0){
+        $_name = implode(' - ', $name);
+
+        if( $post->post_title != $_name){
+          wp_update_post(
+              array (
+                  'ID'            => $post_id,
+                  'post_title'     => $_name,
+              )
+          );
+        }
+      }
+    }
+
+
+    if(isset($_POST['lead_specialists'])){
+      foreach ($_POST['lead_specialists'] as $user_id => $assigned) {
+        $assigned_posts = get_the_author_meta('_leads_assigned',  $user_id);
+
+        if(!$assigned_posts){
+          $assigned_posts = [];
+        }
+
+        if(!in_array($post_id, $assigned_posts) && 'yes' === $assigned){
+          array_push($assigned_posts, $post_id);
+        }
+
+        if(!update_user_meta( $user_id, '_leads_assigned', $assigned_posts )){
+          add_user_meta( $user_id, '_leads_assigned', $assigned_posts );
+        }
+      }
+    }
+
+    //uncoment for debug
+    // echo "<pre>";
+    // // print_r($_POST);
+    // echo "</pre>";
+    // exit();
+
+    //saves meta
     foreach ($data as $_id => $_d) {
       if(isset($_POST[$_d['name']]) && !empty($_POST[$_d['name']])){
         $new_data = $_POST[$_d['name']];
@@ -592,9 +661,42 @@ class velesh_theme_posts {
         delete_post_meta( $post_id, $_d['name']);
       }
     }
-    // exit();
   }
 
+  public function remove_assigned_leads($post_id){
+    foreach(get_users() as $user){
+      $assigned_posts = get_the_author_meta('_leads_assigned', $user->ID);
+      if(!$assigned_posts) continue;
+      $key_to_remove  = array_search($post_id, $assigned_posts );
+      if(!$key_to_remove) continue;
+      unset($assigned_posts[$key_to_remove]);
+      if(!update_user_meta( $user->ID, '_leads_assigned', $assigned_posts )){
+        add_user_meta( $user->ID, '_leads_assigned', $assigned_posts );
+      }
+    }
+  }
+
+
+  public function restore_assigned_leads($post_id){
+    $meta = get_post_meta($post_id, '_lead_specialists', true);
+    if($meta){
+      foreach ($meta as $user_id => $assigned) {
+        $assigned_posts = get_the_author_meta('_leads_assigned',  $user_id);
+
+        if(!$assigned_posts){
+          $assigned_posts = [];
+        }
+
+        if(!in_array($post_id, $assigned_posts) && 'yes' === $assigned){
+          array_push($assigned_posts, (int)$post_id);
+        }
+
+        if(!update_user_meta( $user_id, '_leads_assigned', $assigned_posts )){
+          add_user_meta( $user_id, '_leads_assigned', $assigned_posts );
+        }
+      }
+    }
+  }
 }
 
 velesh_theme_posts::init();
