@@ -26,8 +26,11 @@ class theme_construct_page{
     // add_action('do_theme_footer', array('theme_content_output', 'print_footer'));
     // add_action('do_theme_content', array('theme_content_output', 'print_content_page'));
 
-    if(self:: is_page_type('dashboard' )){
+    if(self:: is_page_type( 'dashboard' )){
       add_action('do_theme_content', array('theme_content_output', 'print_dashboard'));
+    }
+    if(self:: is_page_type( 'leads-list' )){
+      add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
     }
   }
 
@@ -52,6 +55,9 @@ class theme_construct_page{
         break;
       case 'dashboard':
         return  $obj->ID ===   $dashboard_id;
+        break;
+      case 'leads-list':
+        return  $obj->ID ===   $leads_id;
         break;
     }
   }

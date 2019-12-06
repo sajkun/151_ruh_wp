@@ -35,6 +35,8 @@ class velesh_theme_posts {
 
     add_action( 'wp_untrash_post', array(__CLASS__, 'restore_assigned_leads') );
     add_action( 'untrash_post', array(__CLASS__, 'restore_assigned_leads') );
+
+    add_action('admin_menu', array(__CLASS__, 'add_leads_sub_menu_pages'));
   }
 
   public static function register_taxonomies(){
@@ -42,7 +44,6 @@ class velesh_theme_posts {
       return;
     }
   }
-
 
   /**
    * Register core post types.
@@ -159,6 +160,100 @@ class velesh_theme_posts {
   }
 
 
+  public static function add_leads_sub_menu_pages(){
+    add_submenu_page( 'edit.php?post_type=lead_item', 'Leads\' Stages', 'Leads\' Stages',
+    'manage_options', 'leads-stages', array(__CLASS__, 'print_leads_stages_cb'));
+  }
+
+    public static function print_leads_stages_cb(){
+      // echo "<pre>";
+      // print_r($_POST);
+      // echo "</pre>";
+
+      if(isset($_POST['save_leads_stages']) && 'yes' === $_POST['save_leads_stages']){
+        $option = array();
+
+        foreach ($_POST['leads_stages'] as $key => $lead) {
+          $option[$lead['number']] = $lead;
+        }
+
+        update_option('leads_stages', $option);
+        update_option('stage_for_converted', $_POST['stage_for_converted']);
+      }
+
+      $stages = get_option('leads_stages');
+      $stage_for_converted = get_option('stage_for_converted');
+
+      $check_first = !$stage_for_converted;
+
+      if(!$stages){
+        $stages = array();
+      }
+      ?>
+
+        <h3>Stages of leads' processing</h3>
+        <i>You may reorder stages by dragging them</i>
+
+        <form action="<?php echo admin_url('edit.php?post_type=lead_item&page=leads-stages') ?>" method="POST">
+
+          <div class="stages-content">
+            <ul class="stages-content__list">
+              <?php
+              $number = 0;
+              if($stages):
+               foreach ($stages as $key => $st): ?>
+              <li>
+                <div class="stages-content__item">
+                  <table>
+                    <tr>
+                      <th colspan="4">
+                        <h3>Stage #<span class="number"><?php echo ($number + 1) ?></span></h3>
+                        <input type="hidden" name="leads_stages[<?php echo ($number) ?>][number]" value="<?php echo ($number) ?>" class="stage_order">
+                        <a  href="javasctipt:void(0)" onclick="delete_leads_stage(this);">Delete Stage</a>
+                      </th>
+                    </tr>
+                    <tr>
+                      <th>Name</th>
+                      <td colspan="3"><input type="text" class="regular-text" name="leads_stages[<?php echo ($number) ?>][name]" value="<?php echo $st['name'] ?>"></td>
+                    </tr>
+
+                    <tr>
+                      <th>Background Color</th>
+                      <td><input type="text" class="regular-text colorpicker" name="leads_stages[<?php echo ($number) ?>][bg_color]" value="<?php echo $st['bg_color'] ?>"></td>
+
+                      <th>Text Color</th>
+                      <td><input type="text" class="regular-text colorpicker" name="leads_stages[<?php echo ($number) ?>][text_color]" value="<?php echo $st['text_color'] ?>"></td>
+                    </tr>
+
+                    <tr><td colspan="4">
+                      <label class="optional_label">
+                      <input type="radio" name="stage_for_converted" class="stage_for_converted" value="<?php echo ($number) ?>" <?php echo  $check_first || (int)$number === (int)$stage_for_converted? 'checked="checked"': ''  ?>>
+                      Is converted <br>
+                      <i>Leads on this stage will be counted as converted</i>
+                      </label>
+                    </td></tr>
+                  </table>
+                </div>
+              </li>
+              <?php
+               $check_first = false;
+               $number++;
+               endforeach;
+               endif; ?>
+            </ul>
+          </div>
+
+          <a href="javasctipt:void(0)" onclick="add_leads_stage();" class="button">Add stage</a>
+
+          <input type="hidden" name="save_leads_stages" value="yes">
+          <input type="hidden" id="leads_count" value="<?php echo $number ?>">
+          <button class="button button-primary">Save</button>
+        </form>
+
+      <?php
+    }
+
+
   /**
    * adds metaboxes
    */
@@ -181,8 +276,45 @@ class velesh_theme_posts {
      add_meta_box( 'lead_logs', __( 'Activity', 'theme-translations' ),  array(__CLASS__, 'lead_logs_cb'),  self::$lead, 'side', 'low' );
 
      add_meta_box( 'lead_reminder', __( 'Reminder', 'theme-translations' ),  array(__CLASS__, 'lead_reminder_cb'),  self::$lead, 'side', 'low' );
+
+     add_meta_box( 'lead_stage', __( 'Current stage', 'theme-translations' ),  array(__CLASS__, 'lead_stage_cb'),  self::$lead, 'side', 'low' );
   }
 
+
+  /**
+   * callback for add_meta_box()
+   *
+   * @param $post - WP_Post object
+   */
+  public static function lead_stage_cb($post){
+    $meta = get_post_meta($post->ID, '_lead_stage', true);
+    $stages = get_option('leads_stages');
+    $select_first = true;
+
+    if(!$meta){
+      $select_first = true;
+    }else{
+      foreach ($stages as $key => $st) {
+        $select_first = ($meta === $st['name'])? false : $select_first;
+      }
+    }
+
+    if(!$stages){
+      printf( ' No stages configured. You may do it <a href="%s">there</a>', admin_url('edit.php?post_type=lead_item&page=leads-stages'));
+       return false;
+    }
+    ?>
+
+    <select name="lead_stage" id="lead_stage" class="fullwidth">
+      <?php foreach ($stages as $key => $st): ?>
+        <option value="<?php echo $st['name']?>" <?php echo $meta === $st['name'] ||$select_first? 'selected="selected"' : '';?>><?php echo $st['name']?></option>
+      <?php
+       $select_first = false;
+       endforeach; ?>
+    </select>
+
+    <?php
+  }
 
   /**
    * callback for add_meta_box()
@@ -584,6 +716,7 @@ class velesh_theme_posts {
       ['name' => 'lead_files', 'unique' => true],
       ['name' => 'lead_notes', 'unique' => true],
       ['name' => 'lead_specialists', 'unique' => true],
+      ['name' => 'lead_stage', 'unique' => true],
     );
 
     // sets post name
@@ -675,7 +808,6 @@ class velesh_theme_posts {
       }
     }
   }
-
 
   public function restore_assigned_leads($post_id){
     $meta = get_post_meta($post_id, '_lead_specialists', true);

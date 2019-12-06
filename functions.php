@@ -35,7 +35,7 @@ class velesh_init_theme{
   public $main_script_slug = 'theme-main-script-dev1';
 
   /* svg sprites files slug for local storage */
-  public $svg_sprite_slug = 'svg_sprite_151_1';
+  public $svg_sprite_slug = 'svg_sprite_151_2';
 
   /* merged style file name */
   public $merged_style_name = 'merged-style3.css';
@@ -168,22 +168,27 @@ class velesh_init_theme{
    * @hookedto - to admin_enqueue_scripts 5
    */
   public function enqueue_scripts_styles_admin(){
+     wp_enqueue_style( 'wp-color-picker' );
 
     wp_enqueue_style( 'theme-datetimepicker-ui-css', THEME_URL.'/assets/libs/datetimepicker/build/jquery.datetimepicker.min.css', THEME_VERSION );
 
-    wp_enqueue_script('theme-date-time-picker', THEME_URL.'/assets/libs/datetimepicker/build/jquery.datetimepicker.full.min.js', array('jquery'), THEME_VERSION, true);
-
     wp_enqueue_style( $this->main_style_slug, THEME_URL.$this->main_style, THEME_VERSION );
+
+    wp_enqueue_style( 'theme-admin-style', THEME_URL.'/assets/css/admin.css', THEME_VERSION );
+
+    wp_enqueue_style( 'theme-jquery-ui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', THEME_VERSION );
+
+    wp_enqueue_script('theme-jquery-ui', 'https://code.jquery.com/ui/1.12.1/jquery-ui.js', array('jquery'), THEME_VERSION, true);
+
+    wp_enqueue_script('theme-date-time-picker', THEME_URL.'/assets/libs/datetimepicker/build/jquery.datetimepicker.full.min.js', array('jquery', 'wp-color-picker'), THEME_VERSION, true);
+
 
     add_svg_sprite($this->svg_sprite_slug, THEME_URL.'/assets/svg_sprite/symbol_sprite.html');
 
     wp_enqueue_script('theme-script', THEME_URL.'/assets/script/admin.js', array('jquery'), THEME_VERSION, true);
 
-    wp_enqueue_style( 'theme-admin-style', THEME_URL.'/assets/css/admin.css', THEME_VERSION );
 
-    $settings_pages = array(
-
-    );
+    $settings_pages = array();
 
     if(isset($_GET['page'])){
       if(in_array($_GET['page'], $settings_pages)){
@@ -315,7 +320,7 @@ class velesh_init_theme{
    * prints inline data in body
    */
   public function print_inline_data_body(){
-    print_inline_style(THEME_URL.'/assets/fonts/fonts.css', 'theme_fonts_151_1');
+    print_inline_style(THEME_URL.'/assets/fonts/fonts.css', 'theme_fonts_151_2');
     add_svg_sprite($this->svg_sprite_slug, THEME_URL.'/assets/svg_sprite/symbol_sprite.html');
   }
 

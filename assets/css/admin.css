@@ -17,3 +17,27 @@
   width: 100px;
   height: auto;
 }
+.stages-content__item h3{
+  margin: 0 0 15px;
+}
+.stages-content__item td,
+.stages-content__item th{
+  padding: 3px 6px;
+  vertical-align: top;
+}
+
+.stages-content__item{
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid  #999;
+  background: #fff;
+  display: inline-block;
+}
+
+.optional_label i{
+  display: none;
+}
+
+.optional_label :checked ~ i{
+  display: block;
+}

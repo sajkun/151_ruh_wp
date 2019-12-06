@@ -462,6 +462,7 @@ if(!function_exists('get_leads_meta')){
         'treatment_value'       => get_post_meta($post->ID, '_treatment_value', true),
         'patient_data'          => get_post_meta($post->ID, '_patient_data', true),
         'reminder'              => get_post_meta($post->ID, '_reminder', true),
+        'lead_stage'            => get_post_meta($post->ID, '_lead_stage', true),
       );
 
       $meta['patient_data']['sourse'] =  $sourses[$meta['patient_data']['sourse']];
@@ -504,6 +505,8 @@ if(!function_exists('get_leads_meta')){
 
       // add filter field to lead
       $leads[$lead_id]->filter_data = $filter_data;
+      $leads[$lead_id]->lead_stage  = get_post_meta($post->ID, '_lead_stage', true);
+
     }
     dlog($leads);
     dlog('-------------', false, true);

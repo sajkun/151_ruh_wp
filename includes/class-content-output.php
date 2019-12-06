@@ -56,15 +56,15 @@ class theme_content_output{
 
 
   /**
-  * prints header
+  * prints content of a dashboard
   *
   * @hookedto
   */
   public static function print_dashboard(){
 
-    // Get date range default
+    global $theme_init;
 
-     global $theme_init;
+    // Get date range default
 
       $today = new DateTime();
 
@@ -79,7 +79,7 @@ class theme_content_output{
 
       $months_first_day = $today->format('M d Y');
 
-    // Get leads by dates dates a
+    // Get leads by dates
 
       $leads = get_posts_by_dates( $months_first_day , $today_formated );
 
@@ -106,14 +106,76 @@ class theme_content_output{
 
       wp_localize_script($theme_init->main_script_slug, 'team_perfomance', $user_data);
 
-    $args = array(
-      'daterange' => array(
-        'from' => $mont_first_day,
-        'to'   => $today_formated
-      ),
-    );
+      $args = array(
+        'daterange' => array(
+          'from' => $mont_first_day,
+          'to'   => $today_formated
+        ),
+      );
 
     print_theme_template_part('dashboard', 'globals', $args);
+  }
+
+
+  /**
+  * prints content of a dashboard
+  *
+  * @hookedto
+  */
+  public static function print_leads_list(){
+    global $theme_init;
+
+    // Get date range default
+
+      $today = new DateTime();
+
+      wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
+
+      $current_month = $today->format('m');
+      $current_year  = $today->format('Y');
+
+      $today_formated = $today->format('M d Y');
+
+      $today->setDate($current_year, $current_month, 1);
+
+      $month_first_day = $today->format('M d Y');
+
+    // Get leads by dates
+
+      $leads = get_posts_by_dates( $months_first_day , $today_formated );
+
+      $leads = get_leads_meta($leads);
+
+
+      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
+
+      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
+
+    // prepare data for filters
+
+      $filter_data = get_filters_by_leads( $leads );
+
+      wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
+
+    // get available stages
+
+      $stages = get_option('leads_stages');
+
+      if(!$stages){
+        echo '<div class="spacer-h-40"></div>';
+        echo '<p class="text-center">No stages configured, Leads can not be ordered. Please Configure stages first</p>';
+        return;
+      }
+
+      $args = array(
+        'stages' => $stages,
+        'daterange' => array(
+          'from' => $month_first_day,
+          'to'   => $today_formated
+        ),
+      );
+
+    print_theme_template_part('leads-list', 'globals', $args);
   }
 
 }
