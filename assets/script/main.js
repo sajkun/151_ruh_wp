@@ -701,7 +701,6 @@ jQuery(document).on('update_app',function(){
 
 
 // class to work with leads
-
 var parse_leads = {
   leads: {},
 
@@ -986,7 +985,7 @@ var parse_leads = {
   }
 }
 
-
+// class to calculate date difference
 var date_difference = {
   ms_to_minute : 60000,
   ms_to_hour   : 3600000,
@@ -1635,6 +1634,8 @@ if('undefined' !== typeof(is_lead_list)){
         team:       'All Team',
       },
 
+      search_value: '',
+
       leads:{},
     },
 
@@ -1697,11 +1698,13 @@ if('undefined' !== typeof(is_lead_list)){
 
 
         for(var column_name in this.leads){
+          var fields_search = ['clinic', 'name', 'treatment', 'sourse', 'team', 'campaign'];
+
           for(var id in this.leads[column_name]){
             var lead     = this.leads[column_name][id];
             var is_match = true;
-            for(filter_id in filters){
 
+            for(filter_id in filters){
               switch(typeof(lead.filter_data[filter_id])){
                 case 'object':
                   is_match = (lead.filter_data[filter_id].indexOf(filters[filter_id]) < 0)? false : is_match;
@@ -1712,6 +1715,21 @@ if('undefined' !== typeof(is_lead_list)){
                  break;
               }
             }
+
+            if(this.search_value){
+              var search_match = false;
+
+              for(field in lead){
+                if(fields_search.indexOf(field) < 0) continue;
+                 var value = lead[field];
+                 var _found = exists_in_object(value, this.search_value);
+
+                 search_match = (_found)? true : search_match;
+              }
+
+              is_match = search_match && is_match;
+            }
+
 
             if(is_match){
               leads_filtered[column_name].push(lead);
@@ -1891,6 +1909,11 @@ if('undefined' !== typeof(is_lead_list)){
 
       set_data: function(key, value){
         this[key] = value;
+      },
+
+      run_search: function(search){
+        console.log('run search');
+        this.search_value = search;
       }
     },
   })
@@ -1906,9 +1929,47 @@ function update_leads_filters(filters){
   }
 }
 
-
 function update_leads_list(){
   if('undefined' !== typeof(is_lead_list)){
     vue_leads_list.run_update_list();
   }
 }
+
+function exists_in_object(obj, search){
+  if(typeof(obj) === 'string'){
+    search = search.toLowerCase();
+    obj = obj.toLowerCase();
+    return obj.search(search) >= 0;
+  }
+
+  var found = false;
+
+  for(id in obj){
+    var _found = exists_in_object(obj[id], search);
+    found = (_found)? true : found;
+  }
+
+  return found;
+}
+var search = new Vue({
+  el: '#search-form',
+
+  data: {
+    search_value: '',
+  },
+
+  watch: {
+    search_value: function(val){
+      if(is_lead_list){
+        if(val.length >= 3){
+          vue_leads_list.run_search(val);
+        }else{
+          vue_leads_list.run_search('');
+        }
+      }
+    }
+  },
+
+  mounted: function(){
+  }
+});

@@ -31,13 +31,14 @@ if ( ! defined( 'ABSPATH' ) ) {
             <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
           </div>
 
-          <div class="search__wrapper">
+          <div class="search__wrapper" id="search-form">
             <form action="#" method="POST" class="search__form">
+
                 <div class="row no-gutters">
                   <button type="submit">
                      <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
                   </button>
-                  <input type="search" class="search__field" placeholder="Search Tracker…">
+                  <input type="search" v-model="search_value" class="search__field" placeholder="Search Tracker…">
                 </div>
             </form>
           </div>
