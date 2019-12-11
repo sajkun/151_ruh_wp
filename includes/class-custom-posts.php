@@ -170,6 +170,7 @@ class velesh_theme_posts {
       // print_r($_POST);
       // echo "</pre>";
 
+      // save changes
       if(isset($_POST['save_leads_stages']) && 'yes' === $_POST['save_leads_stages']){
         $option = array();
 
@@ -177,14 +178,39 @@ class velesh_theme_posts {
           $option[$lead['number']] = $lead;
         }
 
-        update_option('leads_stages', $option);
-        update_option('stage_for_converted', $_POST['stage_for_converted']);
+        $updated = update_option('leads_stages', $option);
+
+        if($updated){
+          ?>
+          <div class="notice notice-success is-dismissible"><p>Changes were saved succesfully</p></div>
+          <?php
+        }
+
+        if(isset($_POST['stage_for_converted'])){
+          update_option('stage_for_converted', $_POST['stage_for_converted']);
+        }else{
+          delete_option('stage_for_converted');
+
+          ?>
+            <div class="notice notice-error is-dismissible"><p>No stage is selected as stage for converted leads</p></div>
+          <?php
+        }
+
+        if(isset($_POST['stage_for_failed'])){
+          update_option('stage_for_failed', $_POST['stage_for_failed']);
+        }else{
+          delete_option('stage_for_failed');
+          ?>
+            <div class="notice notice-error is-dismissible"><p>No stage is selected as stage for failed leads</p></div>
+          <?php
+        }
       }
 
       $stages = get_option('leads_stages');
       $stage_for_converted = get_option('stage_for_converted');
+      $stage_for_failed    = get_option('stage_for_failed');
 
-      $check_first = !$stage_for_converted;
+      clog($stage_for_converted);
 
       if(!$stages){
         $stages = array();
@@ -195,6 +221,11 @@ class velesh_theme_posts {
         <i>You may reorder stages by dragging them</i>
 
         <form action="<?php echo admin_url('edit.php?post_type=lead_item&page=leads-stages') ?>" method="POST">
+          <br>
+          <br>
+        <a href="javasctipt:void(0)" onclick="add_leads_stage();" class="button">Add stage</a>
+        <button class="button button-primary">Save</button>
+          <br>
 
           <div class="stages-content">
             <ul class="stages-content__list">
@@ -219,24 +250,29 @@ class velesh_theme_posts {
 
                     <tr>
                       <th>Background Color</th>
-                      <td><input type="text" class="regular-text colorpicker" name="leads_stages[<?php echo ($number) ?>][bg_color]" value="<?php echo $st['bg_color'] ?>"></td>
+                      <td><input type="text" class="short-text colorpicker" name="leads_stages[<?php echo ($number) ?>][bg_color]" value="<?php echo $st['bg_color'] ?>"></td>
 
                       <th>Text Color</th>
-                      <td><input type="text" class="regular-text colorpicker" name="leads_stages[<?php echo ($number) ?>][text_color]" value="<?php echo $st['text_color'] ?>"></td>
+                      <td><input type="text" class="short-text colorpicker" name="leads_stages[<?php echo ($number) ?>][text_color]" value="<?php echo $st['text_color'] ?>"></td>
                     </tr>
 
                     <tr><td colspan="4">
                       <label class="optional_label">
-                      <input type="radio" name="stage_for_converted" class="stage_for_converted" value="<?php echo ($number) ?>" <?php echo  $check_first || (int)$number === (int)$stage_for_converted? 'checked="checked"': ''  ?>>
+                      <input type="radio" name="stage_for_converted" class="stage_for_converted" value="<?php echo ($number) ?>" <?php echo  $stage_for_converted && (int)$number === (int)$stage_for_converted? 'checked="checked"': ''  ?>>
                       Is converted <br>
-                      <i>Leads on this stage will be counted as converted</i>
+                      <i>Leads on this stage, and all hire stages,  will be counted as converted</i>
+                      </label>
+
+                      <label class="optional_label">
+                      <input type="radio" name="stage_for_failed" class="stage_for_failed" value="<?php echo ($number) ?>" <?php echo !!$stage_for_failed && (int)$number === (int)$stage_for_failed? 'checked="checked"': ''  ?>>
+                        Is failed <br>
+                        <i>Leads on this stage, will be counted as failed</i>
                       </label>
                     </td></tr>
                   </table>
                 </div>
               </li>
               <?php
-               $check_first = false;
                $number++;
                endforeach;
                endif; ?>
@@ -324,7 +360,7 @@ class velesh_theme_posts {
   public static function lead_reminder_cb($post){
     $meta = get_post_meta($post->ID, '_reminder', true);
     ?>
-      <input type="text" name="reminder" placeholder="Add" class="leads-block__input fullwidth datetimepicker"  value="<?php echo isset($meta)? $meta : ''; ?>">
+      <input type="text" autocomplete="off" name="reminder" placeholder="Add" class="leads-block__input fullwidth datetimepicker"  value="<?php echo isset($meta)? $meta : ''; ?>">
       <br> <br>
       <a href="javascript:void(0)" onclick="clear_input(this)">Clear Reminder</a>
     <?php

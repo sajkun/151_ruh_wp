@@ -22,7 +22,7 @@
 }
 .stages-content__item td,
 .stages-content__item th{
-  padding: 3px 6px;
+  padding: 3px 6px 8px;
   vertical-align: top;
 }
 
@@ -32,6 +32,16 @@
   border: 1px solid  #999;
   background: #fff;
   display: inline-block;
+}
+
+.stages-content__item td,
+.stages-content__item th{
+  vertical-align: top!important;
+}
+
+.stages-content__item th{
+  padding-top: 10px;
+  padding-bottom: 0 !important;
 }
 
 .optional_label i{

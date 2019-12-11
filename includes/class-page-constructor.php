@@ -23,14 +23,17 @@ class theme_construct_page{
   */
   public static function init(){
     add_action('do_theme_header', array('theme_content_output', 'print_header'));
-    // add_action('do_theme_footer', array('theme_content_output', 'print_footer'));
-    // add_action('do_theme_content', array('theme_content_output', 'print_content_page'));
 
     if(self:: is_page_type( 'dashboard' )){
       add_action('do_theme_content', array('theme_content_output', 'print_dashboard'));
     }
-    if(self:: is_page_type( 'leads-list' )){
+
+    else if(self:: is_page_type( 'leads-list' )){
       add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+    }
+
+    else if(self:: is_page_type( 'lead' )){
+      add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
     }
   }
 
@@ -59,6 +62,8 @@ class theme_construct_page{
       case 'leads-list':
         return  $obj->ID ===   $leads_id;
         break;
+      case 'lead':
+        return velesh_theme_posts::$lead === $obj->post_type;
     }
   }
 }

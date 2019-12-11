@@ -388,7 +388,7 @@ if(!function_exists('get_posts_by_dates')){
   * @return array
   */
 
-  function get_posts_by_dates($from=false, $to=false, $post_type = false){
+  function get_posts_by_dates($from = false, $to = false, $post_type = false){
     dlog('Get Posts by Date', true, false);
     $post_type = (! $post_type )? velesh_theme_posts::$lead :  $post_type ;
 
@@ -488,9 +488,14 @@ if(!function_exists('get_leads_meta')){
           $name =  theme_get_user_name($user);
           $user_position = get_the_author_meta('user_position', $user->ID);
 
+          $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
+          $image =  wp_get_attachment_url( $user_photo_id );
+          $image = ($image) ? $image : DUMMY_ADMIN;
+
           array_push($filter_data['team'] , trim($name));
 
           array_push($specialists , array(
+            'image'    => $image,
             'user_id'  => $user_id,
             'name'     => trim($name),
             'position' => $user_position,
@@ -503,10 +508,31 @@ if(!function_exists('get_leads_meta')){
       // add meta field to lead
       $leads[$lead_id]->meta = $meta;
 
-      // add filter field to lead
+      // add filter, stage, order field to lead
       $leads[$lead_id]->filter_data = $filter_data;
-      $leads[$lead_id]->lead_stage  = get_post_meta($post->ID, '_lead_stage', true);
 
+      $stages = get_option('leads_stages');
+
+      if($stages){
+        $exists = false;
+        $stage = get_post_meta($post->ID, '_lead_stage', true);
+
+        foreach ($stages as $st) {
+           $exists = $st['name'] === $stage ? true :  $exists;
+        }
+        $leads[$lead_id]->lead_stage  = ($exists)? $stage : $stages[0]['name'];
+
+      }else{
+        $leads[$lead_id]->lead_stage  = '';
+      }
+
+      $leads[$lead_id]->permalink = esc_url(get_permalink($post));
+
+      $order = get_post_meta($post->ID, '_lead_order', true);
+
+      if($order){
+        $leads[$lead_id]->order = $order;
+      }
     }
     dlog($leads);
     dlog('-------------', false, true);
@@ -546,7 +572,6 @@ if(!function_exists('get_filters_by_leads')){
   * @return array
   */
   function get_filters_by_leads($leads = false){
-    if(!$leads) return array();
 
     dlog('Get filter data by leads', true, false);
 
@@ -557,6 +582,8 @@ if(!function_exists('get_filters_by_leads')){
       'sourses'    => array('All Sourses'),
       'team'       => array('All Team'),
     );
+
+    if(!$leads) return $data;
 
     foreach ($leads as $key => $lead) {
       $meta      = $lead->meta;

@@ -58,69 +58,6 @@ function str_replace(needle, highstack){
     }
     return template;
 }
-
-
-// sortrable actions
-  jQuery( function() {
-
-    jQuery(document).ready(function(){
-      equal_list_heights();
-    })
-
-
-    jQuery("ul.leads-list" ).sortable({
-      connectWith: "ul",
-      receive: function( event, ui ){
-        // console.log('activate');
-        // console.log(event);
-        // console.log(ui);
-      },
-      over: function( event, ui ){
-      },
-      stop : function( event, ui ){
-        jQuery(document).trigger('update_leads_list');
-
-        var leads_order_list = [];
-
-        jQuery('ul.leads-list li').each(function(ind, el){
-          var _el = jQuery(el).find('div.lead-preview');
-          var parent = _el.closest('ul');
-          var data = {};
-          data.id = _el.data('id');
-          data.list  = parent.data('list');
-          data.index = jQuery(el).index();
-          leads_order_list.push(data);
-        })
-      },
-    });
-
-    jQuery( ".leads-list" ).on( "sortover", function( event, ui ) {
-      jQuery(this).css({'background': '#eee'});
-    } );
-
-    jQuery( ".leads-list" ).on( "sortout", function( event, ui ) {
-      jQuery(this).css({'background': 'none'});
-    } );
-
-    jQuery( ".leads-list" ).on( "sortreceive", function( event, ui ) {
-      equal_list_heights();
-      jQuery(this).css({'background': 'none'});
-    } );
-  } );
-
-
-function equal_list_heights(){
-    var height = 0;
-
-    jQuery('.leads-list').css({'min-height': 0 + 'px'});
-
-    jQuery('.leads-list').each(function(ind, el){
-      height = Math.max(height, jQuery(el).height());
-    });
-
-
-    jQuery('.leads-list').css({'min-height': height + 50 + 'px'});
-}
 jQuery('.search-open').click(function(){
   jQuery('.search__wrapper').toggleClass('shown');
 });
@@ -139,25 +76,29 @@ jQuery('.reminder .label').click(function(){
     jQuery('.reminder input').datetimepicker('show');
 })
 
-  jQuery(document).ready(function(){
-    var now     = new Date();
-    var last_7  = new Date();
-    last_7.setDate(last_7.getDate() - 7);
-    var last_90 = new Date();
-    last_90.setDate(last_7.getDate() - 90);
-    var now     = new Date();
-    var today_str = (now.getMonth() + 1) + '/' + now.getDate() + '/' + now.getFullYear();
+jQuery(document).ready(function(){
+  init_date_range();
+})
+
+function init_date_range(){
+  var now     = new Date();
+  var last_7  = new Date();
+  last_7.setDate(last_7.getDate() - 7);
+  var last_90 = new Date();
+  last_90.setDate(last_7.getDate() - 90);
+  var now     = new Date();
+  var today_str = (now.getMonth() + 1) + '/' + now.getDate() + '/' + now.getFullYear();
 
 
-    var last_7_str = (last_7.getMonth() + 1) + '/' + last_7.getDate() + '/' + last_7.getFullYear();
-    var last_90_str = (last_90.getMonth() + 1) + '/' + last_90.getDate() + '/' + last_90.getFullYear();
+  var last_7_str = (last_7.getMonth() + 1) + '/' + last_7.getDate() + '/' + last_7.getFullYear();
+  var last_90_str = (last_90.getMonth() + 1) + '/' + last_90.getDate() + '/' + last_90.getFullYear();
 
-    var for_last_day = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  var for_last_day = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    var month_first_day = (now.getMonth() + 1) + '/' + 1 + '/' + now.getFullYear();
-    var month_last_day = (now.getMonth() + 1) + '/' + for_last_day.getDate() + '/' + now.getFullYear();
+  var month_first_day = (now.getMonth() + 1) + '/' + 1 + '/' + now.getFullYear();
+  var month_last_day = (now.getMonth() + 1) + '/' + for_last_day.getDate() + '/' + now.getFullYear();
 
-    jQuery('.range-datepicker').daterangepicker({
+  jQuery('.range-datepicker').daterangepicker({
     "autoApply": true,
     "ranges": {
         "Today": [
@@ -189,41 +130,47 @@ jQuery('.reminder .label').click(function(){
 
     jQuery(document.body).trigger('get_leads_by_dates', {from: start.format('MMM DD YYYY') , to: end.format('MMM DD YYYY')});
   });
+}
+
+jQuery(document.body).on('get_leads_by_dates', function(e, data){
+
+  data.action = 'get_leads_by_dates';
+
+  jQuery.ajax({
+    url: WP_URLS.wp_ajax_url,
+    type: 'POST',
+    dataType: 'json',
+    data: data,
+    complete: function(xhr, textStatus) {
+      //called when complete
+    },
+
+    success: function(data, textStatus, xhr) {
+      console.group('leads updated by date');
+      console.log(data);
+      dashboard_leads_data = data.leads;
+      team_perfomance      = data.team_perfomance;
+
+      //dashboard
+      update_filters(data.filter_data);
+      update_dashboard_totals();
+      update_top_sourses();
+      update_team_perfomance();
+
+      //leads_list
+      update_leads_filters(data.filter_data);
+      update_leads_list();
+
+      console.groupEnd('---');
+    },
+
+    error: function(xhr, textStatus, errorThrown) {
+      console.log('error');
+      console.log(errorThrown);
+     }
+  });
+
 })
-
-
-  jQuery(document.body).on('get_leads_by_dates', function(e, data){
-
-    data.action = 'get_leads_by_dates';
-
-    jQuery.ajax({
-      url: WP_URLS.wp_ajax_url,
-      type: 'POST',
-      dataType: 'json',
-      data: data,
-      complete: function(xhr, textStatus) {
-        //called when complete
-      },
-
-      success: function(data, textStatus, xhr) {
-        console.log(data);
-        dashboard_leads_data = data.leads;
-        team_perfomance      = data.team_perfomance;
-        update_filters(data.filter_data);
-        update_dashboard_totals();
-        update_top_sourses();
-        update_team_perfomance();
-
-        console.log('time range updated');
-      },
-
-      error: function(xhr, textStatus, errorThrown) {
-        console.log('error');
-        console.log(errorThrown);
-       }
-    });
-
-  })
 if('undefined' !== typeof(is_dashboard)){
 
   var chart = document.getElementById('gistogramm-year').getContext('2d');
@@ -541,6 +488,213 @@ if('undefined' !== typeof(is_dashboard)){
     window.myDoughnut = new Chart(ctx, config);
   })
 }
+
+// sortrable actions
+  jQuery( function() {
+
+
+    // makes height of all lists on leads' page one and the same
+    jQuery(document).ready(function(){
+      equal_list_heights();
+    })
+
+    // init of sortable
+    jQuery("ul.leads-list" ).sortable({
+      connectWith: "ul",
+
+      create:function(event, ui){},
+
+      receive: function( event, ui ){},
+
+      over: function( event, ui ){
+      },
+
+
+      stop : function( event, ui ){
+        jQuery(document).trigger('update_leads_list');
+
+        var leads_order_list = [];
+
+        var items = jQuery(event.target).find('a');
+
+        var orders = [];
+
+        items.each(function(ind, el){
+          var post_id = parseInt(el.dataset.post_id);
+          orders.push({post_id: post_id, order: ind});
+
+          for(id in dashboard_leads_data){
+            if(post_id == dashboard_leads_data[id].ID){
+              dashboard_leads_data[id].order = ind;
+            }
+          }
+        });
+
+        vue_leads_list.run_update_list();
+
+        if(orders.length > 1){
+          jQuery(document.body).trigger('update_items_order', {order: orders});
+        }
+      },
+    });
+
+    jQuery( ".leads-list" ).on( "sortover", function( event, ui ) {
+      jQuery(this).css({'background': '#eee'});
+    } );
+
+    jQuery( ".leads-list" ).on( "sortout", function( event, ui ) {
+      jQuery(this).css({'background': 'none'});
+
+    } );
+
+    jQuery( ".leads-list" ).on( "sortreceive", function( event, ui ) {
+
+      console.groupCollapsed('Sort receive');
+
+      var order = -1;
+      var post_id = ui.item.find('a').data('post_id');
+      var list_id =  ui.item.closest('ul').data('list');
+      var list_id_prev = ui.item.children('a').data('list');
+      var orders = [];
+
+      // set order for all items in list
+      var items = jQuery(event.target).find('a');
+
+
+      items.each(function(ind, el){
+        var post_id = parseInt(el.dataset.post_id);
+        orders.push({post_id: post_id, order: ind});
+        for(id in dashboard_leads_data){
+          if(post_id == dashboard_leads_data[id].ID){
+            dashboard_leads_data[id].order = ind;
+          }
+        }
+      });
+
+
+      if(orders.length > 1){
+        jQuery(document.body).trigger('update_items_order', {order: orders});
+      }
+
+
+      console.log('Moved from: ' + list_id_prev + ' to: ' + list_id);
+      console.log('Sorted id: ' + post_id);
+
+      // search item in global items array and update value for list
+      for(ind in dashboard_leads_data){
+        if(post_id == dashboard_leads_data[ind].ID){
+
+          list_id_prev = dashboard_leads_data[ind].lead_stage;
+          dashboard_leads_data[ind].lead_stage      = list_id;
+          dashboard_leads_data[ind].meta.lead_stage = list_id;
+          order = dashboard_leads_data[ind].order
+
+          console.log(dashboard_leads_data[ind].ID + '. patient: ' + dashboard_leads_data[ind].meta.patient_data.name + ' new col: '+ dashboard_leads_data[ind].lead_stage);
+        }
+      }
+
+      // update changes in Vue object
+      vue_leads_list.run_update_list();
+      console.log(vue_leads_list.leads[list_id]);
+
+      // change visual part of lists
+      equal_list_heights();
+      jQuery(this).css({'background': 'none'});
+
+
+      // fire trigger to save changes in backend
+      jQuery(document.body).trigger('save_dragged_item', {post_id: post_id, list_id: list_id})
+      console.groupEnd('---');
+    });
+  });
+
+
+/**
+* function that makes height of all lists on leads' page one and the same;
+*/
+function equal_list_heights(){
+  var height = 0;
+
+  jQuery('.leads-list').css({'min-height': 0 + 'px'});
+
+  jQuery('.leads-list').each(function(ind, el){
+    height = Math.max(height, jQuery(el).height());
+  });
+
+
+  jQuery('.leads-list').css({'min-height': height + 50 + 'px'});
+}
+
+
+jQuery(document.body).on('update_items_order', function(e, data){
+  console.groupCollapsed('update_items_order');
+
+
+  var data_post = {
+    action : 'update_leads_order',
+    order: data.order,
+  };
+
+  console.log(data_post);
+
+  jQuery.ajax({
+    url: WP_URLS.wp_ajax_url,
+    type: 'POST',
+    dataType: 'json',
+    data: data_post,
+    complete: function(xhr, textStatus) {
+      //called when complete
+    },
+
+    success: function(data, textStatus, xhr) {
+      console.log(data);
+      console.groupEnd('---');
+    },
+
+    error: function(xhr, textStatus, errorThrown) {
+      console.log('error');
+      console.log(errorThrown);
+      console.groupEnd();
+
+     }
+  });
+
+})
+
+jQuery(document.body).on('save_dragged_item', function(e, data){
+  console.groupCollapsed('save_dragged_item');
+
+  var data_post = {
+    action : 'update_leads_list',
+  };
+
+  for(id in data){
+    data_post[id] = data[id];
+  };
+
+  console.log(data_post);
+
+  jQuery.ajax({
+    url: WP_URLS.wp_ajax_url,
+    type: 'POST',
+    dataType: 'json',
+    data: data_post,
+    complete: function(xhr, textStatus) {
+      //called when complete
+    },
+
+    success: function(data, textStatus, xhr) {
+      console.log(data);
+      console.groupEnd('---');
+    },
+
+    error: function(xhr, textStatus, errorThrown) {
+      console.log('error');
+      console.log(errorThrown);
+      console.groupEnd('---');
+     }
+  });
+})
 jQuery(document).on('update_app',function(){
 
 })
@@ -593,9 +747,7 @@ var parse_leads = {
     }
 
     dashboard_leads_data_filtered = dashboard_leads_data_filtered_new;
-
     this.leads = dashboard_leads_data_filtered_new;
-
     return dashboard_leads_data_filtered_new;
   },
 
@@ -605,7 +757,7 @@ var parse_leads = {
     var lead_filter  = lead.filter_data;
     var is_match     = true;
 
-    if(!filters){
+    if('undefined' !== typeof(filters)){
       for(id in vue_selects){
        var value = vue_selects[id].get_value();
 
@@ -637,9 +789,45 @@ var parse_leads = {
     return is_match;
   },
 
-
   get_leads: function (){
     return this.leads;
+  },
+
+  get_leads_for_list: function(){
+    var leads = [];
+
+    var now = new Date();
+
+    for(id in this.leads){
+      var data = {};
+      var date_received = new Date(this.leads[id].post_date);
+      var reminder_date = new Date(this.leads[id].meta.reminder);
+
+      data.overdue = (this.leads[id].meta.reminder !== '' && now > reminder_date)? 'yes' : 'no';
+
+      data.alarms      = (this.leads[id].meta.reminder)? 'yes' : 'no';
+      data.post_id     = this.leads[id].ID;
+      data.name        = this.leads[id].meta.patient_data.name;
+      data.clinic      = this.leads[id].meta.patient_data.clinic;
+      data.treatment   = this.leads[id].meta.patient_data.treatment;
+      data.sourse      = this.leads[id].meta.patient_data.sourse;
+      data.team        = this.leads[id].meta.lead_specialists;
+      data.lead_stage  = this.leads[id].lead_stage;
+      data.reminder    = this.leads[id].meta.reminder;
+      data.permalink   = this.leads[id].permalink;
+      data.filter_data = this.leads[id].filter_data;
+
+      if('undefined' !== typeof(this.leads[id].order)){
+        data.order = this.leads[id].order;
+      }else{
+        data.order = 0;
+      }
+
+      data.time_passed = date_difference.construct(date_received, now)  + ' ago';
+      leads.push(data);
+    }
+
+    return leads;
   },
 
   /**
@@ -799,9 +987,62 @@ var parse_leads = {
 }
 
 
-// jQuery(document).ready(function(){
-//   jQuery(document.body).trigger('update_app');
-// })
+var date_difference = {
+  ms_to_minute : 60000,
+  ms_to_hour   : 3600000,
+  ms_to_day    : 86400000,
+
+  construct: function(d1, d2){
+    var date_diff = d2 - d1;
+
+    if(date_diff < this.ms_to_minute){
+      return 'Just recieved';
+    }
+
+
+    // how many days
+
+    var days_data = this.get_days_passed(date_diff);
+
+
+    var hours_data = this.get_hours_passed(days_data.date_diff);
+
+    var minutes_data = this.get_minutes_passed(hours_data.date_diff);
+
+    var time_passed = '';
+    var days_text     = (days_data.value > 1)? 'd ' : 'd ';
+    var hours_text    = (hours_data.value > 1)? 'h ' : 'h ';
+    var minutes_text = (minutes_data.value > 1)? 'm ' : 'm ';
+
+    time_passed += (days_data.value > 0)?  days_data.value + days_text : '';
+    time_passed += (hours_data.value > 0)? hours_data.value + hours_text : '';
+    time_passed += (minutes_data.value > 0)?  minutes_data.value + minutes_text : '';
+
+    return time_passed;
+  },
+
+  get_minutes_passed: function(date_diff){
+    var value  = Math.floor(date_diff/this.ms_to_minute);
+    var delta =  date_diff - value*this.ms_to_minute;
+
+    return {value: value, date_diff: delta};
+  },
+
+  get_hours_passed: function(date_diff){
+    var value  = Math.floor(date_diff/this.ms_to_hour);
+    var delta =  date_diff - value*this.ms_to_hour;
+
+
+    return {value: value, date_diff: delta};
+  },
+
+  get_days_passed: function(date_diff){
+    var value  = Math.floor(date_diff/this.ms_to_day);
+    var delta =  date_diff - value*this.ms_to_day;
+
+    return {value: value, date_diff: delta};
+  },
+};
 
   // component that displays total revenue on dahsboard page
 
@@ -889,6 +1130,7 @@ select_imitation = Vue.component('select-imitation', {
     // sets value for a select
     set_value: function(key, value){
       this[key] = value;
+      this.$emit('update_list', { val :this.selected, name: this.select_name});
     },
 
     // gets value of a select
@@ -982,6 +1224,9 @@ select_imitation_icon = Vue.component('select-imitation-icon', {
     // sets value for a select
     set_value: function(key, value){
       this[key] = value;
+      if(key === 'selected'){
+        this.$emit('update_list', { val :this.selected, name: this.select_name});
+      }
     },
 
     // gets value of a select
@@ -1026,7 +1271,6 @@ function init_filters(filter_data){
         },
 
         methods: {
-
           // toggles state of expanded list initation
           expand_select: function(){
             this.isExpanded = 'expanded';
@@ -1363,6 +1607,9 @@ var icons_selects = {
 
   'team': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
 };
+
+var overdue_timeout;
+
 Vue.directive('min-height', {
   componentUpdated: function (el, binding, vnode) {
     el.setAttribute("style", "min-height:" +binding.value + 'px');
@@ -1378,6 +1625,8 @@ if('undefined' !== typeof(is_lead_list)){
       height: 0,
       scroll_height: 0,
 
+      overdue_checked: false,
+
       filters:{
         clinics:    'All Clinics',
         treatments: 'All Treatments',
@@ -1389,15 +1638,149 @@ if('undefined' !== typeof(is_lead_list)){
       leads:{},
     },
 
-    mounted: function(){
-      var leads = parse_leads.construct();
-      var _leads = leads.get_leads();
-      this.update_leads(_leads);
+    computed:{
+      get_convertion: function(){
+        var vm = this;
 
+        return function (col_id) {
+          var leads_total = 0;
+          var leads_column_total = 0;
+
+          for(id in this.leads_filtered){
+            leads_total += this.leads_filtered[id].length;
+          }
+
+          if('undefined' !== typeof(this.leads_filtered[col_id]) && leads_total > 0){
+
+            leads_column_total = this.leads_filtered[col_id].length;
+            var val = (leads_column_total/leads_total)*100;
+            return val.toFixed(2);
+          }else{
+            return 0;
+          }
+        }
+      },
+
+      get_leads_total: function(){
+        return function(col_id){
+          if(col_id == 'all'){
+            var leads_total = 0;
+
+            for(id in this.leads_filtered){
+              leads_total += this.leads_filtered[id].length;
+            }
+
+            return leads_total;
+          }else{
+            if('undefined' !== typeof(this.leads_filtered[col_id])){
+              return this.leads_filtered[col_id].length;
+            }else{
+              return 0;
+            }
+          }
+        }
+      },
+
+      leads_filtered: function(){
+        var leads_filtered = {};
+        var filters = {};
+
+        for(var column_name in this.leads ){
+          leads_filtered[column_name] = [];
+        }
+
+        for(var filter_name in this.filters){
+         if(this.filters[filter_name].search('All') !== 0){
+            filters[filter_name] = this.filters[filter_name];
+          }
+        }
+
+
+        for(var column_name in this.leads){
+          for(var id in this.leads[column_name]){
+            var lead     = this.leads[column_name][id];
+            var is_match = true;
+            for(filter_id in filters){
+
+              switch(typeof(lead.filter_data[filter_id])){
+                case 'object':
+                  is_match = (lead.filter_data[filter_id].indexOf(filters[filter_id]) < 0)? false : is_match;
+                 break;
+
+                default:
+                  is_match = (filters[filter_id] !== lead.filter_data[filter_id])? false : is_match;
+                 break;
+              }
+            }
+
+            if(is_match){
+              leads_filtered[column_name].push(lead);
+            }
+          }
+        }
+
+        return leads_filtered;
+      },
+
+      show_filter_clear_btn: function(){
+        var show = false;
+        for(var filter_name in this.filters){
+          show = (this.filters[filter_name].search('All') !== 0)? true: show;
+        }
+        return show;
+      },
+
+      alarms: function(){
+        var alarms = 0;
+        var overdue = 0;
+
+        for(col_id in this.leads_filtered){
+          for(id in this.leads_filtered[col_id]){
+            var lead = this.leads_filtered[col_id][id];
+            alarms = (lead.reminder)? alarms+1 : alarms;
+            overdue = (lead.reminder && 'yes' === lead.overdue)? overdue+1 : overdue;
+          }
+        }
+
+        if(alarms === 0){
+          this.overdue_checked = false;
+        }
+
+        return {total: alarms, overdue: overdue};
+      },
+    },
+
+    watch:{
+      overdue_checked: function(show){
+        if(overdue_timeout){
+          clearTimeout(overdue_timeout);
+        }
+
+        if(show){
+          jQuery('.lead-preview[data-overdue=no]').css({'opacity': 0});
+          overdue_timeout = setTimeout(function(){
+            jQuery('.lead-preview[data-overdue=no]').slideUp();
+          },300)
+        }else{
+          jQuery('.lead-preview[data-overdue=no]').slideDown();
+          overdue_timeout = setTimeout(function(){
+            // jQuery('.lead-preview[data-overdue=no]').slideUp();
+            jQuery('.lead-preview').css({'opacity': 1});
+          },300)
+        }
+      }
+    },
+
+    mounted: function(){
+      console.groupCollapsed('vue inits list');
       window.addEventListener('resize', this.handleResize);
       this.handle_resize();
-      this.init_jQuery();
       this.init_filters();
+      var leads = parse_leads.construct();
+      _leads = leads.get_leads_for_list();
+      this.update_leads(_leads);
+      console.log(this.leads);
+      console.groupEnd('---');
      },
 
     methods:{
@@ -1417,30 +1800,8 @@ if('undefined' !== typeof(is_lead_list)){
         console.groupEnd('----');
       },
 
-      //inits jQuery actions
-      init_jQuery: function(){
-        var overdue_timeout;
-        jQuery('[name=show_overdue_only]').on('change',function(e){
-          var show = jQuery(this).prop('checked');
-
-          if(overdue_timeout){
-            clearTimeout(overdue_timeout);
-          }
-
-          if(show){
-            jQuery('.lead-preview[data-overdue=no]').css({'opacity': 0});
-            overdue_timeout = setTimeout(function(){
-              jQuery('.lead-preview[data-overdue=no]').slideUp();
-            },300)
-          }else{
-            jQuery('.lead-preview[data-overdue=no]').slideDown();
-            overdue_timeout = setTimeout(function(){
-              // jQuery('.lead-preview[data-overdue=no]').slideUp();
-              jQuery('.lead-preview').css({'opacity': 1});
-            },300)
-
-          }
-        })
+      init_datepicker: function(){
+        init_date_range();
       },
 
       //inits filters
@@ -1455,6 +1816,7 @@ if('undefined' !== typeof(is_lead_list)){
             isHiddenSelect: true,
             isHiddenImitation: false,
           };
+
           props.options = dashboard_filter_data[select_name];
           props.selected = dashboard_filter_data[select_name][0];
 
@@ -1466,30 +1828,87 @@ if('undefined' !== typeof(is_lead_list)){
         }
       },
 
-      // updates list value
-      run_update_list: function(select){
-        if('undefined' !== typeof(select) ){
-          this.filters[select.name] = select.val;
-          var leads = parse_leads.construct();
-          var leads_filtered = leads.filter_for_leads_list(this.filters);
+      // sets all filters' values to default value
+      resert_filters: function(){
+        this.filters = {
+          clinics:    'All Clinics',
+          treatments: 'All Treatments',
+          campaigns:  'All Campaigns',
+          sourses:    'All Sourses',
+          team:       'All Team',
+        };
 
-          this.update_leads(leads_filtered);
-
-          console.log(this.leads);
+        for(select_name in this.filters){
+          this.$refs[select_name].set_value('selected', this.filters[select_name]);
         }
       },
 
-      update_leads: function(leads){
-        this.leads = {};
-        for(id in leads){
-          if('undefined'  === typeof(this.leads[leads[id].lead_stage])){
-            this.leads[leads[id].lead_stage]  = [];
-          }
-
-          this.leads[leads[id].lead_stage].push(leads[id]);
+      //changes filters values
+      run_filter_list: function(select_value){
+        if(select_value){
+          console.log('leads were filtered: ' + select_value.name + ' = '+select_value.val);
+          this.filters[select_value.name] = select_value.val;
         }
+      },
+
+      // updates list value
+      run_update_list: function(){
+        if(this.filters){
+          var leads = parse_leads.construct();
+          leads.filter_for_leads_list(this.filters);
+          var leads_filtered = leads.get_leads_for_list();
+          this.update_leads(leads_filtered);
+        }
+
+      },
+
+      // sort function forr manual drag and drop
+      sort_by_order: function(a, b){
+        if(a.order === b.order){
+          return 0;
+        }
+        return (a.order > b.order)? 1 : -1;
+      },
+
+      update_leads: function(leads){
+        console.log('Update leads');
+        var temp_leads = {};
+        this.leads = {};
+
+        for(id in leads){
+          if('undefined'  === typeof(temp_leads[leads[id].lead_stage])){
+            temp_leads[leads[id].lead_stage]  = [];
+          }
+          temp_leads[leads[id].lead_stage].push(leads[id]);
+        }
+
+        for(id in temp_leads){
+          temp_leads[id].sort(this.sort_by_order);
+        }
+
+        this.leads = temp_leads;
+      },
+
+      set_data: function(key, value){
+        this[key] = value;
       }
     },
   })
 
+}
+
+function update_leads_filters(filters){
+  if('undefined' !== typeof(is_lead_list)){
+    for(select_name in filters){
+      vue_leads_list.$refs[select_name].set_value('options', filters[select_name]);
+      vue_leads_list.$refs[select_name].set_value('selected', filters[select_name][0]);
+    }
+  }
+}
+
+
+function update_leads_list(){
+  if('undefined' !== typeof(is_lead_list)){
+    vue_leads_list.run_update_list();
+  }
 }

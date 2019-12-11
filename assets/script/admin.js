@@ -157,7 +157,8 @@ function add_leads_stage(){
   var $counter = document.getElementById('leads_count');
   var count    = parseInt($counter.value);
 
-  var template = '<li> <div class="stages-content__item"> <table> <tr> <th colspan="4"> <h3>Stage #<span class="number">{number}</span></h3> <input type="hidden" name="leads_stages[{count}][number]" class="stage_order" value="{number}"> <a  href="javasctipt:void(0)" onclick="delete_leads_stage(this);">Delete Stage</a> </th> </tr> <tr> <th>Name</th> <td colspan="3"><input type="text" class="regular-text" name="leads_stages[{count}][name]" value=""></td> </tr> <tr> <th>Background Color</th> <td><input type="text" class="regular-text colorpicker new" name="leads_stages[{count}][bg_color]" value=""></td> <th>Text Color</th> <td><input type="text" class="regular-text colorpicker new" name="leads_stages[{count}][text_color]" value=""></td>                     <tr><td colspan="4"> <label class="optional_label"> <input type="radio" name="stage_for_converted" class="stage_for_converted" value="{count}"> Is converted <br> <i>Leads on this stage will be counted as converted</i> </label> </td></tr></tr> </table> </div> </li>';
+  var template = '<li> <div class="stages-content__item"> <table> <tr> <th colspan="4"> <h3>Stage #<span class="number">{number}</span></h3> <input type="hidden" name="leads_stages[{count}][number]" class="stage_order" value="{number}"> <a  href="javasctipt:void(0)" onclick="delete_leads_stage(this);">Delete Stage</a> </th> </tr> <tr> <th>Name</th> <td colspan="3"><input type="text" class="regular-text" name="leads_stages[{count}][name]" value=""></td> </tr> <tr> <th>Background Color</th> <td><input type="text" class="small-text colorpicker new" name="leads_stages[{count}][bg_color]" value=""></td> <th>Text Color</th> <td><input type="text" class="small-text colorpicker new" name="leads_stages[{count}][text_color]" value=""></td> <tr><td colspan="4"> <label class="optional_label"> <input type="radio" name="stage_for_converted" class="stage_for_converted" value="{count}"> Is converted <br> <i>Leads on this stage, and all stages with hire numbers ,  will be counted as converted</i> </label> <label class="optional_label"> <input type="radio" name="stage_for_failed" class="stage_for_failed" value="{count}"> Is failed <br> <i>Leads on this stage, will be counted as failed</i> </label> </td></tr></tr> </table> </div> </li>';
+
   var search = {
     count: count,
     number: count + 1,
@@ -178,43 +179,61 @@ function add_leads_stage(){
 
 function delete_leads_stage(obj){
   jQuery(obj).closest('li').remove();
+
+  jQuery( ".stages-content__list" ).find('li').each(function(ind, el){
+    jQuery(el).find('.number').text(ind+1);
+    jQuery(el).find('.stage_order').val(ind);
+    jQuery(el).find('.stage_for_converted').attr({ 'value' :ind});
+    jQuery(el).find('.stage_for_failed').attr({ 'value' :ind});
+  })
 }
 
 jQuery(document).ready(function(){
   jQuery('.colorpicker').wpColorPicker();
 
-    jQuery("ul.stages-content__list" ).sortable({
-      receive: function( event, ui ){
-        // console.log('activate');
-        // console.log(event);
-        // console.log(ui);
-      },
-      over: function( event, ui ){
-      },
-      stop : function( event, ui ){
-        jQuery(document).trigger('update_leads_list');
+  jQuery("ul.stages-content__list" ).sortable({
+    receive: function( event, ui ){
+      // console.log('activate');
+      // console.log(event);
+      // console.log(ui);
+    },
+    over: function( event, ui ){
+    },
+    stop : function( event, ui ){
+      jQuery(document).trigger('update_leads_list');
 
-        var leads_order_list = [];
+      var leads_order_list = [];
 
-        jQuery('ul.leads-list li').each(function(ind, el){
-          var _el = jQuery(el).find('div.lead-preview');
-          var parent = _el.closest('ul');
-          var data = {};
-          data.id = _el.data('id');
-          data.list  = parent.data('list');
-          data.index = jQuery(el).index();
-          leads_order_list.push(data);
-        })
-      },
-    });
-
-    jQuery( ".stages-content__list" ).on( "sortstop", function( event, ui ) {
-      console.log(ui);
-
-      jQuery( ".stages-content__list" ).find('li').each(function(ind, el){
-        jQuery(el).find('.number').text(ind+1);
-        jQuery(el).find('.stage_order').val(ind);
-        jQuery(el).find('.stage_for_converted').attr({ 'value' :ind});
+      jQuery('ul.leads-list li').each(function(ind, el){
+        var _el = jQuery(el).find('div.lead-preview');
+        var parent = _el.closest('ul');
+        var data = {};
+        data.id = _el.data('id');
+        data.list  = parent.data('list');
+        data.index = jQuery(el).index();
+        leads_order_list.push(data);
       })
-    });
+    },
+  });
+
+  jQuery( ".stages-content__list" ).on( "sortstop", function( event, ui ) {
+
+    jQuery( ".stages-content__list" ).find('li').each(function(ind, el){
+      jQuery(el).find('.number').text(ind+1);
+      jQuery(el).find('.stage_order').val(ind);
+      jQuery(el).find('.stage_for_converted').attr({ 'value' :ind});
+      jQuery(el).find('.stage_for_failed').attr({ 'value' :ind});
+    })
+  });
+})
+
+jQuery('.stage_for_converted, .stage_for_failed').change(function(e){
+  e.preventDefault();
+  var previous = jQuery('.stage_for_converted:checked');
+  var other = jQuery(this).closest('label').siblings('label').find('input');
+  if(other.prop('checked')){
+    jQuery(this).prop({'checked': 0});
+
+    alert('One stage can not be used as failed and converted at the same time');
+  }
 })

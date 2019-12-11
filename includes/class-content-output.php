@@ -22,7 +22,6 @@ class theme_content_output{
     $obj     = get_queried_object();
     $user_id = get_current_user_id();
     $user = get_user_by('id', $user_id);
-
     $last_name     = get_the_author_meta('last_name',  $user_id );
     $first_name    = get_the_author_meta('first_name', $user_id );
     $name = $first_name  . ' '. $last_name ;
@@ -142,7 +141,7 @@ class theme_content_output{
 
     // Get leads by dates
 
-      $leads = get_posts_by_dates( $months_first_day , $today_formated );
+      $leads = get_posts_by_dates( $month_first_day , $today_formated );
 
       $leads = get_leads_meta($leads);
 
@@ -178,4 +177,20 @@ class theme_content_output{
     print_theme_template_part('leads-list', 'globals', $args);
   }
 
+
+  public static function print_lead_content(){
+    $lead = get_queried_object();
+
+    $args = array(
+      'lead_notes'            => get_post_meta($lead->ID, '_lead_notes', true),
+      'lead_files'            => get_post_meta($lead->ID, '_lead_files', true),
+      'treatment_coordinator' => get_post_meta($lead->ID, '_treatment_coordinator', true),
+      'treatment_value'       => get_post_meta($lead->ID, '_treatment_value', true),
+      'patient_data'          => get_post_meta($lead->ID, '_patient_data', true),
+      'reminder'              => get_post_meta($lead->ID, '_reminder', true),
+      'lead_stage'            => get_post_meta($lead->ID, '_lead_stage', true),
+    );
+
+    print_theme_template_part('lead-single', 'globals', $args);
+  }
 }

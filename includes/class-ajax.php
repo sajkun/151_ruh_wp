@@ -22,6 +22,51 @@ if(!class_exists('theme_ajax_action')){
 
       // login action
       add_action('wp_ajax_get_leads_by_dates', array($this, 'get_leads_by_dates_cb'));
+      add_action('wp_ajax_nopriv_get_leads_by_dates', array($this, 'get_leads_by_dates_cb'));
+
+      //
+      add_action('wp_ajax_update_leads_list', array($this, 'update_leads_list_cb'));
+      add_action('wp_ajax_nopriv_update_leads_list', array($this, 'update_leads_list_cb'));
+
+      add_action('wp_ajax_update_leads_order', array($this, 'update_leads_order_cb'));
+      add_action('wp_ajax_nopriv_update_leads_order', array($this, 'update_leads_order_cb'));
+    }
+
+
+    public function update_leads_order_cb(){
+
+      $result = array();
+
+      foreach ($_POST['order'] as $key => $data) {
+        $update = update_post_meta(  (int)$data['post_id'] , '_lead_order', $data['order'] );
+
+        if(!$update){
+         $update = add_post_meta( (int)$data['post_id'] , '_lead_order', $data['order'] );
+        }
+
+         $result[] = $update;
+      }
+
+      wp_send_json($result);
+    }
+
+
+    public static function update_leads_list_cb(){
+
+      $post_id = (int)$_POST['post_id'];
+      $post_id = (int)$_POST['post_id'];
+
+      if( !isset( $_POST['post_id'] ) || !isset( $_POST['list_id']) ){
+        wp_send_json(array('success' => false));
+      }
+
+      $update = update_post_meta(  $post_id , '_lead_stage', $_POST['list_id'] );
+
+      if(!$update){
+       $update = add_post_meta(  $post_id , '_lead_stage',  $_POST['list_id'] );
+      }
+
+      wp_send_json(array('success' => $update));
     }
 
 
