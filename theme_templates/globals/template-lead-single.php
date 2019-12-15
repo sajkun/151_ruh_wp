@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div id="single-lead">
 
+<input-field _type="hidden" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="user_id" _value="<?php echo $user_id?>"></input-field>
+
 <input-field _type="hidden" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="user_name" _value="<?php echo $user_name?>"></input-field>
 
 <input-field _type="hidden" ref="lead_id_input" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="lead_id" _value="<?php echo $lead_id; ?>"></input-field>
@@ -384,38 +386,25 @@ if ( ! defined( 'ABSPATH' ) ) {
          <h2 class="leads-block__title">Team</h2>
 
           <table class="team-leads">
-            <tbody><tr>
-               <td><div class="team-leads__photo"><img src="assets/images/c/team-ph.png" alt=""></div></td>
+            <tbody><tr v-for="(sp, index) in visible_specialists">
+               <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name"></div></td>
               <td colspan="3">
                 <div class="clearfix">
-                  <span class="team-leads__name">Kerry-Lee Sharpe</span>
-                  <span class="team-leads__post">Patient Care Manager</span>
+                  <span class="team-leads__name">{{sp.name}}</span>
+                  <span class="team-leads__post">{{sp.position}}</span>
                 </div>
               </td>
-              <td><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></td>
+              <td class="text-right">  <svg class="icon svg-icon-trash" v-on:click="remove_specialist(sp.name)"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use> </svg></td>
 
             </tr>
-            <tr>
-               <td><div class="team-leads__photo"><img src="assets/images/c/team-ph.png" alt=""></div></td>
-              <td colspan="3">
-                <div class="clearfix">
-                  <span class="team-leads__name">Kerry-Lee Sharpe</span>
-                  <span class="team-leads__post">Patient Care Manager</span>
-                </div>
-              </td>
-               <td><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></td>
-             </tr>
           </tbody></table>
          <div class="leads-block__row">
         </div>
          <div class="leads-block__row">
 
-          <div class="select-imitation fullwidth">
-            <select name="team" id="">
-              <option value="1">User 1</option>
-              <option value="2">User 2</option>
-            </select>
-          </div>
+          <select-imitation _select_name="lead_specialissts" v-on:update_list="update_specialists($event)" v-bind:class="'fullwidth'" ref="lead_specialissts_select"></select-imitation>
+
+          <span class="button-assign" v-if="show_add_specialist_button" v-on:click="assign_specialist()">assign specialist</span>
         </div>
       </div>
 

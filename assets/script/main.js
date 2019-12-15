@@ -717,6 +717,8 @@ jQuery(document.body).on('save_dragged_item', function(e, data){
 jQuery(document.body).on('update_lead_log', function(e, data){
   console.groupCollapsed('update lead log');
 
+  console.log(data);
+
   var data_post = {
     action : 'update_leads_log',
   };
@@ -749,6 +751,10 @@ jQuery(document.body).on('update_lead_log', function(e, data){
 
     success: function(data, textStatus, xhr) {
       console.log(data);
+
+      if('object' === typeof(single_lead)){
+        single_lead.logs = data.logs;
+      }
       console.groupEnd('---');
     },
 
@@ -770,7 +776,7 @@ var parse_leads = {
 
   construct: function(){
     if('undefined' !== typeof(is_dashboard)){
-      this.filter();
+      this.leads = dashboard_leads_data;
     }
 
     if('undefined' !== typeof(is_lead_list)){
@@ -797,6 +803,22 @@ var parse_leads = {
     this.leads = dashboard_leads_data_filtered_new;
 
     return dashboard_leads_data_filtered_new;
+  },
+
+  filter_exec: function(filters){
+    var dashboard_leads_data_filtered_new = [];
+
+    for(lead_id in dashboard_leads_data){
+      if(this.filter_lead(dashboard_leads_data[lead_id]), filters){
+        dashboard_leads_data_filtered_new.push(dashboard_leads_data[lead_id]);
+      }
+    }
+
+    dashboard_leads_data_filtered = dashboard_leads_data_filtered_new;
+
+    this.leads = dashboard_leads_data_filtered_new;
+
+    return this;
   },
 
 
@@ -1120,6 +1142,18 @@ var select_imitation_icon;
 var input_field;
 var datepicker_field;
 var wait_block;
+
+var icons_selects = {
+  'clinics': '<svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>',
+
+  'treatments': '<svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>',
+
+  'campaigns': '<svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>',
+
+  'sourses': '<svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>',
+
+  'team': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
+};
 var select_mixin = {
   data: function () {
     return {
@@ -1311,127 +1345,108 @@ input_field = Vue.component('input-field', {
 
 var vue_selects = {};
 var vue_dashboard_totals;
+var filter_dashboard;
+var vue_team_perfomance;
 var vue_top_items = {};
 
 
 function init_filters(filter_data){
   if('undefined' !== typeof(is_dashboard)){
-    for( select_name in dashboard_filter_data){
-      vue_selects['vue_'+select_name+'_select'] = new Vue({
-        el: '#'+select_name+'-select',
+    filter_dashboard = new Vue({
+      el: '#dashboard-filters',
 
-        data: {
-          select_name : select_name,
-          options: filter_data[select_name],
-          selected:filter_data[select_name][0],
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
+      data:{
+        filters:{
+          clinics:    'All Clinics',
+          treatments: 'All Treatments',
+          campaigns:  'All Campaigns',
+          sourses:    'All Sourses',
+          team:       'All Team',
         },
+      },
 
-        mounted: function(){
-          this.update_selected_option();
-          this.isHiddenSelect = jQuery(window).width()   > 768 ? true : false;
-          this.isHiddenImitation = jQuery(window).width() > 768 ? false : true;
+      mounted: function(){
+        this.init_filters();
+      },
+
+      computed: {
+        show_filter_clear_btn: function(){
+          var show = false;
+          for(var filter_name in this.filters){
+            show = (this.filters[filter_name].search('All') !== 0)? true: show;
+          }
+
+          return show ? '' : 'visuallyhidden';
         },
+      },
 
-        methods: {
-          // toggles state of expanded list initation
-          expand_select: function(){
-            this.isExpanded = 'expanded';
-            collapse_filters(this.select_name);
-            collapse_top_lists('');
-          },
+      methods: {
+        //inits filters
+        init_filters: function(){
+          var props;
+          for(select_name in dashboard_filter_data){
+            props =  {
+              icon: icons_selects[select_name],
+              isExpanded: '',
+              isSelected: [],
+              isHiddenSelect: true,
+              isHiddenImitation: false,
+            };
 
-          // toggles select in expanded dropdown
-          update_selected_option: function(){
-            for(id in this.options){
-              this.isSelected[this.options[id]] = false;
+            props.options = dashboard_filter_data[select_name];
+            props.selected = dashboard_filter_data[select_name][0];
+
+            vue_select_components.push(this.$refs[select_name]);
+
+            for( id in props){
+              this.$refs[select_name].set_value(id, props[id]);
             }
+          }
+        },
 
-            this.isSelected[this.selected] = true;
-          },
+        // sets all filters' values to default value
+        resert_filters: function(){
+          this.filters = {
+            clinics:    'All Clinics',
+            treatments: 'All Treatments',
+            campaigns:  'All Campaigns',
+            sourses:    'All Sourses',
+            team:       'All Team',
+          };
 
-          // changes data on option click
-          imitate_select_option: function(value){
-            this.selected = value;
-            this.isExpanded = '';
-            this.update_selected_option();
-            vue_dashboard_totals.update();
-          },
+          for(select_name in this.filters){
+            this.$refs[select_name].set_value('selected', this.filters[select_name]);
+          }
+        },
 
-           // closes select
-          discard_select:function(){
-            this.isExpanded = '';
-          },
+        run_filter_list: function(event){
+          if('undefined' !== typeof(event.val)){
+            this.filters[event.name] = event.val;
 
-           // updates options of a select
-          update_options: function(options){
-            this.options = options;
-            this.selected = options[0];
-            this.isExpanded = '';
-            this.update_selected_option();
-          },
-
-          change: function(){
-          },
-
-          // sets value for a select
-          set_value: function(value){
-            this.selected = value;
-          },
-
-          // gets value of a select
-          get_value: function(){
-            return this.selected;
-          },
-
-          // gets name of a select
-          get_name: function(){
-            return this.select_name;
+            if('undefined' !== typeof(vue_dashboard_totals)){
+              vue_dashboard_totals.update_filters(this.filters);
+            }
           }
         }
-      });
-    }
+      },
+    });
   }
 }
 
-function collapse_filters(select_name){
-  if('undefined' !== typeof(is_dashboard)){
-    for( _select_name in dashboard_filter_data){
-      if(_select_name != select_name){
-        vue_selects['vue_'+_select_name+'_select'].discard_select();
-      }
-    }
-  }
-}
+function collapse_filters(select_name){}
 
 
 function update_filters(filter_data){
   if('undefined' !== typeof(is_dashboard)){
-    var values = {};
     for(select_name in filter_data){
-       vue_selects['vue_'+select_name+'_select'].update_options(filter_data[select_name]);
-       values['vue_'+select_name+'_select'] = filter_data[select_name];
+       filter_dashboard.$refs[select_name].set_value('options', filter_data[select_name]);
+       filter_dashboard.$refs[select_name].set_value('selected', filter_data[select_name][0]);
     }
-
-    jQuery('#dashboard').find('.select-imitation').find('span').remove();
-    jQuery('#dashboard').find('.select-imitation').find('div').remove();
-    jQuery('#dashboard').find('.select-imitation').find('select').removeClass('hidden');
-
-    jQuery('#dashboard').find('select').each(function(ind, el){
-      var id = jQuery(el).data('vue-id');
-      jQuery(this).theme_select({
-        values: values[id],
-      });
-    })
   }
 }
 
 jQuery('.site-inner').click(function(e){
   if(!jQuery(e.target).closest('.select-imitation').length){
-   collapse_filters('');
    collapse_top_lists('');
    discard_selects();
   }
@@ -1448,18 +1463,102 @@ if('undefined' !== typeof(is_dashboard)){
     el: '#dashboard_totals',
 
     data:{
-      rev:  0,
-      leads: 0,
-      avg: 0,
       up_down: '',
       percent_change: '',
-      percents: '',
       icon: '',
       change_type: '',
+
+      filters:{
+        clinics:    'All Clinics',
+        treatments: 'All Treatments',
+        campaigns:  'All Campaigns',
+        sourses:    'All Sourses',
+        team:       'All Team',
+      },
+
+      leads_obj: dashboard_leads_data,
     },
 
+    computed:{
+      filtered_leads: function(){
+        var leads  = this.leads_obj;
+        var leads_filtered = [];
+
+        for(id in leads){
+          var is_match = true;
+
+          filter_value = leads[id]['filter_data'];
+
+          for(filter_id in this.filters){
+            if(this.filters[filter_id].search('All') === 0) continue;
+
+            if(filter_value[filter_id] === null && this.filters[filter_id] !== null){
+              is_match = false;
+              continue;
+            }
+
+            switch(typeof(filter_value[filter_id])){
+              case 'object':
+                is_match = (filter_value[filter_id].indexOf(this.filters[filter_id]) < 0)? false : is_match;
+               break;
+              case 'string':
+                is_match = (this.filters[filter_id] !== filter_value[filter_id])? false : is_match;
+               break;
+            }
+          }
+
+          if(is_match){
+            leads_filtered.push(leads[id]);
+          }
+        }
+
+        return leads_filtered;
+      },
+
+      leads: function(){
+        return this.filtered_leads.length;
+      },
+
+      revenue_val: function(){
+        var total = 0;
+
+        for(id in this.filtered_leads){
+          var value = this.filtered_leads[id].meta.treatment_value.value;
+
+          if('string' === typeof(value)){
+            var pierces = value.split('.');
+            var exp = new RegExp("\\D", "gi");
+            value = pierces[0].replace(exp, '');
+          }
+
+          total += parseInt(value);
+        }
+
+        return total;
+      },
+
+      revenue: function(){
+        return '£'+ formatMoney(this.revenue_val, 2, ".", ",");
+      },
+
+      avg: function(){
+        var avg =  this.revenue_val/this.leads;
+        return  '£'+ formatMoney(avg, 2, ".", ",");
+      },
+
+      leads_converted: function(){
+
+        var converted_count = 0;
+
+        for(id in this.filtered_leads){
+          converted_count = ('yes' === this.filtered_leads[id].is_converted)? converted_count+1 : converted_count;
+        }
+        return converted_count;
+      },
+    },
+
+
     mounted: function(){
-      this.update();
     },
 
     methods:{
@@ -1468,10 +1567,11 @@ if('undefined' !== typeof(is_dashboard)){
       },
 
       update: function(){
-        var leads = parse_leads.construct();
-        this.rev   = '£'+ formatMoney(leads.get_total_revenue(), 2, ".", ",");
-        this.leads = leads.get_total_leads();
-        this.avg   = '£'+ formatMoney(leads.get_average_leads(), 2, ".", ",");
+        this.leads_obj = dashboard_leads_data;
+     },
+
+      update_filters: function(filters){
+        this.filters = filters;
       }
     },
   })
@@ -1602,45 +1702,56 @@ function collapse_top_lists(name){
 }
 
 if('undefined' !== typeof(is_dashboard)){
-  var vue_team_perfomance = new Vue({
+  vue_team_perfomance = new Vue({
     el: '#team_perfomance',
 
     data:{
-      team: team_perfomance.team,
+      team_data: team_perfomance.team,
+    },
+
+    computed: {
+      team: function(){
+        return this.team_data;
+      }
     },
 
     mounted: function(){
-      var props =  {
-        select_name: 'team_perfomance_list',
-        options: team_perfomance.positions,
-        selected: team_perfomance.positions[0],
-        isExpanded: '',
-        isSelected: [],
-        isHiddenSelect: true,
-        isHiddenImitation: false,
-      };
 
-      for( id in props){
-        this.$refs.posts_list.set_value(id, props[id]);
-      }
+      this.update_list();
 
       vue_select_components.push(this.$refs.posts_list);
     },
 
     methods:{
-      run_update_list: function(val){
-        if(val){
-          if(val === 'all'){
-            this.team = team_perfomance.team;
+      run_update_list: function(event){
+        if(typeof(event.val) !=='undefined'){
+          if(event.val === 'all'){
+            this.team_data = team_perfomance.team;
           }else{
             var new_team = {};
             for(id in team_perfomance.team){
-              if(team_perfomance.team[id].user_position === val){
+              if(team_perfomance.team[id].user_position === event.val){
                 new_team[id] = team_perfomance.team[id];
               }
             }
-            this.team = new_team;
+            this.team_data = new_team;
           }
+        }
+      },
+
+      update_list: function(){
+        var props =  {
+          select_name: 'team_perfomance_list',
+          options: team_perfomance.positions,
+          selected: team_perfomance.positions[0],
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+        };
+
+        for( id in props){
+          this.$refs.posts_list.set_value(id, props[id]);
         }
       },
     },
@@ -1650,7 +1761,7 @@ if('undefined' !== typeof(is_dashboard)){
 
 function update_team_perfomance(){
   if('undefined' !== typeof(is_dashboard)){
-    vue_team_perfomance.run_update_list('all');
+    vue_team_perfomance.run_update_list({val: 'all'});
   }
 }
 
@@ -1661,18 +1772,6 @@ function discard_selects(){
   }
 }
 var vue_leads_list;
-
-var icons_selects = {
-  'clinics': '<svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>',
-
-  'treatments': '<svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>',
-
-  'campaigns': '<svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>',
-
-  'sourses': '<svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>',
-
-  'team': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
-};
 
 var overdue_timeout;
 
@@ -2037,6 +2136,7 @@ if('undefined' !== typeof(is_single_lead)){
       patient_data: {},
       treatment_value: {},
       treatment_coordinator: {},
+      specialists_data: {},
       lead_data: {},
       notes: [],
       files: [],
@@ -2046,6 +2146,7 @@ if('undefined' !== typeof(is_single_lead)){
       new_file: '',
       save_text: 'Save Changes',
       requre_save : false,
+      selected_specialist: false,
     },
 
     computed:{
@@ -2064,6 +2165,22 @@ if('undefined' !== typeof(is_single_lead)){
       get_logs: function(){
         return this.logs;
       },
+
+      show_add_specialist_button: function(){
+        return !!this.selected_specialist;
+      },
+
+      visible_specialists: function(){
+        var shown = [];
+
+        for(id in this.specialists_data){
+          if('yes' === this.specialists_data[id].show){
+            shown.push(this.specialists_data[id]);
+          }
+        }
+
+        return shown;
+      }
     },
 
     watch: {
@@ -2073,16 +2190,15 @@ if('undefined' !== typeof(is_single_lead)){
       },
     },
 
-    created: function(){
-
-    },
+    created: function(){},
 
     mounted: function(){
       this.notes = lead_notes;
       this.files = lead_files;
       this.logs  = lead_logs;
+      this.specialists_data  = specialists_data;
 
-       props =  {
+       var props =  {
           isExpanded: '',
           isSelected: [],
           isHiddenSelect: true,
@@ -2100,7 +2216,14 @@ if('undefined' !== typeof(is_single_lead)){
           this.$refs['sourse_select'].set_value(id, props[id]);
         }
 
+        props.options = specialists;
+
+        for( id in props){
+          this.$refs['lead_specialissts_select'].set_value(id, props[id]);
+        }
+
         vue_select_components.push(this.$refs['sourse_select']);
+        vue_select_components.push(this.$refs['lead_specialissts_select']);
     },
 
     methods: {
@@ -2283,6 +2406,94 @@ if('undefined' !== typeof(is_single_lead)){
               alert(xhr.status + ' ' +errorThrown);
             }
            }
+        })
+      },
+
+      update_specialists: function(event){
+        if('undefined' !== typeof(event.val) ){
+
+          if(this.lead_data.lead_id < 0){
+            alert('Create lead before assigning it to a specialist, please');
+            return false;
+          };
+
+          if(this.specialists_data[event.val].show === 'yes')
+            {
+               return false;
+            };
+
+          this.specialists_data[event.val].show = 'yes';
+          this.save_sepcialists_meta();
+
+          jQuery(document.body).trigger('update_lead_log', {
+            post_id     : parseInt(this.lead_data.lead_id),
+            nonce       : jQuery('[name=lead_data]').val(),
+            user_name   : this.lead_data.user_name,
+            user_id     : this.lead_data.user_id,
+            event       : 'specialist_updated',
+            text: 'Assined to ' +  event.val + ' by ' + this.lead_data.user_name,
+          })
+        }
+      },
+
+      assign_specialist: function(){
+        // this.selected_specialist = false;
+        // this.save_sepcialists_meta();
+      },
+
+      remove_specialist: function(name){
+        this.specialists_data[name].show = 'no';
+        this.save_sepcialists_meta();
+
+        jQuery(document.body).trigger('update_lead_log', {
+          post_id     : parseInt(this.lead_data.lead_id),
+          nonce       : jQuery('[name=lead_data]').val(),
+          user_name   : this.lead_data.user_name,
+          user_id     : this.lead_data.user_id,
+          event       : 'specialist_updated',
+          text: 'Unassined from ' +  name + ' by ' + this.lead_data.user_name,
+        })
+      },
+
+      save_sepcialists_meta: function(){
+        var meta = {};
+        for(id in specialists_data){
+          meta[specialists_data[id].user_id] = specialists_data[id].show;
+        }
+
+        var data = {
+          meta: {
+            lead_specialists: meta,
+          },
+          action                : 'update_lead_meta',
+          lead_data             : this.lead_data,
+          nonce                 : jQuery('[name=lead_data]').val(),
+        };
+
+        var vm = this;
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+             wait_block.hide();
+          },
+
+          success: function(data, textStatus, xhr) {
+            console.log(data);
+            vm.$refs.lead_id_input.set_value(data.post_id);
+          },
+
+          error: function(xhr, textStatus, errorThrown) {
+            if(xhr.status === 418){
+              var response_text = JSON.parse(xhr.responseText);
+              alert(response_text.data[0]);
+            }else{
+              alert(xhr.status + ' ' +errorThrown);
+            }
+          }
         })
       },
 

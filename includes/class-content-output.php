@@ -85,7 +85,6 @@ class theme_content_output{
 
       $leads = get_leads_meta($leads);
 
-
       wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
 
       wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
@@ -109,7 +108,7 @@ class theme_content_output{
 
       $args = array(
         'daterange' => array(
-          'from' => $mont_first_day,
+          'from' => $months_first_day,
           'to'   => $today_formated
         ),
       );
@@ -185,37 +184,38 @@ class theme_content_output{
   }
 
 
+   /**
+   /* prints a content of a lead of a lead
+   */
   public static function print_lead_content(){
     global $theme_init;
     $lead                = get_queried_object();
+
+    // gets data about stage of a lead
     $lead_stage          = get_post_meta($lead->ID, '_lead_stage', true);
-    $lead_stage_num      = 0;
-    $stages              = get_option('leads_stages');
+    $converted_stages    = get_converted_stages();
 
-    foreach ($stages as $key => $st) {
-      $lead_stage_num = $st['name'] === $lead_stage ? (int)$st['number'] : $lead_stage_num;
-    }
+    // foreach ($stages as $key => $st) {
+    //   $lead_stage_num = $st['name'] === $lead_stage ? (int)$st['number'] : $lead_stage_num;
+    // }
 
-
-    $stage_for_converted = (int)get_option('stage_for_converted');
-    $stage_for_failed    = (int)get_option('stage_for_failed');
-
+    // defines a type of a lead
     $lead_type  = array('class' => 'opened', 'text' => 'Opened Lead');
+    $lead_type = (in_array( $lead_stage, $converted_stages ))? array('class' => 'converted', 'text' => 'Converted Lead'): $lead_type;
+    $lead_type = ($lead_stage === get_failed_stage_name())? array('class' => 'failed', 'text' => 'Failed Lead'): $lead_type;
 
-    $lead_type = ($lead_stage_num >= $stage_for_converted  && $lead_stage_num !== $stage_for_failed )? array('class' => 'converted', 'text' => 'Converted Lead'): $lead_type;
-
-    $lead_type = ($lead_stage_num === $stage_for_failed)? array('class' => 'failed', 'text' => 'Failed Lead'): $lead_type;
-
+    // get current user data
     $user = get_user_by('id', get_current_user_id());
     $user_name =  theme_get_user_name($user);
 
-    $_lead_notes = get_post_meta($lead->ID, '_lead_notes', true);
-    $_lead_files = get_post_meta($lead->ID, '_lead_files', true);
 
+    // gets lead logs, notes and files
     $lead_notes = array();
     $lead_files = array();
+    $_lead_notes = get_post_meta($lead->ID, '_lead_notes', true);
+    $_lead_files = get_post_meta($lead->ID, '_lead_files', true);
+    $lead_logs   = get_post_meta($lead->ID, '_lead_log', true);
 
-    $lead_logs = get_post_meta($lead->ID, '_lead_log', true);
 
     if(!$lead_logs){
       $lead_logs = array();
@@ -233,9 +233,31 @@ class theme_content_output{
       }
     }
 
-    $leads_id     = (int)get_option('theme_page_leads');
+    // get assigned specialists data
 
+    $specialists_assigned = get_post_meta($lead->ID, '_lead_specialists', true);
+    $users = get_users();
+    $specialists_data = array();
+
+    foreach ($users as $key => $user) {
+      $photo_id = get_the_author_meta('user_photo_id', $user->ID);
+      $image    =  wp_get_attachment_url( $photo_id );
+      $image    = ($image) ? $image : DUMMY_ADMIN;
+      $position = esc_html( get_the_author_meta( 'user_position', $user->ID ) );
+      $name     = theme_get_user_name($user);
+
+      $specialists_data[$name] = array(
+        'photo'     => $image,
+        'position'  => $position,
+        'user_id'   => $user->ID,
+        'name'      => $name,
+        'show'      => (isset($specialists_assigned[$user->ID]) && 'yes' === $specialists_assigned[$user->ID])? 'yes' : 'no'
+      );
+    }
+    // get other leads info
+    $leads_id          = (int)get_option('theme_page_leads');
     $lead_created_time = new DateTime($lead->post_date);
+
 
     $args = array(
       'treatment_coordinator' => get_post_meta($lead->ID, '_treatment_coordinator', true),
@@ -256,6 +278,8 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', $lead_notes);
+    wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
     wp_localize_script($theme_init->main_script_slug, 'lead_files', $lead_files);
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
 
@@ -263,13 +287,34 @@ class theme_content_output{
   }
 
 
+   /**
+   /* prints a content of a form for a creation of a lead
+   */
+  public static function print_lead_content_blank(){
+    global $theme_init;
 
-   public static function print_lead_content_blank(){
-      global $theme_init;
+    $lead_created_time = new DateTime();
+    $leads_id     = (int)get_option('theme_page_leads');
 
-      $lead_created_time = new DateTime();
-      $leads_id     = (int)get_option('theme_page_leads');
+    // get assigned specialists data
 
+    $users = get_users();
+    $specialists_data = array();
+
+    foreach ($users as $key => $user) {
+      $photo_id = get_the_author_meta('user_photo_id', $user->ID);
+      $image    =  wp_get_attachment_url( $photo_id );
+      $image    = ($image) ? $image : DUMMY_ADMIN;
+      $position = esc_html( get_the_author_meta( 'user_position', $user->ID ) );
+      $name     = theme_get_user_name($user);
+
+      $specialists_data[$name] = array(
+        'photo'     => $image,
+        'position'  => $position,
+        'name'      => $name,
+        'show'     => 'no',
+      );
+    }
 
       $args = array(
         'treatment_coordinator' => array(),
@@ -289,6 +334,8 @@ class theme_content_output{
 
       wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
       wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());
+      wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
+      wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
       wp_localize_script($theme_init->main_script_slug, 'lead_files', array());
       wp_localize_script($theme_init->main_script_slug, 'lead_logs',  array());
 

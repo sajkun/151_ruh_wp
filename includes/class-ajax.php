@@ -19,7 +19,6 @@ if(!class_exists('theme_ajax_action')){
 
     public function __construct(){
 
-
       // login action
       add_action('wp_ajax_get_leads_by_dates', array($this, 'get_leads_by_dates_cb'));
       add_action('wp_ajax_nopriv_get_leads_by_dates', array($this, 'get_leads_by_dates_cb'));
@@ -50,7 +49,9 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_delete_lead', array($this, 'delete_lead_cb'));
     }
 
-
+    /**
+    * deletes a lead
+    */
     public function delete_lead_cb(){
       $verify =  wp_verify_nonce(  $_POST['nonce'], 'update_meta_nonce_id' );
 
@@ -66,6 +67,9 @@ if(!class_exists('theme_ajax_action')){
     }
 
 
+    /**
+    * adds an action log for a lead
+    */
     public function update_leads_log_cb(){
       $post_id = (int)$_POST['post_id'];
       $post = get_post($post_id);
@@ -97,8 +101,26 @@ if(!class_exists('theme_ajax_action')){
 
           array_push($meta, $data_to_save);
           break;
-      }
 
+        case 'specialist_updated':
+          $date_passed    = $_POST['date'];
+          $date_prev_str  = (isset($meta[count($meta) - 1]))? $meta[count($meta) - 1]['date'] : $post->post_date;
+
+          $date           = new DateTime($date_passed);
+          $date_prev      = new DateTime($date_prev_str);
+          $diff           = date_diff($date, $date_prev );
+
+          $data_to_save = array(
+            'text' => $_POST['text'],
+            'date_formatted' => $date->format('d M Y') . ' at '. $date->format('H:i'),
+            'date'           => $_POST['date'],
+            'user_name'      => $_POST['user_name'],
+            'user_id'        => $_POST['user_id'],
+            'time_passed'    => $diff->format('%dd %hh %is'),
+          );
+          array_push($meta, $data_to_save);
+          break;
+      }
 
       if(!$data_to_save){
         wp_send_json_error(array('message' => 'failed to save'), 418);
@@ -111,7 +133,9 @@ if(!class_exists('theme_ajax_action')){
       wp_send_json(array('result' => 'success', 'logs' => $meta));
     }
 
-
+    /**
+    * updates a leads meta
+    */
     public function update_lead_meta_cb(){
 
       $verify =  wp_verify_nonce(  $_POST['nonce'], 'update_meta_nonce_id' );
@@ -179,12 +203,41 @@ if(!class_exists('theme_ajax_action')){
       foreach ($meta as $meta_key => $data) {
         $key = '_'.$meta_key;
 
+
+        if(isset($meta['lead_specialists'])){
+
+          foreach ($meta['lead_specialists'] as $user_id => $assigned) {
+            $assigned_posts = get_the_author_meta('_leads_assigned',  $user_id);
+
+            if(!$assigned_posts){
+              $assigned_posts = [];
+            }
+
+            if(!in_array($post_id, $assigned_posts) && 'yes' === $assigned){
+              array_push($assigned_posts, $post_id);
+            }
+
+            if('no' === $assigned){
+              $assigned_key = array_search($post_id, $assigned_posts);
+              if($assigned_key){
+                array_splice($assigned_posts, $assigned_key, 1);
+              }
+            }
+
+            if(!update_user_meta( $user_id, '_leads_assigned', $assigned_posts )){
+              add_user_meta( $user_id, '_leads_assigned', $assigned_posts );
+            }
+          }
+
+        }
+
         if(!update_post_meta($post_id,  $key, $data)){
           $removed = add_post_meta( $post_id,  $key, $data, true );
         }
       }
 
       $meta['post_id'] = $post_id;
+      $meta['POST'] = $_POST;
 
       wp_send_json($meta);
     }

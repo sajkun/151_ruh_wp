@@ -433,15 +433,21 @@ if(!function_exists('get_leads_meta')){
     dlog('Get Leads Meta', true, false);
 
 
-      $sourses = array(
-          'live-chat'  => 'Live Chat',
-          'instagram'  => 'Instagram',
-          'google-ppc' => 'Google PPC',
-          'website'    => 'Website',
-          'phone'      => 'Phone',
-          'walk-in'    => 'Walk In',
-          'other'      => 'Other',
-        );
+    $sourses = array(
+        'live-chat'  => 'Live Chat',
+        'instagram'  => 'Instagram',
+        'google-ppc' => 'Google PPC',
+        'website'    => 'Website',
+        'phone'      => 'Phone',
+        'walk-in'    => 'Walk In',
+        'other'      => 'Other',
+      );
+
+
+    $stages              = get_option('leads_stages');
+    $stage_for_failed    = (int)get_option('stage_for_failed');
+    $stage_for_converted = (int)get_option('stage_for_converted');
+
 
     foreach ($leads as $lead_id => $post) {
     // get all metadata;
@@ -484,26 +490,26 @@ if(!function_exists('get_leads_meta')){
         $lead_specialists = array();
       }
 
-        foreach ($lead_specialists as $user_id => $assigned) {
-          if('yes' === $assigned){
-            $user = get_user_by('id', $user_id);
-            $name =  theme_get_user_name($user);
-            $user_position = get_the_author_meta('user_position', $user->ID);
+      foreach ($lead_specialists as $user_id => $assigned) {
+        if('yes' === $assigned){
+          $user = get_user_by('id', $user_id);
+          $name =  theme_get_user_name($user);
+          $user_position = get_the_author_meta('user_position', $user->ID);
 
-            $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
-            $image =  wp_get_attachment_url( $user_photo_id );
-            $image = ($image) ? $image : DUMMY_ADMIN;
+          $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
+          $image =  wp_get_attachment_url( $user_photo_id );
+          $image = ($image) ? $image : DUMMY_ADMIN;
 
-            array_push($filter_data['team'] , trim($name));
+          array_push($filter_data['team'] , trim($name));
 
-            array_push($specialists , array(
-              'image'    => $image,
-              'user_id'  => $user_id,
-              'name'     => trim($name),
-              'position' => $user_position,
-            ));
-          }
+          array_push($specialists , array(
+            'image'    => $image,
+            'user_id'  => $user_id,
+            'name'     => trim($name),
+            'position' => $user_position,
+          ));
         }
+      }
 
       $meta['lead_specialists'] =  $specialists;
 
@@ -513,21 +519,28 @@ if(!function_exists('get_leads_meta')){
       // add filter, stage, order field to lead
       $leads[$lead_id]->filter_data = $filter_data;
 
-      $stages = get_option('leads_stages');
+      $stages_formatted = [];
 
       if($stages){
         $exists = false;
         $stage = get_post_meta($post->ID, '_lead_stage', true);
 
         foreach ($stages as $st) {
-           $exists = $st['name'] === $stage ? true :  $exists;
+          $exists = $st['name'] === $stage ? true :  $exists;
         }
+
         $leads[$lead_id]->lead_stage  = ($exists)? $stage : $stages[0]['name'];
 
+
       }else{
-        $leads[$lead_id]->lead_stage  = '';
+        $leads[$lead_id]->lead_stage   = '';
       }
 
+      // detect if lead is failed or converted
+
+      $leads[$lead_id]->is_converted = (in_array($leads[$lead_id]->lead_stage, get_converted_stages()) )? 'yes': 'no';
+
+      $leads[$lead_id]->is_failed = ($lead_stage === get_failed_stage_name())? 'yes': 'no';
       $leads[$lead_id]->permalink = esc_url(get_permalink($post));
 
       $order = get_post_meta($post->ID, '_lead_order', true);
@@ -536,6 +549,7 @@ if(!function_exists('get_leads_meta')){
         $leads[$lead_id]->order = $order;
       }
     }
+
     dlog($leads);
     dlog('-------------', false, true);
     return $leads;
@@ -544,6 +558,13 @@ if(!function_exists('get_leads_meta')){
 
 
 if(!function_exists('theme_get_user_name')){
+  /**
+  * Gets user name in format last name + 1st name or user nicename
+  *
+  * @param $user - mixed WP_User or integer
+  *
+  * @return string
+  */
    function theme_get_user_name($user){
      if(is_integer($user)){
       $user = get_user_by('ID', $user);
@@ -621,6 +642,35 @@ if(!function_exists('get_filters_by_leads')){
   }
 }
 
+function get_converted_stages(){
+  $stages              = get_option('leads_stages');
+  $stage_for_failed    = (int)get_option('stage_for_failed');
+  $stage_for_converted = (int)get_option('stage_for_converted');
+
+  $converted_stages = array();
+
+  foreach ($stages as $key => $st) {
+    if((int)$st['number'] >= $stage_for_converted &&  (int)$st['number'] != $stage_for_failed ){
+      $converted_stages[] = $st['name'];
+    }
+  }
+
+  return $converted_stages;
+}
+
+function get_failed_stage_name(){
+  $stages              = get_option('leads_stages');
+  $stage_for_failed    = (int)get_option('stage_for_failed');
+
+  foreach ($stages as $key => $st) {
+    if((int)$st['number'] === $stage_for_failed){
+      return $st['name'];
+    }
+  }
+
+  return false;
+}
+
 if(!function_exists('get_users_leads')){
 
   /**
@@ -635,21 +685,34 @@ if(!function_exists('get_users_leads')){
     $data = array();
     $posistions = array('all');
 
+    $converted_stages = get_converted_stages();
+
     foreach (get_users() as $key => $user) {
       $name = theme_get_user_name($user);
       $user_position = strtolower(get_the_author_meta('user_position', $user->ID));
       $assigned_posts = get_the_author_meta('_leads_assigned', $user->ID);
-      $photo_id = get_the_author_meta('user_photo_id', $user->ID);
 
+      dlog($assigned_posts);
+      $photo_id = get_the_author_meta('user_photo_id', $user->ID);
       $image =  wp_get_attachment_url( $photo_id );
       $image = ($image) ? $image : DUMMY_ADMIN;
 
+      if( !$assigned_posts ){
+        $data[$name] = array(
+          'user_position' => $user_position,
+          'leads'         => array(),
+          'total_leads'   => 0,
+          'converted'     => 0,
+          'image'     => $image ,
+        );
+        continue;
+      }
       // default args fo wp query
       $args = array(
-        'post_type' => velesh_theme_posts::$lead,
-        'post__in'  => $assigned_posts,
+        'post_type'      => velesh_theme_posts::$lead,
+        'post__in'       => $assigned_posts,
         'posts_per_page' => -1,
-        'limit' => -1,
+        'limit'          => -1,
         'date_query' => array(
 
           array(
@@ -681,19 +744,31 @@ if(!function_exists('get_users_leads')){
          unset($args['date_query']);
       }
 
+      $args_converted = $args;
+
       $posts = get_posts($args);
 
+// _lead_stage
+
+      $args_converted['meta_query'] = array('relation' => 'OR');
+
+      foreach (get_converted_stages() as $key => $_stage) {
+        $args_converted['meta_query'][] = array('key' =>'_lead_stage', 'value'=>$_stage);
+      }
 
       if(!in_array($user_position, $posistions)){
         array_push($posistions, $user_position );
       }
 
+
+      $leads_converted = get_posts($args_converted);
+
       $data[$name] = array(
         'user_position' => $user_position,
         'leads'         => get_leads_meta($posts),
         'total_leads'   => count($posts),
-        'converted'     => 0,
-        'image'     => $image ,
+        'converted'     => count($leads_converted),
+        'image'         => $image ,
       );
     }
 
@@ -711,18 +786,38 @@ if(!function_exists('get_users_leads')){
   }
 }
 
-function format_price($val){
-  $pierces = explode('.', $val);
-  $val = preg_replace('/\\D/', '', $pierces[0]);
-  $val = '£'.number_format($val, 2, '.', ',');
-  return $val;
+
+if(!function_exists('format_price')){
+  /**
+  * formats a string to number
+  * users for price steing
+  *
+  * @param $val - string
+  *
+  * @return integer
+  */
+  function format_price($val){
+    $pierces = explode('.', $val);
+    $val = preg_replace('/\\D/', '', $pierces[0]);
+    $val = '£'.number_format($val, 2, '.', ',');
+    return $val;
+  }
 }
 
 
-function price_to_number($price){
-  $pierces = explode('.', $price);
-  $val = preg_replace('/\\D/', '', $pierces[0]);
-  return (float) $val;
+if(!function_exists('price_to_number')){
+  /**
+  * formats a number to a price string
+  *
+  * @param $val - integer
+  *
+  * @return string
+  */
+  function price_to_number($price){
+    $pierces = explode('.', $price);
+    $val = preg_replace('/\\D/', '', $pierces[0]);
+    return (float) $val;
+  }
 }
 
 

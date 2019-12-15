@@ -18,89 +18,17 @@ if ( ! defined( 'ABSPATH' ) ) {
       <span class="range-datepicker__arrow"></span>
     </div><!-- range-datepicker -->
 
-    <div class="select-imitation has-icon select-imitation_shift-bottom" v-bind:class="{ expanded: isExpanded}" id="clinics-select">
-      <svg class="icon svg-icon-clinics">
-        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>
+    <select-imitation-icon _select_name="clinics" ref="clinics" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-      <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-        <option v-for="data in options" v-bind:value="data">{{data}}</option>
-      </select>
+    <select-imitation-icon _select_name="treatments" ref="treatments" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-      <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-      <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-      <div class="select-imitation__dropdown">
-        <ul class="select-imitation__list">
-          <li v-for="data in options" v-bind:class="{selected: isSelected[data]}" v-on:click="imitate_select_option(data)">
-            <span>{{data}}</span>
-          </li>
-        </ul>
-      </div>
-    </div><!-- select-imitation  -->
+    <select-imitation-icon _select_name="campaigns" ref="campaigns" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-    <div class="select-imitation has-icon select-imitation_shift-bottom" id="treatments-select"  v-bind:class="{ expanded: isExpanded}" >
-      <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
-      <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-        <option v-for="data in options" v-bind:value="data">{{data}}</option>
-      </select>
-      <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-      <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-      <div class="select-imitation__dropdown">
-        <ul class="select-imitation__list">
-          <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)">
-            <span>{{data}}</span>
-          </li>
-        </ul>
-      </div>
-    </div><!-- select-imitation  -->
+    <select-imitation-icon _select_name="sourses" ref="sourses" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-    <div class="select-imitation has-icon select-imitation_shift-bottom" id="campaigns-select"  v-bind:class="{ expanded: isExpanded}" >
-      <svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>
-      <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-        <option v-for="data in options" v-bind:value="data">{{data}}</option>
-      </select>
-      <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-      <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-      <div class="select-imitation__dropdown">
-        <ul class="select-imitation__list">
-          <li v-for="data in options"  v-on:click="imitate_select_option(data)"  v-bind:class="{selected: isSelected[data]}" >
-            <span>{{data}}</span>
-          </li>
-        </ul>
-      </div>
-    </div><!-- select-imitation  -->
+    <select-imitation-icon _select_name="team" ref="team" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-    <div class="select-imitation has-icon select-imitation_shift-bottom" id="sourses-select"  v-bind:class="{ expanded: isExpanded}" >
-      <svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>
-      <select v-model="selected" v-on:change="change"  v-bind:class="{ hidden: isHiddenSelect}">
-        <option v-for="data in options" v-bind:value="data">{{data}}</option>
-      </select>
-      <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-      <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-      <div class="select-imitation__dropdown">
-        <ul class="select-imitation__list">
-          <li v-for="data in options" v-bind:class="{selected: isSelected[data]}" v-on:click="imitate_select_option(data)">
-            <span>{{data}}</span>
-          </li>
-        </ul>
-      </div>
-    </div><!-- select-imitation  -->
-
-    <div class="select-imitation has-icon select-imitation_shift-bottom" id="team-select"  v-bind:class="{ expanded: isExpanded}" >
-      <svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>
-
-      <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-        <option v-for="data in options" v-bind:value="data">{{data}}</option>
-      </select>
-      <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-      <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-      <div class="select-imitation__dropdown">
-        <ul class="select-imitation__list">
-          <li v-for="data in options"  v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)">
-            <span>{{data}}</span>
-          </li>
-        </ul>
-      </div>
-    </div><!-- select-imitation  -->
+    <span class="button-filter" v-bind:class="show_filter_clear_btn" v-on:click="resert_filters">Clear Filter</span>
   </div><!-- row -->
 </div><!-- container -->
 
@@ -118,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               <svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
             </i>
             <h4 class="block-title">Total Revenue</h4>
-            <p class="block-value">{{rev}}</p>
+            <p class="block-value">{{revenue}}</p>
             <div class="block-comment">
               <span v-html="icon"></span>
               <span>
@@ -137,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <p class="block-value">{{leads}}</p>
             <div class="block-comment">
                 <svg class="icon svg-icon-refresh"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-refresh"></use> </svg>
-                <span> <span class="encr">{{percents}}</span> Leads <br> converted </span>
+                <span> <span class="encr">{{leads_converted}}</span> Leads <br> converted </span>
              </div>
           </div>
 

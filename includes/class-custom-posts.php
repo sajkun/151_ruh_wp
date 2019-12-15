@@ -814,6 +814,13 @@ class velesh_theme_posts {
           array_push($assigned_posts, $post_id);
         }
 
+        if('no' === $assigned){
+            $assigned_key = array_search($post_id, $assigned_posts);
+            if($assigned_key){
+              array_splice($assigned_posts, $assigned_key, 1);
+            }
+          }
+
         if(!update_user_meta( $user_id, '_leads_assigned', $assigned_posts )){
           add_user_meta( $user_id, '_leads_assigned', $assigned_posts );
         }
@@ -830,14 +837,6 @@ class velesh_theme_posts {
     foreach ($data as $_id => $_d) {
       if(isset($_POST[$_d['name']]) && !empty($_POST[$_d['name']])){
         $new_data = $_POST[$_d['name']];
-
-        if($_d['name'] === 'product_cat'){
-          foreach ($new_data as $key => $term_id) {
-            if(!update_term_meta($term_id, '_special_offer_id', $post_id )){
-              add_term_meta( $term_id, '_special_offer_id', $post_id, true);
-            }
-          }
-        }
 
        if(!update_post_meta($post_id, '_'.$_d['name'] , $new_data)){
           $test = add_post_meta( $post_id, '_'.$_d['name'] , $new_data, $_d['unique'] );
