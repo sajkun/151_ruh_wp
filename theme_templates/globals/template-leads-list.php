@@ -5,15 +5,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <div id="leads-list" ref="parent">
+
+  <input type="hidden" id="user_name" name="user_name" value="<?php echo $user_name?>">
+  <input type="hidden" id="user_id" name="user_id" value="<?php echo $user_id?>">
+
   <div class="spacer-h-40" ref="spacer1"></div>
   <div class="container-fluid filter-container" ref="container_filter">
      <div class="row no-gutters justify-content-start justify-content-center-lg switchers" id="leads-filters">
 
-      <div class="alert"  v-show="alarms.total>0">
+      <div class="alert"  v-bind:class="alarms.class">
         <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
 
         <span class="alert__count">{{alarms.total}}</span>
-        <span class="alert__tag overdue" v-show="alarms.overdue>0">{{alarms.overdue}} Ovderdue</span>
+        <span class="alert__tag overdue" v-bind:class="alarms.class_overdue">{{alarms.overdue}} Ovderdue</span>
 
         <div class="checkbox-imitation inline">
           <label>
@@ -42,15 +46,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <select-imitation-icon _select_name="team" ref="team" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-      <span class="button-filter" v-if="show_filter_clear_btn" v-on:click="resert_filters">Clear Filter</span>
+      <span class="button-filter" v-bind:class="show_filter_clear_btn" v-on:click="resert_filters">Clear Filter</span>
     </div><!-- row -->
   </div><!-- container-fluid -->
 
   <div class="spacer-h-40" ref="spacer2"></div>
 
   <div class="container-fluid leads-container" ref="container_leads">
-    <div class="horizontal-scroll" v-min-height="scroll_height" ref="horizontal_scroll">
-      <div class="row no-gutters justify-content-center-xxl">
+
+    <div class="horizontal-scroll" v-min-height="get_scroll_height" ref="horizontal_scroll">
+      <div class="row no-gutters">
 
         <?php
         // clog($stages);
@@ -74,16 +79,23 @@ if ( ! defined( 'ABSPATH' ) ) {
                   <li v-for="data in leads_filtered['<?php echo $st['name'] ?>']" v-bind:key="data.post_id">
                     <a :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>">
                        <div class="clearfix">
-                         <span class="lead-preview__name">{{data.name}}</span>
-                         <span class="lead-preview__icons">
+                        <div class="row justify-content-start">
+                          <div class="col-7">
+                           <span class="lead-preview__name">{{data.name}}</span>
+                           <span class="lead-preview__icons">
 
-                          <svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="12" height="12" viewBox="0 0 12 12"><g><g><g><path fill="#2196f3" d="M6 0C2.691 0 0 2.691 0 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6z"/></g><g><path fill="#fafafa" d="M8.85 4.803l-3.319 3.06a.532.532 0 0 1-.36.137.532.532 0 0 1-.362-.138l-1.66-1.53a.444.444 0 0 1 0-.665.541.541 0 0 1 .723 0L5.17 6.864l2.958-2.726a.541.541 0 0 1 .722 0c.2.184.2.481 0 .665z"/></g></g></g></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="12" height="12" viewBox="0 0 12 12"><g><g><g><path fill="#2196f3" d="M6 0C2.691 0 0 2.691 0 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6z"/></g><g><path fill="#fafafa" d="M8.85 4.803l-3.319 3.06a.532.532 0 0 1-.36.137.532.532 0 0 1-.362-.138l-1.66-1.53a.444.444 0 0 1 0-.665.541.541 0 0 1 .723 0L5.17 6.864l2.958-2.726a.541.541 0 0 1 .722 0c.2.184.2.481 0 .665z"/></g></g></g></svg>
 
-                          <svg class="icon svg-icon-bell" v-if="data.reminder != '' && data.overdue == 'yes'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+                            <svg class="icon svg-icon-bell" v-if="data.reminder != '' && data.overdue == 'yes'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
 
-                          <svg class="icon svg-icon-bell green" v-if="data.reminder != '' && data.overdue == 'no'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
-                         </span>
-                         <span class="lead-preview__time">{{data.time_passed}}</span>
+                            <svg class="icon svg-icon-bell green" v-if="data.reminder != '' && data.overdue == 'no'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+                           </span>
+                          </div>
+
+                          <div class="col-5">
+                           <span class="lead-preview__time" v-bind:title="data.time_passed">{{data.time_passed}}</span>
+                          </div>
+                        </div>
                        </div>
 
                        <div class="clearfix">

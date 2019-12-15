@@ -237,7 +237,7 @@ if(!function_exists('include_php_from_dir')){
 
 
 
-if(!function_exists('exec_upload')){
+if(!function_exists('exec_upload_file')){
   /**
   * Process an uploading of a file
   *
@@ -247,129 +247,119 @@ if(!function_exists('exec_upload')){
   *
   * @return Array || false
   */
-  function exec_upload($file_name , $nonce_post ='', $nonce =''  ){
+  function exec_upload_file($file_name , $nonce_post ='', $nonce =''  ){
 
     dlog('exec_upload ' .  $file_name , true, false, 'exec_upload');
 
-    // if( (isset($_FILES[$file_name]) && $_FILES[$file_name]['error'] !== 4 && wp_verify_nonce( $_POST[$nonce_post], $nonce ) ) ){
+    if ( ! function_exists( 'wp_handle_upload' ) )
+      include_once( ABSPATH . 'wp-admin/includes/file.php' );
 
-      if ( ! function_exists( 'wp_handle_upload' ) )
-        include_once( ABSPATH . 'wp-admin/includes/file.php' );
+    // global $upload_exeptions;
 
-      global $upload_exeptions;
+    $upload_exeptions = array(
+      'error' => array(),
+      'success' => array(),
+      'info' => array(),
+    );
 
-      if(!$upload_exeptions){
-        $upload_exeptions = array(
-          'error' => array(),
-          'success' => array(),
-          'info' => array(),
-        );
+    try {
+      $file      = & $_FILES[$file_name];
+      $dir       = wp_upload_dir();
+      $overrides = [ 'test_form' => false ];
+
+      dlog('file: ');
+      dlog($file);
+
+
+     /**
+     * check for errors on uploading file
+     *
+     */
+     switch($file['error']){
+        case 8:
+          throw new Exception('UPLOAD_ERR_EXTENSION');
+         break;
+        case 7:
+          throw new Exception('Failed to load file, error 7, UPLOAD_ERR_CANT_WRITE');
+          break;
+        case 6:
+          throw new Exception('Destination folder was not found, error 6, UPLOAD_ERR_NO_TMP_DIR ');
+          break;
+        case 4:
+          return;
+          throw new Exception('No file was loaded, error 4, UPLOAD_ERR_NO_FILE');
+          break;
+        case 3:
+          throw new Exception('Files was recived partially, error 3, "UPLOAD_ERR_PARTIAL"');
+          break;
+        case 2:
+          throw new Exception('Files size exceedes form limit, error 2, "UPLOAD_ERR_FORM_SIZE"' );
+          break;
+        case 1:
+          throw new Exception('Files size exceedes max file size, error 1, "UPLOAD_ERR_INI_SIZE"');
+          break;
+     }
+
+     // if((int)$file['size'] > $limit){
+     //    throw new Exception('Files size exceedes max file size, error 1, "UPLOAD_ERR_INI_SIZE"');
+     //  }
+
+      $allowed  = ['image/jpg', 'image/jpeg', 'image/png', 'application/pdf'];
+
+      if(!in_array($file['type'],  $allowed )){
+        throw new Exception('Wrong file extension. Tried to upload <b>' . $file['type'] . '</b> file. Only jpg, jpeg, png, pdf are allowed');
       }
 
-      try {
-        $file      = & $_FILES[$file_name];
-        $dir       = wp_upload_dir();
-        $overrides = [ 'test_form' => false ];
+      add_filter('upload_dir', 'my_upload_dir');
 
-        dlog('file: ');
-        dlog($file);
+      $file_loaded = wp_handle_upload( $file, $overrides );
 
-
-       /**
-       * check for errors on uploading file
-       *
-       */
-       switch($file['error']){
-          case 8:
-            throw new Exception('UPLOAD_ERR_EXTENSION');
-           break;
-          case 7:
-            throw new Exception('Failed to load file, error 7, UPLOAD_ERR_CANT_WRITE');
-            break;
-          case 6:
-            throw new Exception('Destination folder was not found, error 6, UPLOAD_ERR_NO_TMP_DIR ');
-            break;
-          case 4:
-            return;
-            throw new Exception('No file was loaded, error 4, UPLOAD_ERR_NO_FILE');
-            break;
-          case 3:
-            throw new Exception('Files was recived partially, error 3, "UPLOAD_ERR_PARTIAL"');
-            break;
-          case 2:
-            throw new Exception('Files size exceedes form limit, error 2, "UPLOAD_ERR_FORM_SIZE"' );
-            break;
-          case 1:
-            throw new Exception('Files size exceedes max file size, error 1, "UPLOAD_ERR_INI_SIZE"');
-            break;
-       }
-
-       // if((int)$file['size'] > $limit){
-       //    throw new Exception('Files size exceedes max file size, error 1, "UPLOAD_ERR_INI_SIZE"');
-       //  }
-
-        $allowed  = ['image/jpg', 'image/jpeg', 'image/png', 'application/pdf'];
-        if(!in_array($file['type'],  $allowed )){
-          throw new Exception('Wrong file extension. Tried to upload <b>' . $file['type'] . '</b> file. Only jpg, jpeg, png, pdf are allowed');
-        }
-        add_filter('upload_dir', 'my_upload_dir');
-
-        $file_loaded = wp_handle_upload( $file, $overrides );
-
-        if( isset($file_loaded['error'])){
-           throw new Exception('Failed to load. '. $file_loaded['error']);
-        }
-
-        dlog( "wp load processed");
-        dlog( $file_loaded );
-
-
-        $p = explode('/', $file_loaded['file']);
-        $file_name = end($p);
-        $file_name_parts = explode('.', $file_name);
-        $file_resolution = end($file_name_parts);
-        $file_resolution_check = strtolower($file_resolution);
-
-
-        dlog('file type: ' . $file_resolution);
-
-        if($file['type'] === 'image/png' || $file['type'] === 'image/jpg' || $file['type'] === 'image/jpeg'  ){
-          $search     = '.'.$file_resolution;
-          $replace    = '_thumb.'.$file_resolution;
-          $thumb_name = str_replace($search, $replace, $file_name);
-          $upload_file_path = str_replace($file_name, $thumb_name, $file_loaded['file']);
-
-          create_thmb( $file_loaded ['file'], $upload_file_path );
-          $file_loaded['thumb_upload_url'] = str_replace($dir['basedir'], '', $upload_file_path);
-        } else {
-          $file_loaded['thumb_upload_url'] = THEME_URL. '/images/'. $file_resolution .'-icon.png';
-        }
-
-        remove_filter('upload_dir', 'my_upload_dir');
-
-        $upload_exeptions['success'][] = 'Upload of the file ' . $file['name'] . ' was completed successfully';
-
-        dlog('exec_upload finished successfully', false, true);
-
-        return array(
-          'file' => $file,
-          'file_loaded' => $file_loaded,
-        ) ;
-      } catch(Exception $ex){
-        dlog($ex->getMessage());
-        $upload_exeptions['error'][] = $ex->getMessage();
-        dlog('exec_upload finished with error', false, true);
+      if( isset($file_loaded['error'])){
+         throw new Exception('Failed to load. '. $file_loaded['error']);
       }
-    // }else{
 
-    //  if(!isset($_FILES[$file_name])){
-    //   dlog('Files was not uploaded', false, true);
-    //  } elseif (!wp_verify_nonce( $_POST[$nonce_post], $nonce ) ){
-    //   dlog('Nonce check failed', false, true);
-    //  }
+      dlog( "wp load processed");
+      dlog( $file_loaded );
 
-    //   return false;
-    // }
+
+      $p = explode('/', $file_loaded['file']);
+      $file_name = end($p);
+      $file_name_parts = explode('.', $file_name);
+      $file_resolution = end($file_name_parts);
+      $file_resolution_check = strtolower($file_resolution);
+
+
+      dlog('file type: ' . $file_resolution);
+
+      if($file['type'] === 'image/png' || $file['type'] === 'image/jpg' || $file['type'] === 'image/jpeg'  ){
+        $search     = '.'.$file_resolution;
+        $replace    = '_thumb.'.$file_resolution;
+        $thumb_name = str_replace($search, $replace, $file_name);
+        $upload_file_path = str_replace($file_name, $thumb_name, $file_loaded['file']);
+
+        // create_thmb( $file_loaded ['file'], $upload_file_path );
+        $file_loaded['thumb_upload_url'] = str_replace($dir['basedir'], '', $upload_file_path);
+      } else {
+        $file_loaded['thumb_upload_url'] = THEME_URL. '/images/'. $file_resolution .'-icon.png';
+      }
+
+      remove_filter('upload_dir', 'my_upload_dir');
+
+      $upload_exeptions['success'][] = 'Upload of the file ' . $file['name'] . ' was completed successfully';
+
+      dlog('exec_upload finished successfully', false, true);
+
+      return array(
+        'file' => $file,
+        'file_loaded' => $file_loaded,
+      ) ;
+    } catch(Exception $ex){
+      dlog($ex->getMessage());
+      $upload_exeptions['error'][] = $ex->getMessage();
+      dlog('exec_upload finished with error', false, true);
+    }
+
+    return $upload_exeptions;
 
   }
 }
@@ -465,7 +455,16 @@ if(!function_exists('get_leads_meta')){
         'lead_stage'            => get_post_meta($post->ID, '_lead_stage', true),
       );
 
-      $meta['patient_data']['sourse'] =  $sourses[$meta['patient_data']['sourse']];
+      if(!$meta['patient_data']){
+        $meta['patient_data'] = array();
+      }
+
+      if(!$meta['patient_data']['sourse']){
+        $meta['patient_data']['sourse'] = '';
+      }else{
+        $meta['patient_data']['sourse'] =  $sourses[$meta['patient_data']['sourse']];
+      }
+
 
       //prepare data for filtering
       $filter_data = array(
@@ -481,27 +480,30 @@ if(!function_exists('get_leads_meta')){
       $lead_specialists  = get_post_meta($post->ID, '_lead_specialists', true);
       $specialists       = array();
 
-
-      foreach ($lead_specialists as $user_id => $assigned) {
-        if('yes' === $assigned){
-          $user = get_user_by('id', $user_id);
-          $name =  theme_get_user_name($user);
-          $user_position = get_the_author_meta('user_position', $user->ID);
-
-          $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
-          $image =  wp_get_attachment_url( $user_photo_id );
-          $image = ($image) ? $image : DUMMY_ADMIN;
-
-          array_push($filter_data['team'] , trim($name));
-
-          array_push($specialists , array(
-            'image'    => $image,
-            'user_id'  => $user_id,
-            'name'     => trim($name),
-            'position' => $user_position,
-          ));
-        }
+      if(!$lead_specialists){
+        $lead_specialists = array();
       }
+
+        foreach ($lead_specialists as $user_id => $assigned) {
+          if('yes' === $assigned){
+            $user = get_user_by('id', $user_id);
+            $name =  theme_get_user_name($user);
+            $user_position = get_the_author_meta('user_position', $user->ID);
+
+            $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
+            $image =  wp_get_attachment_url( $user_photo_id );
+            $image = ($image) ? $image : DUMMY_ADMIN;
+
+            array_push($filter_data['team'] , trim($name));
+
+            array_push($specialists , array(
+              'image'    => $image,
+              'user_id'  => $user_id,
+              'name'     => trim($name),
+              'position' => $user_position,
+            ));
+          }
+        }
 
       $meta['lead_specialists'] =  $specialists;
 
@@ -708,3 +710,38 @@ if(!function_exists('get_users_leads')){
 
   }
 }
+
+function format_price($val){
+  $pierces = explode('.', $val);
+  $val = preg_replace('/\\D/', '', $pierces[0]);
+  $val = '£'.number_format($val, 2, '.', ',');
+  return $val;
+}
+
+
+function price_to_number($price){
+  $pierces = explode('.', $price);
+  $val = preg_replace('/\\D/', '', $pierces[0]);
+  return (float) $val;
+}
+
+
+if(!function_exists('my_upload_dir')){
+
+  /**
+  * modifies upload url and path
+  *
+  * @param $upload - array
+  */
+  function my_upload_dir($upload) {
+
+    $upload['subdir'] = '/documents' . $upload['subdir'];
+
+    $upload['path']   = $upload['basedir'] . $upload['subdir'];
+
+    $upload['url']    = $upload['baseurl'] . $upload['subdir'];
+
+    return $upload;
+  }
+}
+

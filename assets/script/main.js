@@ -58,11 +58,20 @@ function str_replace(needle, highstack){
     }
     return template;
 }
+
+
+function goBack() {
+  window.history.back();
+}
 jQuery('.search-open').click(function(){
   jQuery('.search__wrapper').toggleClass('shown');
 });
 jQuery(document).ready(function(){
     jQuery('.reminder input').datetimepicker({
+      format:'M d Y H:i',
+    });
+
+    jQuery('.datepicker').datetimepicker({
       format:'M d Y H:i',
     });
 });
@@ -604,6 +613,19 @@ if('undefined' !== typeof(is_dashboard)){
 
       // fire trigger to save changes in backend
       jQuery(document.body).trigger('save_dragged_item', {post_id: post_id, list_id: list_id})
+
+      var user_name = jQuery('#user_name').val();
+      var user_id = jQuery('#user_id').val();
+
+      jQuery(document.body).trigger('update_lead_log', {
+        post_id: post_id,
+        list_id_prev: list_id_prev,
+        list_id_new: list_id,
+        user_name: user_name ,
+        user_id:   user_id ,
+        event: 'stage_changed'
+      });
+
       console.groupEnd('---');
     });
   });
@@ -628,7 +650,6 @@ function equal_list_heights(){
 
 jQuery(document.body).on('update_items_order', function(e, data){
   console.groupCollapsed('update_items_order');
-
 
   var data_post = {
     action : 'update_leads_order',
@@ -655,7 +676,6 @@ jQuery(document.body).on('update_items_order', function(e, data){
       console.log('error');
       console.log(errorThrown);
       console.groupEnd();
-
      }
   });
 
@@ -672,7 +692,51 @@ jQuery(document.body).on('save_dragged_item', function(e, data){
     data_post[id] = data[id];
   };
 
-  console.log(data_post);
+  jQuery.ajax({
+    url: WP_URLS.wp_ajax_url,
+    type: 'POST',
+    dataType: 'json',
+    data: data_post,
+    complete: function(xhr, textStatus) {
+      //called when complete
+    },
+
+    success: function(data, textStatus, xhr) {
+      console.log(data);
+      console.groupEnd('---');
+    },
+
+    error: function(xhr, textStatus, errorThrown) {
+      console.log('error');
+      console.log(errorThrown);
+      console.groupEnd('---');
+     }
+  });
+})
+
+jQuery(document.body).on('update_lead_log', function(e, data){
+  console.groupCollapsed('update lead log');
+
+  var data_post = {
+    action : 'update_leads_log',
+  };
+
+  for(id in data){
+    data_post[id] = data[id];
+  };
+
+
+  var date = new Date();
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May','Jun', 'Jul', 'Aug', "Sep", 'Oct', "Nov", "Dec"];
+
+  var date_formatted = months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' at ' + date.getHours() + ':' + date.getMinutes();
+
+  data_post.date_formatted = date_formatted;
+
+  var minutes =  (date.getMinutes() < 10)?  '0' + date.getMinutes():  date.getMinutes();
+
+  data_post.date = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' +date.getDate()+ ' ' + date.getHours() + ':' + minutes;
+
 
   jQuery.ajax({
     url: WP_URLS.wp_ajax_url,
@@ -1053,7 +1117,10 @@ var date_difference = {
 var vue_select_components = [];
 var select_imitation;
 var select_imitation_icon;
-select_imitation = Vue.component('select-imitation', {
+var input_field;
+var datepicker_field;
+var wait_block;
+var select_mixin = {
   data: function () {
     return {
       select_name : this._select_name,
@@ -1077,7 +1144,6 @@ select_imitation = Vue.component('select-imitation', {
   },
 
   created: function(){
-    this.$emit('update_list', this.selected);
   },
 
   mounted:function(){
@@ -1085,7 +1151,7 @@ select_imitation = Vue.component('select-imitation', {
 
   methods: {
     change: function(){
-      this.$emit('update_list', this.selected);
+      this.$emit('update_list', {val: this.selected, name: this.select_name});
     },
 
     // toggles state of expanded list initation
@@ -1130,6 +1196,19 @@ select_imitation = Vue.component('select-imitation', {
     set_value: function(key, value){
       this[key] = value;
       this.$emit('update_list', { val :this.selected, name: this.select_name});
+
+
+      if(key === 'options'){
+        var vm = this;
+        var select = vm.$el.getElementsByClassName( 'select-imitation__dropdown' )[0].getElementsByClassName( 'select-imitation__list' )[0];
+          vm.$el.setAttribute("style", "width: auto");
+
+          Vue.nextTick(function() {
+          var width = select.clientWidth;
+
+          vm.$el.setAttribute("style", "width:" + (width + 62) + 'px');
+        });
+      }
     },
 
     // gets value of a select
@@ -1142,105 +1221,93 @@ select_imitation = Vue.component('select-imitation', {
       return this.select_name;
     }
   },
+}
+select_imitation = Vue.component('select-imitation', {
+
+  mixins: [select_mixin],
 
   template: '<div class="select-imitation" v-bind:class="{ expanded: isExpanded}" > <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="data in options" v-bind:value="data">{{data}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)"> <span>{{data}}</span> </li> </ul> </div> </div>',
 })
 select_imitation_icon = Vue.component('select-imitation-icon', {
+  mixins: [select_mixin],
+
   data: function () {
     return {
       icon : this._icon,
-      select_name : this._select_name,
-      options: this._options,
-      selected:this._selected,
-      isExpanded: this._isExpanded,
-      isSelected: this._isSelected,
-      isHiddenSelect: this._isHiddenSelect,
-      isHiddenImitation: this._isHiddenImitation,
     }
   },
 
   props:{
-    _select_name : String,
-    _options: Array,
-    _selected: String,
-    _isExpanded: String,
-    _isSelected: Array,
-    _isHiddenSelect: Boolean,
-    _isHiddenImitation: Boolean,
     _icon: String,
   },
 
-  created: function(){
-    this.$emit('update_list', this.selected);
-  },
-
-  mounted:function(){
-  },
-
-  methods: {
-    change: function($event){
-      this.$emit('update_list', { val :this.selected, name: this.select_name});
-    },
-
-    // toggles state of expanded list initation
-    expand_select: function(){
-       discard_selects();
-       collapse_filters('');
-       collapse_top_lists('');
-       this.isExpanded = 'expanded';
-    },
-
-    // toggles select in expanded dropdown
-    update_selected_option: function(){
-      for(id in this.options){
-        this.isSelected[this.options[id]] = false;
-      }
-
-      this.isSelected[this.selected] = true;
-    },
-
-    // changes data on option click
-    imitate_select_option: function(value){
-      this.selected = value;
-      this.isExpanded = '';
-      this.update_selected_option();
-      this.change();
-    },
-
-     // closes select
-    discard_select:function(){
-      this.isExpanded = '';
-    },
-
-     // updates options of a select
-    update_options: function(options){
-      this.options = options;
-      this.selected = options[0];
-      this.isExpanded = '';
-      this.update_selected_option();
-    },
-
-    // sets value for a select
-    set_value: function(key, value){
-      this[key] = value;
-      if(key === 'selected'){
-        this.$emit('update_list', { val :this.selected, name: this.select_name});
-      }
-    },
-
-    // gets value of a select
-    get_value: function(){
-      return this.selected;
-    },
-
-    // gets name of a select
-    get_name: function(){
-      return this.select_name;
-    }
-  },
 
   template: '<div class="select-imitation has-icon select-imitation_shift-bottom" v-bind:class="{ expanded: isExpanded}" > <span v-html="icon"></span> <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="data in options" v-bind:value="data">{{data}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)"> <span>{{data}}</span> </li> </ul> </div> </div>',
 })
+
+datepicker_field = Vue.component('datepicker', {
+  data: function () {
+    return {
+      name:  this._name,
+      value : this._value,
+    }
+  },
+
+  props:['_value', '_name'],
+
+  mounted: function(){
+    this.$emit('input_value_changed', {name: this.name, val: this.value});
+    var vm = this;
+
+    jQuery(vm.$el).datetimepicker({
+      format:'M d Y H:i',
+
+      onClose:function(dp,$input){
+        vm.value = $input.val();
+        vm.$emit('input_value_changed', {name: vm.name, val: vm.value});
+      }
+    });
+  },
+
+  methods:{
+    input: function(){
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    }
+  },
+
+  template : '<input type="text" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" >',
+});
+input_field = Vue.component('input-field', {
+  data: function () {
+    return {
+      type: (this._type)? this._type : 'text',
+      name:  this._name,
+      value : this._value,
+      readonly : this._readonly,
+      placeholder : (this._placeholder)? this._placeholder : 'Add',
+    }
+  },
+
+  props:['_value', '_name', '_readonly', '_placeholder', '_type'],
+
+  mounted: function(){
+    this.$emit('input_value_changed', {name: this.name, val: this.value});
+  },
+
+  methods:{
+    input: function(){
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    },
+
+    set_value:function(val){
+      this.value = val;
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    }
+  },
+
+  template : '<input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="leads-block__input":readonly="readonly == 1">',
+
+});
 
 var vue_selects = {};
 var vue_dashboard_totals;
@@ -1610,6 +1677,7 @@ var icons_selects = {
 var overdue_timeout;
 
 Vue.directive('min-height', {
+
   componentUpdated: function (el, binding, vnode) {
     el.setAttribute("style", "min-height:" +binding.value + 'px');
   },
@@ -1621,7 +1689,7 @@ if('undefined' !== typeof(is_lead_list)){
     el: '#leads-list',
 
     data:{
-      height: 0,
+      height_value: 0,
       scroll_height: 0,
 
       overdue_checked: false,
@@ -1660,6 +1728,10 @@ if('undefined' !== typeof(is_lead_list)){
             return 0;
           }
         }
+      },
+
+      get_scroll_height: function(){
+        return this.scroll_height;
       },
 
       get_leads_total: function(){
@@ -1704,6 +1776,7 @@ if('undefined' !== typeof(is_lead_list)){
             var lead     = this.leads[column_name][id];
             var is_match = true;
 
+            // apply filter
             for(filter_id in filters){
               switch(typeof(lead.filter_data[filter_id])){
                 case 'object':
@@ -1716,6 +1789,7 @@ if('undefined' !== typeof(is_lead_list)){
               }
             }
 
+            // apply search
             if(this.search_value){
               var search_match = false;
 
@@ -1728,6 +1802,11 @@ if('undefined' !== typeof(is_lead_list)){
               }
 
               is_match = search_match && is_match;
+            }
+
+            //apply overdue
+            if(this.overdue_checked){
+              is_match = is_match && lead.reminder;
             }
 
 
@@ -1745,7 +1824,8 @@ if('undefined' !== typeof(is_lead_list)){
         for(var filter_name in this.filters){
           show = (this.filters[filter_name].search('All') !== 0)? true: show;
         }
-        return show;
+
+        return show ? '' : 'visuallyhidden';
       },
 
       alarms: function(){
@@ -1764,40 +1844,35 @@ if('undefined' !== typeof(is_lead_list)){
           this.overdue_checked = false;
         }
 
-        return {total: alarms, overdue: overdue};
+        return {
+           total: alarms,
+           overdue: overdue,
+           class: (alarms > 0)? '' : 'visuallyhidden',
+           class_overdue: (overdue > 0)? '' : 'visuallyhidden',
+         };
       },
     },
 
     watch:{
       overdue_checked: function(show){
-        if(overdue_timeout){
-          clearTimeout(overdue_timeout);
-        }
-
-        if(show){
-          jQuery('.lead-preview[data-overdue=no]').css({'opacity': 0});
-          overdue_timeout = setTimeout(function(){
-            jQuery('.lead-preview[data-overdue=no]').slideUp();
-          },300)
-        }else{
-          jQuery('.lead-preview[data-overdue=no]').slideDown();
-          overdue_timeout = setTimeout(function(){
-            // jQuery('.lead-preview[data-overdue=no]').slideUp();
-            jQuery('.lead-preview').css({'opacity': 1});
-          },300)
-        }
       }
     },
 
     mounted: function(){
       console.groupCollapsed('vue inits list');
-      window.addEventListener('resize', this.handleResize);
-      this.handle_resize();
-      this.init_filters();
+      var vm = this;
+      vm.init_filters();
+
+      Vue.nextTick(function() {
+        vm.handle_resize();
+      });
+
+      window.addEventListener('resize', this.handle_resize);
+
       var leads = parse_leads.construct();
       _leads = leads.get_leads_for_list();
-      this.update_leads(_leads);
-      console.log(this.leads);
+      vm.update_leads(_leads);
+      console.log(vm.leads);
       console.groupEnd('---');
      },
 
@@ -1809,10 +1884,13 @@ if('undefined' !== typeof(is_lead_list)){
         this.$refs.horizontal_scroll.setAttribute("style", "min-height:0");
 
         //calculate element height
-        this.height = this.$el.clientHeight;
+        this.height_value = this.$refs.parent.clientHeight;
+
 
         //calculate scroll-block height
-        this.scroll_height = this.height - this.$refs.spacer1.clientHeight - this.$refs.spacer2.clientHeight - this.$refs.container_filter.clientHeight;
+        this.scroll_height = this.height_value - this.$refs.spacer1.clientHeight - this.$refs.spacer2.clientHeight - this.$refs.container_filter.clientHeight;
+
+        this.$forceUpdate();
 
         console.log('Scroll area height:' + this.scroll_height);
         console.groupEnd('----');
@@ -1864,7 +1942,7 @@ if('undefined' !== typeof(is_lead_list)){
       //changes filters values
       run_filter_list: function(select_value){
         if(select_value){
-          console.log('leads were filtered: ' + select_value.name + ' = '+select_value.val);
+          console.log('leads were filtered: ' + select_value.name + ' = ' +  select_value.val);
           this.filters[select_value.name] = select_value.val;
         }
       },
@@ -1951,6 +2029,312 @@ function exists_in_object(obj, search){
 
   return found;
 }
+if('undefined' !== typeof(is_single_lead)){
+  var single_lead = new Vue({
+    el: '#single-lead',
+
+    data: {
+      patient_data: {},
+      treatment_value: {},
+      treatment_coordinator: {},
+      lead_data: {},
+      notes: [],
+      files: [],
+      logs:  [],
+      note_text: '',
+      reminder: '',
+      new_file: '',
+      save_text: 'Save Changes',
+      requre_save : false,
+    },
+
+    computed:{
+      file_is_prepared: function(){
+        return this.new_file.length > 0
+      },
+
+      files_updated: function(){
+        return this.files;
+      },
+
+      is_requre_save: function(){
+        return this.requre_save;
+      },
+
+      get_logs: function(){
+        return this.logs;
+      },
+    },
+
+    watch: {
+      note_text: function(){
+        this.$refs.note_textarea.style.height = '';
+        this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+      },
+    },
+
+    created: function(){
+
+    },
+
+    mounted: function(){
+      this.notes = lead_notes;
+      this.files = lead_files;
+      this.logs  = lead_logs;
+
+       props =  {
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+        };
+
+        if(jQuery(window).width()< 768){
+          props.isHiddenSelect = false;
+          props.isHiddenImitation =  true;
+        }
+
+        props.options = ['--Select--', 'Live Chat', 'Instagram', 'Google PPC', 'Website', 'Phone', "Walk In", "Other"];
+
+        for( id in props){
+          this.$refs['sourse_select'].set_value(id, props[id]);
+        }
+
+        vue_select_components.push(this.$refs['sourse_select']);
+    },
+
+    methods: {
+
+      save_lead_meta: function(key_meta, key_this){
+        wait_block.show();
+        var vm = this;
+
+        if(typeof(key_meta) !== 'string'){
+          var meta = {
+            patient_data          : this.patient_data,
+            treatment_value       : this.treatment_value,
+            treatment_coordinator : this.treatment_coordinator,
+            lead_notes            : this.notes,
+            reminder              : this.reminder,
+          };
+        }else{
+          var  meta = {};
+          meta[key_meta] = this[key_this];
+        }
+
+        var data = {
+          meta: meta,
+          action                : 'update_lead_meta',
+          lead_data             : this.lead_data,
+          nonce                 : jQuery('[name=lead_data]').val(),
+        };
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+             wait_block.hide();
+          },
+
+          success: function(data, textStatus, xhr) {
+            console.log(data);
+            vm.$refs.lead_id_input.set_value(data.post_id);
+          },
+
+          error: function(xhr, textStatus, errorThrown) {
+            if(xhr.status === 418){
+              var response_text = JSON.parse(xhr.responseText);
+              alert(response_text.data[0]);
+            }else{
+              alert(xhr.status + ' ' +errorThrown);
+            }
+          }
+        })
+      },
+
+      update_lead: function(data, key){
+        if('object' === typeof(data)){
+          if('object' === typeof(this[key])){
+            this[key][data.name] = data.val;
+          }
+          if('string' === typeof(this[key])){
+            this[key] = data.val;
+          }
+
+          this.requre_save = true;
+        }
+      },
+
+      do_delete_or_return: function(url){
+
+        wait_block.show();
+
+        if(parseInt(this.lead_data.lead_id) < 0){
+          wait_block.hide();
+          location.href = url;
+        }else{
+          var data = {
+            action  : 'delete_lead',
+            lead_id : parseInt(this.lead_data.lead_id),
+            nonce   : jQuery('[name=lead_data]').val(),
+            url     : url,
+          };
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+             wait_block.hide();
+          },
+
+          success: function(data, textStatus, xhr) {
+            console.log(data);
+            if('undefined' != typeof(data.redirect)){
+              location.href = data.redirect;
+            }
+          },
+
+          error: function(xhr, textStatus, errorThrown) {
+            if(xhr.status === 418){
+              var response_text = JSON.parse(xhr.responseText);
+              alert(response_text.data[0]);
+            }else{
+              alert(xhr.status + ' ' +errorThrown);
+            }
+          }
+        })
+        }
+      },
+
+      add_note: function(){
+        if(!this.note_text){
+          alert('Please enter some text');
+          return false;
+        }
+
+        this.requre_save = true;
+
+        var date = new Date();
+
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May','Jun', 'Jul', 'Aug', "Sep", 'Oct', "Nov", "Dec"];
+
+        var minutes =  (date.getMinutes() < 10)?  '0' + date.getMinutes():  date.getMinutes();
+
+        var date_formatted = months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' at ' + date.getHours() + ':' + minutes;
+
+        var new_note = {
+          'date'      : date_formatted,
+          'user_name' : this.lead_data.user_name,
+          'text'      : this.note_text,
+        };
+
+        this.notes.push(new_note);
+        this.note_text = '';
+        this.$refs.note_textarea.style.height = '';
+
+        this.save_lead_meta('lead_notes', 'notes');
+      },
+
+      load_file: function(){
+        console.log('load_file');
+
+        wait_block.show();
+
+        var file_pierces = this.$refs.file_input.value.split('\\');
+        var file_name = file_pierces[file_pierces.length-1];
+        var file = jQuery(this.$refs.file_input).prop('files')[0];
+        var fd   = new FormData();
+
+        var vm = this;
+
+        fd.append('file',file);
+        fd.append('lead_id',this.lead_data.lead_id);
+        fd.append('user_name',this.lead_data.user_name);
+        fd.append('action', 'upload_new_document');
+        fd.append('file_nonce',jQuery('[name=file_nonce]').val());
+        fd.append('_wp_http_referer',jQuery('[name=_wp_http_referer]').val());
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          processData: false,
+          contentType: false,
+          data: fd,
+
+          complete: function(xhr, textStatus) {
+            single_lead.new_file = '';
+            wait_block.hide();
+          },
+
+          success: function(data, textStatus, xhr) {
+            console.log(data);
+            vm.files.push(data.file_data);
+          },
+
+          error: function(xhr, textStatus, errorThrown) {
+            if(xhr.status === 418){
+              var response_text = JSON.parse(xhr.responseText);
+              alert(response_text.data[0]);
+            }else{
+              alert(xhr.status + ' ' +errorThrown);
+            }
+           }
+        })
+      },
+
+      remove_file: function(file_id){
+        var vm = this;
+
+        if(window.confirm("Confirm deleting file " + this.files[file_id].name)){
+
+          var file_data = vm.files[file_id];
+
+          vm.files.splice(file_id, 1);
+
+          var data = {
+            file_data: file_data,
+            lead_id: vm.lead_data.lead_id,
+            user_name: vm.lead_data.user_name,
+            action: 'delete_file_from_lead',
+          };
+
+          jQuery.ajax({
+            url: WP_URLS.wp_ajax_url,
+            type: 'POST',
+            data: data,
+
+            complete: function(xhr, textStatus) {
+
+            },
+
+            success: function(data, textStatus, xhr) {
+              console.log(data);
+            },
+
+            error: function(xhr, textStatus, errorThrown) {
+              if(xhr.status === 418){
+                var response_text = JSON.parse(xhr.responseText);
+                alert(response_text.data[0]);
+              }else{
+                alert(xhr.status + ' ' +errorThrown);
+              }
+            }
+          })
+        }
+      },
+
+      file_changed: function(){
+        var file_pierces = this.$refs.file_input.value.split('\\');
+        var file_name = file_pierces[file_pierces.length-1];
+        this.new_file = file_name;
+      },
+    },
+  })
+}
 var search = new Vue({
   el: '#search-form',
 
@@ -1958,8 +2342,15 @@ var search = new Vue({
     search_value: '',
   },
 
+  computed:{
+    isVisuallyHidden: function(){
+      return typeof(is_lead_list) === 'undefined';
+    }
+  },
+
   watch: {
     search_value: function(val){
+
       if(is_lead_list){
         if(val.length >= 3){
           vue_leads_list.run_search(val);
@@ -1967,9 +2358,43 @@ var search = new Vue({
           vue_leads_list.run_search('');
         }
       }
+
     }
   },
 
-  mounted: function(){
+  methods:{
+    run_search: function(search){
+      this.search = search;
+    }
+  }
+});
+wait_block = new Vue({
+  el: '#wait-block',
+
+  data: {
+    class: '',
+    text: '',
+  },
+
+  computed:{
+    show_class: function(){
+      return this.class;
+    },
+
+    wait_text: function(){
+      return this.text;
+    },
+  },
+
+  methods: {
+    show: function(){
+      this.text = 'Please wait';
+      this.class = 'shown';
+    },
+
+    hide: function(text){
+      this.text = '';
+       this.class = '';
+    }
   }
 });

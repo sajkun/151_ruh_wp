@@ -210,8 +210,6 @@ class velesh_theme_posts {
       $stage_for_converted = get_option('stage_for_converted');
       $stage_for_failed    = get_option('stage_for_failed');
 
-      clog($stage_for_converted);
-
       if(!$stages){
         $stages = array();
       }
@@ -475,8 +473,9 @@ class velesh_theme_posts {
     <div class="leads-block__row">
       <h4>Treatment Value (£)</h4>
       <div class="leads-block__price">
-        <input type="number" name="treatment_value[value]" placeholder="£00.00" class="leads-block__input xxl"  value="<?php echo isset($meta['value']) ? $meta['value'] : ''; ?>">
+        <input type="text" name="treatment_value[value]" placeholder="£00.00" class="leads-block__input xxl"  value="<?php echo isset($meta['value']) ? $meta['value'] : ''; ?>">
       </div>
+      <i>place only number without any separators or currency symbols</i>
     </div>
     <br>
 
@@ -619,7 +618,7 @@ class velesh_theme_posts {
          ?>
     </div>
 
-    <a href="javascript:void(0)" class="button" onclick="upload_document(this)">Upload Document</a>
+    <?php /*<a href="javascript:void(0)" class="button" onclick="upload_document(this)">Upload Document</a> */ ?>
     <input type="hidden" id="files_count" value="<?php echo $count; ?>">
     <input type="hidden" name="save_theme_meta" value="yes">
     <?php
@@ -638,6 +637,8 @@ class velesh_theme_posts {
 
     $id = get_current_user_id();
     $user = get_user_by('ID',$id);
+    $user = get_user_by('id', get_current_user_id());
+    $user_name =  theme_get_user_name($user);
     ?>
     <div class="notes-block">
 
@@ -645,7 +646,7 @@ class velesh_theme_posts {
       <?php
       if($meta):
       foreach ($meta as $key => $m):
-        if(empty($m['name']) && empty($m['note'])) continue;
+        if(empty($m['name']) && empty($m['text'])) continue;
 
         $_user = get_user_by('ID',(int)$m['user_id']);
         ?>
@@ -656,13 +657,13 @@ class velesh_theme_posts {
         </div>
 
         <div class="note-block__body">
-          <?php echo $m['note'] ?>
+          <?php echo $m['text'] ?>
         </div>
 
         <a href="javascript:void(0)" onclick="remove_note(this)"> Remove Note</a>
 
-        <input type="hidden" name="lead_notes[<?php echo $count ?>][user_id]" value="<?php echo $m['user_id'] ?>}">
-        <input type="hidden" name="lead_notes[<?php echo $count ?>][note]" value="<?php echo $m['note'] ?>">
+        <input type="hidden" name="lead_notes[<?php echo $count ?>][user_name]" value="<?php echo $m['user_name'] ?>}">
+        <input type="hidden" name="lead_notes[<?php echo $count ?>][text]" value="<?php echo $m['text'] ?>">
         <input type="hidden" name="lead_notes[<?php echo $count ?>][date]" value="<?php echo $m['date'] ?>">
       </div>
       <br>
@@ -677,7 +678,8 @@ class velesh_theme_posts {
     <a href="javascript:void(0)" class="button" onclick="add_note(this, <?php echo $id;?>)">Add Notes</a>
     <input type="hidden" id="notes_count" value="<?php echo $count; ?>">
     <input type="hidden" name="save_theme_meta" value="yes">
-    <input type="hidden" id="user_nice_name" value="<?php echo $user->data->display_name; ?>">
+    <input type="hidden" name="save_theme_meta" value="yes">
+    <input type="hidden" id="user_nice_name" value="<?php echo $user_name; ?>">
 
     <?php
   }
@@ -730,8 +732,22 @@ class velesh_theme_posts {
    * @param $post - WP_Post object
    */
   public static function lead_logs_cb($post){
-    $meta = get_post_meta($post->ID, '_product_cat', true);
+    $meta = get_post_meta($post->ID, '_lead_log', true);
+    $date = new DateTime($post->post_date);
+
     ?>
+    <ul class="leads-block__activity">
+      <li>
+        <i class="state-none icon-activity"></i> <span class="leads-block__activity-text"><span class="action">Lead Created</span> <span class="date"><?php echo $date->format('d M Y') ?> at <?php echo $date->format('H:I') ?> </span></span> <span class="length">0d 0h 0m</span></li>
+
+        <?php if ($meta): ?>
+
+        <?php foreach ($meta as $key => $d): ?>
+        <li>
+         <i class="state-none icon-activity"></i> <span class="leads-block__activity-text"><span class="action"><?php echo $d['text'] ?></span> <span class="date"><?php echo $d['date_formatted'] ?> </span></span> <span class="length"><?php echo $d['time_passed'] ?></span></li>
+        <?php endforeach ?>
+        <?php endif ?>
+      </ul>
     <input type="hidden" name="lead_logs" value="yes">
     <?php
   }
@@ -806,9 +822,9 @@ class velesh_theme_posts {
 
     //uncoment for debug
     // echo "<pre>";
-    // // print_r($_POST);
+    // print_r($_POST);
     // echo "</pre>";
-    // exit();
+      // exit();
 
     //saves meta
     foreach ($data as $_id => $_d) {
@@ -827,7 +843,7 @@ class velesh_theme_posts {
           $test = add_post_meta( $post_id, '_'.$_d['name'] , $new_data, $_d['unique'] );
         }
       }else{
-        delete_post_meta( $post_id, $_d['name']);
+        $test = delete_post_meta( $post_id, '_'.$_d['name']);
       }
     }
   }

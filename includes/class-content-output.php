@@ -48,6 +48,7 @@ class theme_content_output{
       'new_lead_url'         => get_permalink($new_lead_id),
       'photo_url'            => $photo_url,
       'name'                 => $name,
+
     );
 
     print_theme_template_part('header', 'globals', $args);
@@ -88,6 +89,7 @@ class theme_content_output{
       wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
 
       wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
+
 
     // prepare data for filters
 
@@ -166,7 +168,12 @@ class theme_content_output{
         return;
       }
 
+      $user = get_user_by('id', get_current_user_id());
+      $user_name =  theme_get_user_name($user);
+
       $args = array(
+        'user_name' => $user_name,
+        'user_id' => get_current_user_id(),
         'stages' => $stages,
         'daterange' => array(
           'from' => $month_first_day,
@@ -179,18 +186,112 @@ class theme_content_output{
 
 
   public static function print_lead_content(){
-    $lead = get_queried_object();
+    global $theme_init;
+    $lead                = get_queried_object();
+    $lead_stage          = get_post_meta($lead->ID, '_lead_stage', true);
+    $lead_stage_num      = 0;
+    $stages              = get_option('leads_stages');
+
+    foreach ($stages as $key => $st) {
+      $lead_stage_num = $st['name'] === $lead_stage ? (int)$st['number'] : $lead_stage_num;
+    }
+
+
+    $stage_for_converted = (int)get_option('stage_for_converted');
+    $stage_for_failed    = (int)get_option('stage_for_failed');
+
+    $lead_type  = array('class' => 'opened', 'text' => 'Opened Lead');
+
+    $lead_type = ($lead_stage_num >= $stage_for_converted  && $lead_stage_num !== $stage_for_failed )? array('class' => 'converted', 'text' => 'Converted Lead'): $lead_type;
+
+    $lead_type = ($lead_stage_num === $stage_for_failed)? array('class' => 'failed', 'text' => 'Failed Lead'): $lead_type;
+
+    $user = get_user_by('id', get_current_user_id());
+    $user_name =  theme_get_user_name($user);
+
+    $_lead_notes = get_post_meta($lead->ID, '_lead_notes', true);
+    $_lead_files = get_post_meta($lead->ID, '_lead_files', true);
+
+    $lead_notes = array();
+    $lead_files = array();
+
+    $lead_logs = get_post_meta($lead->ID, '_lead_log', true);
+
+    if(!$lead_logs){
+      $lead_logs = array();
+    }
+
+    if($_lead_notes){
+      foreach ($_lead_notes as $key => $n) {
+        $lead_notes[] = $n;
+      }
+    }
+
+    if($_lead_files){
+      foreach ($_lead_files as $key => $n) {
+        $lead_files[] = $n;
+      }
+    }
+
+    $leads_id     = (int)get_option('theme_page_leads');
+
+    $lead_created_time = new DateTime($lead->post_date);
 
     $args = array(
-      'lead_notes'            => get_post_meta($lead->ID, '_lead_notes', true),
-      'lead_files'            => get_post_meta($lead->ID, '_lead_files', true),
       'treatment_coordinator' => get_post_meta($lead->ID, '_treatment_coordinator', true),
       'treatment_value'       => get_post_meta($lead->ID, '_treatment_value', true),
       'patient_data'          => get_post_meta($lead->ID, '_patient_data', true),
       'reminder'              => get_post_meta($lead->ID, '_reminder', true),
-      'lead_stage'            => get_post_meta($lead->ID, '_lead_stage', true),
+      'lead_stage'            => $lead_stage,
+      'lead_type'             => $lead_type,
+      'lead_id'               => $lead->ID,
+      'user_name'             => $user_name,
+      'user_id'               => get_current_user_id(),
+      'url'                   => get_permalink($lead),
+      'return_url'            => get_permalink($leads_id),
+      'text_save_btn'         => 'Save changes',
+      'text_save_del'         => 'Delete',
+      'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
     );
+
+    wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
+    wp_localize_script($theme_init->main_script_slug, 'lead_notes', $lead_notes);
+    wp_localize_script($theme_init->main_script_slug, 'lead_files', $lead_files);
+    wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
 
     print_theme_template_part('lead-single', 'globals', $args);
   }
+
+
+
+   public static function print_lead_content_blank(){
+      global $theme_init;
+
+      $lead_created_time = new DateTime();
+      $leads_id     = (int)get_option('theme_page_leads');
+
+
+      $args = array(
+        'treatment_coordinator' => array(),
+        'treatment_value'       => array(),
+        'patient_data'          => array(),
+        'reminder'              => '',
+        'lead_stage'            => $lead_stage,
+        'lead_type'             => array('class' => 'opened', 'text' => 'New Lead'),
+        'lead_id'               => -1,
+        'user_name'             => $user_name,
+        'user_id'               => get_current_user_id(),
+        'return_url'            => get_permalink($leads_id),
+        'text_save_btn'         => 'Create Lead',
+        'text_save_del'         => 'Cancel',
+        'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
+      );
+
+      wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
+      wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());
+      wp_localize_script($theme_init->main_script_slug, 'lead_files', array());
+      wp_localize_script($theme_init->main_script_slug, 'lead_logs',  array());
+
+      print_theme_template_part('lead-single', 'globals', $args);
+   }
 }

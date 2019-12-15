@@ -107,7 +107,8 @@ console.log('admin script was loaded');
   }
 
 function delete_file(obj){
-  jQuery(obj).closest('.document-block').addClass('hidden').find('input').val('');
+  jQuery(obj).closest('.document-block').remove();
+  // jQuery(obj).closest('.document-block').addClass('hidden').find('input').val('');
 }
 
 function remove_note(obj){
@@ -123,7 +124,7 @@ function add_note(obj, user_id){
     return;
   }
   var number = jQuery('#notes_count').val();
-  var template = '<div class="note-block"> <div class="note-block__header clearfix"> <span class="name">{name}</span> <span class="date">{date}</span> </div> <div class="note-block__body"> {note} </div> <a href="javascript:void(0)" onclick="remove_note(this)"> Remove Note</a> <input type="hidden" name="lead_notes[{number}][user_id]" value="{user_id}"> <input type="hidden" name="lead_notes[{number}][note]" value="{note}"> <input type="hidden" name="lead_notes[{number}][date]" value="{date}"> </div><br>';
+  var template = '<div class="note-block"> <div class="note-block__header clearfix"> <span class="name">{name}</span> <span class="date">{date}</span> </div> <div class="note-block__body"> {note} </div> <a href="javascript:void(0)" onclick="remove_note(this)"> Remove Note</a> <input type="hidden" name="lead_notes[{number}][user_name]" value="{user_name}"> <input type="hidden" name="lead_notes[{number}][text]" value="{note}"> <input type="hidden" name="lead_notes[{number}][date]" value="{date}"> </div><br>';
 
   var date = new Date();
   var user_id = user_id;
@@ -135,7 +136,7 @@ function add_note(obj, user_id){
     var search = {
       number: number,
       name: name,
-      user_id : user_id,
+      user_name : name,
       note : text,
       date: date_formatted
     };

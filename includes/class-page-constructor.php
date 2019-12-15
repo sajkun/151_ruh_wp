@@ -35,6 +35,9 @@ class theme_construct_page{
     else if(self:: is_page_type( 'lead' )){
       add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
     }
+    else if(self:: is_page_type( 'lead-blank' )){
+      add_action('do_theme_content', array('theme_content_output', 'print_lead_content_blank'));
+    }
   }
 
 
@@ -64,6 +67,11 @@ class theme_construct_page{
         break;
       case 'lead':
         return velesh_theme_posts::$lead === $obj->post_type;
+        break;
+
+      case 'lead-blank':
+        return $new_lead_id === $obj->ID;
+        break;
     }
   }
 }

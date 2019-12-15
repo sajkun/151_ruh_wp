@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
           </div>
 
-          <div class="search__wrapper" id="search-form">
+          <div class="search__wrapper" id="search-form" v-bind:class="{ visuallyhidden : isVisuallyHidden}">
             <form action="#" method="POST" class="search__form">
 
                 <div class="row no-gutters">
