@@ -63,9 +63,82 @@ function str_replace(needle, highstack){
 function goBack() {
   window.history.back();
 }
+
+
+function get_sum_from_price(sum){
+  if(typeof(sum) === 'undefined'){
+    return 0;
+  }
+
+  if(typeof(sum) === 'string'){
+    var exp = new RegExp("\\D", "gi");
+    var pierces = sum.split('.');
+    var summ = pierces[0].replace(exp, '');
+
+    return parseInt(summ);
+  }
+
+  if(typeof(sum) === 'number'){
+    return sum;
+  }
+
+  return 0;
+}
 jQuery('.search-open').click(function(){
   jQuery('.search__wrapper').toggleClass('shown');
 });
+
+
+jQuery('#login-form').on('submit',function(){
+  console.log('login');
+  var data = jQuery(this).serializeArray();
+
+  var post_data = {};
+
+  for(id in data){
+    post_data[data[id].name] = data[id].value;
+
+    if(!data[id].value){
+      alert('No ' + data[id].name +' entered');
+      return false;
+    }
+
+  }
+  post_data.action = 'run_login';
+
+  jQuery.ajax({
+    url: WP_URLS.wp_ajax_url,
+    type: 'POST',
+    dataType: 'json',
+    data: post_data,
+
+    complete: function(xhr, textStatus) {
+      //called when complete
+    },
+
+    success: function(data, textStatus, xhr) {
+      console.group('leads updated by date');
+      console.log(data);
+
+      location.href= data.redirect;
+
+      console.groupEnd('---');
+    },
+
+    error: function(xhr, textStatus, errorThrown) {
+      var resp = JSON.parse(xhr.responseText);
+
+      message = '';
+      for(id in resp.data){
+        message += resp.data[id][0];
+      }
+
+      alert(message);
+
+      console.log(resp);
+     }
+  });
+})
 jQuery(document).ready(function(){
     jQuery('.reminder input').datetimepicker({
       format:'M d Y H:i',
@@ -92,19 +165,26 @@ jQuery(document).ready(function(){
 function init_date_range(){
   var now     = new Date();
   var last_7  = new Date();
-  last_7.setDate(last_7.getDate() - 7);
+  var last_30  = new Date();
   var last_90 = new Date();
+  last_7.setDate(last_7.getDate() - 7);
+  last_30.setDate(last_30.getDate() - 30);
   last_90.setDate(last_7.getDate() - 90);
+
   var now     = new Date();
   var today_str = (now.getMonth() + 1) + '/' + now.getDate() + '/' + now.getFullYear();
 
 
   var last_7_str = (last_7.getMonth() + 1) + '/' + last_7.getDate() + '/' + last_7.getFullYear();
+
+  var last_30_str = (last_30.getMonth() + 1) + '/' + last_30.getDate() + '/' + last_30.getFullYear();
+
   var last_90_str = (last_90.getMonth() + 1) + '/' + last_90.getDate() + '/' + last_90.getFullYear();
 
   var for_last_day = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
   var month_first_day = (now.getMonth() + 1) + '/' + 1 + '/' + now.getFullYear();
+
   var month_last_day = (now.getMonth() + 1) + '/' + for_last_day.getDate() + '/' + now.getFullYear();
 
   jQuery('.range-datepicker').daterangepicker({
@@ -118,17 +198,24 @@ function init_date_range(){
           month_first_day,
           today_str
         ],
+
         'Past 7 Days': [
           last_7_str,
           today_str
         ],
+
+        'Past 30 Days':[
+          last_30_str,
+          today_str
+        ],
+
         'Past 90 Days': [
           last_90_str,
           today_str
         ],
     },
     "alwaysShowCalendars": true,
-    "startDate": month_first_day,
+    "startDate": last_30_str,
     "endDate": today_str
   }, function(start, end, label) {
 
@@ -137,7 +224,7 @@ function init_date_range(){
     jQuery('.range-datepicker__text').text(text);
     jQuery('.range-datepicker__label').text(label);
 
-    jQuery(document.body).trigger('get_leads_by_dates', {from: start.format('MMM DD YYYY') , to: end.format('MMM DD YYYY')});
+    jQuery(document.body).trigger('get_leads_by_dates', {from: start.format('MMM DD YYYY') , to: end.format('MMM DD YYYY'), label: label});
   });
 }
 
@@ -145,11 +232,16 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
 
   data.action = 'get_leads_by_dates';
 
+  data.get_previous_data = typeof(is_dashboard) !== 'undefined';
+
+  console.log(data);
+
   jQuery.ajax({
     url: WP_URLS.wp_ajax_url,
     type: 'POST',
     dataType: 'json',
     data: data,
+
     complete: function(xhr, textStatus) {
       //called when complete
     },
@@ -158,13 +250,15 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
       console.group('leads updated by date');
       console.log(data);
       dashboard_leads_data = data.leads;
+      dashboard_leads_data_prev = data.leads_prev;
       team_perfomance      = data.team_perfomance;
 
       //dashboard
       update_filters(data.filter_data);
-      update_dashboard_totals();
+      update_dashboard_totals(data.days_count_prev);
       update_top_sourses();
       update_team_perfomance();
+      update_confertions(data.days_count_prev);
 
       //leads_list
       update_leads_filters(data.filter_data);
@@ -386,33 +480,21 @@ if('undefined' !== typeof(is_dashboard)){
       },
   }
 
-    var randomScalingFactor = function() {
-      return Math.round(Math.random() * 100);
-    };
+var _prefix;
+var _suffix;
 
+ function prepare_donnut_data(data, labels, suffix, prefix){
     var colors = [
             '#f6b82f',
             '#ee63d2',
             '#8933f6',
             '#3354f6',
             '#01c58d',
+            '#eee',
+            '#eee',
           ]
-
-    var data =  [
-            10,
-            30,
-            47,
-            3,
-            10
-          ];
-
-    var labels = [
-          'Live Chat',
-          'Instagram',
-          'Google PPC',
-          'Website',
-          'Phone'
-        ]
+    _prefix = prefix;
+    _suffix = suffix;
 
     var config = {
       type: 'doughnut',
@@ -440,7 +522,8 @@ if('undefined' !== typeof(is_dashboard)){
             'padding' : 20,
             'fontFamily' : 'HelveticaFont_,sans-serif',
             'fontColor' : '#3b3f45',
-            generateLabels: function(chart){
+
+             generateLabels: function(chart){
                       var data = chart.data;
                       if (data.labels.length && data.datasets.length) {
                           return data.labels.map(function(label, i) {
@@ -455,12 +538,17 @@ if('undefined' !== typeof(is_dashboard)){
                               var bw = custom.borderWidth ? custom.borderWidth : getValueAtIndexOrDefault(ds.borderWidth, i, arcOpts.borderWidth);
 
                 // We get the value of the current label
-                var value = chart.config.data.datasets[arc._datasetIndex].data[arc._index];
+                             var value = chart.config.data.datasets[arc._datasetIndex].data[arc._index];
+
+
+                             var text = (typeof(_suffix) !== 'undefined' && _suffix!== false)? label + "  " + value + suffix : label + "  " + value;
+
+                              text = (typeof(_prefix) !== 'undefined' && _prefix!== false)? label + "  " + _prefix + formatMoney(value, 2, ".", ",") : text;
 
                               return {
                                   // Instead of `text: label,`
                                   // We add the value to the string
-                                  text: label + "  " + value + '%' ,
+                                  text: text,
                                   fillStyle: fill,
                                   strokeStyle: stroke,
                                   lineWidth: bw,
@@ -489,12 +577,11 @@ if('undefined' !== typeof(is_dashboard)){
 
     config.options.legend.position = jQuery(window).width() < 768 ? 'bottom' : 'right';
 
+    return config
+ }
+
   jQuery(document).ready(function(){
     var chart_income = new Chart(chart, options_chart);
-
-    document.getElementById('convertions-canvas').height = jQuery(window).width() < 768 ? '300' : '250';
-    var ctx = document.getElementById('convertions-canvas').getContext('2d');
-    window.myDoughnut = new Chart(ctx, config);
   })
 }
 
@@ -691,6 +778,9 @@ jQuery(document.body).on('save_dragged_item', function(e, data){
   for(id in data){
     data_post[id] = data[id];
   };
+
+  console.log('data_post:');
+  console.log(data_post);
 
   jQuery.ajax({
     url: WP_URLS.wp_ajax_url,
@@ -1239,10 +1329,14 @@ var select_mixin = {
 
           Vue.nextTick(function() {
           var width = select.clientWidth;
-
           vm.$el.setAttribute("style", "width:" + (width + 62) + 'px');
         });
       }
+    },
+
+    resert_width: function(){
+      var vm = this;
+      vm.$el.setAttribute("style", "width: auto");
     },
 
     // gets value of a select
@@ -1347,6 +1441,7 @@ var vue_selects = {};
 var vue_dashboard_totals;
 var filter_dashboard;
 var vue_team_perfomance;
+var dashboard_convertions;
 var vue_top_items = {};
 
 
@@ -1457,16 +1552,13 @@ if('undefined' !== typeof(is_dashboard)){
 }
 if('undefined' !== typeof(is_dashboard)){
   var icon_encr = '<svg class="icon svg-icon-up"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-up"></use> </svg>';
+
   var icon_decr = '<svg class="icon svg-icon-down"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-down"></use> </svg>';
 
   vue_dashboard_totals = new Vue({
     el: '#dashboard_totals',
 
     data:{
-      up_down: '',
-      percent_change: '',
-      icon: '',
-      change_type: '',
 
       filters:{
         clinics:    'All Clinics',
@@ -1476,7 +1568,10 @@ if('undefined' !== typeof(is_dashboard)){
         team:       'All Team',
       },
 
-      leads_obj: dashboard_leads_data,
+      days_count: 30,
+
+      leads_obj      : dashboard_leads_data,
+      leads_obj_prev : dashboard_leads_data_prev,
     },
 
     computed:{
@@ -1515,8 +1610,58 @@ if('undefined' !== typeof(is_dashboard)){
         return leads_filtered;
       },
 
+      filtered_leads_prev: function(){
+        var leads  = this.leads_obj_prev;
+        var leads_filtered = [];
+
+        for(id in leads){
+          var is_match = true;
+
+          filter_value = leads[id]['filter_data'];
+
+          for(filter_id in this.filters){
+            if(this.filters[filter_id].search('All') === 0) continue;
+
+            if(filter_value[filter_id] === null && this.filters[filter_id] !== null){
+              is_match = false;
+              continue;
+            }
+
+            switch(typeof(filter_value[filter_id])){
+              case 'object':
+                is_match = (filter_value[filter_id].indexOf(this.filters[filter_id]) < 0)? false : is_match;
+               break;
+              case 'string':
+                is_match = (this.filters[filter_id] !== filter_value[filter_id])? false : is_match;
+               break;
+            }
+          }
+
+          if(is_match){
+            leads_filtered.push(leads[id]);
+          }
+        }
+
+        return leads_filtered;
+      },
+
       leads: function(){
         return this.filtered_leads.length;
+      },
+
+      revenue_val_prev: function(){
+
+        if(!this.leads_obj_prev){
+          return 0;
+        }
+        var total = 0;
+
+        for(id in this.filtered_leads_prev){
+          var value = this.filtered_leads_prev[id].meta.treatment_value.value;
+          total += get_sum_from_price(value);
+        }
+
+        return total;
       },
 
       revenue_val: function(){
@@ -1524,14 +1669,7 @@ if('undefined' !== typeof(is_dashboard)){
 
         for(id in this.filtered_leads){
           var value = this.filtered_leads[id].meta.treatment_value.value;
-
-          if('string' === typeof(value)){
-            var pierces = value.split('.');
-            var exp = new RegExp("\\D", "gi");
-            value = pierces[0].replace(exp, '');
-          }
-
-          total += parseInt(value);
+          total += get_sum_from_price(value);
         }
 
         return total;
@@ -1555,11 +1693,37 @@ if('undefined' !== typeof(is_dashboard)){
         }
         return converted_count;
       },
+
+      icon: function(){
+        if(!this.leads_obj_prev){
+          return '';
+        }
+
+        return (this.revenue_val >= this.revenue_val_prev)? icon_encr: icon_decr;
+      },
+
+      up_down: function(){
+        if(!this.leads_obj_prev){
+          return '';
+        }
+
+        return (this.revenue_val >= this.revenue_val_prev)? 'up': 'down';
+      },
+
+      change_type: function(){
+        if(!this.leads_obj_prev){
+          return '';
+        }
+
+        return (this.revenue_val >= this.revenue_val_prev)? 'encr': 'decr';
+      },
+
+      percent_change: function(){
+        return Math.abs(100 - (this.revenue_val / this.revenue_val_prev)*100).toFixed(2);
+      }
     },
 
-
-    mounted: function(){
-    },
+    mounted: function(){},
 
     methods:{
       set_value: function(key, value){
@@ -1567,7 +1731,8 @@ if('undefined' !== typeof(is_dashboard)){
       },
 
       update: function(){
-        this.leads_obj = dashboard_leads_data;
+        this.leads_obj      = dashboard_leads_data;
+        this.leads_obj_prev = dashboard_leads_data_prev;
      },
 
       update_filters: function(filters){
@@ -1577,9 +1742,10 @@ if('undefined' !== typeof(is_dashboard)){
   })
 }
 
-function update_dashboard_totals(){
+function update_dashboard_totals(days_count){
   if('undefined' !== typeof(is_dashboard)){
     vue_dashboard_totals.update();
+      vue_dashboard_totals.set_value('days_count', days_count);
   }
 }
 
@@ -1590,94 +1756,131 @@ if('undefined' !== typeof(is_dashboard)){
     vue_top_items[top_items[top_type]] = new Vue({
       el: '#top_'+top_items[top_type],
 
-      mounted: function(){
-      },
-
       data: {
-        name              : 'Unavailable',
-        item_name         :  top_items[top_type],
-        leads             :  0,
+        leads_obj         : dashboard_leads_data,
         label             : 'leads',
-        revenue           :  '£'+ formatMoney(00, 2, ".", ","), // up || down
-        rate              :  0,
-        isExpanded        : '',
-        isHiddenSelect    : true,
-        isHiddenImitation : false,
-        isSelected        : [],
-        selected          :  'Leads',
-        options           : ['Leads', 'Revenue']
+        type              : top_items[top_type],
+        display_type      : 'Leads',
+      },
+
+      computed: {
+        data_by_sourse: function(){
+          var data = {};
+
+          for(id in this.leads_obj){
+            var meta         = this.leads_obj[id].meta;
+            var patient_data = meta.patient_data;
+
+            if(patient_data[this.type] === null || typeof(patient_data[this.type]) === 'undefined') continue;
+
+            if(typeof(data[patient_data[this.type]]) === 'undefined'){
+
+              data[patient_data[this.type]] = {items: [], total: 0, converted: 0, revenue: 0};
+            }
+            var revenue = get_sum_from_price(meta.treatment_value.value);
+
+            data[patient_data[this.type]].items.push(this.leads_obj[id]);
+            data[patient_data[this.type]].total++;
+            data[patient_data[this.type]].converted = ('yes' == this.leads_obj[id].is_converted)?  data[patient_data[this.type]].converted + 1:  data[patient_data[this.type]].converted ;
+            data[patient_data[this.type]].revenue += revenue;
+          }
+          return data;
+        },
+
+        name: function(){
+          switch(this.display_type){
+            case 'Leads':
+              var result    = 'Unavailable';
+              var max_leads = -1;
+              var leads_converted = -1;
+              for(id in this.data_by_sourse){
+                result = (this.data_by_sourse[id].total >= max_leads && this.data_by_sourse[id].converted >= leads_converted)? id : result;
+                max_leads = Math.max(max_leads, this.data_by_sourse[id].total);
+                leads_converted = Math.max(leads_converted, this.data_by_sourse[id].converted);
+
+              }
+              return result;
+
+              break;
+            case 'Revenue':
+              var result    = 'Unavailable';
+              var max_revenue = -1;
+
+              for(id in this.data_by_sourse){
+                result = (this.data_by_sourse[id].revenue >= max_revenue)? id : result;
+                max_revenue = Math.max(max_revenue, this.data_by_sourse[id].revenue);
+              }
+
+              return result;
+              break;
+          }
+        },
+
+        leads: function(){
+          if(typeof(this.data_by_sourse[this.name]) === 'undefined'){
+            return 'no';
+          }
+          return this.data_by_sourse[this.name].total;
+        },
+
+        leads_total: function(){
+          return this.leads_obj.length;
+        },
+
+        revenue: function(){
+          if(typeof(this.data_by_sourse[this.name]) === 'undefined'){
+            return '-';
+          }
+
+          revenue = this.data_by_sourse[this.name].revenue;
+
+          return '£'+ formatMoney(revenue, 2, ".", ",");
+        },
+
+        rate: function(){
+          if(typeof(this.data_by_sourse[this.name]) === 'undefined'){
+            return '-';
+          };
+
+          return (((this.data_by_sourse[this.name].converted * 100) / this.leads_total)).toFixed(2);
+        },
       },
 
       mounted: function(){
-        this.update_selected_option();
-        this.isHiddenSelect = jQuery(window).width()   > 768 ? true : false;
-        this.isHiddenImitation = jQuery(window).width() > 768 ? false : true;
-        this.change();
+        var vm = this;
+        vm.init_select();
+
+        Vue.nextTick(function() {
+          vm.$refs.display_type.resert_width();
+        });
       },
 
       methods: {
-        change: function(){
-          var leads = parse_leads.construct();
-          var data  = leads.get_leads_data_by(this.item_name, this.selected);
-
-          this.leads = data.leads;
-          this.rate  = data.rate;
-          this.name  = data.name;
-          this.revenue = '£'+ formatMoney(data.revenue, 2, ".", ",");
-          this.label  = (this.leads === 1)? 'lead' : 'leads';
+        update: function(){
+          this.leads_obj = dashboard_leads_data;
         },
 
-        // toggles state of expanded list initation
-        expand_select: function(){
-          this.isExpanded = 'expanded';
-           collapse_filters('');
-           collapse_top_lists(this.item_name);
-        },
-
-        // toggles select in expanded dropdown
-        update_selected_option: function(){
-          for(id in this.options){
-            this.isSelected[this.options[id]] = false;
+        run_update_data: function(event){
+          if('undefined' !== event.val){
+            this.display_type = event.val;
           }
-
-          this.isSelected[this.selected] = true;
         },
 
-        // changes data on option click
-        imitate_select_option: function(value){
-          this.selected = value;
-          this.isExpanded = '';
-          this.update_selected_option();
-          this.change();
-        },
+        init_select: function(){
+          var props =  {
+            select_name: 'select_'+top_items[top_type],
+            options: ['Leads', "Revenue"],
+            selected: 'Leads',
+            isExpanded: '',
+            isSelected: [],
+            isHiddenSelect: true,
+            isHiddenImitation: false,
+          };
 
-         // closes select
-        discard_select:function(){
-          this.isExpanded = '';
+          for( id in props){
+            this.$refs.display_type.set_value(id, props[id]);
+          }
         },
-
-         // updates options of a select
-        update_options: function(options){
-          this.options = options;
-          this.selected = options[0];
-          this.isExpanded = '';
-          this.update_selected_option();
-        },
-
-        // sets value for a select
-        set_value: function(value){
-          this.selected = value;
-        },
-
-        // gets value of a select
-        get_value: function(){
-          return this.selected;
-        },
-
-        // gets name of a select
-        get_name: function(){
-          return this.select_name;
-        }
       },
     })
   }
@@ -1686,7 +1889,7 @@ if('undefined' !== typeof(is_dashboard)){
 function update_top_sourses(){
   if('undefined' !== typeof(is_dashboard)){
     for(top_type in top_items){
-      vue_top_items[top_items[top_type]].change();
+      vue_top_items[top_items[top_type]].update();
     }
   }
 }
@@ -1695,7 +1898,7 @@ function collapse_top_lists(name){
   if('undefined' !== typeof(is_dashboard)){
     for(top_type in top_items){
       if(name !== top_items[top_type]){
-        vue_top_items[top_items[top_type]].discard_select();
+        vue_top_items[top_items[top_type]].$refs.display_type.discard_select();
       }
     }
   }
@@ -1769,6 +1972,239 @@ function update_team_perfomance(){
 function discard_selects(){
   for(id in vue_select_components){
     vue_select_components[id].discard_select();
+  }
+}
+if('undefined' !== typeof(is_dashboard)){
+  dashboard_convertions =new Vue({
+    el: '#dashboard-convertions',
+
+    data: {
+      leads_obj: dashboard_leads_data,
+      leads_obj_prev : dashboard_leads_data_prev,
+      days_count: 30,
+      display_type: 'Leads',
+      doughnut: {},
+    },
+
+    computed: {
+      convertions: function(){
+        var convertions_by_type = {};
+
+        for(id in this.leads_obj){
+          var lead = this.leads_obj[id];
+          var sourse = lead.meta.patient_data.sourse;
+          // var exp = new RegExp("\\D", "gi");
+          sourse = (sourse === null || sourse === '')? 'Other' : sourse;
+
+          if(typeof(convertions_by_type[sourse]) === 'undefined'){
+            convertions_by_type[sourse] = [];
+          }
+
+          if('yes' === lead.is_converted){
+
+            summ = get_sum_from_price(lead.meta.treatment_value.value);
+
+            convertions_by_type[sourse].push({
+              time_converted : lead.converted_time,
+              time_created   : lead.post_date,
+              summ           : summ,
+            });
+          }
+        }
+        return convertions_by_type;
+      },
+
+      convertion_rate: function(){
+        total = 0;
+
+        for(id in this.leads_obj){
+          var lead = this.leads_obj[id];
+          if('yes' === lead.is_converted){
+            total++;
+          }
+        }
+
+        return Math.ceil((total/this.total_leads)*100);
+      },
+
+      convertion_rate_prev: function(){
+        total = 0;
+
+        if(!this.leads_obj_prev || this.leads_obj_prev.length==0){
+          return 0;
+        }
+
+        for(id in this.leads_obj_prev){
+          var lead = this.leads_obj_prev[id];
+          if('yes' === lead.is_converted){
+            total++;
+          }
+        }
+
+        return Math.ceil((total/this.total_leads_prev)*100);
+      },
+
+      total_leads: function(){
+        return this.leads_obj.length;
+      },
+
+      total_leads_prev: function(){
+        return this.leads_obj_prev.length;
+      },
+
+      diagram_info: function(){
+        var info = {
+          labels : [],
+          data: [],
+        };
+
+        if(this.display_type === 'Leads'){
+          for(id in this.convertions){
+            percents = (this.convertions[id].length / this.total_leads) * 100;
+            info.labels.push(id);
+            info.data.push(percents.toFixed(2));
+          };
+        }
+
+        if(this.display_type === 'Revenue'){
+          for(id in this.convertions){
+            info.labels.push(id);
+            var summ = 0;
+
+            for(i in  this.convertions[id]){
+              summ += this.convertions[id][i].summ;
+            }
+
+            // summ = formatMoney(summ, 2, ".", ",")
+            info.data.push(summ);
+          };
+        }
+        return info;
+      },
+
+      suffix: function(){
+        return (this.display_type === 'Leads')? '%' : false
+      },
+
+      prefix: function(){
+        return (this.display_type === 'Revenue')? '£' : false
+      },
+
+      average_time: function(){
+        var total_time = 0;
+        var counter =0;
+
+        for(id in this.convertions){
+          for(i in this.convertions[id]){
+            var time_created = new Date(this.convertions[id][i].time_created);
+            var time_converted = new Date(this.convertions[id][i].time_converted);
+            counter++;
+
+            total_time += time_converted - time_created;
+          }
+        }
+
+        if(counter === 0){
+          return 'Unavailable';
+        }
+
+        var average_time = Math.ceil(total_time/counter);
+
+        var t = date_difference.construct(0,  average_time);
+
+        return t;
+      },
+
+      icon: function(){
+        return (this.convertion_rate > this.convertion_rate_prev)? icon_encr: icon_decr;
+      },
+
+      delta: function(){
+        if(this.convertion_rate_prev <= 0){
+          return 100;
+        }
+
+        return Math.abs(100 - ((this.convertion_rate /this.convertion_rate_prev) * 100)).toFixed(2);
+      },
+
+      up_down: function(){
+        return (this.convertion_rate >= this.convertion_rate_prev)? 'up': 'down';
+      },
+
+      change_type: function(){
+         return (this.convertion_rate >= this.convertion_rate_prev)? 'encr': 'decr';
+      },
+    },
+
+    mounted: function(){
+      console.log('convertions mounted');
+      var vm = this;
+      vm.init_select();
+
+      Vue.nextTick(function() {
+        vm.draw_doughnut();
+      });
+    },
+
+    methods: {
+      update: function(days_count){
+        var vm = this;
+        vm.leads_obj      = dashboard_leads_data;
+        vm.leads_obj_prev = dashboard_leads_data_prev;
+        vm.days_count = days_count;
+        vm.update_doughnut();
+      },
+
+      draw_doughnut: function(){
+        var config = prepare_donnut_data(this.diagram_info.data, this.diagram_info.labels, this.suffix, this.prefix);
+
+        document.getElementById('convertions-canvas').height = jQuery(window).width() < 768 ? '300' : '250';
+
+        var ctx = document.getElementById('convertions-canvas').getContext('2d');
+        this.doughnut = new Chart(ctx, config);
+      },
+
+      run_update_convertions: function(event){
+        if('undefined' !== typeof(event.val)){
+          var vm = this;
+          vm.display_type = event.val;
+          vm.update_doughnut();
+        }
+      },
+
+      update_doughnut: function(){
+        var vm = this;
+        if('undefined' !== typeof(vm.doughnut.data)){
+          _prefix = this.prefix;
+          _suffix = this.suffix;
+          vm.doughnut.data.datasets[0].data = vm.diagram_info.data;
+          vm.doughnut.data.labels = vm.diagram_info.labels;
+          vm.doughnut.update();
+        }
+      },
+
+      init_select: function(){
+        var props =  {
+          select_name: 'team_perfomance_list',
+          options: ['Leads', "Revenue"],
+          selected: 'Leads',
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+        };
+
+        for( id in props){
+          this.$refs.display_type.set_value(id, props[id]);
+        }
+      },
+    }
+  });
+}
+
+function update_confertions(days_count){
+  if('undefined' !== typeof(dashboard_convertions)){
+    dashboard_convertions.update(days_count);
   }
 }
 var vue_leads_list;
@@ -2134,7 +2570,12 @@ if('undefined' !== typeof(is_single_lead)){
 
     data: {
       patient_data: {},
-      treatment_value: {},
+      treatment_value: {
+        value: '',
+        terms: '',
+        mounthly: '',
+        treatment: '',
+      },
       treatment_coordinator: {},
       specialists_data: {},
       lead_data: {},
@@ -2180,6 +2621,39 @@ if('undefined' !== typeof(is_single_lead)){
         }
 
         return shown;
+      },
+
+      get_treatment_value: function(){
+        return this.treatment_value.value;
+      },
+
+      get_terms_count: function(){
+        $return = 1;
+        switch(this.treatment_value.terms){
+          case '12 Months':
+             $return = 12;
+            break;
+          case '24 Months':
+             $return = 24;
+            break;
+          case '36 Months':
+             $return = 36;
+            break;
+          case '48 Months':
+             $return = 48;
+            break;
+          default:
+             $return = 1;
+            break;
+        }
+
+        return  $return;
+      },
+
+      monthly_payment: function(){
+        var summ = get_sum_from_price(this.get_treatment_value)/this.get_terms_count;
+        summ = summ.toFixed(2);
+        return   '£'+ formatMoney(summ, 2, ".", ",");
       }
     },
 
@@ -2187,6 +2661,9 @@ if('undefined' !== typeof(is_single_lead)){
       note_text: function(){
         this.$refs.note_textarea.style.height = '';
         this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+      },
+
+      'treatment_value.terms': function(val){
       },
     },
 
@@ -2197,6 +2674,12 @@ if('undefined' !== typeof(is_single_lead)){
       this.files = lead_files;
       this.logs  = lead_logs;
       this.specialists_data  = specialists_data;
+      this.init_select();
+    },
+
+    methods: {
+
+      init_select: function(){
 
        var props =  {
           isExpanded: '',
@@ -2210,7 +2693,7 @@ if('undefined' !== typeof(is_single_lead)){
           props.isHiddenImitation =  true;
         }
 
-        props.options = ['--Select--', 'Live Chat', 'Instagram', 'Google PPC', 'Website', 'Phone', "Walk In", "Other"];
+        props.options = ['Live Chat', 'Instagram', 'Google PPC', 'Website', 'Phone', "Walk In", "Other"];
 
         for( id in props){
           this.$refs['sourse_select'].set_value(id, props[id]);
@@ -2224,9 +2707,56 @@ if('undefined' !== typeof(is_single_lead)){
 
         vue_select_components.push(this.$refs['sourse_select']);
         vue_select_components.push(this.$refs['lead_specialissts_select']);
-    },
 
-    methods: {
+
+        var props =  {
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: treatments,
+        };
+
+        for( id in props){
+          this.$refs['treatments_select'].set_value(id, props[id]);
+          this.$refs['treatments_select2'].set_value(id, props[id]);
+        }
+
+        vue_select_components.push(this.$refs['treatments_select']);
+        vue_select_components.push(this.$refs['treatments_select2']);
+
+        this.$refs['treatments_select'].resert_width();
+
+
+        var props =  {
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: clinics,
+        };
+
+        for( id in props){
+          this.$refs['clinic_select'].set_value(id, props[id]);
+        }
+
+        vue_select_components.push(this.$refs['clinic_select']);
+
+
+        var props =  {
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: ['Full Payment', '12 Months', '24 Months', '36 Months', '48 Months'],
+        };
+
+        for( id in props){
+          this.$refs['terms_select'].set_value(id, props[id]);
+        }
+
+        vue_select_components.push(this.$refs['terms_select']);
+      },
 
       save_lead_meta: function(key_meta, key_this){
         wait_block.show();
@@ -2287,6 +2817,11 @@ if('undefined' !== typeof(is_single_lead)){
           }
 
           this.requre_save = true;
+          var vm = this;
+
+          Vue.nextTick(function(){
+            vm.$forceUpdate();
+          });
         }
       },
 
@@ -2546,39 +3081,41 @@ if('undefined' !== typeof(is_single_lead)){
     },
   })
 }
-var search = new Vue({
-  el: '#search-form',
+if(typeof(is_leads_list) !=='undefined'){
+  var search = new Vue({
+    el: '#search-form',
 
-  data: {
-    search_value: '',
-  },
+    data: {
+      search_value: '',
+    },
 
-  computed:{
-    isVisuallyHidden: function(){
-      return typeof(is_lead_list) === 'undefined';
-    }
-  },
-
-  watch: {
-    search_value: function(val){
-
-      if(is_lead_list){
-        if(val.length >= 3){
-          vue_leads_list.run_search(val);
-        }else{
-          vue_leads_list.run_search('');
-        }
+    computed:{
+      isVisuallyHidden: function(){
+        return typeof(is_lead_list) === 'undefined';
       }
+    },
 
-    }
-  },
+    watch: {
+      search_value: function(val){
 
-  methods:{
-    run_search: function(search){
-      this.search = search;
+        if(is_lead_list){
+          if(val.length >= 3){
+            vue_leads_list.run_search(val);
+          }else{
+            vue_leads_list.run_search('');
+          }
+        }
+
+      }
+    },
+
+    methods:{
+      run_search: function(search){
+        this.search = search;
+      }
     }
-  }
-});
+  });
+}
 wait_block = new Vue({
   el: '#wait-block',
 

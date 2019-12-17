@@ -47,12 +47,18 @@ if ( ! defined( 'ABSPATH' ) ) {
             </i>
             <h4 class="block-title">Total Revenue</h4>
             <p class="block-value">{{revenue}}</p>
-            <div class="block-comment">
-              <span v-html="icon"></span>
-              <span>
+            <div class="block-comment" v-if="days_count > 0">
+              <span v-html="icon" v-if="revenue_val_prev > 0"></span>
+              <span v-if="revenue_val_prev > 0">
                 Your total revenue is {{up_down}} <br>
-                <span :class="change_type">{{percent_change}}%</span> from previous 30 days
+                <span :class="change_type">{{percent_change}}%</span> from previous {{days_count}}  days
               </span>
+              <span v-else>
+                Your total revenue <br> for previous {{days_count}} days is 0
+              </span>
+            </div>
+            <div class="block-comment"  v-if="days_count < 0">
+              <span>You revenue can't be compared <br>with previous period</span>
             </div>
           </div>
 
@@ -102,20 +108,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
           <h4 class="block-title">Top Source</h4>
 
-          <div class="select-imitation" v-bind:class="{ expanded: isExpanded}" >
-            <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-              <option v-for="data in options" v-bind:value="data">{{data}}</option>
-            </select>
-            <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-            <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-            <div class="select-imitation__dropdown">
-              <ul class="select-imitation__list">
-                <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)">
-                  <span>{{data}}</span>
-                </li>
-              </ul>
-            </div>
-          </div><!-- select-imitation  -->
+           <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
 
         </div><!-- information-block__header -->
 
@@ -145,23 +138,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="col-12 col-md-6 col-lg-3">
       <div class="information-block" id="top_campaign">
         <div class="information-block__header">
-
           <h4 class="block-title">Top Campaign</h4>
-
-          <div class="select-imitation" v-bind:class="{ expanded: isExpanded}" >
-            <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-              <option v-for="data in options" v-bind:value="data">{{data}}</option>
-            </select>
-            <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-            <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-            <div class="select-imitation__dropdown">
-              <ul class="select-imitation__list">
-                <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)">
-                  <span>{{data}}</span>
-                </li>
-              </ul>
-            </div>
-          </div><!-- select-imitation  -->
+          <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
         </div><!-- information-block__header -->
 
         <div class="information-block__body sourse">
@@ -193,21 +171,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
           <h4 class="block-title">Top Treatment</h4>
 
+           <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
 
-          <div class="select-imitation" v-bind:class="{ expanded: isExpanded}" >
-            <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-              <option v-for="data in options" v-bind:value="data">{{data}}</option>
-            </select>
-            <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-            <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-            <div class="select-imitation__dropdown">
-              <ul class="select-imitation__list">
-                <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)">
-                  <span>{{data}}</span>
-                </li>
-              </ul>
-            </div>
-          </div><!-- select-imitation  -->
         </div><!-- information-block__header -->
 
         <div class="information-block__body sourse">
@@ -239,21 +204,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
           <h4 class="block-title">Top Clinic</h4>
 
+           <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
 
-          <div class="select-imitation" v-bind:class="{ expanded: isExpanded}" >
-            <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
-              <option v-for="data in options" v-bind:value="data">{{data}}</option>
-            </select>
-            <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span>
-            <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
-            <div class="select-imitation__dropdown">
-              <ul class="select-imitation__list">
-                <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)">
-                  <span>{{data}}</span>
-                </li>
-              </ul>
-            </div>
-          </div><!-- select-imitation  -->
         </div><!-- information-block__header -->
 
         <div class="information-block__body sourse">
@@ -285,7 +237,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <div class="row gutters-md-10">
     <div class="col-12 col-lg-6">
-      <div class="information-block">
+      <div class="information-block" id="dashboard-convertions">
         <div class="spacer-h-10"></div>
         <div class="information-block__header">
           <div class="valign-center">
@@ -293,34 +245,43 @@ if ( ! defined( 'ABSPATH' ) ) {
             <h4 class="block-title">Convertions</h4>
           </div>
 
-          <div class="select-imitation">
-            <select name="" id="">
-              <option value="1">value 1</option>
-              <option value="2">value 2</option>
-              <option value="3">value 3</option>
-            </select>
-          </div><!-- select-imitation -->
+          <select-imitation v-on:update_list="run_update_convertions($event)" ref="display_type"></select-imitation>
+
         </div><!-- information-block__header -->
-        <div class="information-block__body ">
+
+        <div class="information-block__body " >
           <div class="row">
             <div class="diagram col-12">
-              <canvas id="convertions-canvas"></canvas>
+              <div class="convertion-val text-center"  v-show="total_leads > 0">
+                Conversion Rate <br>
+                <span>{{convertion_rate}}%</span>
+              </div>
+              <canvas  v-show="total_leads > 0" id="convertions-canvas"></canvas>
+
+              <div  v-if="total_leads <= 0">
+                <div class="spacer-h-50"></div>
+                <h3 class="text-center">No conversetions for selected period</h3>
+              </div>
             </div>
           </div>
         </div><!-- row -->
+
         <div class="spacer-h-50"></div>
-        <div class="information-block__results">
+        <div class="information-block__results" v-if="total_leads > 0">
           <div class="row">
             <div class="col-12 col-md-6">
-                <div class="block-comment">
-                <svg class="icon svg-icon-down"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-down"></use> </svg>
-                 <span>Your conversion rate is down
-                 <span class=decr>24%</span>from previous 30 days </span>
+                <div class="block-comment" v-show="days_count > 0">
+                <span v-html="icon"></span>
+                 <span>Your conversion rate is {{up_down}}
+                 <span v-bind:class='change_type'>{{delta}}%</span> from previous {{days_count}} days </span>
+              </div>
+                <div class="block-comment" v-show="days_count <= 0">
+                 <span>Convertions rate can't be compared with previous period</span>
               </div>
             </div>
             <div class="col-12 col-md-6">
               <p class="convertion-label">Avg. Conversion Time </p>
-              <p class="convertion-time">3d 2h 32m</p>
+              <p class="convertion-time">{{average_time}}</p>
             </div>
           </div>
         </div>

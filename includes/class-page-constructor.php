@@ -22,21 +22,25 @@ class theme_construct_page{
   * @return void
   */
   public static function init(){
-    add_action('do_theme_header', array('theme_content_output', 'print_header'));
 
-    if(self:: is_page_type( 'dashboard' )){
-      add_action('do_theme_content', array('theme_content_output', 'print_dashboard'));
-    }
+    if(is_user_logged_in()){
+      add_action('do_theme_header', array('theme_content_output', 'print_header'));
+      if(self:: is_page_type( 'dashboard' )){
+        add_action('do_theme_content', array('theme_content_output', 'print_dashboard'));
+      }
 
-    else if(self:: is_page_type( 'leads-list' )){
-      add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
-    }
+      else if(self:: is_page_type( 'leads-list' )){
+        add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+      }
 
-    else if(self:: is_page_type( 'lead' )){
-      add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
-    }
-    else if(self:: is_page_type( 'lead-blank' )){
-      add_action('do_theme_content', array('theme_content_output', 'print_lead_content_blank'));
+      else if(self:: is_page_type( 'lead' )){
+        add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
+      }
+      else if(self:: is_page_type( 'lead-blank' )){
+        add_action('do_theme_content', array('theme_content_output', 'print_lead_content_blank'));
+      }
+    }else{
+    add_action('do_theme_header', array('theme_content_output', 'print_login_form'));
     }
   }
 

@@ -75,20 +75,36 @@ class theme_content_output{
 
       $today_formated = $today->format('M d Y');
 
-      $today->setDate($current_year, $current_month, 1);
 
-      $months_first_day = $today->format('M d Y');
+      $days_30_before_today = new DateTime();
+      $days_30_before_today = $days_30_before_today->modify('-30 days');
+      $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
 
     // Get leads by dates
 
-      $leads = get_posts_by_dates( $months_first_day , $today_formated );
+      $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
 
       $leads = get_leads_meta($leads);
 
       wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
 
+
       wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
 
+      // leads for previous preriod
+
+      $from_prev_period = new DateTime();
+      $to_prev_period   = new DateTime();
+      $from_prev_period->modify('-1 day');
+      $to_prev_period->modify('-31 days');
+      $from_prev_period_fromatted = $from_prev_period->format('M d Y');
+      $to_prev_period_fromatted = $to_prev_period->format('M d Y');
+
+      $leads_prev = get_posts_by_dates( $from_prev_period_fromatted , $to_prev_period_fromatted );
+
+      $leads_prev = get_leads_meta($leads_prev);
+
+      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_prev', $leads_prev);
 
     // prepare data for filters
 
@@ -96,19 +112,16 @@ class theme_content_output{
 
       wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
 
-    // gistogram ????
-
-    // convertions????
 
     // team perfomance
 
-      $user_data = get_users_leads( $months_first_day , $today_formated);
+      $user_data = get_users_leads( $days_30_before_today_formatted , $today_formated);
 
       wp_localize_script($theme_init->main_script_slug, 'team_perfomance', $user_data);
 
       $args = array(
         'daterange' => array(
-          'from' => $months_first_day,
+          'from' => $days_30_before_today_formatted,
           'to'   => $today_formated
         ),
       );
@@ -239,13 +252,16 @@ class theme_content_output{
     $users = get_users();
     $specialists_data = array();
 
+    $clinics = get_option('clinics_list');
+    $treatments = get_option('treatments_list');
+
+
     foreach ($users as $key => $user) {
       $photo_id = get_the_author_meta('user_photo_id', $user->ID);
       $image    =  wp_get_attachment_url( $photo_id );
       $image    = ($image) ? $image : DUMMY_ADMIN;
       $position = esc_html( get_the_author_meta( 'user_position', $user->ID ) );
       $name     = theme_get_user_name($user);
-
       $specialists_data[$name] = array(
         'photo'     => $image,
         'position'  => $position,
@@ -275,6 +291,12 @@ class theme_content_output{
       'text_save_del'         => 'Delete',
       'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
     );
+
+    $clinics = $clinics ? $clinics: array();
+    $treatments = $treatments ? $treatments: array();
+
+    wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+    wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
 
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', $lead_notes);
@@ -332,6 +354,15 @@ class theme_content_output{
         'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
       );
 
+      $clinics = get_option('clinics_list');
+      $treatments = get_option('treatments_list');
+
+      $clinics = $clinics ? $clinics: array();
+      $treatments = $treatments ? $treatments: array();
+
+      wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+      wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+
       wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
       wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());
       wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
@@ -340,5 +371,12 @@ class theme_content_output{
       wp_localize_script($theme_init->main_script_slug, 'lead_logs',  array());
 
       print_theme_template_part('lead-single', 'globals', $args);
+   }
+
+
+   public static function print_login_form(){
+
+      $args = array();
+      print_theme_template_part('login-form', 'globals', $args);
    }
 }

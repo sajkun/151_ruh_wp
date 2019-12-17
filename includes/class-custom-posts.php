@@ -161,9 +161,103 @@ class velesh_theme_posts {
 
 
   public static function add_leads_sub_menu_pages(){
-    add_submenu_page( 'edit.php?post_type=lead_item', 'Leads\' Stages', 'Leads\' Stages',
-    'manage_options', 'leads-stages', array(__CLASS__, 'print_leads_stages_cb'));
+    add_submenu_page( 'edit.php?post_type=lead_item', 'Leads\' Stages', 'Leads\' Stages', 'manage_options', 'leads-stages', array(__CLASS__, 'print_leads_stages_cb'));
+
+    add_submenu_page( 'edit.php?post_type=lead_item', 'Clinics, treatment configurations', 'Clinics, treatment configurations', 'manage_options', 'clinics-treatment-configurations', array(__CLASS__, 'print_clinics_treatment_configurations_cb'));
   }
+
+    public static function print_clinics_treatment_configurations_cb(){
+      // echo "<pre>";
+      // print_r($_POST);
+      // echo "</pre>";
+
+      if(isset($_POST['do_save']) && 'yes' === $_POST['do_save']){
+        if(isset($_POST['clinic'])){
+          update_option('clinics_list', $_POST['clinic']);
+          ?>
+          <div class="notice notice-success is-dismissible"><p>Clinics were saved succesfully</p></div>
+          <?php
+        }else{
+          delete_option('clinics_list');
+        }
+
+        if(isset($_POST['treatment'])){
+          update_option('treatments_list', $_POST['treatment']);
+         ?>
+          <div class="notice notice-success is-dismissible"><p>Treatments were saved succesfully</p></div>
+          <?php
+        }else{
+          delete_option('treatments_list');
+        }
+      }
+
+      $clinics = get_option('clinics_list');
+      $treatments = get_option('treatments_list');
+
+      ?>
+        <h3>Set clinics, and treatments names</h3>
+       <form action="<?php echo admin_url('edit.php?post_type=lead_item&page=clinics-treatment-configurations') ?>" method="POST">
+
+        <div class="">
+          <table class="fullwidth justify-table">
+            <tr>
+              <td>
+                <h4>CLinics</h4>
+
+                  <div class="clinics-list">
+                    <?php if ($clinics): ?>
+
+                    <?php foreach ($clinics as $key => $cl): ?>
+                      <div class="input-control">
+                        <p class="input-title">Clinic #<?php echo $key ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete Clinic</a></p>
+                        <input type="text" class="fullwidth" name="clinic[<?php echo $key ?>]" value="<?php echo $cl ?>">
+                      </div>
+                    <?php endforeach ?>
+                    <?php endif ?>
+                  </div>
+
+
+
+                <input type="hidden" id="count_clinics" value="<?php echo  $clinics? count( $clinics): 0 ?>">
+              </td>
+              <td>
+                <h4>Treatment</h4>
+                <div class="treatments-list">
+                    <?php if ($treatments): ?>
+
+                    <?php foreach ($treatments as $key => $cl): ?>
+                      <div class="input-control">
+                        <p class="input-title">Treatment #<?php echo $key ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete treatment</a></p>
+                        <input type="text" class="fullwidth" name="treatment[<?php echo $key ?>]" value="<?php echo $cl ?>">
+                      </div>
+                    <?php endforeach ?>
+                    <?php endif ?>
+                </div>
+                <input type="hidden" id="count_treatment">
+              </td>
+              <td></td>
+            </tr>
+
+            <tr>
+              <td>
+                <a href="javascript:void(0)" class="button" onclick="add_input('clinic')">Add clinic</a>
+              </td>
+              <td>
+                <a href="javascript:void(0)" class="button" onclick="add_input('treatment')">Add treatment</a>
+
+              </td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+
+        <br><br>
+        <button class="button button-primary" type="submit">Save</button>
+        <input type="hidden" name="do_save" value="yes">
+      </form>
+      <?php
+    }
+
 
     public static function print_leads_stages_cb(){
       // echo "<pre>";
@@ -652,7 +746,7 @@ class velesh_theme_posts {
         ?>
       <div class="note-block">
         <div class="note-block__header clearfix">
-          <span class="name"><?php echo $_user->data->display_name; ?></span>
+          <span class="name"><?php echo $m['user_name']; ?></span>
           <span class="date"><?php echo $m['date'] ?></span>
         </div>
 

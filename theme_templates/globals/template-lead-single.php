@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-8">
+
       <a href="<?php echo $return_url; ?>" class="button-back">
         <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
         <span> Back to Leads</span>
@@ -117,7 +118,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </td>
                   <td><p class="leads-block__label">Treatment</p></td>
                   <td>
-                     <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="treatment" _value="<?php echo $patient_data['treatment']?>"></input-field>
+
+                    <div class="clearfix">
+                      <select-imitation v-bind:class="'style-less'" _name="treatment"  _select_name="treatment" v-on:update_list="update_lead($event, 'patient_data')" ref="treatments_select" _selected="<?php echo ($patient_data['treatment'])? $patient_data['treatment'] : '--Select--'?>"
+                    ></select-imitation>
+                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -126,7 +131,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </td>
                   <td><p class="leads-block__label">Clinic</p></td>
                   <td>
-                    <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="clinic" _value="<?php echo $patient_data['clinic']?>"></input-field>
+
+                    <select-imitation v-bind:class="'style-less'" _name="clinic"  _select_name="clinic" v-on:update_list="update_lead($event, 'patient_data')" ref="clinic_select" _selected="<?php echo ($patient_data['clinic'])? $patient_data['clinic'] : '--Select--'?>"></select-imitation>
+
                   </td>
                 </tr>
                 <tr>
@@ -224,7 +231,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </td>
                 <td><p class="leads-block__label">Payment Terms</p></td>
                 <td>
-                  <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="terms" _value="<?php echo $treatment_value['terms']?>" v-bind:class="'leads-block__input sm'"></input-field>
+
+                  <select-imitation v-bind:class="'style-less'" _name="terms"  _select_name="terms" v-on:update_list="update_lead($event, 'treatment_value')" ref="terms_select" _selected="<?php echo ($treatment_value['terms'])? $treatment_value['terms'] : '--Select--'?>"
+                    ></select-imitation>
+
                 </td>
               </tr>
               <tr>
@@ -233,7 +243,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </td>
                 <td><p class="leads-block__label">Monthly</p></td>
                 <td>
-                  <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="mounthly" _value="<?php echo $treatment_value['mounthly']?>" v-bind:class="'leads-block__input sm'"></input-field>
+                  <input type="text" class="leads-block__input leads-block__input sm" v-bind:value="monthly_payment">
                 </td>
               </tr>
               <tr>
@@ -251,7 +261,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </td>
                 <td><p class="leads-block__label">Treatment</p></td>
                 <td>
-                  <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="treatment" _value="<?php echo $treatment_value['treatment']?>" v-bind:class="'leads-block__input sm'"></input-field>
+                   <select-imitation v-bind:class="'style-less'" _name="treatment"  _select_name="treatment" v-on:update_list="update_lead($event, 'treatment_value')" ref="treatments_select2" _selected="<?php echo ($treatment_value['treatment'])? $treatment_value['treatment'] : '--Select--'?>"
+                    ></select-imitation>
                 </td>
               </tr>
             </table>

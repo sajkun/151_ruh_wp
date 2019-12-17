@@ -51,3 +51,20 @@
 .optional_label :checked ~ i{
   display: block;
 }
+
+.justify-table{
+  table-layout: fixed;
+}
+.justify-table td{
+  vertical-align: top;
+  padding: 5px 15px;
+}
+
+.input-title{
+  margin: 0 0 5px;
+  text-transform: capitalize;
+}
+
+.input-title+input{
+  margin-bottom: 15px;
+}

@@ -511,6 +511,9 @@ if(!function_exists('get_leads_meta')){
         }
       }
 
+      $leads[$lead_id]->converted_time = get_post_meta($post->ID, '_time_converted', true);
+
+
       $meta['lead_specialists'] =  $specialists;
 
       // add meta field to lead
@@ -692,7 +695,6 @@ if(!function_exists('get_users_leads')){
       $user_position = strtolower(get_the_author_meta('user_position', $user->ID));
       $assigned_posts = get_the_author_meta('_leads_assigned', $user->ID);
 
-      dlog($assigned_posts);
       $photo_id = get_the_author_meta('user_photo_id', $user->ID);
       $image =  wp_get_attachment_url( $photo_id );
       $image = ($image) ? $image : DUMMY_ADMIN;
@@ -748,7 +750,7 @@ if(!function_exists('get_users_leads')){
 
       $posts = get_posts($args);
 
-// _lead_stage
+      // _lead_stage
 
       $args_converted['meta_query'] = array('relation' => 'OR');
 
@@ -772,17 +774,12 @@ if(!function_exists('get_users_leads')){
       );
     }
 
-    dlog($data);
-    dlog($posistions);
-
     dlog('-------------', false, true);
 
     return array(
       'team' => $data,
       'positions' => $posistions,
     );
-
-
   }
 }
 

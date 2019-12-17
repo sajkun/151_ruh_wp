@@ -238,3 +238,42 @@ jQuery('.stage_for_converted, .stage_for_failed').change(function(e){
     alert('One stage can not be used as failed and converted at the same time');
   }
 })
+
+function add_input(slug){
+  switch(slug){
+    case 'clinic':
+      var count = parseInt(jQuery('#count_clinics').val()) || 0;
+      break;
+    case 'treatment':
+      var count = parseInt(jQuery('#count_treatment').val()) || 0;
+      break;
+  }
+  var template = ' <div class="input-control"><p class="input-title">{slug} #{count} <a href="javascript:void(0)" onclick="delete_input(this)">Delete {slug}</a></p><input type="text" value="" class="fullwidth" name="{slug}[{count}]" /> <br /></div>'
+
+  var search = {
+    slug: slug,
+    count: count,
+  }
+
+  var html = theme_actions.string_replace(search, template);
+
+
+  count++;
+
+  switch(slug){
+    case 'clinic':
+    jQuery('.clinics-list').append(html);
+      jQuery('#count_clinics').val(count);
+      break;
+    case 'treatment':
+      jQuery('.treatments-list').append(html);
+      jQuery('#count_treatment').val(count);
+      break;
+  }
+
+
+}
+
+function delete_input(obj){
+  jQuery(obj).closest('.input-control').remove();
+}

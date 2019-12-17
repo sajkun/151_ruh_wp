@@ -47,6 +47,28 @@ if(!class_exists('theme_ajax_action')){
 
       add_action('wp_ajax_delete_lead', array($this, 'delete_lead_cb'));
       add_action('wp_ajax_nopriv_delete_lead', array($this, 'delete_lead_cb'));
+
+      add_action('wp_ajax_nopriv_run_login', array($this, 'run_login_cb'));
+    }
+
+    public function run_login_cb(){
+
+      $verify =  wp_verify_nonce(  $_POST['wp-nonce-login'], 'login_nonce_check' );
+
+      if(!$verify){
+        wp_send_json_error(array('Nonce field check failed'), 418);
+      }
+
+      $data =$_POST;
+      unset($data['action']);
+
+      $user = wp_signon($data);
+
+      if(isset($user->errors)){
+        wp_send_json_error($user->errors, 418);
+      }
+
+      wp_send_json(array('user'=>$user, 'redirect' => HOME_URL));
     }
 
     /**
@@ -200,36 +222,47 @@ if(!class_exists('theme_ajax_action')){
         $meta['patient_data']['sourse']   = $sourses[$meta['patient_data']['sourse']];
       }
 
-      foreach ($meta as $meta_key => $data) {
-        $key = '_'.$meta_key;
+      if(isset($meta['lead_specialists'])){
+        foreach ($meta['lead_specialists'] as $user_id => $assigned) {
+          $assigned_posts = get_the_author_meta('_leads_assigned',  $user_id);
 
+          if(!$assigned_posts){
+            $assigned_posts = [];
+          }
 
-        if(isset($meta['lead_specialists'])){
+          if(!in_array($post_id, $assigned_posts) && 'yes' === $assigned){
+            array_push($assigned_posts, $post_id);
+          }
 
-          foreach ($meta['lead_specialists'] as $user_id => $assigned) {
-            $assigned_posts = get_the_author_meta('_leads_assigned',  $user_id);
-
-            if(!$assigned_posts){
-              $assigned_posts = [];
-            }
-
-            if(!in_array($post_id, $assigned_posts) && 'yes' === $assigned){
-              array_push($assigned_posts, $post_id);
-            }
-
-            if('no' === $assigned){
-              $assigned_key = array_search($post_id, $assigned_posts);
-              if($assigned_key){
-                array_splice($assigned_posts, $assigned_key, 1);
-              }
-            }
-
-            if(!update_user_meta( $user_id, '_leads_assigned', $assigned_posts )){
-              add_user_meta( $user_id, '_leads_assigned', $assigned_posts );
+          if('no' === $assigned){
+            $assigned_key = array_search($post_id, $assigned_posts);
+            if($assigned_key){
+              array_splice($assigned_posts, $assigned_key, 1);
             }
           }
 
+          if(!update_user_meta( $user_id, '_leads_assigned', $assigned_posts )){
+            add_user_meta( $user_id, '_leads_assigned', $assigned_posts );
+          }
         }
+      }
+
+      // sets time when a lead becomes converted
+      if(isset( $meta['lead_stage'] )){
+        $meta_converted_time = get_post_meta($post_id, '_time_converted', true);
+
+        if( !$meta_converted_time && in_array($meta['lead_stage'],get_converted_stages() )){
+          $today = new DateTime();
+          $today_formatted = $today->format('Y-m-d H:i:s');
+
+          if(!update_post_meta($post_id,  '_time_converted', $today_formatted)){
+            $removed = add_post_meta( $post_id,  '_time_converted', $today_formatted, true );
+          }
+        }
+      }
+
+      foreach ($meta as $meta_key => $data) {
+        $key = '_'.$meta_key;
 
         if(!update_post_meta($post_id,  $key, $data)){
           $removed = add_post_meta( $post_id,  $key, $data, true );
@@ -340,10 +373,25 @@ if(!class_exists('theme_ajax_action')){
     public static function update_leads_list_cb(){
 
       $post_id = (int)$_POST['post_id'];
-      $post_id = (int)$_POST['post_id'];
 
       if( !isset( $_POST['post_id'] ) || !isset( $_POST['list_id']) ){
         wp_send_json(array('success' => false));
+      }
+
+      // sets time when a lead becomes converted
+      if(isset( $_POST['list_id'] )){
+        $meta_converted_time = get_post_meta($post_id, '_time_converted', true);
+
+        if( !$meta_converted_time && in_array( $_POST['list_id'] ,get_converted_stages() )){
+          $today = new DateTime();
+          $today_formatted = $today->format('Y-m-d H:i:s');
+
+          if(!update_post_meta($post_id,  '_time_converted', $today_formatted)){
+            add_post_meta( $post_id,  '_time_converted', $today_formatted, true );
+          }
+        }else if(!in_array( $_POST['list_id'] ,get_converted_stages() )){
+          delete_post_meta( $post_id,  '_time_converted');
+        }
       }
 
       $update = update_post_meta(  $post_id , '_lead_stage', $_POST['list_id'] );
@@ -362,6 +410,7 @@ if(!class_exists('theme_ajax_action')){
       $from = new DateTime($_POST['from']);
       $to = new DateTime($_POST['to']);
 
+
       $from_formated = $from->format('M d Y');
       $to_formated   = $to->format('M d Y');
 
@@ -371,17 +420,51 @@ if(!class_exists('theme_ajax_action')){
 
       $team_perfomance = get_users_leads($from_formated , $to_formated);
 
-    // prepare data for filters
+      // prepare data for filters
 
       $filter_data = get_filters_by_leads( $leads );
 
-      wp_send_json(array(
-        'leads'         => $leads,
-        'filter_data'   => $filter_data,
-        'from_formated' => $from_formated,
-        'to_formated'   => $to_formated,
+
+      $data = array(
+        'leads'             => $leads,
+        'filter_data'       => $filter_data,
+        'from_formated'     => $from_formated,
+        'to_formated'       => $to_formated,
         'team_perfomance'   => $team_perfomance,
-      ) );
+        'leads_prev'        => false,
+        'days_count_prev'   => -1,
+
+      );
+
+      $period_compared = array(
+        'Past 7 Days'  => 7,
+        'Past 30 Days' => 30,
+        'Past 90 Days' => 90,
+      );
+
+      if(isset($_POST['get_previous_data']) && $_POST['get_previous_data'] && in_array($_POST['label'], array_keys($period_compared) )){
+
+        $delta = ($period_compared[$_POST['label']] + 1);
+
+        $date_prev_period_end   = new DateTime($_POST['from']);
+        $date_prev_period_start = new DateTime($_POST['from']);
+
+        $date_prev_period_start->modify('-'. $delta.' days');
+        $date_prev_period_end->modify('-1 days');
+
+        $from_formated_prev = $date_prev_period_start->format('M d Y');
+        $to_formatted_prev  = $date_prev_period_end->format('M d Y');
+
+        $leads_prev = get_posts_by_dates($from_formated_prev , $to_formatted_prev );
+
+        $leads_prev = get_leads_meta($leads_prev);
+
+        $data['leads_prev'] =  $leads_prev;
+        $data['days_count_prev'] =  $period_compared[$_POST['label']];
+      }
+
+
+      wp_send_json($data);
     }
   }
 }
