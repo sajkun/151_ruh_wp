@@ -66,6 +66,10 @@ function goBack() {
 
 
 function get_sum_from_price(sum){
+  if(sum === 0){
+    return 0;
+  }
+
   if(typeof(sum) === 'undefined'){
     return 0;
   }
@@ -2698,7 +2702,8 @@ if('undefined' !== typeof(is_single_lead)){
 
     methods: {
       price_to_value: function(){
-        var summ = get_sum_from_price(this.treatment_value.value);
+        var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
+        summ = get_sum_from_price(summ);
         this.$refs.price_input_field.set_value(summ);
       },
 
