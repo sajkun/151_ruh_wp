@@ -49,7 +49,64 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_delete_lead', array($this, 'delete_lead_cb'));
 
       add_action('wp_ajax_nopriv_run_login', array($this, 'run_login_cb'));
+
+      add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
     }
+
+    public function add_a_lead_by_post_cb(){
+
+      $meta = $_POST;
+
+      unset($meta['action']);
+
+      $_name = array($meta['name'], $meta['treatment'], $meta['clinic']);
+
+      $name = array();
+
+      foreach ($_name as $key => $n) {
+        if(trim($n)){
+          array_push($name, $n);
+        }
+      }
+
+      $name_str = implode(' - ', $name);
+
+      $date = new DateTime();
+
+      $post_data = array(
+        'post_title'    =>  $name_str,
+        'post_content'  => '',
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'     => velesh_theme_posts::$lead,
+        'post_date'     => $date->format('Y-m-d H:i:s'),
+      );
+
+      if( $name_str ){
+        $post_id = wp_insert_post( $post_data );
+        $meta['date_time'] = $date->format('d M Y'). ' at '. $date->format('H:i');
+      }else{
+        wp_send_json_error(array('no data passed'), 418);
+      }
+
+
+      $updated = update_post_meta($post_id,  '_patient_data', $meta);
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_patient_data', $meta, true );
+      }
+
+      $response = array(
+        'posted'  => $_POST,
+        'created' => array(
+          'updated' => $updated,
+          'post_id' => $post_id,
+        ),
+      );
+
+      wp_send_json( $response );
+    }
+
 
     public function run_login_cb(){
 
@@ -166,7 +223,6 @@ if(!class_exists('theme_ajax_action')){
         wp_send_json_error(array('Nonce field check failed'), 418);
       }
 
-
       $meta = $_POST['meta'];
 
       $post_id = (int)$_POST['lead_data']['lead_id'];
@@ -204,22 +260,8 @@ if(!class_exists('theme_ajax_action')){
         }
       }
 
-      $sourses = array(
-        'Live Chat'  => 'live-chat',
-        'Instagram'  => 'instagram',
-        'Google PPC' => 'google-ppc',
-        'Website'    => 'website',
-        'Phone'      => 'phone',
-        'Walk In'    => 'walk-in',
-        'Other'      => 'other',
-      );
-
       if(isset($meta['treatment_value'])){
         $meta['treatment_value']['value'] =  price_to_number($meta['treatment_value']['value']);
-      }
-
-      if(isset($meta['patient_data'])){
-        $meta['patient_data']['sourse']   = $sourses[$meta['patient_data']['sourse']];
       }
 
       if(isset($meta['lead_specialists'])){

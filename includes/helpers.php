@@ -365,10 +365,46 @@ if(!function_exists('exec_upload_file')){
 }
 
 
+if(!function_exists('get_annually_income')){
+  function get_annually_income(){
+    $date = new DateTime();
+    $year_current = (int)$date->format('Y');
+    $date->setDate($year_current, 1, 1);
+    $date->setTime(0, 0 ,0);
+    $months = array();
+
+    for($i = 0; $i < 12; $i++){
+      $index = $date->format('M');
+      $months[ $index] = array('from'=>$date->format('Y-m-d H:i:s'), 'to'=>$date->format('Y-m-t H:i:s'));
+      $new_date = $date->modify('+1 month');
+    }
+
+
+    foreach ($months as $month => $period) {
+      $summ = 0;
+
+      $leads = get_posts_by_dates($period['from'], $period['to']);
+
+      if(count($leads) == 0){
+        $months[$month]['sum']  = 0;
+        continue;
+      }
+
+      foreach ($leads as $lead) {
+        $meta = get_post_meta($lead->ID, '_treatment_value', true);
+        $summ += price_to_number($meta['value']);
+      }
+
+       $months[$month]['sum']  = $summ;
+    }
+
+
+    return $months;
+  }
+}
+
 
 if(!function_exists('get_posts_by_dates')){
-
-
   /**
   * Gets WP posts between dates
   *
@@ -433,7 +469,7 @@ if(!function_exists('get_leads_meta')){
     dlog('Get Leads Meta', true, false);
 
 
-    $sourses = array(
+    $sources = array(
         'live-chat'  => 'Live Chat',
         'instagram'  => 'Instagram',
         'google-ppc' => 'Google PPC',
@@ -450,7 +486,7 @@ if(!function_exists('get_leads_meta')){
 
 
     foreach ($leads as $lead_id => $post) {
-    // get all metadata;
+      // get all metadata;
       $meta = array(
         'lead_notes'            => get_post_meta($post->ID, '_lead_notes', true),
         'lead_files'            => get_post_meta($post->ID, '_lead_files', true),
@@ -465,19 +501,16 @@ if(!function_exists('get_leads_meta')){
         $meta['patient_data'] = array();
       }
 
-      if(!$meta['patient_data']['sourse']){
-        $meta['patient_data']['sourse'] = '';
-      }else{
-        $meta['patient_data']['sourse'] =  $sourses[$meta['patient_data']['sourse']];
+      if(!$meta['patient_data']['source']){
+        $meta['patient_data']['source'] = '';
       }
-
 
       //prepare data for filtering
       $filter_data = array(
-        'clinics'    => $meta['patient_data']['clinic'],
-        'treatments' => $meta['patient_data']['treatment'] ,
-        'campaigns'  => '',
-        'sourses'    => $meta['patient_data']['sourse'],
+        'clinics'    => ($meta['patient_data']['clinic'])? $meta['patient_data']['clinic'] : '',
+        'treatments'    => ($meta['patient_data']['treatment'])? $meta['patient_data']['treatment'] : '',
+        'campaigns'    => ($meta['patient_data']['campaign'])? $meta['patient_data']['campaign'] : '',
+        'sources'    => ($meta['patient_data']['source'])? $meta['patient_data']['source'] : '',
         'team'       => array(),
       );
 
@@ -587,9 +620,8 @@ if(!function_exists('theme_get_user_name')){
 
 }
 
+
 if(!function_exists('get_filters_by_leads')){
-
-
   /**
   * Gets WP posts between dates
   *
@@ -605,7 +637,7 @@ if(!function_exists('get_filters_by_leads')){
       'clinics'    => array('All Clinics'),
       'treatments' => array('All Treatments'),
       'campaigns'  => array('All Campaigns'),
-      'sourses'    => array('All Sourses'),
+      'sources'    => array('All Sources'),
       'team'       => array('All Team'),
     );
 
@@ -616,7 +648,8 @@ if(!function_exists('get_filters_by_leads')){
 
       $clinic    = $meta['patient_data']['clinic'];
       $treatment = $meta['patient_data']['treatment'];
-      $sourse    = $meta['patient_data']['sourse'];
+      $source    = $meta['patient_data']['source'];
+      $campaign  = $meta['patient_data']['campaign'];
       $team      = $meta['lead_specialists'];
 
       if(!in_array( $clinic ,$data['clinics']) && !empty(trim( $clinic))){
@@ -626,8 +659,12 @@ if(!function_exists('get_filters_by_leads')){
         array_push($data['treatments'], $treatment);
       }
 
-      if(!in_array($sourse ,$data['sourses']) &&  $sourse != '-1' && !empty(trim( $sourse))){
-        array_push($data['sourses'], $sourse);
+      if(!in_array($source ,$data['sources']) &&  $source != '-1' && !empty(trim( $source))){
+        array_push($data['sources'], $source);
+      }
+
+      if(!in_array($campaign , $data['campaigns']) &&  $campaign != '-1' && !empty(trim( $campaign))){
+        array_push($data['campaigns'], $campaign);
       }
 
       foreach ($team as $member_id => $member) {
@@ -645,33 +682,49 @@ if(!function_exists('get_filters_by_leads')){
   }
 }
 
-function get_converted_stages(){
-  $stages              = get_option('leads_stages');
-  $stage_for_failed    = (int)get_option('stage_for_failed');
-  $stage_for_converted = (int)get_option('stage_for_converted');
 
-  $converted_stages = array();
+if(!function_exists('get_failed_stage_name')){
+  /**
+  * Gets names of stages set for converted leads
+  *
+  * @return array
+  */
+  function get_converted_stages(){
+    $stages              = get_option('leads_stages');
+    $stage_for_failed    = (int)get_option('stage_for_failed');
+    $stage_for_converted = (int)get_option('stage_for_converted');
 
-  foreach ($stages as $key => $st) {
-    if((int)$st['number'] >= $stage_for_converted &&  (int)$st['number'] != $stage_for_failed ){
-      $converted_stages[] = $st['name'];
+    $converted_stages = array();
+
+    foreach ($stages as $key => $st) {
+      if((int)$st['number'] >= $stage_for_converted &&  (int)$st['number'] != $stage_for_failed ){
+        $converted_stages[] = $st['name'];
+      }
     }
-  }
 
-  return $converted_stages;
+    return $converted_stages;
+  }
 }
 
-function get_failed_stage_name(){
-  $stages              = get_option('leads_stages');
-  $stage_for_failed    = (int)get_option('stage_for_failed');
 
-  foreach ($stages as $key => $st) {
-    if((int)$st['number'] === $stage_for_failed){
-      return $st['name'];
+if(!function_exists('get_failed_stage_name')){
+  /**
+  * Gets name of stage set for failed leads
+  *
+  * @return string
+  */
+  function get_failed_stage_name(){
+    $stages              = get_option('leads_stages');
+    $stage_for_failed    = (int)get_option('stage_for_failed');
+
+    foreach ($stages as $key => $st) {
+      if((int)$st['number'] === $stage_for_failed){
+        return $st['name'];
+      }
     }
-  }
 
-  return false;
+    return false;
+  }
 }
 
 if(!function_exists('get_users_leads')){
@@ -836,4 +889,6 @@ if(!function_exists('my_upload_dir')){
     return $upload;
   }
 }
+
+
 

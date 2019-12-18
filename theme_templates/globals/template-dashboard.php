@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     <select-imitation-icon _select_name="campaigns" ref="campaigns" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-    <select-imitation-icon _select_name="sourses" ref="sourses" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
+    <select-imitation-icon _select_name="sources" ref="sources" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
     <select-imitation-icon _select_name="team" ref="team" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
@@ -103,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="container statistics">
   <div class="row gutters-md-10">
     <div class="col-12 col-md-6 col-lg-3">
-      <div class="information-block" id="top_sourse">
+      <div class="information-block" id="top_source">
         <div class="information-block__header">
 
           <h4 class="block-title">Top Source</h4>
@@ -326,12 +326,16 @@ if ( ! defined( 'ABSPATH' ) ) {
                   {{data.converted}}
                 </div>
               </td>
+
+              <td><div class="cell-content">&nbsp;&nbsp;&nbsp;</div></td>
+
+              <?php /*
               <td>
                 <div class="cell-content">
                    <svg class="icon svg-icon-up"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-up"></use> </svg>
                   <span class="encr">0</span>
                 </div>
-              </td>
+              </td> */ ?>
             </tr>
           </table>
         </div><!-- information-block__body -->

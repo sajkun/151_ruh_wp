@@ -25,13 +25,13 @@ if ( ! defined( 'ABSPATH' ) ) {
           </li>
         </ul>
       </nav>
-      <div class="col-12 order-2 order-md-0 col-md-2 col-lg-4 search">
+      <div class="search" v-bind:class="classes"  id="search-form">
         <div class="row no-gutters justify-content-between justify-content-around-md justify-content-between-lg">
-          <div class="search-open">
+          <div class="search-open"  v-if="show_search">
             <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
           </div>
 
-          <div class="search__wrapper" id="search-form" v-bind:class="{ visuallyhidden : isVisuallyHidden}">
+          <div class="search__wrapper"  v-if="show_search">
             <form action="#" method="POST" class="search__form">
 
                 <div class="row no-gutters">

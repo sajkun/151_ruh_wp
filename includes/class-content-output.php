@@ -119,6 +119,9 @@ class theme_content_output{
 
       wp_localize_script($theme_init->main_script_slug, 'team_perfomance', $user_data);
 
+      wp_localize_script($theme_init->main_script_slug, 'income_month_data', get_annually_income());
+
+
       $args = array(
         'daterange' => array(
           'from' => $days_30_before_today_formatted,
@@ -208,17 +211,13 @@ class theme_content_output{
     $lead_stage          = get_post_meta($lead->ID, '_lead_stage', true);
     $converted_stages    = get_converted_stages();
 
-    // foreach ($stages as $key => $st) {
-    //   $lead_stage_num = $st['name'] === $lead_stage ? (int)$st['number'] : $lead_stage_num;
-    // }
-
     // defines a type of a lead
     $lead_type  = array('class' => 'opened', 'text' => 'Opened Lead');
     $lead_type = (in_array( $lead_stage, $converted_stages ))? array('class' => 'converted', 'text' => 'Converted Lead'): $lead_type;
     $lead_type = ($lead_stage === get_failed_stage_name())? array('class' => 'failed', 'text' => 'Failed Lead'): $lead_type;
 
     // get current user data
-    $user = get_user_by('id', get_current_user_id());
+    $user      = get_user_by('id', get_current_user_id());
     $user_name =  theme_get_user_name($user);
 
 
@@ -252,9 +251,8 @@ class theme_content_output{
     $users = get_users();
     $specialists_data = array();
 
-    $clinics = get_option('clinics_list');
+    $clinics    = get_option('clinics_list');
     $treatments = get_option('treatments_list');
-
 
     foreach ($users as $key => $user) {
       $photo_id = get_the_author_meta('user_photo_id', $user->ID);

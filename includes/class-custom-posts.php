@@ -202,7 +202,7 @@ class velesh_theme_posts {
           <table class="fullwidth justify-table">
             <tr>
               <td>
-                <h4>CLinics</h4>
+                <h4>Clinics</h4>
 
                   <div class="clinics-list">
                     <?php if ($clinics): ?>
@@ -217,12 +217,13 @@ class velesh_theme_posts {
                   </div>
 
 
+              <a href="javascript:void(0)" class="button" onclick="add_input('clinic')">Add clinic</a>
 
                 <input type="hidden" id="count_clinics" value="<?php echo  $clinics? count( $clinics): 0 ?>">
               </td>
-              <td>
+              <td colspan="2">
                 <h4>Treatment</h4>
-                <div class="treatments-list">
+                <div class="treatments-list" style="column-count:2; column-gap:20px">
                     <?php if ($treatments): ?>
 
                     <?php foreach ($treatments as $key => $cl): ?>
@@ -234,17 +235,7 @@ class velesh_theme_posts {
                     <?php endif ?>
                 </div>
                 <input type="hidden" id="count_treatment">
-              </td>
-              <td></td>
-            </tr>
-
-            <tr>
-              <td>
-                <a href="javascript:void(0)" class="button" onclick="add_input('clinic')">Add clinic</a>
-              </td>
-              <td>
                 <a href="javascript:void(0)" class="button" onclick="add_input('treatment')">Add treatment</a>
-
               </td>
               <td></td>
             </tr>
@@ -465,6 +456,8 @@ class velesh_theme_posts {
    */
   public static function lead_patient_data_cb($post){
     $meta = get_post_meta($post->ID, '_patient_data', true);
+    $clinics    = get_option('clinics_list');
+    $treatments = get_option('treatments_list');
     ?>
 
     <div class="leads-block__row">
@@ -500,20 +493,20 @@ class velesh_theme_posts {
           <td><p class="leads-block__label">Source</p></td>
           <td>
             <?php
-              $sourses = array(
-                'live-chat' => 'Live Chat',
-                'instagram' => 'Instagram',
-                'google-ppc' => 'Google PPC',
-                'website' => 'Website',
-                'phone' => 'Phone',
-                'walk-in' => 'Walk In',
-                'other' => 'Other',
+              $sources = array(
+                'Live Chat',
+                'Instagram',
+                'Google PPC',
+                'Website',
+                'Phone',
+                'Walk In',
+                'Other',
               );
             ?>
-            <select name="patient_data[sourse]" id="patient_data[sourse]" class="fullwidth">
+            <select name="patient_data[source]" id="patient_data[source]" class="fullwidth">
               <option value="-1">Select</option>
-              <?php foreach ($sourses as $key => $s): ?>
-              <option value="<?php echo $key ?>" <?php echo isset($meta['sourse']) && $key == $meta['sourse']?'selected="selected"' : ''; ?>><?php echo $s ?></option>
+              <?php foreach ($sources as $key => $s): ?>
+              <option value="<?php echo $s ?>" <?php echo isset($meta['source']) && $s == $meta['source']?'selected="selected"' : ''; ?>><?php echo $s ?></option>
               <?php endforeach ?>
             </select>
           </td>
@@ -524,7 +517,15 @@ class velesh_theme_posts {
           </td>
           <td><p class="leads-block__label">Treatment</p></td>
           <td>
-            <input type="text" name="patient_data[treatment]" placeholder="Add" class="leads-block__input fullwidth"  value="<?php echo isset($meta['treatment'])? $meta['treatment'] : ''; ?>">
+
+            <select name="patient_data[treatment]" id="patient_data[treatment]" class="fullwidth">
+              <option value="">Select</option>
+              <?php foreach ($treatments as $s): ?>
+              <option value="<?php echo $s ?>" <?php echo isset($meta['treatment']) && $s == $meta['treatment']?'selected="selected"' : ''; ?>><?php echo $s ?></option>
+              <?php endforeach ?>
+            </select>
+
+
           </td>
         </tr>
         <tr>
@@ -533,7 +534,14 @@ class velesh_theme_posts {
           </td>
           <td><p class="leads-block__label">Clinic</p></td>
           <td>
-            <input type="text" name="patient_data[clinic]" placeholder="Add" class="leads-block__input fullwidth"  value="<?php echo isset($meta['clinic'])? $meta['clinic'] : ''; ?>">
+
+            <select name="patient_data[clinic]" id="patient_data[clinic]" class="fullwidth">
+              <option value="">Select</option>
+              <?php foreach ($clinics as $s): ?>
+              <option value="<?php echo $s ?>" <?php echo isset($meta['clinic']) && $s == $meta['clinic']?'selected="selected"' : ''; ?>><?php echo $s ?></option>
+              <?php endforeach ?>
+            </select>
+
           </td>
         </tr>
         <tr>
@@ -546,6 +554,18 @@ class velesh_theme_posts {
                $date = new DateTime($post->post_modified);
              ?>
             <input type="text" readonly name="patient_data[date_time]" placeholder="Add" class="leads-block__input fullwidth"  value="<?php echo $date->format('M d Y H:i') ?>">
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>
+          </td>
+          <td><p class="leads-block__label">Campaign</p></td>
+          <td>
+            <?php
+             ?>
+            <input type="text" name="patient_data[campaign]" placeholder="Add" class="leads-block__input fullwidth"  value="<?php echo isset($meta['phone'])? $meta['phone'] : ''; ?>">
 
           </td>
         </tr>
@@ -562,12 +582,20 @@ class velesh_theme_posts {
    * @param $post - WP_Post object
    */
   public static function lead_proposed_treatment_value_cb($post){
+    $treatments = get_option('treatments_list');
     $meta = get_post_meta($post->ID, '_treatment_value', true);
+    $terms = array(
+      'Full Payment',
+      '12 Months',
+      '24 Months',
+      '36 Months',
+      '48 Months',
+    );
     ?>
     <div class="leads-block__row">
       <h4>Treatment Value (£)</h4>
       <div class="leads-block__price">
-        <input type="text" name="treatment_value[value]" placeholder="£00.00" class="leads-block__input xxl"  value="<?php echo isset($meta['value']) ? $meta['value'] : ''; ?>">
+        <input type="text" name="treatment_value[value]" placeholder="£00.00" class="leads-block__input xxl price_input"  value="<?php echo isset($meta['value']) ? $meta['value'] : ''; ?>">
       </div>
       <i>place only number without any separators or currency symbols</i>
     </div>
@@ -582,7 +610,14 @@ class velesh_theme_posts {
             </td>
             <td><p class="leads-block__label">Payment Terms</p></td>
             <td>
-              <input type="text" name="treatment_value[terms]" placeholder="Add" class="leads-block__input fullwidth" value="<?php echo isset($meta['terms']) ? $meta['terms'] : ''; ?>">
+
+
+
+            <select name="treatment_value[terms]" id="treatment_value[terms]" class="terms_select fullwidth">
+              <?php foreach ($terms as $key => $s): ?>
+              <option value="<?php echo $s ?>" <?php echo isset($meta['terms']) && $s == $meta['terms']?'selected="selected"' : ''; ?>><?php echo $s ?></option>
+              <?php endforeach ?>
+            </select>
             </td>
           </tr>
           <tr>
@@ -591,7 +626,7 @@ class velesh_theme_posts {
             </td>
             <td><p class="leads-block__label">Monthly</p></td>
             <td>
-              <input type="text" name="treatment_value[mounthly]" placeholder="Add"  class="leads-block__input fullwidth" value="<?php echo isset($meta['mounthly']) ? $meta['mounthly'] : ''; ?>">
+              <input type="text" readonly name="treatment_value[mounthly]" placeholder="Add"  class="leads-block__input fullwidth treatment_mounthly" value="<?php echo isset($meta['mounthly']) ? $meta['mounthly'] : ''; ?>">
             </td>
           </tr>
           <tr>
@@ -609,7 +644,12 @@ class velesh_theme_posts {
           </td>
           <td><p class="leads-block__label">Treatment</p></td>
           <td>
-            <input type="text" name="treatment_value[treatment]" placeholder="Add" class="leads-block__input fullwidth" value="<?php echo isset($meta['treatment']) ? $meta['treatment'] : ''; ?>">
+            <select name="treatment_value[treatment]" id="treatment_value[treatment]" class="fullwidth">
+              <option value="">Select</option>
+              <?php foreach ($treatments as $s): ?>
+              <option value="<?php echo $s ?>" <?php echo isset($meta['treatment']) && $s == $meta['treatment']?'selected="selected"' : ''; ?>><?php echo $s ?></option>
+              <?php endforeach ?>
+            </select>
           </td>
         </tr>
       </tbody></table>

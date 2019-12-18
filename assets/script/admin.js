@@ -39,6 +39,42 @@ console.log('admin script was loaded');
         });
       }
       return template;
+    },
+
+    get_sum_from_price:function(sum){
+      if(typeof(sum) === 'undefined'){
+        return 0;
+      }
+
+      if(typeof(sum) === 'string'){
+        var exp = new RegExp("\\D", "gi");
+        var pierces = sum.split('.');
+        var summ = pierces[0].replace(exp, '');
+
+        return parseInt(summ);
+      }
+
+      if(typeof(sum) === 'number'){
+        return sum;
+      }
+
+      return 0;
+    },
+
+
+
+     formatMoney: function(number, decPlaces, decSep, thouSep) {
+      decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
+      decSep = typeof decSep === "undefined" ? "." : decSep;
+      thouSep = typeof thouSep === "undefined" ? "," : thouSep;
+      var sign = number < 0 ? "-" : "";
+      var i = String(parseInt(number = Math.abs(Number(number) || 0).toFixed(decPlaces)));
+      var j = (j = i.length) > 3 ? j % 3 : 0;
+
+      return sign +
+        (j ? i.substr(0, j) + thouSep : "") +
+        i.substr(j).replace(/(\decSep{3})(?=\decSep)/g, "$1" + thouSep) +
+        (decPlaces ? decSep + Math.abs(number - i).toFixed(decPlaces).slice(2) : "");
     }
   }
 
@@ -277,3 +313,41 @@ function add_input(slug){
 function delete_input(obj){
   jQuery(obj).closest('.input-control').remove();
 }
+
+
+
+jQuery(document).ready(function(){
+  jQuery(".terms_select, .price_input").on('change input',function(){
+    var value = jQuery(".terms_select").val();
+    var price = jQuery('.price_input').val();
+    price = theme_actions.get_sum_from_price(price);
+
+    if(!price){
+      summ = '£'+ theme_actions.formatMoney(0, 2, ".", ",");
+      jQuery('.treatment_mounthly').val(summ);
+      return false
+    }
+    switch(value){
+      case '12 Months':
+         index = 12;
+        break;
+      case '24 Months':
+         index = 24;
+        break;
+      case '36 Months':
+         index = 36;
+        break;
+      case '48 Months':
+         index = 48;
+        break;
+      default:
+         index = 1;
+        break;
+    }
+    var summ = price/index;
+    summ = summ.toFixed(2);
+    summ = '£'+ theme_actions.formatMoney(summ, 2, ".", ",");
+    jQuery('.treatment_mounthly').val(summ);
+  })
+
+})

@@ -16,24 +16,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-8">
+        <div class="row no-gutters justify-content-center justify-content-start-sm">
+          <a href="<?php echo $return_url; ?>" class="button-back">
+            <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
+            <span> Back to Leads</span>
+          </a>
 
-      <a href="<?php echo $return_url; ?>" class="button-back">
-        <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
-        <span> Back to Leads</span>
-      </a>
+          <a href="#" class="reminder">
+            <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+            <span class="label">Set Reminder</span>
 
-      <a href="#" class="reminder">
-        <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
-        <span class="label">Set Reminder</span>
+            <datepicker v-on:input_value_changed="update_lead($event, 'reminder')" v-bind:class="'value'" v-bind:placeholder="'MM dd YYYY hh:mm'" _name="reminder" _value="<?php echo $reminder; ?>"></datepicker>
+          </a>
 
-        <datepicker v-on:input_value_changed="update_lead($event, 'reminder')" v-bind:class="'value'" v-bind:placeholder="'MM dd YYYY hh:mm'" _name="reminder" _value="<?php echo $reminder; ?>"></datepicker>
-      </a>
-
-      <span class="lead-tag <?php echo $lead_type['class'] ?>"><?php echo $lead_type['text'] ?></span>
-
-
+          <span class="lead-tag <?php echo $lead_type['class'] ?>"><?php echo $lead_type['text'] ?></span>
+      </div>
     </div>
-    <div class="col-12 col-md-4 text-right-md">
+
+    <div class="col-12 col-md-4 text-center text-right-md">
 
       <a href="<?php echo $return_url; ?>" v-on:click.prevent v-on:click="do_delete_or_return('<?php echo $return_url; ?>')" class="button-cancel"><?php echo $text_save_del; ?></a>
 
@@ -96,17 +96,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                   <td><p class="leads-block__label">Source</p></td>
                   <td>
                     <div id="select-imitation-sourses">
-                      <select-imitation _select_name="sourse" v-on:update_list="update_lead($event, 'patient_data')" ref="sourse_select" _selected="<?php
-                          $sourses = array(
-                              'live-chat'  => 'Live Chat',
-                              'instagram'  => 'Instagram',
-                              'google-ppc' => 'Google PPC',
-                              'website'    => 'Website',
-                              'phone'      => 'Phone',
-                              'walk-in'    => 'Walk In',
-                              'other'      => 'Other',
-                            );
-                          echo (isset($sourses[$patient_data['sourse']]) ? $sourses[$patient_data['sourse']] : '--Select--');
+                      <select-imitation _select_name="source" v-on:update_list="update_lead($event, 'patient_data')" ref="source_select" _selected="<?php
+                          echo isset($patient_data['source']) ? $patient_data['source'] : '--Select--';
                           ?>"
                         ></select-imitation>
                     </div>
@@ -133,6 +124,18 @@ if ( ! defined( 'ABSPATH' ) ) {
                   <td>
 
                     <select-imitation v-bind:class="'style-less'" _name="clinic"  _select_name="clinic" v-on:update_list="update_lead($event, 'patient_data')" ref="clinic_select" _selected="<?php echo ($patient_data['clinic'])? $patient_data['clinic'] : '--Select--'?>"></select-imitation>
+
+                  </td>
+                </tr>
+                <tr>
+                <tr>
+                  <td>
+                    <svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>
+                  </td>
+                  <td><p class="leads-block__label">Campaign</p></td>
+                  <td>
+
+                    <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="campaign" _value="<?php echo $patient_data['campaign']?>"></input-field>
 
                   </td>
                 </tr>
@@ -219,7 +222,18 @@ if ( ! defined( 'ABSPATH' ) ) {
           <div class="leads-block__row">
            <div class="leads-block__price">
 
-            <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="value" _value="<?php echo (isset($treatment_value['value']))? format_price($treatment_value['value']): ''?>" _placeholder="£00.00" v-bind:class="'leads-block__input xxl'"></input-field>
+            <input-field
+            v-on:input_value_changed="update_lead($event, 'treatment_value')"
+            _name="value"
+            _value="<?php echo (isset($treatment_value['value']))? format_price($treatment_value['value']): ''?>"
+            _placeholder="£00.00"
+            v-bind:class="'leads-block__input xxl'"
+            @focus.native="price_to_value()"
+            @blur.native="value_to_price()"
+            ref='price_input_field'
+            >
+
+            </input-field>
             </div>
           </div>
 

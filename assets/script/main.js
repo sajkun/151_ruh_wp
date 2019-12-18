@@ -236,6 +236,8 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
 
   console.log(data);
 
+  wait_block.show();
+
   jQuery.ajax({
     url: WP_URLS.wp_ajax_url,
     type: 'POST',
@@ -244,6 +246,7 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
 
     complete: function(xhr, textStatus) {
       //called when complete
+      wait_block.hide();
     },
 
     success: function(data, textStatus, xhr) {
@@ -256,7 +259,7 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
       //dashboard
       update_filters(data.filter_data);
       update_dashboard_totals(data.days_count_prev);
-      update_top_sourses();
+      update_top_sources();
       update_team_perfomance();
       update_confertions(data.days_count_prev);
 
@@ -270,6 +273,7 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
     error: function(xhr, textStatus, errorThrown) {
       console.log('error');
       console.log(errorThrown);
+      console.log(xhr);
      }
   });
 
@@ -361,19 +365,34 @@ if('undefined' !== typeof(is_dashboard)){
       data: {
           datasets: [{
               backgroundColor: 'rgb(237, 240, 255)',
-              data: [1000, 5000, 10000, 7500], // january, may, july, october
+              data: [
+                income_month_data['Jan']['sum'],
+                income_month_data['May']['sum'],
+                income_month_data['Jul']['sum'],
+                income_month_data['Oct']['sum']
+                ], // january, may, july, october
               label: 'Left dataset',
 
               // This binds the dataset to the left y axis
               yAxisID: 'left-y-axis'
           }, {
-              data: [15000, 10250, 12000, 4000], //february, april, august, november
+              data: [
+                income_month_data['Feb']['sum'],
+                income_month_data['Apr']['sum'],
+                income_month_data['Aug']['sum'],
+                income_month_data['Nov']['sum']
+                ], //february, april, august, november
               label: 'Right dataset',
               backgroundColor: 'rgb(237, 240, 255)',
               // This binds the dataset to the right y axis
               yAxisID: 'left-y-axis'
           },{
-              data: [9000, 10000, 7500, 5000], //march, june, september, december
+              data:  [
+                income_month_data['Mar']['sum'],
+                income_month_data['Jun']['sum'],
+                income_month_data['Sep']['sum'],
+                income_month_data['Dec']['sum']
+                ], //march, june, september, december
               label: 'Right dataset',
               backgroundColor: 'rgb(237, 240, 255)',
               // This binds the dataset to the right y axis
@@ -382,8 +401,6 @@ if('undefined' !== typeof(is_dashboard)){
           labels: ['c1', 'c2', 'c3', 'c4']
       },
   }
-
-
   var options_chart_test = {
       options: {
           legend:{
@@ -1240,7 +1257,7 @@ var icons_selects = {
 
   'campaigns': '<svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>',
 
-  'sourses': '<svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>',
+  'sources': '<svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>',
 
   'team': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
 };
@@ -1325,11 +1342,11 @@ var select_mixin = {
       if(key === 'options'){
         var vm = this;
         var select = vm.$el.getElementsByClassName( 'select-imitation__dropdown' )[0].getElementsByClassName( 'select-imitation__list' )[0];
-          vm.$el.setAttribute("style", "width: auto");
+        vm.$el.setAttribute("style", "width: auto");
 
-          Vue.nextTick(function() {
-          var width = select.clientWidth;
-          vm.$el.setAttribute("style", "width:" + (width + 62) + 'px');
+        Vue.nextTick(function() {
+          var width = (window.outerWidth < 768)? window.outerWidth - 30 : select.clientWidth + 62;
+          vm.$el.setAttribute("style", "width:" + (width) + 'px');
         });
       }
     },
@@ -1455,7 +1472,7 @@ function init_filters(filter_data){
           clinics:    'All Clinics',
           treatments: 'All Treatments',
           campaigns:  'All Campaigns',
-          sourses:    'All Sourses',
+          sourses:    'All Sources',
           team:       'All Team',
         },
       },
@@ -1505,7 +1522,7 @@ function init_filters(filter_data){
             clinics:    'All Clinics',
             treatments: 'All Treatments',
             campaigns:  'All Campaigns',
-            sourses:    'All Sourses',
+            sources:    'All Sources',
             team:       'All Team',
           };
 
@@ -1750,7 +1767,7 @@ function update_dashboard_totals(days_count){
 }
 
 if('undefined' !== typeof(is_dashboard)){
-  var top_items = ['sourse', 'treatment', 'clinic', 'campaign'];
+  var top_items = ['source', 'treatment', 'clinic', 'campaign'];
 
   for(top_type in top_items){
     vue_top_items[top_items[top_type]] = new Vue({
@@ -1764,7 +1781,7 @@ if('undefined' !== typeof(is_dashboard)){
       },
 
       computed: {
-        data_by_sourse: function(){
+        data_by_source: function(){
           var data = {};
 
           for(id in this.leads_obj){
@@ -1793,10 +1810,10 @@ if('undefined' !== typeof(is_dashboard)){
               var result    = 'Unavailable';
               var max_leads = -1;
               var leads_converted = -1;
-              for(id in this.data_by_sourse){
-                result = (this.data_by_sourse[id].total >= max_leads && this.data_by_sourse[id].converted >= leads_converted)? id : result;
-                max_leads = Math.max(max_leads, this.data_by_sourse[id].total);
-                leads_converted = Math.max(leads_converted, this.data_by_sourse[id].converted);
+              for(id in this.data_by_source){
+                result = (this.data_by_source[id].total >= max_leads && this.data_by_source[id].converted >= leads_converted)? id : result;
+                max_leads = Math.max(max_leads, this.data_by_source[id].total);
+                leads_converted = Math.max(leads_converted, this.data_by_source[id].converted);
 
               }
               return result;
@@ -1806,9 +1823,9 @@ if('undefined' !== typeof(is_dashboard)){
               var result    = 'Unavailable';
               var max_revenue = -1;
 
-              for(id in this.data_by_sourse){
-                result = (this.data_by_sourse[id].revenue >= max_revenue)? id : result;
-                max_revenue = Math.max(max_revenue, this.data_by_sourse[id].revenue);
+              for(id in this.data_by_source){
+                result = (this.data_by_source[id].revenue >= max_revenue)? id : result;
+                max_revenue = Math.max(max_revenue, this.data_by_source[id].revenue);
               }
 
               return result;
@@ -1817,10 +1834,10 @@ if('undefined' !== typeof(is_dashboard)){
         },
 
         leads: function(){
-          if(typeof(this.data_by_sourse[this.name]) === 'undefined'){
+          if(typeof(this.data_by_source[this.name]) === 'undefined'){
             return 'no';
           }
-          return this.data_by_sourse[this.name].total;
+          return this.data_by_source[this.name].total;
         },
 
         leads_total: function(){
@@ -1828,21 +1845,21 @@ if('undefined' !== typeof(is_dashboard)){
         },
 
         revenue: function(){
-          if(typeof(this.data_by_sourse[this.name]) === 'undefined'){
+          if(typeof(this.data_by_source[this.name]) === 'undefined'){
             return '-';
           }
 
-          revenue = this.data_by_sourse[this.name].revenue;
+          revenue = this.data_by_source[this.name].revenue;
 
           return '£'+ formatMoney(revenue, 2, ".", ",");
         },
 
         rate: function(){
-          if(typeof(this.data_by_sourse[this.name]) === 'undefined'){
+          if(typeof(this.data_by_source[this.name]) === 'undefined'){
             return '-';
           };
 
-          return (((this.data_by_sourse[this.name].converted * 100) / this.leads_total)).toFixed(2);
+          return (((this.data_by_source[this.name].converted * 100) / this.leads_total)).toFixed(2);
         },
       },
 
@@ -1886,7 +1903,7 @@ if('undefined' !== typeof(is_dashboard)){
   }
 }
 
-function update_top_sourses(){
+function update_top_sources(){
   if('undefined' !== typeof(is_dashboard)){
     for(top_type in top_items){
       vue_top_items[top_items[top_type]].update();
@@ -1992,19 +2009,19 @@ if('undefined' !== typeof(is_dashboard)){
 
         for(id in this.leads_obj){
           var lead = this.leads_obj[id];
-          var sourse = lead.meta.patient_data.sourse;
+          var source = lead.meta.patient_data.source;
           // var exp = new RegExp("\\D", "gi");
-          sourse = (sourse === null || sourse === '')? 'Other' : sourse;
+          source = (source === null || source === '')? 'Other' : source;
 
-          if(typeof(convertions_by_type[sourse]) === 'undefined'){
-            convertions_by_type[sourse] = [];
+          if(typeof(convertions_by_type[source]) === 'undefined'){
+            convertions_by_type[source] = [];
           }
 
           if('yes' === lead.is_converted){
 
             summ = get_sum_from_price(lead.meta.treatment_value.value);
 
-            convertions_by_type[sourse].push({
+            convertions_by_type[source].push({
               time_converted : lead.converted_time,
               time_created   : lead.post_date,
               summ           : summ,
@@ -2137,7 +2154,6 @@ if('undefined' !== typeof(is_dashboard)){
     },
 
     mounted: function(){
-      console.log('convertions mounted');
       var vm = this;
       vm.init_select();
 
@@ -2233,7 +2249,7 @@ if('undefined' !== typeof(is_lead_list)){
         clinics:    'All Clinics',
         treatments: 'All Treatments',
         campaigns:  'All Campaigns',
-        sourses:    'All Sourses',
+        sources:    'All Sources',
         team:       'All Team',
       },
 
@@ -2305,7 +2321,7 @@ if('undefined' !== typeof(is_lead_list)){
 
 
         for(var column_name in this.leads){
-          var fields_search = ['clinic', 'name', 'treatment', 'sourse', 'team', 'campaign'];
+          var fields_search = ['clinic', 'name', 'treatment', 'source', 'team', 'campaign'];
 
           for(var id in this.leads[column_name]){
             var lead     = this.leads[column_name][id];
@@ -2313,6 +2329,7 @@ if('undefined' !== typeof(is_lead_list)){
 
             // apply filter
             for(filter_id in filters){
+              console.log(filter_id);
               switch(typeof(lead.filter_data[filter_id])){
                 case 'object':
                   is_match = (lead.filter_data[filter_id].indexOf(filters[filter_id]) < 0)? false : is_match;
@@ -2465,7 +2482,7 @@ if('undefined' !== typeof(is_lead_list)){
           clinics:    'All Clinics',
           treatments: 'All Treatments',
           campaigns:  'All Campaigns',
-          sourses:    'All Sourses',
+          sources:    'All Sources',
           team:       'All Team',
         };
 
@@ -2571,7 +2588,7 @@ if('undefined' !== typeof(is_single_lead)){
     data: {
       patient_data: {},
       treatment_value: {
-        value: '',
+        value: 0,
         terms: '',
         mounthly: '',
         treatment: '',
@@ -2654,7 +2671,9 @@ if('undefined' !== typeof(is_single_lead)){
         var summ = get_sum_from_price(this.get_treatment_value)/this.get_terms_count;
         summ = summ.toFixed(2);
         return   '£'+ formatMoney(summ, 2, ".", ",");
-      }
+      },
+
+
     },
 
     watch: {
@@ -2678,6 +2697,16 @@ if('undefined' !== typeof(is_single_lead)){
     },
 
     methods: {
+      price_to_value: function(){
+        var summ = get_sum_from_price(this.treatment_value.value);
+        this.$refs.price_input_field.set_value(summ);
+      },
+
+
+      value_to_price: function(){
+        var summ = '£' + formatMoney(this.treatment_value.value,2, '.',',');
+         this.$refs.price_input_field.set_value(summ);
+      },
 
       init_select: function(){
 
@@ -2696,7 +2725,7 @@ if('undefined' !== typeof(is_single_lead)){
         props.options = ['Live Chat', 'Instagram', 'Google PPC', 'Website', 'Phone', "Walk In", "Other"];
 
         for( id in props){
-          this.$refs['sourse_select'].set_value(id, props[id]);
+          this.$refs['source_select'].set_value(id, props[id]);
         }
 
         props.options = specialists;
@@ -2705,7 +2734,7 @@ if('undefined' !== typeof(is_single_lead)){
           this.$refs['lead_specialissts_select'].set_value(id, props[id]);
         }
 
-        vue_select_components.push(this.$refs['sourse_select']);
+        vue_select_components.push(this.$refs['source_select']);
         vue_select_components.push(this.$refs['lead_specialissts_select']);
 
 
@@ -2726,7 +2755,6 @@ if('undefined' !== typeof(is_single_lead)){
         vue_select_components.push(this.$refs['treatments_select2']);
 
         this.$refs['treatments_select'].resert_width();
-
 
         var props =  {
           isExpanded: '',
@@ -2810,7 +2838,8 @@ if('undefined' !== typeof(is_single_lead)){
       update_lead: function(data, key){
         if('object' === typeof(data)){
           if('object' === typeof(this[key])){
-            this[key][data.name] = data.val;
+            var val = (data.name === 'value' && key == 'treatment_value')? (data.val) : data.val;
+            this[key][data.name] = val;
           }
           if('string' === typeof(this[key])){
             this[key] = data.val;
@@ -2897,6 +2926,97 @@ if('undefined' !== typeof(is_single_lead)){
         this.save_lead_meta('lead_notes', 'notes');
       },
 
+      update_specialists: function(event){
+        if('undefined' !== typeof(event.val) ){
+
+          if(this.lead_data.lead_id < 0){
+            alert('Create lead before assigning it to a specialist, please');
+            return false;
+          };
+
+          if(this.specialists_data[event.val].show === 'yes')
+            {
+               return false;
+            };
+
+          this.specialists_data[event.val].show = 'yes';
+          this.save_sepcialists_meta();
+
+          jQuery(document.body).trigger('update_lead_log', {
+            post_id     : parseInt(this.lead_data.lead_id),
+            nonce       : jQuery('[name=lead_data]').val(),
+            user_name   : this.lead_data.user_name,
+            user_id     : this.lead_data.user_id,
+            event       : 'specialist_updated',
+            text: 'Assined to ' +  event.val + ' by ' + this.lead_data.user_name,
+          })
+        }
+      },
+
+      assign_specialist: function(){
+        // this.selected_specialist = false;
+        // this.save_sepcialists_meta();
+      },
+
+      remove_specialist: function(name){
+        if(window.confirm("Confirm unassigning " + name + " from this lead")){
+          this.specialists_data[name].show = 'no';
+          this.save_sepcialists_meta();
+
+          jQuery(document.body).trigger('update_lead_log', {
+            post_id     : parseInt(this.lead_data.lead_id),
+            nonce       : jQuery('[name=lead_data]').val(),
+            user_name   : this.lead_data.user_name,
+            user_id     : this.lead_data.user_id,
+            event       : 'specialist_updated',
+            text: 'Unassined from ' +  name + ' by ' + this.lead_data.user_name,
+          })
+        }
+      },
+
+      save_sepcialists_meta: function(){
+        var meta = {};
+        for(id in specialists_data){
+          meta[specialists_data[id].user_id] = specialists_data[id].show;
+        }
+
+        var data = {
+          meta: {
+            lead_specialists: meta,
+          },
+          action                : 'update_lead_meta',
+          lead_data             : this.lead_data,
+          nonce                 : jQuery('[name=lead_data]').val(),
+        };
+
+        var vm = this;
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+             wait_block.hide();
+          },
+
+          success: function(data, textStatus, xhr) {
+            console.log(data);
+            vm.$refs.lead_id_input.set_value(data.post_id);
+          },
+
+          error: function(xhr, textStatus, errorThrown) {
+            if(xhr.status === 418){
+              var response_text = JSON.parse(xhr.responseText);
+              alert(response_text.data[0]);
+            }else{
+              alert(xhr.status + ' ' +errorThrown);
+            }
+          }
+        })
+      },
+
+
       load_file: function(){
         console.log('load_file');
 
@@ -2944,93 +3064,6 @@ if('undefined' !== typeof(is_single_lead)){
         })
       },
 
-      update_specialists: function(event){
-        if('undefined' !== typeof(event.val) ){
-
-          if(this.lead_data.lead_id < 0){
-            alert('Create lead before assigning it to a specialist, please');
-            return false;
-          };
-
-          if(this.specialists_data[event.val].show === 'yes')
-            {
-               return false;
-            };
-
-          this.specialists_data[event.val].show = 'yes';
-          this.save_sepcialists_meta();
-
-          jQuery(document.body).trigger('update_lead_log', {
-            post_id     : parseInt(this.lead_data.lead_id),
-            nonce       : jQuery('[name=lead_data]').val(),
-            user_name   : this.lead_data.user_name,
-            user_id     : this.lead_data.user_id,
-            event       : 'specialist_updated',
-            text: 'Assined to ' +  event.val + ' by ' + this.lead_data.user_name,
-          })
-        }
-      },
-
-      assign_specialist: function(){
-        // this.selected_specialist = false;
-        // this.save_sepcialists_meta();
-      },
-
-      remove_specialist: function(name){
-        this.specialists_data[name].show = 'no';
-        this.save_sepcialists_meta();
-
-        jQuery(document.body).trigger('update_lead_log', {
-          post_id     : parseInt(this.lead_data.lead_id),
-          nonce       : jQuery('[name=lead_data]').val(),
-          user_name   : this.lead_data.user_name,
-          user_id     : this.lead_data.user_id,
-          event       : 'specialist_updated',
-          text: 'Unassined from ' +  name + ' by ' + this.lead_data.user_name,
-        })
-      },
-
-      save_sepcialists_meta: function(){
-        var meta = {};
-        for(id in specialists_data){
-          meta[specialists_data[id].user_id] = specialists_data[id].show;
-        }
-
-        var data = {
-          meta: {
-            lead_specialists: meta,
-          },
-          action                : 'update_lead_meta',
-          lead_data             : this.lead_data,
-          nonce                 : jQuery('[name=lead_data]').val(),
-        };
-
-        var vm = this;
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: data,
-
-          complete: function(xhr, textStatus) {
-             wait_block.hide();
-          },
-
-          success: function(data, textStatus, xhr) {
-            console.log(data);
-            vm.$refs.lead_id_input.set_value(data.post_id);
-          },
-
-          error: function(xhr, textStatus, errorThrown) {
-            if(xhr.status === 418){
-              var response_text = JSON.parse(xhr.responseText);
-              alert(response_text.data[0]);
-            }else{
-              alert(xhr.status + ' ' +errorThrown);
-            }
-          }
-        })
-      },
 
       remove_file: function(file_id){
         var vm = this;
@@ -3081,7 +3114,7 @@ if('undefined' !== typeof(is_single_lead)){
     },
   })
 }
-if(typeof(is_leads_list) !=='undefined'){
+if(typeof(is_lead_list) !=='undefined' || typeof(is_dashboard) !=='undefined' || typeof(is_single_lead) !=='undefined' ){
   var search = new Vue({
     el: '#search-form',
 
@@ -3092,6 +3125,15 @@ if(typeof(is_leads_list) !=='undefined'){
     computed:{
       isVisuallyHidden: function(){
         return typeof(is_lead_list) === 'undefined';
+      },
+
+      classes: function(){
+        return typeof(is_lead_list)!== 'undefined' && 'yes' === is_lead_list ?
+        'order-2 order-md-0 col-md-2 col-lg-4' : 'search-single col-md-2 col-lg-4'
+      },
+
+      show_search: function(){
+        return typeof(is_lead_list)!== 'undefined' && 'yes' === is_lead_list? true: false;
       }
     },
 

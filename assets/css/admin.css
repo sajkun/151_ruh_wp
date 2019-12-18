@@ -68,3 +68,7 @@
 .input-title+input{
   margin-bottom: 15px;
 }
+
+.treatments-list .input-control{
+  break-inside: avoid-column;
+}

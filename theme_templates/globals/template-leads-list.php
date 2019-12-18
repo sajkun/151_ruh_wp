@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <select-imitation-icon _select_name="campaigns" ref="campaigns" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-      <select-imitation-icon _select_name="sourses" ref="sourses" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
+      <select-imitation-icon _select_name="sources" ref="sources" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
       <select-imitation-icon _select_name="team" ref="team" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
