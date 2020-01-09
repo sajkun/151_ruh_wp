@@ -48,9 +48,40 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_delete_lead', array($this, 'delete_lead_cb'));
       add_action('wp_ajax_nopriv_delete_lead', array($this, 'delete_lead_cb'));
 
+
+      add_action('wp_ajax_save_phones_count', array($this, 'save_phones_count_cb'));
+      add_action('wp_ajax_nopriv_save_phones_count', array($this, 'save_phones_count_cb'));
+
+      add_action('wp_ajax_save_messages_count', array($this, 'save_messages_count_cb'));
+      add_action('wp_ajax_nopriv_save_messages_count', array($this, 'save_messages_count_cb'));
+
       add_action('wp_ajax_nopriv_run_login', array($this, 'run_login_cb'));
 
       add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
+    }
+
+    public function save_phones_count_cb(){
+      $post_id = (int)$_POST['lead_id'];
+
+      $updated = update_post_meta($post_id,  '_phone_count', $_POST['count']);
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_phone_count', $_POST['count'], true );
+      }
+
+      wp_send_json($updated);
+    }
+
+    public function save_messages_count_cb(){
+      $post_id = (int)$_POST['lead_id'];
+
+      $updated = update_post_meta($post_id,  '_message_count', $_POST['count']);
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_message_count', $_POST['count'], true );
+      }
+
+      wp_send_json($updated);
     }
 
     public function add_a_lead_by_post_cb(){

@@ -584,6 +584,17 @@ if(!function_exists('get_leads_meta')){
       if($order){
         $leads[$lead_id]->order = $order;
       }
+
+    $phone_count   = get_post_meta($post->ID, '_phone_count', true);
+
+    $phone_count = ($phone_count) ? $phone_count : 0;
+
+    $message_count   = get_post_meta($post->ID, '_message_count', true);
+    $message_count = ($message_count) ? $message_count : 0;
+
+    $leads[$lead_id]->message_count = (int)$message_count;
+    $leads[$lead_id]->phone_count = (int)$phone_count;
+
     }
 
     dlog($leads);

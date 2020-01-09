@@ -147,18 +147,29 @@ class theme_content_output{
 
       wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
 
+      // $current_month = $today->format('m');
+      // $current_year  = $today->format('Y');
+
+      // $today_formated = $today->format('M d Y');
+
+      // $today->setDate($current_year, $current_month, 1);
+
+      // $month_first_day = $today->format('M d Y');
+
+
       $current_month = $today->format('m');
       $current_year  = $today->format('Y');
 
       $today_formated = $today->format('M d Y');
 
-      $today->setDate($current_year, $current_month, 1);
 
-      $month_first_day = $today->format('M d Y');
+      $days_30_before_today = new DateTime();
+      $days_30_before_today = $days_30_before_today->modify('-130 days');
+      $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
 
     // Get leads by dates
 
-      $leads = get_posts_by_dates( $month_first_day , $today_formated );
+      $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
 
       $leads = get_leads_meta($leads);
 
@@ -191,7 +202,7 @@ class theme_content_output{
         'user_id' => get_current_user_id(),
         'stages' => $stages,
         'daterange' => array(
-          'from' => $month_first_day,
+          'from' => $days_30_before_today_formatted,
           'to'   => $today_formated
         ),
       );
@@ -294,6 +305,19 @@ class theme_content_output{
     $treatments = $treatments ? $treatments: array();
 
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+
+    $phone_count   = get_post_meta($lead->ID, '_phone_count', true);
+
+    $phone_count = ($phone_count) ? $phone_count : 0;
+
+    wp_localize_script($theme_init->main_script_slug, 'phone_count', $phone_count);
+
+    $message_count   = get_post_meta($lead->ID, '_message_count', true);
+
+    $message_count = ($message_count) ? $message_count : 0;
+
+    wp_localize_script($theme_init->main_script_slug, 'message_count', $message_count);
+
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
 
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');

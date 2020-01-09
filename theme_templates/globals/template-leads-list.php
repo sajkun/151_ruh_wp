@@ -75,13 +75,24 @@ if ( ! defined( 'ABSPATH' ) ) {
               </div><!-- leads-column__head -->
 
               <div class="leads-column__body">
-                <ul class="leads-list"  data-list="<?php echo $st['name'] ?>">
+                <transition-group
+                  class="leads-list"
+                  name="lead-list"
+                  tag="ul"
+                    data-list="<?php echo $st['name'] ?>"
+                  v-bind:css="false"
+                  v-on:before-enter="beforeEnter"
+                  v-on:enter="enter"
+                  v-on:leave="leave"
+                  v-on:after-enter="enterAfter"
+                  v-on:after-leave="leaveAfter"
+                >
                   <li v-for="data in leads_filtered['<?php echo $st['name'] ?>']" v-bind:key="data.post_id">
-                    <a :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>">
+                    <a :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>" >
                        <div class="clearfix">
                         <div class="row justify-content-start">
                           <div class="col-7">
-                           <span class="lead-preview__name">{{data.name}}</span>
+                           <span class="lead-preview__name" v-bind:title="data.name">{{data.name}}</span>
                            <span class="lead-preview__icons">
 
                             <svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="12" height="12" viewBox="0 0 12 12"><g><g><g><path fill="#2196f3" d="M6 0C2.691 0 0 2.691 0 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6z"/></g><g><path fill="#fafafa" d="M8.85 4.803l-3.319 3.06a.532.532 0 0 1-.36.137.532.532 0 0 1-.362-.138l-1.66-1.53a.444.444 0 0 1 0-.665.541.541 0 0 1 .723 0L5.17 6.864l2.958-2.726a.541.541 0 0 1 .722 0c.2.184.2.481 0 .665z"/></g></g></g></svg>
@@ -89,6 +100,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                             <svg class="icon svg-icon-bell" v-if="data.reminder != '' && data.overdue == 'yes'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
 
                             <svg class="icon svg-icon-bell green" v-if="data.reminder != '' && data.overdue == 'no'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+                            <span class="list-counters">
+
+                            <i class="icon-message-phone phone-na" v-if="data.phone_count == 0"></i><i class="icon-message-phone phone-ok" v-else="data.phone_count > 0"><span class="counter">{{data.phone_count}}</span></i><i class="icon-message-phone message-na" v-if="data.message_count == 0"></i><i class="icon-message-phone message-ok" v-else="data.message_count > 0"><span class="counter">{{data.message_count}}</span></i>
+                            </span>
+
+
                            </span>
                           </div>
 
@@ -107,7 +125,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                        </div>
                     </a>
                   </li>
-                </ul>
+                </transition-group>
               </div>
             </div><!-- leads-column -->
           <?php

@@ -60,7 +60,18 @@ if ( ! defined( 'ABSPATH' ) ) {
            /************************************/?>
       <div class="leads-block">
         <form action="" id="patient_data">
-          <h2 class="leads-block__title">Patient Information</h2>
+          <h2 class="leads-block__title">Patient Information
+
+            <span class="icons">
+              <span class="phones" v-on:click="change_phone">
+                <i class="phone-ok icon" v-for="n in phones_count"></i><i class="phone-na icon"  v-for="n in phones_left"></i>
+              </span>
+
+              <span class="messages" v-on:click="change_message">
+                <i class="message-ok icon" v-for="n in messages_count"></i><i class="message-na icon"  v-for="n in messages_left"></i>
+              </span>
+            </span>
+          </h2>
 
           <div class="leads-block__row">
             <form id="patient_data" method="POST">
