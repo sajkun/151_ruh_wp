@@ -117,7 +117,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                        </div>
 
                        <div class="clearfix">
-                         <span class="lead-preview__sourse">{{data.clinic}}</span>
+                         <span class="lead-preview__sourse">{{get_text_list(data)}}</span>
 
                          <span class="lead-preview__photo" v-for="member in data.team">
                            <img :src="member.image" :alt="member.name" :title="member.name">

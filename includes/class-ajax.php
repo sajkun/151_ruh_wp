@@ -60,6 +60,10 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
     }
 
+
+    /**
+    * saves meta data for marked messages icons
+    */
     public function save_phones_count_cb(){
       $post_id = (int)$_POST['lead_id'];
 
@@ -72,6 +76,9 @@ if(!class_exists('theme_ajax_action')){
       wp_send_json($updated);
     }
 
+    /**
+    * saves meta data for marked messages icons
+    */
     public function save_messages_count_cb(){
       $post_id = (int)$_POST['lead_id'];
 
@@ -84,6 +91,9 @@ if(!class_exists('theme_ajax_action')){
       wp_send_json($updated);
     }
 
+    /**
+    * adds lead by ajax request
+    */
     public function add_a_lead_by_post_cb(){
 
       $meta = $_POST;
@@ -115,7 +125,7 @@ if(!class_exists('theme_ajax_action')){
 
       if( $name_str ){
         $post_id = wp_insert_post( $post_data );
-        $meta['date_time'] = $date->format('d M Y'). ' at '. $date->format('H:i');
+        // $meta['date_time'] = $date->format('d M Y'). ' at '. $date->format('H:i');
       }else{
         wp_send_json_error(array('no data passed'), 418);
       }
@@ -138,7 +148,9 @@ if(!class_exists('theme_ajax_action')){
       wp_send_json( $response );
     }
 
-
+    /**
+    * Login ajax action
+    */
     public function run_login_cb(){
 
       $verify =  wp_verify_nonce(  $_POST['wp-nonce-login'], 'login_nonce_check' );

@@ -35,10 +35,17 @@ class theme_content_output{
     $leads_id      = (int)get_option('theme_page_leads');
     $new_lead_id = (int)get_option('theme_page_create_leads');
 
+    $user_id   = get_current_user_id();
+    $user_meta = get_userdata($user_id);
+    $user_roles = $user_meta->roles;
 
-    $leads_menu_class = ($obj->ID === $leads_id || $obj->ID === $new_lead_id ||  velesh_theme_posts::$lead === $obj->post_type )? 'active' : '';
+    $is_admin = in_array('administrator', $user_roles);
+
+    $leads_menu_class = ($obj->ID === $leads_id || $obj->ID === $new_lead_id ||  velesh_theme_posts::$lead === $obj->post_type || !$is_admin )? 'active' : '';
 
     $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
+
+
 
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
@@ -48,7 +55,7 @@ class theme_content_output{
       'new_lead_url'         => get_permalink($new_lead_id),
       'photo_url'            => $photo_url,
       'name'                 => $name,
-
+      'is_admin'              => in_array('administrator', $user_roles),
     );
 
     print_theme_template_part('header', 'globals', $args);
@@ -147,16 +154,6 @@ class theme_content_output{
 
       wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
 
-      // $current_month = $today->format('m');
-      // $current_year  = $today->format('Y');
-
-      // $today_formated = $today->format('M d Y');
-
-      // $today->setDate($current_year, $current_month, 1);
-
-      // $month_first_day = $today->format('M d Y');
-
-
       $current_month = $today->format('m');
       $current_year  = $today->format('Y');
 
@@ -164,7 +161,7 @@ class theme_content_output{
 
 
       $days_30_before_today = new DateTime();
-      $days_30_before_today = $days_30_before_today->modify('-130 days');
+      $days_30_before_today = $days_30_before_today->modify('-30 days');
       $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
 
     // Get leads by dates
@@ -283,6 +280,11 @@ class theme_content_output{
     $leads_id          = (int)get_option('theme_page_leads');
     $lead_created_time = new DateTime($lead->post_date);
 
+    $user_id = get_current_user_id();
+
+    $user_meta=get_userdata($user_id);
+
+    $user_roles=$user_meta->roles;
 
     $args = array(
       'treatment_coordinator' => get_post_meta($lead->ID, '_treatment_coordinator', true),
@@ -299,6 +301,8 @@ class theme_content_output{
       'text_save_btn'         => 'Save changes',
       'text_save_del'         => 'Delete',
       'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
+
+      'can_delete' => in_array('administrator', $user_roles),
     );
 
     $clinics = $clinics ? $clinics: array();
@@ -384,6 +388,9 @@ class theme_content_output{
 
       wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
       wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+
+      wp_localize_script($theme_init->main_script_slug, 'phone_count', [0]);
+      wp_localize_script($theme_init->main_script_slug, 'message_count', [0]);
 
       wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
       wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());

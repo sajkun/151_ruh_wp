@@ -12,12 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
       </div>
       <nav class="col-12 order-last order-md-0 col-md-4 col-lg-4 main-menu">
         <ul class="menu">
+          <?php if ($is_admin): ?>
+
           <li class="menu-item <?php echo $dashboard_menu_class?>">
             <a href="<?php echo $dashboard_url?>">
               <svg class="icon svg-icon-dashboard"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dashboard"></use> </svg>
                 Dashboard
               </a>
           </li>
+          <?php endif ?>
           <li class="menu-item <?php echo $leads_menu_class?>">
             <a href="<?php echo $lead_url?>">
                <svg class="icon svg-icon-leads"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leads"></use> </svg>

@@ -23,24 +23,48 @@ class theme_construct_page{
   */
   public static function init(){
 
+
+    $user_id   = get_current_user_id();
+    $user_meta = get_userdata($user_id);
+    $user_roles = $user_meta->roles;
+    $is_admin = in_array('administrator', $user_roles);
+
     if(is_user_logged_in()){
       add_action('do_theme_header', array('theme_content_output', 'print_header'));
-      if(self:: is_page_type( 'dashboard' )){
-        add_action('do_theme_content', array('theme_content_output', 'print_dashboard'));
-      }
 
-      else if(self:: is_page_type( 'leads-list' )){
-        add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
-      }
+      if(!$is_admin){
+        if(self:: is_page_type( 'dashboard' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+        }
 
-      else if(self:: is_page_type( 'lead' )){
-        add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
-      }
-      else if(self:: is_page_type( 'lead-blank' )){
-        add_action('do_theme_content', array('theme_content_output', 'print_lead_content_blank'));
+        else if(self:: is_page_type( 'leads-list' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+        }
+
+        else if(self:: is_page_type( 'lead' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
+        }
+        else if(self:: is_page_type( 'lead-blank' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_lead_content_blank'));
+        }
+      }else{
+        if(self:: is_page_type( 'dashboard' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_dashboard'));
+        }
+
+        else if(self:: is_page_type( 'leads-list' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+        }
+
+        else if(self:: is_page_type( 'lead' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
+        }
+        else if(self:: is_page_type( 'lead-blank' )){
+          add_action('do_theme_content', array('theme_content_output', 'print_lead_content_blank'));
+        }
       }
     }else{
-    add_action('do_theme_header', array('theme_content_output', 'print_login_form'));
+      add_action('do_theme_header', array('theme_content_output', 'print_login_form'));
     }
   }
 

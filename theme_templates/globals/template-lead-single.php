@@ -3,6 +3,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
 }
+
+
 ?>
 <div id="single-lead">
 
@@ -35,7 +37,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     <div class="col-12 col-md-4 text-center text-right-md">
 
+
+      <?php if (!$can_delete && $lead_id >=0 ): ?>
+
       <a href="<?php echo $return_url; ?>" v-on:click.prevent v-on:click="do_delete_or_return('<?php echo $return_url; ?>')" class="button-cancel"><?php echo $text_save_del; ?></a>
+      <?php endif ?>
 
       <?php wp_nonce_field('update_meta_nonce_id', 'lead_data', false); ?>
 
@@ -156,7 +162,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </td>
                   <td><p class="leads-block__label">Date / Time</p></td>
                   <td>
-                     <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="date_time" _readonly="1" _value="<?php echo $patient_data['date_time']?>"></input-field>
+                    <datepicker v-on:input_value_changed="update_lead($event, 'patient_data')" v-bind:class="'leads-block__input sm'" _name="date_time" _value="<?php echo $patient_data['date_time']; ?>"></datepicker>
                   </td>
                 </tr>
               </table>
@@ -252,6 +258,15 @@ if ( ! defined( 'ABSPATH' ) ) {
             <table class="leads-block__data">
               <tr>
                 <td>
+                  <svg class="icon svg-icon-card green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
+                </td>
+                <td><p class="leads-block__label">Payment Method</p></td>
+                <td>
+                  <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="payment_method" _value="<?php echo $treatment_value['payment_method']?>" v-bind:class="'leads-block__input sm'"></input-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
                   <svg class="icon svg-icon-clock green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clock"></use> </svg>
                 </td>
                 <td><p class="leads-block__label">Payment Terms</p></td>
@@ -271,15 +286,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                   <input type="text" class="leads-block__input leads-block__input sm" v-bind:value="monthly_payment">
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <svg class="icon svg-icon-card green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
-                </td>
-                <td><p class="leads-block__label">Payment Method</p></td>
-                <td>
-                  <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="payment_method" _value="<?php echo $treatment_value['payment_method']?>" v-bind:class="'leads-block__input sm'"></input-field>
-                </td>
-              </tr>
+
               <tr>
                 <td>
                   <svg class="icon svg-icon-tooth green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>

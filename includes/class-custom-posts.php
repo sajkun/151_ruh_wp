@@ -224,17 +224,22 @@ class velesh_theme_posts {
               <td colspan="2">
                 <h4>Treatment</h4>
                 <div class="treatments-list" style="column-count:2; column-gap:20px">
-                    <?php if ($treatments): ?>
+                    <?php if ($treatments):
+                      $counter = 0;
+                      ?>
 
                     <?php foreach ($treatments as $key => $cl): ?>
                       <div class="input-control">
-                        <p class="input-title">Treatment #<?php echo $key ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete treatment</a></p>
-                        <input type="text" class="fullwidth" name="treatment[<?php echo $key ?>]" value="<?php echo $cl ?>">
+                        <p class="input-title">Treatment #<?php echo $counter;  ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete treatment</a></p>
+                        <input type="text" class="fullwidth" name="treatment[<?php echo $counter ?>]" value="<?php echo $cl ?>">
                       </div>
-                    <?php endforeach ?>
+                    <?php
+                      $counter++;
+                      endforeach;
+                     ?>
                     <?php endif ?>
                 </div>
-                <input type="hidden" id="count_treatment">
+                <input type="hidden" id="count_treatment" value="<?php echo count($treatments); ?>">
                 <a href="javascript:void(0)" class="button" onclick="add_input('treatment')">Add treatment</a>
               </td>
               <td></td>
@@ -496,6 +501,10 @@ class velesh_theme_posts {
               $sources = array(
                 'Live Chat',
                 'Instagram',
+                'Slaine Instagram',
+                'Riz Instagram',
+                'Andy Instagram',
+                'Pete Instagram',
                 'Google PPC',
                 'Website',
                 'Phone',

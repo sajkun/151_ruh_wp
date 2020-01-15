@@ -139,7 +139,7 @@ class velesh_init_theme{
 
     wp_enqueue_script('theme-date-range-picker', THEME_URL.'/assets/libs/datepicker/daterangepicker.js', array('jquery'), THEME_VERSION, true);
 
-    wp_enqueue_script('theme-vue-js', 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js', array('jquery'), THEME_VERSION, true);
+    // wp_enqueue_script('theme-vue-js', 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js', array('jquery'), THEME_VERSION, true);
 
     wp_enqueue_script($this->main_script_slug, THEME_URL.$this->main_script, array('jquery'), THEME_VERSION, true);
   }

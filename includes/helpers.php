@@ -472,6 +472,10 @@ if(!function_exists('get_leads_meta')){
     $sources = array(
         'live-chat'  => 'Live Chat',
         'instagram'  => 'Instagram',
+        'slaine-instagram'  => 'Slaine Instagram',
+        'riz-instagram'  => 'Riz Instagram',
+        'andy-instagram'  => 'Andy Instagram',
+        'pete-instagram'  => 'Pete Instagram',
         'google-ppc' => 'Google PPC',
         'website'    => 'Website',
         'phone'      => 'Phone',
