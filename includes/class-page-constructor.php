@@ -24,12 +24,12 @@ class theme_construct_page{
   public static function init(){
 
 
-    $user_id   = get_current_user_id();
-    $user_meta = get_userdata($user_id);
-    $user_roles = $user_meta->roles;
-    $is_admin = in_array('administrator', $user_roles);
-
     if(is_user_logged_in()){
+      $user_id   = get_current_user_id();
+      $user_meta = get_userdata($user_id);
+      $user_roles = $user_meta->roles;
+      $is_admin = in_array('administrator', $user_roles) || in_array('manager', $user_roles);
+
       add_action('do_theme_header', array('theme_content_output', 'print_header'));
 
       if(!$is_admin){

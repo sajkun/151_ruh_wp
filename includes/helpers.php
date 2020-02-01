@@ -476,6 +476,7 @@ if(!function_exists('get_leads_meta')){
         'riz-instagram'  => 'Riz Instagram',
         'andy-instagram'  => 'Andy Instagram',
         'pete-instagram'  => 'Pete Instagram',
+        'sonnie-instagram'  => 'Sonnie Instagram',
         'google-ppc' => 'Google PPC',
         'website'    => 'Website',
         'phone'      => 'Phone',

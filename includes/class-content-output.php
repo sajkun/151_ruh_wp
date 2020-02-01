@@ -39,13 +39,11 @@ class theme_content_output{
     $user_meta = get_userdata($user_id);
     $user_roles = $user_meta->roles;
 
-    $is_admin = in_array('administrator', $user_roles);
+    $is_admin = in_array('administrator', $user_roles) || in_array('manager', $user_roles);
 
     $leads_menu_class = ($obj->ID === $leads_id || $obj->ID === $new_lead_id ||  velesh_theme_posts::$lead === $obj->post_type || !$is_admin )? 'active' : '';
 
     $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
-
-
 
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
@@ -55,7 +53,7 @@ class theme_content_output{
       'new_lead_url'         => get_permalink($new_lead_id),
       'photo_url'            => $photo_url,
       'name'                 => $name,
-      'is_admin'              => in_array('administrator', $user_roles),
+      'is_admin'              => in_array('administrator', $user_roles) || in_array('manager', $user_roles),
     );
 
     print_theme_template_part('header', 'globals', $args);
@@ -236,6 +234,19 @@ class theme_content_output{
     $_lead_files = get_post_meta($lead->ID, '_lead_files', true);
     $lead_logs   = get_post_meta($lead->ID, '_lead_log', true);
 
+    $args = array(
+        'role'    => 'dentist',
+        'orderby' => 'user_nicename',
+        'order'   => 'ASC'
+    );
+
+    $dentists = get_users( $args );
+
+    $available_dentists = array();
+
+    foreach ($dentists as $d) {
+      $available_dentists[]  = theme_get_user_name($d);
+    }
 
     if(!$lead_logs){
       $lead_logs = array();
@@ -261,6 +272,7 @@ class theme_content_output{
 
     $clinics    = get_option('clinics_list');
     $treatments = get_option('treatments_list');
+    $campaigns = get_option('campaigns_list');
 
     foreach ($users as $key => $user) {
       $photo_id = get_the_author_meta('user_photo_id', $user->ID);
@@ -286,8 +298,40 @@ class theme_content_output{
 
     $user_roles=$user_meta->roles;
 
+    $treatment_coordinator = get_post_meta($lead->ID, '_treatment_coordinator', true);
+
+    if(($treatment_coordinator['specialist'])){
+      foreach ($treatment_coordinator['specialist'] as $key => $value) {
+        if(!$value || empty($value)){
+          unset($treatment_coordinator['specialist'][$key]);
+        }
+      }
+      $assigned_dentists = $treatment_coordinator['specialist'];
+
+    }else{
+      $assigned_dentists = array();
+    }
+
+    $treatment_value = get_post_meta($lead->ID, '_treatment_value', true);
+
+    if(isset($treatment_value['treatment'])){
+      foreach ($treatment_value['treatment'] as $key => $value) {
+        if(!$value || $value==='--Select--' || empty($value)){
+          unset($treatment_value['treatment'][$key]);
+         }
+      }
+
+      $assigned_treatments = $treatment_value['treatment'];
+    }else{
+      $assigned_treatments = array();
+    }
+
+
+    $stages = get_option('leads_stages');
+
+
     $args = array(
-      'treatment_coordinator' => get_post_meta($lead->ID, '_treatment_coordinator', true),
+      'treatment_coordinator' => $treatment_coordinator,
       'treatment_value'       => get_post_meta($lead->ID, '_treatment_value', true),
       'patient_data'          => get_post_meta($lead->ID, '_patient_data', true),
       'reminder'              => get_post_meta($lead->ID, '_reminder', true),
@@ -307,8 +351,20 @@ class theme_content_output{
 
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
+    $campaigns = $campaigns ? $campaigns: array();
+
+
+    $stages_names = array();
+
+    foreach ($stages as $key => $st) {
+       $stages_names[] = $st['name'];
+    }
+
+    wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);
 
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+
+    wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
 
     $phone_count   = get_post_meta($lead->ID, '_phone_count', true);
 
@@ -321,6 +377,11 @@ class theme_content_output{
     $message_count = ($message_count) ? $message_count : 0;
 
     wp_localize_script($theme_init->main_script_slug, 'message_count', $message_count);
+
+    wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
+
+    wp_localize_script($theme_init->main_script_slug, 'assigned_dentists', $assigned_dentists);
+    wp_localize_script($theme_init->main_script_slug, 'assigned_treatments', $assigned_treatments);
 
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
 
@@ -340,6 +401,9 @@ class theme_content_output{
    */
   public static function print_lead_content_blank(){
     global $theme_init;
+    // get current user data
+    $user      = get_user_by('id', get_current_user_id());
+    $user_name =  theme_get_user_name($user);
 
     $lead_created_time = new DateTime();
     $leads_id     = (int)get_option('theme_page_leads');
@@ -364,48 +428,86 @@ class theme_content_output{
       );
     }
 
-      $args = array(
-        'treatment_coordinator' => array(),
-        'treatment_value'       => array(),
-        'patient_data'          => array(),
-        'reminder'              => '',
-        'lead_stage'            => $lead_stage,
-        'lead_type'             => array('class' => 'opened', 'text' => 'New Lead'),
-        'lead_id'               => -1,
-        'user_name'             => $user_name,
-        'user_id'               => get_current_user_id(),
-        'return_url'            => get_permalink($leads_id),
-        'text_save_btn'         => 'Create Lead',
-        'text_save_del'         => 'Cancel',
-        'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
-      );
+    $args = array(
+      'role'    => 'dentist',
+      'orderby' => 'user_nicename',
+      'order'   => 'ASC'
+    );
 
-      $clinics = get_option('clinics_list');
-      $treatments = get_option('treatments_list');
+    $dentists = get_users( $args );
 
-      $clinics = $clinics ? $clinics: array();
-      $treatments = $treatments ? $treatments: array();
+    $available_dentists = array();
 
-      wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
-      wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+    foreach ($dentists as $d) {
+      $available_dentists[]  = theme_get_user_name($d);
+    }
 
-      wp_localize_script($theme_init->main_script_slug, 'phone_count', [0]);
-      wp_localize_script($theme_init->main_script_slug, 'message_count', [0]);
+    $stages = get_option('leads_stages');
 
-      wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
-      wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());
-      wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
-      wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
-      wp_localize_script($theme_init->main_script_slug, 'lead_files', array());
-      wp_localize_script($theme_init->main_script_slug, 'lead_logs',  array());
+    $args = array(
+      'treatment_coordinator' => array(),
+      'treatment_value'       => array(),
+      'patient_data'          => array(),
+      'reminder'              => '',
+      'lead_stage'            => $stages[0]['name'],
+      'lead_type'             => array('class' => 'opened', 'text' => 'New Lead'),
+      'lead_id'               => -1,
+      'user_name'             => $user_name,
+      'user_id'               => get_current_user_id(),
+      'return_url'            => get_permalink($leads_id),
+      'text_save_btn'         => 'Create Lead',
+      'text_save_del'         => 'Cancel',
+      'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
+    );
 
-      print_theme_template_part('lead-single', 'globals', $args);
-   }
+    $clinics = get_option('clinics_list');
+    $treatments = get_option('treatments_list');
+    $campaigns = get_option('campaigns_list');
+
+    $clinics = $clinics ? $clinics: array();
+    $treatments = $treatments ? $treatments: array();
+    $campaigns = $campaigns ? $campaigns: array();
 
 
-   public static function print_login_form(){
+    $assigned_treatments = array();
+    $assigned_dentists  = array();
 
-      $args = array();
-      print_theme_template_part('login-form', 'globals', $args);
-   }
+    wp_localize_script($theme_init->main_script_slug, 'assigned_treatments', $assigned_treatments);
+
+    wp_localize_script($theme_init->main_script_slug, 'assigned_dentists ', $assigned_dentists );
+
+    wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
+
+
+    $stages_names = array();
+
+    foreach ($stages as $key => $st) {
+       $stages_names[] = $st['name'];
+    }
+
+    wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);
+
+    wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+    wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+
+    wp_localize_script($theme_init->main_script_slug, 'phone_count', [0]);
+    wp_localize_script($theme_init->main_script_slug, 'message_count', [0]);
+
+    wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
+    wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());
+    wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
+    wp_localize_script($theme_init->main_script_slug, 'lead_files', array());
+    wp_localize_script($theme_init->main_script_slug, 'lead_logs',  array());
+    wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
+
+    print_theme_template_part('lead-single', 'globals', $args);
+  }
+
+
+  public static function print_login_form(){
+
+    $args = array();
+    print_theme_template_part('login-form', 'globals', $args);
+  }
 }

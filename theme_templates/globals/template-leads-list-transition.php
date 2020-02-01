@@ -52,19 +52,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <div class="spacer-h-40" ref="spacer2"></div>
 
-  <div class="preload-timer">
-    <span class="text-center">Featching leads</span>
-    <div class="hold-on">
-      <div class="hold-on__item"></div>
-      <div class="hold-on__item"></div>
-      <div class="hold-on__item"></div>
-    </div>
-  </div>
-  <div class="container-fluid leads-container visuallyhidden" ref="container_leads">
+  <div class="container-fluid leads-container" ref="container_leads">
 
     <div class="horizontal-scroll" v-min-height="get_scroll_height" ref="horizontal_scroll">
       <div class="row no-gutters">
+
         <?php
+        // clog($stages);
         foreach ($stages as $key => $st) {
           ?>
           <div class="leads-column">
@@ -81,8 +75,18 @@ if ( ! defined( 'ABSPATH' ) ) {
               </div><!-- leads-column__head -->
 
               <div class="leads-column__body">
-                <ul class="leads-list" name="lead-list" data-list="<?php echo $st['name'] ?>"
-                 >
+                <transition-group
+                  class="leads-list"
+                  name="lead-list"
+                  tag="ul"
+                    data-list="<?php echo $st['name'] ?>"
+                  v-bind:css="false"
+                  v-on:before-enter="beforeEnter"
+                  v-on:enter="enter"
+                  v-on:leave="leave"
+                  v-on:after-enter="enterAfter"
+                  v-on:after-leave="leaveAfter"
+                >
                   <li v-for="data in leads_filtered['<?php echo $st['name'] ?>']" v-bind:key="data.post_id">
                     <a :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>" >
                        <div class="clearfix">
@@ -113,7 +117,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                        </div>
                     </a>
                   </li>
-                </ul>
+
               </div>
             </div><!-- leads-column -->
           <?php

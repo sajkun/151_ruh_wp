@@ -51,7 +51,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <div class="col-12 order-md-0 col-md-3 col-lg-2 user">
         <div class="user__photo"><img src="<?php echo $photo_url?>" alt=""></div>
-        <span class="user__text">Hi, <?php echo $name?></span>
+        <span class="user__text">Hi, <?php echo $name?></span><br>
+        <a  class="user__logout" href="<?php echo wp_logout_url(HOME_URL);?>">Log out</a>
       </div>
     </div>
   </div>

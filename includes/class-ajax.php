@@ -270,6 +270,25 @@ if(!class_exists('theme_ajax_action')){
 
       $post_id = (int)$_POST['lead_data']['lead_id'];
 
+      if((int)$_POST['confirmed'] === 0 && $post_id < 0){
+       global $wpdb;
+       $name = $meta['patient_data']['name'];
+       $querystr = "
+          SELECT $wpdb->postmeta.*
+          FROM $wpdb->postmeta
+          WHERE $wpdb->postmeta.meta_key = '_patient_data'
+          AND $wpdb->postmeta.meta_value LIKE '%$name%'
+       ";
+
+        $request = $wpdb->get_results($querystr, OBJECT);
+
+        if( $request  && count($request) > 0){
+          wp_send_json_error(array('name was found'), 418);
+        }
+
+      }
+
+
       if($post_id < 0){
         $_name = array($meta['patient_data']['name'], $meta['patient_data']['treatment'],$meta['patient_data']['clinic']);
 

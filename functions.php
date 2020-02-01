@@ -45,7 +45,6 @@ class velesh_init_theme{
    * theme init defauls action
    */
   public function __construct(){
-
     $this->define_theme_globals();
     $this->define_theme_supports();
     $this->define_image_sizes();
@@ -67,6 +66,8 @@ class velesh_init_theme{
     if('no' !== get_option( 'woocommerce_cart_redirect_after_add' ) ){
       update_option('woocommerce_cart_redirect_after_add', 'no');
     }
+
+    $user = get_user_by('ID', 4);
   }
 
 
@@ -288,8 +289,25 @@ class velesh_init_theme{
     add_action('admin_init', array($this,'add_reading_settings'));
 
     add_action('admin_menu', array($this,'add_option_pages'));
+
+    add_action('init', array($this, 'manager_cant_see_dashboard'));
   }
 
+
+  public static function manager_cant_see_dashboard(){
+    if( is_admin() && !defined('DOING_AJAX')){
+      $user_id = get_current_user_id();
+
+      $user_meta=get_userdata( $user_id );
+
+      $user_roles=$user_meta->roles;
+
+      if(in_array('manager', $user_roles)){
+        wp_redirect(home_url());
+        exit;
+      }
+    }
+  }
 
   /**
    * puts styles and fonts to local storage
@@ -612,6 +630,7 @@ class velesh_init_theme{
    *
    * @hookedto - wp_enqueue_scripts 9999
    */
+
   public function merge_all_scripts(){
 
    if(is_admin() || is_customize_preview()) return;

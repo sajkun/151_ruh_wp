@@ -189,10 +189,20 @@ class velesh_theme_posts {
         }else{
           delete_option('treatments_list');
         }
+
+        if(isset($_POST['campaign'])){
+          update_option('campaigns_list', $_POST['campaign']);
+         ?>
+          <div class="notice notice-success is-dismissible"><p>Campaigns were saved succesfully</p></div>
+          <?php
+        }else{
+          delete_option('campaigns_list');
+        }
       }
 
       $clinics = get_option('clinics_list');
       $treatments = get_option('treatments_list');
+      $campaigns = get_option('campaigns_list');
 
       ?>
         <h3>Set clinics, and treatments names</h3>
@@ -242,6 +252,31 @@ class velesh_theme_posts {
                 <input type="hidden" id="count_treatment" value="<?php echo count($treatments); ?>">
                 <a href="javascript:void(0)" class="button" onclick="add_input('treatment')">Add treatment</a>
               </td>
+              <td></td>
+            </tr>
+
+            <tr>
+              <td  colspan="1">
+                <h4>Campaigns</h4>
+
+                  <div class="campaigns-list">
+                    <?php if ($campaigns): ?>
+
+                    <?php foreach ($campaigns as $key => $cl): ?>
+                      <div class="input-control">
+                        <p class="input-title">Campaign #<?php echo $key ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete Campaign</a></p>
+                        <input type="text" class="fullwidth" name="campaign[<?php echo $key ?>]" value="<?php echo $cl ?>">
+                      </div>
+                    <?php endforeach ?>
+                    <?php endif ?>
+                  </div>
+
+                 <a href="javascript:void(0)" class="button" onclick="add_input('campaign')">Add campaign</a>
+
+                <input type="hidden" id="count_campaign" value="<?php echo  $campaigns? count( $campaigns): 0 ?>">
+              </td>
+              <td></td>
+              <td></td>
               <td></td>
             </tr>
           </table>
