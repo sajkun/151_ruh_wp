@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   <input type="hidden" id="user_id" name="user_id" value="<?php echo $user_id?>">
 
   <div class="spacer-h-40" ref="spacer1"></div>
-  <div class="container-fluid filter-container" ref="container_filter">
+  <div class="container-fluid filter-container visuallyhidden" ref="container_filter">
      <div class="row no-gutters justify-content-start justify-content-center-lg switchers" id="leads-filters">
 
       <div class="alert"  v-bind:class="alarms.class">
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
       <div class="range-datepicker" id='picker'>
         <svg class="icon svg-icon-calendar"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-calendar"></use> </svg>
 
-        <span class="range-datepicker__label">This Month</span>
+        <span class="range-datepicker__label">Past 30 days</span>
         <span class="range-datepicker__text"> <?php echo $daterange['from'] ?> → <?php echo $daterange['to'] ?></span>
 
         <span class="range-datepicker__arrow"></span>
@@ -46,7 +46,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <select-imitation-icon _select_name="team" ref="team" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
+      <span class="button-filter"  v-on:click="load_csv">Download CSV</span>
+
       <span class="button-filter" v-bind:class="show_filter_clear_btn" v-on:click="resert_filters">Clear Filter</span>
+
     </div><!-- row -->
   </div><!-- container-fluid -->
 
@@ -54,12 +57,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <div class="preload-timer">
     <span class="text-center">Featching leads</span>
-    <div class="hold-on">
-      <div class="hold-on__item"></div>
-      <div class="hold-on__item"></div>
-      <div class="hold-on__item"></div>
-    </div>
+    <img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt="">
   </div>
+
   <div class="container-fluid leads-container visuallyhidden" ref="container_leads">
 
     <div class="horizontal-scroll" v-min-height="get_scroll_height" ref="horizontal_scroll">
@@ -106,7 +106,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                           <span class="list-counters">
                             <svg class="icon svg-icon-bell" v-if="data.reminder != '' && data.overdue == 'yes'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
 
+                            <img v-if="data.manager_noted =='yes'" src="<?php echo THEME_URL?>/assets/images/warn.jpg" class="warn-icon" alt="" title="has manager's note">
+
                             <svg class="icon svg-icon-bell green" v-if="data.reminder != '' && data.overdue == 'no'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+
 
                             <i class="icon-message-phone phone-na" v-if="data.phone_count == 0"></i><i class="icon-message-phone phone-ok" v-else="data.phone_count > 0"><span class="counter">{{data.phone_count}}</span></i><i class="icon-message-phone message-na" v-if="data.message_count == 0"></i><i class="icon-message-phone message-ok" v-else="data.message_count > 0"><span class="counter">{{data.message_count}}</span></i>
                           </span>

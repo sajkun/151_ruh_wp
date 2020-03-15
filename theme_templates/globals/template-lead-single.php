@@ -45,8 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
         <?php if ($can_delete && $lead_id >=0 ): ?>
-
-        <a href="<?php echo $return_url; ?>" v-on:click.prevent v-on:click="do_delete_or_return('<?php echo $return_url; ?>')" class="button-cancel"><?php echo $text_save_del; ?></a>
+          <a href="<?php echo $return_url; ?>" v-on:click.prevent v-on:click="do_delete_or_return('<?php echo $return_url; ?>')" class="button-cancel"><?php echo $text_save_del; ?></a>
         <?php endif ?>
 
         <?php wp_nonce_field('update_meta_nonce_id', 'lead_data', false); ?>
@@ -252,8 +251,8 @@ if ( ! defined( 'ABSPATH' ) ) {
               _value="<?php echo (isset($treatment_value['value']))? format_price($treatment_value['value']): ''?>"
               _placeholder="£00.00"
               v-bind:class="'leads-block__input xxl'"
-              @focus.native="price_to_value()"
-              @blur.native="value_to_price()"
+              @focus.native="price_to_value('price_input_field')"
+              @blur.native="value_to_price('price_input_field')"
               ref='price_input_field'
               >
               </input-field>
@@ -262,6 +261,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             <div class="leads-block__row">
               <table class="leads-block__data">
+                <tr>
+                  <td><svg class="icon svg-icon-card green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg></td>
+                  <td><p class="leads-block__label">Billed</p></td>
+                  <td>
+                    <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="billed" _value="<?php echo $treatment_value['billed']?>" v-bind:class="'leads-block__input sm'" @focus.native="price_to_value('input_billed')" @blur.native="value_to_price('input_billed')" ref="input_billed"></input-field>
+                  </td>
+                </tr>
                 <tr>
                   <td>
                     <svg class="icon svg-icon-card green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
@@ -294,7 +300,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </td>
                   <td><p class="leads-block__label">Monthly</p></td>
                   <td>
-                    <input type="text" class="leads-block__input leads-block__input sm" v-bind:value="monthly_payment">
+                    <input type="text" readonly class="leads-block__input leads-block__input sm" v-bind:value="monthly_payment">
                   </td>
                 </tr>
 
@@ -436,14 +442,19 @@ if ( ! defined( 'ABSPATH' ) ) {
           <h2 class="leads-block__title">Notes <span class="info-helper" title="use Enter for line breaks, use Alt+Enter to add note">?</span>
           </h2>
           <div class="leads-block__row">
-            <div v-for="note in notes" class="note-block">
+            <div v-for="note,key in notes" class="note-block">
               <div class="note-block__header clearfix">
                 <span class="name">{{note.user_name}}</span>
                 <span class="date">{{note.date}}</span>
               </div>
 
-              <div class="note-block__body">
+              <div class="note-block__body" v-bind:class="{'manager-note': note.is_manager == 'yes'}">
                 {{note.text}}
+
+
+                <i class="icon-manager-done" v-on:click="mark_note_done(key, 'no')" v-if="note.is_manager == 'yes' && note.done =='yes'"></i>
+
+                <i class="icon-manager-done not" v-on:click="mark_note_done(key, 'yes')" v-if="note.is_manager == 'yes' && note.done !='yes'"></i>
               </div>
             </div>
           </div>

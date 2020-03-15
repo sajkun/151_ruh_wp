@@ -392,7 +392,13 @@ if(!function_exists('get_annually_income')){
 
       foreach ($leads as $lead) {
         $meta = get_post_meta($lead->ID, '_treatment_value', true);
-        $summ += price_to_number($meta['value']);
+        $stage = get_post_meta($lead->ID, '_lead_stage', true);
+
+        if(in_array($stage , get_converted_stages()) ){
+          if(isset($meta['value'])){
+            $summ += price_to_number($meta['value']);
+          }
+        }
       }
 
        $months[$month]['sum']  = $summ;
@@ -489,17 +495,21 @@ if(!function_exists('get_leads_meta')){
     $stage_for_failed    = (int)get_option('stage_for_failed');
     $stage_for_converted = (int)get_option('stage_for_converted');
 
-
     foreach ($leads as $lead_id => $post) {
       // get all metadata;
+
+      $coordinator_data =  get_post_meta($post->ID, '_treatment_coordinator', true);
+
       $meta = array(
         'lead_notes'            => get_post_meta($post->ID, '_lead_notes', true),
         'lead_files'            => get_post_meta($post->ID, '_lead_files', true),
-        'treatment_coordinator' => get_post_meta($post->ID, '_treatment_coordinator', true),
+        'treatment_coordinator' => $coordinator_data,
         'treatment_value'       => get_post_meta($post->ID, '_treatment_value', true),
         'patient_data'          => get_post_meta($post->ID, '_patient_data', true),
         'reminder'              => get_post_meta($post->ID, '_reminder', true),
         'lead_stage'            => get_post_meta($post->ID, '_lead_stage', true),
+        'start_date'            => get_post_meta($post->ID, '_start_date', true),
+        'end_date'              => get_post_meta($post->ID, '_end_date', true),
       );
 
       if(!$meta['patient_data']){
@@ -549,6 +559,14 @@ if(!function_exists('get_leads_meta')){
         }
       }
 
+
+      if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
+        foreach ($coordinator_data['specialist'] as $name) {
+          if(!$name) continue;
+          array_push($filter_data['team'] , trim($name));
+        }
+      }
+
       $leads[$lead_id]->converted_time = get_post_meta($post->ID, '_time_converted', true);
 
 
@@ -590,16 +608,17 @@ if(!function_exists('get_leads_meta')){
         $leads[$lead_id]->order = $order;
       }
 
-    $phone_count   = get_post_meta($post->ID, '_phone_count', true);
+      $phone_count   = get_post_meta($post->ID, '_phone_count', true);
 
-    $phone_count = ($phone_count) ? $phone_count : 0;
+      $phone_count = ($phone_count) ? $phone_count : 0;
 
-    $message_count   = get_post_meta($post->ID, '_message_count', true);
-    $message_count = ($message_count) ? $message_count : 0;
+      $message_count   = get_post_meta($post->ID, '_message_count', true);
+      $message_count = ($message_count) ? $message_count : 0;
 
-    $leads[$lead_id]->message_count = (int)$message_count;
-    $leads[$lead_id]->phone_count = (int)$phone_count;
+      $leads[$lead_id]->message_count = (int)$message_count;
+      $leads[$lead_id]->phone_count = (int)$phone_count;
 
+      $leads[$lead_id]->payment_end_date =  get_post_meta($post->ID, '_end_date' , true);
     }
 
     dlog($leads);
@@ -686,8 +705,19 @@ if(!function_exists('get_filters_by_leads')){
       foreach ($team as $member_id => $member) {
         if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
           array_push($data['team'], $member['name']);
+
+          dlog($member['name']);
         }
 
+      }
+
+      $coordinator_data = $meta['treatment_coordinator'];
+
+      if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
+        foreach ($coordinator_data['specialist'] as $name) {
+          if(!$name) continue;
+          array_push($data['team'] , trim($name));
+        }
       }
     }
 
@@ -908,3 +938,51 @@ if(!function_exists('my_upload_dir')){
 
 
 
+function get_billed_totals($sheck_date_start = false, $check_date_end = false,  $start_period_day = 1, $end_period_day = 31){
+
+  if(!$sheck_date_start || !$check_date_end){
+    return array(
+      'mounthly_total' => 0,
+      'ids' => array(),
+    );
+  }
+
+  global $wpdb;
+
+
+  $querystr = "
+    SELECT $wpdb->postmeta.post_id
+    FROM  $wpdb->postmeta
+    WHERE $wpdb->postmeta.meta_key = '_end_date'
+    AND (str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') >= str_to_date('$check_date_end ', '%Y-%m-%d %H:%i:%s')
+      OR str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') >= str_to_date('$sheck_date_start ', '%Y-%m-%d %H:%i:%s')
+    )
+  ";
+
+  $request = $wpdb->get_results($querystr, OBJECT);
+  $ids_end = array_column($request, 'post_id');
+  $querystr = "
+    SELECT $wpdb->postmeta.post_id
+    FROM  $wpdb->postmeta
+    WHERE $wpdb->postmeta.meta_key = '_start_date'
+    AND (str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') <= str_to_date('$check_date_end ', '%Y-%m-%d %H:%i:%s')
+      OR str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') <= str_to_date('$sheck_date_start ', '%Y-%m-%d %H:%i:%s')
+    )
+  ";
+  $request = $wpdb->get_results($querystr, OBJECT);
+  $ids_start = array_column($request, 'post_id');
+
+  $ids = array_intersect ($ids_end, $ids_start);
+
+  $_ids = array();
+
+  foreach($ids as $i){
+    $_ids[] = (int)$i;
+  }
+
+  $mounthly_total = 0;
+  return array(
+    'mounthly_total' =>$mounthly_total,
+    'ids' => $_ids,
+  );
+}

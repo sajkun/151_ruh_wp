@@ -27,6 +27,8 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_update_leads_list', array($this, 'update_leads_list_cb'));
       add_action('wp_ajax_nopriv_update_leads_list', array($this, 'update_leads_list_cb'));
 
+      add_action('wp_ajax_save_lead_end_date', array($this, 'save_lead_end_date_cb'));
+      add_action('wp_ajax_nopriv_save_lead_end_date', array($this, 'save_lead_end_date_cb'));
 
       add_action('wp_ajax_update_leads_order', array($this, 'update_leads_order_cb'));
       add_action('wp_ajax_nopriv_update_leads_order', array($this, 'update_leads_order_cb'));
@@ -58,6 +60,32 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_run_login', array($this, 'run_login_cb'));
 
       add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
+    }
+
+    public static function save_lead_end_date_cb(){
+       $post_id = (int)$_POST['lead_id'];
+
+
+       $post = get_post($post_id);
+
+       $date_start = new DateTime($post->post_date);
+       $date_start->modify('+1 month');
+       $date_start_formatted =  $date_start->format('Y-m-d H:i:s');
+
+      $updated = update_post_meta($post_id,  '_end_date', $_POST['date']);
+
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_end_date', $_POST['date'], true );
+      }
+
+
+      $updated2 = update_post_meta($post_id,  '_start_date', $date_start_formatted);
+      if (!$updated2 ){
+        $updated2 = add_post_meta( $post_id,  '_start_date', $date_start_formatted, true );
+      }
+
+       wp_send_json($updated);
     }
 
 
@@ -285,9 +313,7 @@ if(!class_exists('theme_ajax_action')){
         if( $request  && count($request) > 0){
           wp_send_json_error(array('name was found'), 418);
         }
-
       }
-
 
       if($post_id < 0){
         $_name = array($meta['patient_data']['name'], $meta['patient_data']['treatment'],$meta['patient_data']['clinic']);
@@ -528,6 +554,16 @@ if(!class_exists('theme_ajax_action')){
 
       $filter_data = get_filters_by_leads( $leads );
 
+      $data_4_billed_revenue_period = get_billed_totals($from->format('Y-m-d H:i:s') ,$to->format('Y-m-d H:i:s'));
+
+      $_args = array(
+       'post_type' => velesh_theme_posts::$lead,
+       'include' => $data_4_billed_revenue_period['ids']
+      );
+
+      $billed_posts = get_posts( $_args );
+      $billed_posts = get_leads_meta($billed_posts);
+
 
       $data = array(
         'leads'             => $leads,
@@ -537,7 +573,9 @@ if(!class_exists('theme_ajax_action')){
         'team_perfomance'   => $team_perfomance,
         'leads_prev'        => false,
         'days_count_prev'   => -1,
-
+        'billed_posts'       => $billed_posts,
+        'from'              => $from->format('Y-m-d H:i:s'),
+        'to'                => $to->format('Y-m-d H:i:s'),
       );
 
       $period_compared = array(

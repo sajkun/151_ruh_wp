@@ -83,7 +83,7 @@ class velesh_init_theme{
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
-    define('THEME_DEBUG', false);
+    define('THEME_DEBUG', true);
   }
 
 

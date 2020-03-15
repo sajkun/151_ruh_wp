@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="range-datepicker">
       <svg class="icon svg-icon-calendar"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-calendar"></use> </svg>
 
-      <span class="range-datepicker__label">This Month</span>
+      <span class="range-datepicker__label">Past 30 days</span>
       <span class="range-datepicker__text"> <?php echo $daterange['from'] ?> → <?php echo $daterange['to'] ?></span>
 
       <span class="range-datepicker__arrow"></span>
@@ -45,9 +45,10 @@ if ( ! defined( 'ABSPATH' ) ) {
             <i class="icon-holder">
               <svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
             </i>
-            <h4 class="block-title">Total Revenue</h4>
-            <p class="block-value">{{revenue}}</p>
-            <div class="block-comment" v-if="days_count > 0">
+            <h4 class="block-title">Billed Revenue</h4>
+            <p class="block-value preload hidden ">{{billed_value}}</p>
+            <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
+            <div class="block-comment preload_ hidden " v-if="days_count > 0">
               <span v-html="icon" v-if="revenue_val_prev > 0"></span>
               <span v-if="revenue_val_prev > 0">
                 Your total revenue is {{up_down}} <br>
@@ -57,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 Your total revenue <br> for previous {{days_count}} days is 0
               </span>
             </div>
-            <div class="block-comment"  v-if="days_count < 0">
+            <div class="block-comment preload hidden"  v-if="days_count < 0">
               <span>You revenue can't be compared <br>with previous period</span>
             </div>
           </div>
@@ -68,8 +69,9 @@ if ( ! defined( 'ABSPATH' ) ) {
               <svg class="icon svg-icon-leads-lines"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leads-lines"></use> </svg>
             </i>
             <h4 class="block-title">Leads</h4>
-            <p class="block-value">{{leads}}</p>
-            <div class="block-comment">
+            <p class="block-value  preload hidden ">{{leads}}</p>
+            <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
+            <div class="block-comment preload hidden ">
                 <svg class="icon svg-icon-refresh"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-refresh"></use> </svg>
                 <span> <span class="encr">{{leads_converted}}</span> Leads <br> converted </span>
              </div>
@@ -80,14 +82,15 @@ if ( ! defined( 'ABSPATH' ) ) {
             <i class="icon-holder">
               <svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
             </i>
-            <h4 class="block-title">Avg. Booking Value</h4>
-            <p class="block-value">{{avg}}</p>
+            <h4 class="block-title">Booked Value</h4>
+            <p class="block-value  preload hidden ">{{booked_value}}</p>
+            <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
           </div>
         </div>
       </div>
 
-      <div class="col col-md-4">
-        <div class="col-graphic">
+      <div class="col col-md-4  ">
+        <div class="col-graphic preload hidden">
           <div class="spacer-h-20 spacer-h-lg-30"></div>
           <div class="graphic">
             <canvas id="gistogramm-year"></canvas>
@@ -110,9 +113,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
            <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
 
+           <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
         </div><!-- information-block__header -->
 
-        <div class="information-block__body sourse">
+
+        <div class="information-block__body sourse preload visuallyhidden">
           <i class="sourse__icon grey">
             <svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>
           </i>
@@ -120,7 +125,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           <p class="sourse__tag grey">{{leads}} {{label}}</p>
         </div><!-- information-block__body -->
 
-        <div class="information-block__footer">
+        <div class="information-block__footer preload visuallyhidden">
           <table>
             <tr>
               <td>Revenue Generated</td>
@@ -140,9 +145,10 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="information-block__header">
           <h4 class="block-title">Top Campaign</h4>
           <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
+          <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
         </div><!-- information-block__header -->
 
-        <div class="information-block__body sourse">
+        <div class="information-block__body sourse preload visuallyhidden">
           <i class="sourse__icon pink">
             <svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>
           </i>
@@ -150,7 +156,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           <p class="sourse__tag pink">{{leads}} {{label}}</p>
         </div><!-- information-block__body -->
 
-        <div class="information-block__footer">
+        <div class="information-block__footer preload visuallyhidden">
           <table>
             <tr>
               <td>Revenue Generated</td>
@@ -172,10 +178,11 @@ if ( ! defined( 'ABSPATH' ) ) {
           <h4 class="block-title">Top Treatment</h4>
 
            <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
+           <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
 
         </div><!-- information-block__header -->
 
-        <div class="information-block__body sourse">
+        <div class="information-block__body sourse preload visuallyhidden">
           <i class="sourse__icon blue">
             <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
           </i>
@@ -183,7 +190,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           <p class="sourse__tag blue">{{leads}} {{label}}</p>
         </div><!-- information-block__body -->
 
-        <div class="information-block__footer">
+        <div class="information-block__footer preload visuallyhidden">
           <table>
             <tr>
               <td>Revenue Generated</td>
@@ -206,9 +213,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
            <select-imitation v-on:update_list="run_update_data($event)" ref="display_type"></select-imitation>
 
+           <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
+
         </div><!-- information-block__header -->
 
-        <div class="information-block__body sourse">
+        <div class="information-block__body sourse preload visuallyhidden">
           <i class="sourse__icon red">
             <svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>
           </i>
@@ -216,7 +225,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           <p class="sourse__tag red">{{leads}} {{label}}</p>
         </div><!-- information-block__body -->
 
-        <div class="information-block__footer">
+        <div class="information-block__footer preload visuallyhidden">
           <table>
             <tr>
               <td>Revenue Generated</td>
@@ -247,9 +256,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
           <select-imitation v-on:update_list="run_update_convertions($event)" ref="display_type"></select-imitation>
 
+          <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
+
         </div><!-- information-block__header -->
 
-        <div class="information-block__body " >
+        <div class="information-block__body preload visuallyhidden" >
           <div class="row">
             <div class="diagram col-12">
               <div class="convertion-val text-center"  v-show="total_leads > 0">
@@ -267,7 +278,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div><!-- row -->
 
         <div class="spacer-h-50"></div>
-        <div class="information-block__results" v-if="total_leads > 0">
+        <div class="information-block__results preload visuallyhidden" v-if="total_leads > 0">
           <div class="row">
             <div class="col-12 col-md-6">
                 <div class="block-comment" v-show="days_count > 0">
@@ -299,10 +310,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
           <div id="select-wrapper">
             <select-imitation v-on:update_list="run_update_list($event)" ref="posts_list"></select-imitation>
+
+             <div class="center-text spinner-cont"><img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt=""></div>
           </div>
         </div><!-- information-block__header -->
 
-        <div class="information-block__scroll">
+        <div class="information-block__scroll preload visuallyhidden">
           <table class="team-perfomance">
             <tr v-for="(data, name, index) in team">
               <td></td>
