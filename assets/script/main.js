@@ -111,34 +111,27 @@ function formatMoney(number, decPlaces, decSep, thouSep) {
   var i = String(parseInt(number = Math.abs(Number(number) || 0).toFixed(decPlaces)));
   var j = (j = i.length) > 3 ? j % 3 : 0;
 
+  var reverted_i = reverseString(i);
+  var numbers = reverted_i.match(/.{1,3}/g);
+
+  numbers.reverse();
+
+  for(id in numbers){
+    numbers[id] =  reverseString(numbers[id]);
+  }
+
   return sign +
-    (j ? i.substr(0, j) + thouSep : "") +
-    i.substr(j).replace(/(\decSep{3})(?=\decSep)/g, "$1" + thouSep) +
+    numbers.join(thouSep)+
     (decPlaces ? decSep + Math.abs(number - i).toFixed(decPlaces).slice(2) : "");
 }
 
+function reverseString(str) {
+    var splitString = str.split("");
+    var reverseArray = splitString.reverse();
+    var joinArray = reverseArray.join(""); // "olleh"
 
-
-/**
-* replaces part of a string
-*
-* @param {needle} - object with pairs {search : replace }
-* @param {highstack} - string
-*
-* @return String
-*/
-function str_replace(needle, highstack){
-  var template = highstack;
-    for(var key in needle){
-    var exp = new RegExp("\\{" + key + "\\}", "gi");
-      template = template.replace(exp, function(str){
-        value = needle[key];
-        return value;
-      });
-    }
-    return template;
+    return joinArray; // "olleh"
 }
-
 
 function goBack() {
   window.history.back();
@@ -336,11 +329,19 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
     },
 
     success: function(data, textStatus, xhr) {
+      jQuery('.site-inner').find('.preload').removeClass('hidden').removeClass('visaullyhidden');
       console.group('leads updated by date');
       console.log(data);
+      if('undefined' !== typeof(is_dashboard)){
+        _to = data.to;
+        _from = data.from;
+        billed_posts = data.billed_posts;
+      }
+
       dashboard_leads_data = data.leads;
       dashboard_leads_data_prev = data.leads_prev;
       team_perfomance      = data.team_perfomance;
+
 
       //dashboard
       update_filters(data.filter_data);
@@ -1094,6 +1095,24 @@ var parse_leads = {
 
     for(id in this.leads){
       var data = {};
+      var for_csv = {
+        dentists:  this.leads[id].meta.treatment_coordinator.specialist,
+        proposed:  get_sum_from_price(this.leads[id].meta.treatment_value.value),
+        billed:    get_sum_from_price(this.leads[id].meta.treatment_value.billed),
+        notes:     this.leads[id].meta.lead_notes,
+        campaign:  this.leads[id].meta.patient_data.campaign,
+      };
+
+      var manager_noted = 'no';
+
+      if(typeof(this.leads[id].meta.lead_notes) == 'object'){
+        for(var k in this.leads[id].meta.lead_notes){
+          if('undefined' !== typeof(this.leads[id].meta.lead_notes[k].is_manager)){
+            manager_noted = ('yes' === this.leads[id].meta.lead_notes[k].is_manager)? 'yes' : manager_noted;
+          }
+        }
+      }
+
       var date_received = new Date(this.leads[id].post_date);
       var reminder_date = new Date(this.leads[id].meta.reminder);
 
@@ -1112,6 +1131,8 @@ var parse_leads = {
       data.filter_data = this.leads[id].filter_data;
       data.phone_count = this.leads[id].phone_count;
       data.message_count = this.leads[id].message_count;
+      data.for_csv      = for_csv;
+      data.manager_noted = manager_noted;
 
       if('undefined' !== typeof(this.leads[id].order)){
         data.order = this.leads[id].order;
@@ -1759,38 +1780,7 @@ if('undefined' !== typeof(is_dashboard)){
 
     computed:{
       filtered_leads: function(){
-        var leads  = this.leads_obj;
-        var leads_filtered = [];
-
-        for(id in leads){
-          var is_match = true;
-
-          filter_value = leads[id]['filter_data'];
-
-          for(filter_id in this.filters){
-            if(this.filters[filter_id].search('All') === 0) continue;
-
-            if(filter_value[filter_id] === null && this.filters[filter_id] !== null){
-              is_match = false;
-              continue;
-            }
-
-            switch(typeof(filter_value[filter_id])){
-              case 'object':
-                is_match = (filter_value[filter_id].indexOf(this.filters[filter_id]) < 0)? false : is_match;
-               break;
-              case 'string':
-                is_match = (this.filters[filter_id] !== filter_value[filter_id])? false : is_match;
-               break;
-            }
-          }
-
-          if(is_match){
-            leads_filtered.push(leads[id]);
-          }
-        }
-
-        return leads_filtered;
+        return this.run_filtered_leads(this.leads_obj);
       },
 
       filtered_leads_prev: function(){
@@ -1851,14 +1841,68 @@ if('undefined' !== typeof(is_dashboard)){
         var total = 0;
 
         for(id in this.filtered_leads){
-          var value = this.filtered_leads[id].meta.treatment_value.value;
-          total += get_sum_from_price(value);
+          if (this.filtered_leads[id].is_converted == 'yes'){
+            var value = this.filtered_leads[id].meta.treatment_value.value;
+            if(value){
+              total += get_sum_from_price(value);
+            }
+          }
         }
 
         return total;
       },
 
+      billed_this_period: function(){
+        var total = 0;
+
+        for(id in this.filtered_leads){
+          // if (this.filtered_leads[id].is_converted == 'yes'){
+            var value = this.filtered_leads[id].meta.treatment_value.billed
+
+            if(value){
+              total += get_sum_from_price(value);
+            }
+          // }
+        }
+
+        return total;
+      },
+
+      billed_value: function(){
+
+        var date_from = new Date(_from);
+        var date_to   = new Date(_to);
+
+        billed_total = 0
+
+        for(id in this.billed_filtered_leads){
+          if(this.billed_filtered_leads[id].meta.start_date){
+
+            // if (this.billed_filtered_leads[id].is_converted == 'yes'){
+              var billed_start = new Date(this.billed_filtered_leads[id].meta.start_date);
+              var count =  count_billed_time(billed_start, date_from, date_to);
+
+              if(this.billed_filtered_leads[id].meta.treatment_value.mounthly){
+                  billed_total+= count*get_sum_from_price(this.billed_filtered_leads[id].meta.treatment_value.mounthly);
+              }
+            // }
+          }
+        }
+
+       var total = billed_total + this.billed_this_period;
+
+        return '£'+ formatMoney(total, 2, ".", ",");
+      },
+
+      billed_filtered_leads: function(){
+         return this.run_filtered_leads(billed_posts);
+      },
+
       revenue: function(){
+        return '£'+ formatMoney(this.revenue_val, 2, ".", ",");
+      },
+
+      booked_value: function(){
         return '£'+ formatMoney(this.revenue_val, 2, ".", ",");
       },
 
@@ -1906,7 +1950,15 @@ if('undefined' !== typeof(is_dashboard)){
       }
     },
 
-    mounted: function(){},
+    mounted: function(){
+      var vm = this;
+      vm.$nextTick(function(){
+        console.log('loaded');
+        jQuery('.preload').removeClass('hidden')
+        jQuery('.preload').removeClass('visuallyhidden')
+        jQuery('.spinner-cont').remove();
+      })
+    },
 
     methods:{
       set_value: function(key, value){
@@ -1920,7 +1972,41 @@ if('undefined' !== typeof(is_dashboard)){
 
       update_filters: function(filters){
         this.filters = filters;
-      }
+      },
+
+      run_filtered_leads: function(leads){
+        var leads_filtered = [];
+
+        for(id in leads){
+          var is_match = true;
+
+          filter_value = leads[id]['filter_data'];
+
+          for(filter_id in this.filters){
+            if(this.filters[filter_id].search('All') === 0) continue;
+
+            if(filter_value[filter_id] === null && this.filters[filter_id] !== null){
+              is_match = false;
+              continue;
+            }
+
+            switch(typeof(filter_value[filter_id])){
+              case 'object':
+                is_match = (filter_value[filter_id].indexOf(this.filters[filter_id]) < 0)? false : is_match;
+               break;
+              case 'string':
+                is_match = (this.filters[filter_id] !== filter_value[filter_id])? false : is_match;
+               break;
+            }
+          }
+
+          if(is_match){
+            leads_filtered.push(leads[id]);
+          }
+        }
+
+        return leads_filtered;
+      },
     },
   })
 }
@@ -1930,6 +2016,25 @@ function update_dashboard_totals(days_count){
     vue_dashboard_totals.update();
       vue_dashboard_totals.set_value('days_count', days_count);
   }
+}
+
+
+function count_billed_time(date, _from, _to, count){
+
+  if(!count){
+    var count = 0;
+  }
+
+  if(date <= _to && date >= _from) {
+    count++;
+    var new_date = new Date(date.setMonth(date.getMonth() + 1));
+    count = count_billed_time(new_date, _from, _to, count);
+  } else if( date < _from ){
+    var new_date = new Date(date.setMonth(date.getMonth() + 1));
+    count = count_billed_time(new_date, _from, _to, count);
+  }
+
+  return count;
 }
 
 if('undefined' !== typeof(is_dashboard)){
@@ -1957,7 +2062,6 @@ if('undefined' !== typeof(is_dashboard)){
             if(patient_data[this.type] === null || typeof(patient_data[this.type]) === 'undefined') continue;
 
             if(typeof(data[patient_data[this.type]]) === 'undefined'){
-
               data[patient_data[this.type]] = {items: [], total: 0, converted: 0, revenue: 0};
             }
             var revenue = get_sum_from_price(meta.treatment_value.value);
@@ -2487,7 +2591,6 @@ if('undefined' !== typeof(is_lead_list)){
           }
         }
 
-
         for(var column_name in this.leads){
           var fields_search = ['clinic', 'name', 'treatment', 'source', 'team', 'campaign'];
 
@@ -2536,8 +2639,8 @@ if('undefined' !== typeof(is_lead_list)){
           }
         }
 
-        //console.log('leads_filtered');
-        //console.log(leads_filtered);
+        // console.log('leads_filtered');
+        // console.log(leads_filtered);
 
         return leads_filtered;
       },
@@ -2618,10 +2721,11 @@ if('undefined' !== typeof(is_lead_list)){
       var vm = this;
 
       vm.$nextTick(function(){
-        //console.log('loaded');
+        console.log('loaded');
 
         jQuery('.preload-timer').addClass('hidden');
         jQuery('.leads-container').removeClass('visuallyhidden');
+        jQuery('.filter-container').removeClass('visuallyhidden');
       })
      },
 
@@ -2755,6 +2859,86 @@ if('undefined' !== typeof(is_lead_list)){
       run_search: function(search){
         //console.log('run search');
         this.search_value = search;
+      },
+
+      load_csv: function(){
+        var formatted_data = [];
+
+        var filters = [];
+
+        for(var j in this.filters){
+         if(this.filters[j].match('All')){
+         }else{
+            filters.push(this.filters[j]);
+          }
+        }
+
+        filters = filters.length ==0 ? ['No filters']: filters;
+
+        filename = jQuery('.range-datepicker__text').text() + '_' + filters.join('-')
+
+        filename = filename.split(' ').join('_');
+
+        if(jQuery('.search__field').val()){
+          filename+='__searched_for%'+ jQuery('.search__field').val()
+        }
+
+        for(var column in this.leads_filtered){
+          var column_data =  this.leads_filtered[column];
+          // console.log(column_data);
+
+          for(var lead_id in column_data){
+
+            var temp = {
+              name: column_data[lead_id].name,
+              treatment: column_data[lead_id].treatment,
+              clinic: column_data[lead_id].clinic,
+              campaign: column_data[lead_id].for_csv.campaign,
+              notes: '',
+              proposed: '£' + formatMoney(column_data[lead_id].for_csv.proposed, 2, '.', ',') ,
+              billed: '£' + formatMoney(column_data[lead_id].for_csv.billed, 2, '.', ',') ,
+            };
+
+
+            temp.dentists = typeof(column_data[lead_id].for_csv.dentists) === 'object'? column_data[lead_id].for_csv.dentists.join(';') : 'none';
+
+            if(typeof(column_data[lead_id].for_csv.notes) === 'object'){
+              var notes = [];
+              for (var i in column_data[lead_id].for_csv.notes){
+                  notes.push(column_data[lead_id].for_csv.notes[i].text);
+              }
+              temp.notes = notes.join(';');
+            }else{
+              temp.notes = 'none';
+            }
+
+            var temp_arr = [];
+
+            for(var i in temp){
+              var reg = new RegExp("[\n|,|\"]");
+              if(temp[i] && temp[i].match("/\r\n|\n|\r|,/gm")){
+              }
+
+               var _t = temp[i]? '"' + temp[i].split("\n").join(' ').split('"').join(' ').split('#').join(' ') + '"': 'none';
+
+               temp_arr.push(_t);
+            }
+
+            formatted_data.push(temp_arr);
+          }
+        }
+
+          var csvContent = "data:text/csv;charset=utf-8,name,treatment,clinic,campaign,notes,proposed,billed,dentists" + "\r\n"
+              + formatted_data.map(e => e.join(",")).join("\r\n");
+
+          var encodedUri = encodeURI(csvContent);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", filename + ".csv");
+          document.body.appendChild(link); // Required for FF
+
+          link.click();
+
       }
     },
   })
@@ -2814,10 +2998,12 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       treatment_value: {
+        billed: 0,
         value     : 0,
         terms     : '',
         mounthly  : '',
         treatment :(!!assigned_treatments && typeof(assigned_treatments) === 'object')? Object.values(assigned_treatments) : [] ,
+        date_end : date_start,
       },
 
       treatment_coordinator: {
@@ -2894,6 +3080,10 @@ if('undefined' !== typeof(is_single_lead)){
         return this.treatment_value.value;
       },
 
+      get_billed_value: function(){
+        return this.treatment_value.billed;
+      },
+
       get_terms_count: function(){
         $return = 1;
         switch(this.treatment_value.terms){
@@ -2921,8 +3111,10 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       monthly_payment: function(){
-        var summ = get_sum_from_price(this.get_treatment_value)/this.get_terms_count;
+        var billed = get_sum_from_price(this.get_billed_value);
+        var summ = (get_sum_from_price(this.get_treatment_value) - get_sum_from_price(this.get_billed_value))/this.get_terms_count;
         summ = summ.toFixed(2);
+        this.treatment_value.mounthly = summ;
         return   '£'+ formatMoney(summ, 2, ".", ",");
       },
 
@@ -2947,7 +3139,6 @@ if('undefined' !== typeof(is_single_lead)){
 
         return treatments;
       },
-
     },
 
     watch: {
@@ -2957,6 +3148,66 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       'treatment_value.terms': function(val){
+
+        var count = 0;
+
+        switch(val){
+          case '12 Months' :
+            count = 12;
+            break;
+          case '18 Months' :
+            count = 18;
+            break;
+          case '24 Months' :
+            count = 24;
+            break;
+          case '36 Months' :
+            count = 36;
+            break;
+          case '48 Months' :
+            count = 48;
+            break;
+        }
+
+        if(count > 0){
+          var date = new Date(date_start);
+          date.setMonth(date.getMonth() + count);
+
+          var month = (date.getMonth() < 9)? "0" + (date.getMonth() + 1) : (date.getMonth() + 1) ;
+
+          var _date = date.getDate() < 10? '0' + date.getDate() : date.getDate();
+
+          var hours =  date.getHours() < 10? '0' + date.getHours() : date.getHours();
+
+          var minutes =  date.getMinutes() < 10? '0' + date.getMinutes() : date.getMinutes();
+
+          var date_end = date.getFullYear() + '-' + month  + '-' + _date + ' ' + hours + ':'+ minutes + ':'+ '00';
+
+          this.treatment_value.date_end = date_end;
+        }else{
+          this.treatment_value.date_end = date_start;
+        }
+
+        posted_data = {
+          date: this.treatment_value.date_end,
+          lead_id: this.lead_data.lead_id,
+          action: 'save_lead_end_date',
+        }
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: posted_data,
+
+          complete: function(xhr, textStatus) {
+          },
+
+          success: function(data, textStatus, xhr) {
+            console.log(data);
+          },
+
+          error: function(xhr, textStatus, errorThrown) {}
+        });
       },
 
       'patient_data.name': function(){
@@ -2986,15 +3237,35 @@ if('undefined' !== typeof(is_single_lead)){
     },
 
     methods: {
-      price_to_value: function(){
+      price_to_value: function(ref){
         var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
+
+        switch(ref){
+          case 'price_input_field':
+            var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
+            break;
+          case 'input_billed':
+            var summ = (!!this.treatment_value.billed)? this.treatment_value.billed : 0;
+            break;
+        }
         summ = get_sum_from_price(summ);
-        this.$refs.price_input_field.set_value(summ);
+        this.$refs[ref].set_value(summ);
       },
 
-      value_to_price: function(){
-        var summ = '£' + formatMoney(this.treatment_value.value,2, '.',',');
-         this.$refs.price_input_field.set_value(summ);
+      update_dates: function(){
+        console.log(this);
+      },
+
+      value_to_price: function(ref){
+        switch(ref){
+          case 'price_input_field':
+            var summ = '£' + formatMoney(this.treatment_value.value,2, '.',',');
+            break;
+          case 'input_billed':
+            var summ = '£' + formatMoney(this.treatment_value.billed,2, '.',',');
+            break;
+        }
+         this.$refs[ref].set_value(summ);
       },
 
       init_select: function(){
@@ -3171,7 +3442,10 @@ if('undefined' !== typeof(is_single_lead)){
         this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
 
 
-        if(!this.patient_data.name || !this.patient_data.phone || !this.patient_data.email  ){
+        console.log(this.lead_data);
+
+
+        if((!this.patient_data.name || !this.patient_data.phone || !this.patient_data.email) && this.lead_data.lead_id < 0){
 
 
           if(!this.patient_data.phone){
@@ -3387,6 +3661,8 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       add_note: function(){
+        console.log(is_manager);
+
         if(!this.note_text){
           alert('Please enter some text');
           return false;
@@ -3403,15 +3679,23 @@ if('undefined' !== typeof(is_single_lead)){
         var date_formatted = months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' at ' + date.getHours() + ':' + minutes;
 
         var new_note = {
-          'date'      : date_formatted,
-          'user_name' : this.lead_data.user_name,
-          'text'      : this.note_text,
+          'date'       : date_formatted,
+          'user_name'  : this.lead_data.user_name,
+          'text'       : this.note_text,
+          'is_manager' : is_manager,
+          'done'       : 'no',
         };
+
 
         this.notes.push(new_note);
         this.note_text = '';
         this.$refs.note_textarea.style.height = '';
 
+        this.save_lead_meta('lead_notes', 'notes');
+      },
+
+      mark_note_done: function(key, val){
+        this.notes[key].done = val;
         this.save_lead_meta('lead_notes', 'notes');
       },
 

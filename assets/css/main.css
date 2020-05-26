@@ -10131,3 +10131,32 @@ input.error {
   color: #e65571;
   font-size: 12px;
 }
+
+.manager-note {
+  background-color: #f5cf90;
+}
+
+.icon-manager-done {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 10px;
+  margin: auto;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAA8UlEQVQoU2NkQAIKUz8lMDIy5jMwMBhAhS/8Z2Cc8CCLZyFMGSOIodD/XoCRnWU/kkJkc0DsC/9//nF8UCj4AaxBcdrnCwwMDProqtD4F+5n8RoyKkz7UsDI8L+fgGKw9P///xMZ8ZkepMbMEK/DzOC/7hfMvAsgDf9hPJCCdbf+grkgdpUFC0Ps1l8M19/ClTCgaOiwZ2GQ4mFk2PPgH0OwOjNDxcHfKIpBBmE4CaRJU5iJIXbLL4ZPcJfAfXiRERr284n2NAnBevF+Fq8BcsQdwBMXF////OMAjziYc6DOK0DSePH///8THmTzLYCpAQCzBl9gUD9FagAAAABJRU5ErkJggg==);
+}
+
+.icon-manager-done.not {
+  -webkit-filter: grayscale(100%);
+          filter: grayscale(100%);
+}
+
+.warn-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+}

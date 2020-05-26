@@ -115,6 +115,7 @@ class theme_content_output{
 
       $filter_data = get_filters_by_leads( $leads );
 
+
       wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
 
 
@@ -125,6 +126,23 @@ class theme_content_output{
       wp_localize_script($theme_init->main_script_slug, 'team_perfomance', $user_data);
 
       wp_localize_script($theme_init->main_script_slug, 'income_month_data', get_annually_income());
+
+
+     // get post for billed values
+     $data_4_billed_revenue_period = get_billed_totals($days_30_before_today->format('Y-m-d H:i:s') ,$today->format('Y-m-d H:i:s'));
+
+     $_args = array(
+       'post_type' => velesh_theme_posts::$lead,
+       'include' => $data_4_billed_revenue_period['ids']
+      );
+
+     $billed_posts = get_posts( $_args );
+     $billed_posts = get_leads_meta($billed_posts);
+
+     wp_localize_script($theme_init->main_script_slug, 'billed_posts', $billed_posts);
+
+     wp_localize_script($theme_init->main_script_slug, '_from', $days_30_before_today->format('Y-m-d H:i:s'));
+     wp_localize_script($theme_init->main_script_slug, '_to',$today->format('Y-m-d H:i:s'));
 
 
       $args = array(
@@ -147,14 +165,12 @@ class theme_content_output{
     global $theme_init;
 
     // Get date range default
+      wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
 
       $today = new DateTime();
 
-      wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
-
       $current_month = $today->format('m');
       $current_year  = $today->format('Y');
-
       $today_formated = $today->format('M d Y');
 
 
@@ -167,7 +183,6 @@ class theme_content_output{
       $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
 
       $leads = get_leads_meta($leads);
-
 
       wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
 
@@ -192,10 +207,19 @@ class theme_content_output{
       $user = get_user_by('id', get_current_user_id());
       $user_name =  theme_get_user_name($user);
 
+      $user_id = get_current_user_id();
+
+      $user_meta=get_userdata($user_id);
+
+      $user_roles = $user_meta->roles;
+
+      $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
+
       $args = array(
         'user_name' => $user_name,
         'user_id' => get_current_user_id(),
         'stages' => $stages,
+        'is_manager' => $is_manager,
         'daterange' => array(
           'from' => $days_30_before_today_formatted,
           'to'   => $today_formated
@@ -296,7 +320,9 @@ class theme_content_output{
 
     $user_meta=get_userdata($user_id);
 
-    $user_roles=$user_meta->roles;
+    $user_roles = $user_meta->roles;
+
+    $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
 
     $treatment_coordinator = get_post_meta($lead->ID, '_treatment_coordinator', true);
 
@@ -346,51 +372,59 @@ class theme_content_output{
       'text_save_del'         => 'Delete',
       'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
 
-      'can_delete' => in_array('administrator', $user_roles),
+      'can_delete' => in_array('administrator', $user_roles) || in_array('manager', $user_roles) ,
     );
 
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
     $campaigns = $campaigns ? $campaigns: array();
-
-
     $stages_names = array();
 
     foreach ($stages as $key => $st) {
        $stages_names[] = $st['name'];
     }
 
+    wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
+
     wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);
-
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
-
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
 
-    $phone_count   = get_post_meta($lead->ID, '_phone_count', true);
-
+    $phone_count = get_post_meta($lead->ID, '_phone_count', true);
     $phone_count = ($phone_count) ? $phone_count : 0;
 
     wp_localize_script($theme_init->main_script_slug, 'phone_count', $phone_count);
 
-    $message_count   = get_post_meta($lead->ID, '_message_count', true);
-
+    $message_count = get_post_meta($lead->ID, '_message_count', true);
     $message_count = ($message_count) ? $message_count : 0;
 
     wp_localize_script($theme_init->main_script_slug, 'message_count', $message_count);
-
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
-
     wp_localize_script($theme_init->main_script_slug, 'assigned_dentists', $assigned_dentists);
     wp_localize_script($theme_init->main_script_slug, 'assigned_treatments', $assigned_treatments);
-
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
-
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
+
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', $lead_notes);
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
     wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
     wp_localize_script($theme_init->main_script_slug, 'lead_files', $lead_files);
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
+
+    $date_created = $lead->post_date;
+
+    $meta = get_post_meta($lead->ID, '_patient_data', true);
+
+    $parts = explode('at',  $meta['date_time'] );
+
+    $date_planned = new DateTime(  implode(' ', $parts));
+
+    $date_planned = $date_planned->format('Y-m-d H:i:s');
+
+    $date_start = (isset($meta['date_time']))? $date_planned : $date_created;
+
+    wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
+
 
     print_theme_template_part('lead-single', 'globals', $args);
   }
@@ -409,6 +443,15 @@ class theme_content_output{
     $leads_id     = (int)get_option('theme_page_leads');
 
     // get assigned specialists data
+
+    $user_id = get_current_user_id();
+
+    $user_meta=get_userdata($user_id);
+
+    $user_roles = $user_meta->roles;
+
+    $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
+
 
     $users = get_users();
     $specialists_data = array();
@@ -500,6 +543,13 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'lead_files', array());
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  array());
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
+
+
+    $date_start =new DateTime();
+
+    $date_start = $date_start->format('Y-m-d H:i:s');
+
+    wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 
     print_theme_template_part('lead-single', 'globals', $args);
   }
