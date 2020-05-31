@@ -7942,6 +7942,47 @@ html {
   background-color: #f8bfed;
 }
 
+.popup-print-options {
+  max-width: 1122px;
+  width: 100%;
+  box-shadow: 0 1px 30px rgba(0, 0, 0, 0.26);
+  border-radius: 9px;
+  background-color: #ffffff;
+  padding: 20px 0;
+  margin: 50px auto 0;
+  display: block;
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.popup-print-options table {
+  width: 100%;
+  margin: 0 0 30px;
+}
+
+.popup-print-options table td,
+.popup-print-options table th {
+  padding-left: 30px;
+  text-align: left;
+}
+
+.popup-print-options table td:first-child,
+.popup-print-options table th:first-child {
+  padding-left: 30px;
+}
+
+.popup-print-options table td:last-child,
+.popup-print-options table th:last-child {
+  padding-right: 30px;
+}
+
+.text-right {
+  text-align: right;
+}
+
 @media (min-width: 1600px) {
   .container {
     max-width: 1170px;
