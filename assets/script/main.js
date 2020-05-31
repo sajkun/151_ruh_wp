@@ -139,11 +139,25 @@ function goBack() {
 
 
 function get_sum_from_price(sum){
+  if(typeof(sum) === 'undefined'){
+    return 0;
+  }
+
+  if(isNaN(sum) && 'string' !== typeof(sum)){
+    return 0;
+  }
+
+  if(!sum){
+    return 0;
+  }
+
+
   if(sum === 0){
     return 0;
   }
 
-  if(typeof(sum) === 'undefined'){
+
+  if((sum) === 'undefined'){
     return 0;
   }
 
@@ -152,7 +166,7 @@ function get_sum_from_price(sum){
     var pierces = sum.split('.');
     var summ = pierces[0].replace(exp, '');
 
-    return parseInt(summ);
+    return parseFloat(summ);
   }
 
   if(typeof(sum) === 'number'){
@@ -216,6 +230,14 @@ jQuery('#login-form').on('submit',function(){
      }
   });
 })
+
+
+// jQuery('.trigger-color').hover(function(){
+//   var id = jQuery(this).data('id');
+//   console.log(id);
+// },function(){
+
+// })
 jQuery(document).ready(function(){
     jQuery('.reminder input').datetimepicker({
       format:'M d Y H:i',
@@ -332,23 +354,23 @@ jQuery(document.body).on('get_leads_by_dates', function(e, data){
       jQuery('.site-inner').find('.preload').removeClass('hidden').removeClass('visaullyhidden');
       console.group('leads updated by date');
       console.log(data);
+
       if('undefined' !== typeof(is_dashboard)){
         _to = data.to;
         _from = data.from;
         billed_posts = data.billed_posts;
+        billed_posts_prev = data.billed_posts_prev;
+        perfomance.update('leads', data.leads);
+        perfomance.update('billed_posts', data.billed_posts);
       }
 
-      dashboard_leads_data = data.leads;
+      dashboard_leads_data      = data.leads;
       dashboard_leads_data_prev = data.leads_prev;
-      team_perfomance      = data.team_perfomance;
-
+      team_perfomance           = data.team_perfomance;
 
       //dashboard
       update_filters(data.filter_data);
       update_dashboard_totals(data.days_count_prev);
-      update_top_sources();
-      update_team_perfomance();
-      update_confertions(data.days_count_prev);
 
       //leads_list
       update_leads_filters(data.filter_data);
@@ -378,23 +400,22 @@ jQuery(document).ready(function(){
     jQuery('.range-datepicker').data('daterangepicker').setStartDate(saved_dates._from);
     jQuery('.range-datepicker').data('daterangepicker').setEndDate(saved_dates._to);
 
-    jQuery(document.body).trigger('get_leads_by_dates',saved_dates);
+    // jQuery(document.body).trigger('get_leads_by_dates',saved_dates);
   }
 })
 if('undefined' !== typeof(is_dashboard)){
-
+  var date  = new Date();
   var chart = document.getElementById('gistogramm-year').getContext('2d');
-  var current_year = '2019';
   var currency     = '£';
-
+  var current_year = date.getFullYear();
 
   months = [
-    ['January','May','July', "October"],
-    ['February','April', "August", 'November'],
-    ['March','June', "September", 'December'],
+    ['January', 'May',   'July',      "October" ],
+    ['February','April', "August",    'November'],
+    ['March',   'June',  "September", 'December'],
   ];
 
-  var options_chart= {
+  var options_chart = {
       options: {
           legend:{
              display: false,
@@ -410,13 +431,11 @@ if('undefined' !== typeof(is_dashboard)){
 
            tooltips: {
               callbacks: {
-
                   title : function(tooltipItem, data) {
                     var row = tooltipItem[0].datasetIndex;
                     var col = tooltipItem[0].index;
                     return months[row][col] + ' '+ current_year;
                   },
-
 
                   beforeLabel: function(tooltipItem, data) {
                     return currency +  formatMoney(tooltipItem.value, 2, ".", ",") ;
@@ -504,6 +523,7 @@ if('undefined' !== typeof(is_dashboard)){
           labels: ['c1', 'c2', 'c3', 'c4']
       },
   }
+
   var options_chart_test = {
       options: {
           legend:{
@@ -600,10 +620,10 @@ if('undefined' !== typeof(is_dashboard)){
       },
   }
 
-var _prefix;
-var _suffix;
+  var _prefix;
+  var _suffix;
 
- function prepare_donnut_data(data, labels, suffix, prefix){
+  function prepare_donnut_data(data, labels, suffix, prefix){
     var colors = [
             '#f6b82f',
             '#ee63d2',
@@ -698,7 +718,7 @@ var _suffix;
     config.options.legend.position = jQuery(window).width() < 768 ? 'bottom' : 'right';
 
     return config
- }
+  }
 
   jQuery(document).ready(function(){
     var chart_income = new Chart(chart, options_chart);
@@ -975,15 +995,17 @@ jQuery(document.body).on('update_lead_log', function(e, data){
      }
   });
 })
-jQuery(document).on('update_app',function(){
+jQuery(document).on('update_app', function(){
 
 })
-
 
 // class to work with leads
 var parse_leads = {
   leads: {},
 
+  /**
+  **
+  **/
   construct: function(){
     if('undefined' !== typeof(is_dashboard)){
       this.leads = dashboard_leads_data;
@@ -997,8 +1019,8 @@ var parse_leads = {
   },
 
   /**
-  *
-  */
+  **
+  **/
   filter: function(){
     var dashboard_leads_data_filtered_new = [];
 
@@ -1015,6 +1037,9 @@ var parse_leads = {
     return dashboard_leads_data_filtered_new;
   },
 
+  /**
+  **
+  **/
   filter_exec: function(filters){
     var dashboard_leads_data_filtered_new = [];
 
@@ -1031,7 +1056,9 @@ var parse_leads = {
     return this;
   },
 
-
+  /**
+  **
+  **/
   filter_for_leads_list: function(filters){
     var dashboard_leads_data_filtered_new = [];
 
@@ -1046,7 +1073,10 @@ var parse_leads = {
     return dashboard_leads_data_filtered_new;
   },
 
-  // check if passed lead mathces current filter values
+  /**
+  **
+  **/
+  //  check if passed lead mathces current filter values
   filter_lead: function(lead, filters){
     var filter_value = {};
     var lead_filter  = lead.filter_data;
@@ -1084,10 +1114,16 @@ var parse_leads = {
     return is_match;
   },
 
+  /**
+  **
+  **/
   get_leads: function (){
     return this.leads;
   },
 
+  /**
+  **
+  **/
   get_leads_for_list: function(){
     var leads = [];
 
@@ -1148,8 +1184,8 @@ var parse_leads = {
   },
 
   /**
-  *
-  */
+  **
+  **/
   get_total_revenue : function(){
     revenue = 0;
 
@@ -1160,10 +1196,16 @@ var parse_leads = {
     return revenue;
   },
 
+  /**
+  **
+  **/
   get_total_leads: function(){
     return this.leads.length;
   },
 
+  /**
+  **
+  **/
   get_average_leads: function(formatted){
     var revenue = this.get_total_revenue();
     var total   = this.get_total_leads();
@@ -1175,6 +1217,9 @@ var parse_leads = {
     }
   },
 
+  /**
+  **
+  **/
   prepare_sorted_data_by: function(get_by){
     var sorted = {};
     var index;
@@ -1258,6 +1303,9 @@ var parse_leads = {
     return sorted;
   },
 
+  /**
+  **
+  **/
   get_leads_data_by: function(get_by, type){
     var sorted = this.prepare_sorted_data_by(get_by);
 
@@ -1377,6 +1425,7 @@ var wait_block;
 var animation_mixin;
 var single_lead_popup;
 var single_lead;
+var perfomance;
 
 var icons_selects = {
   'clinics': '<svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>',
@@ -1412,11 +1461,9 @@ var select_mixin = {
     _isHiddenImitation: Boolean,
   },
 
-  created: function(){
-  },
+  created: function(){},
 
-  mounted:function(){
-  },
+  mounted:function(){},
 
   methods: {
     change: function(){
@@ -1513,7 +1560,6 @@ select_imitation_icon = Vue.component('select-imitation-icon', {
   props:{
     _icon: String,
   },
-
 
   template: '<div class="select-imitation has-icon select-imitation_shift-bottom" v-bind:class="{ expanded: isExpanded}" > <span v-html="icon"></span> <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="data in options" v-bind:value="data">{{data}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)"> <span>{{data}}</span> </li> </ul> </div> </div>',
 })
@@ -1646,7 +1692,41 @@ var vue_dashboard_totals;
 var filter_dashboard;
 var vue_team_perfomance;
 var dashboard_convertions;
+var perfomance;
 var vue_top_items = {};
+/**
+**
+**/
+function update_team_perfomance(){
+  if('undefined' !== typeof(is_dashboard)){
+    vue_team_perfomance.run_update_list({val: 'all'});
+  }
+}
+
+/**
+**
+**/
+function discard_selects(){
+  for(id in vue_select_components){
+    vue_select_components[id].discard_select();
+  }
+
+  if('undefined' !== typeof(is_dashboard)){
+    perfomance.$refs.perfomance_type.discard_select();
+  }
+}
+
+//deprecated
+function update_top_sources(){
+  if('undefined' !== typeof(is_dashboard)){
+  }
+}
+
+//deprecated
+function collapse_top_lists(name){
+  if('undefined' !== typeof(is_dashboard)){
+  }
+}
 
 
 function init_filters(filter_data){
@@ -1659,7 +1739,7 @@ function init_filters(filter_data){
           clinics:    'All Clinics',
           treatments: 'All Treatments',
           campaigns:  'All Campaigns',
-          sourses:    'All Sources',
+          sources:    'All Sources',
           team:       'All Team',
         },
       },
@@ -1670,10 +1750,15 @@ function init_filters(filter_data){
 
       computed: {
         show_filter_clear_btn: function(){
+          //console.groupCollapsed('\x1b[0m%s\x1b[35m %s \x1b[0m' , 'filters:', 'show_filter_clear_btn');
           var show = false;
           for(var filter_name in this.filters){
             show = (this.filters[filter_name].search('All') !== 0)? true: show;
+
+            //console.log(show);
           }
+
+          //console.groupEnd();
 
           return show ? '' : 'visuallyhidden';
         },
@@ -1682,6 +1767,7 @@ function init_filters(filter_data){
       methods: {
         //inits filters
         init_filters: function(){
+          //console.log('\x1b[0m%s\x1b[35m %s \x1b[0m' , 'filters:', 'init_filters');
           var props;
           for(select_name in dashboard_filter_data){
             props =  {
@@ -1720,10 +1806,19 @@ function init_filters(filter_data){
 
         run_filter_list: function(event){
           if('undefined' !== typeof(event.val)){
+            //console.groupCollapsed('\x1b[0m%s\x1b[35m %s \x1b[0m' , 'filters:', 'run_filter_list');
+
+            //console.log(event);
+            //console.groupEnd();
             this.filters[event.name] = event.val;
 
             if('undefined' !== typeof(vue_dashboard_totals)){
-              vue_dashboard_totals.update_filters(this.filters);
+
+              var vm = this;
+
+              Vue.nextTick(function(){
+                vue_dashboard_totals.update_filters(vm.filters);
+              })
             }
           }
         }
@@ -1768,7 +1863,7 @@ if('undefined' !== typeof(is_dashboard)){
         clinics:    'All Clinics',
         treatments: 'All Treatments',
         campaigns:  'All Campaigns',
-        sourses:    'All Sourses',
+        sources:    'All Sourses',
         team:       'All Team',
       },
 
@@ -1780,11 +1875,19 @@ if('undefined' !== typeof(is_dashboard)){
 
     computed:{
       filtered_leads: function(){
-        return this.run_filtered_leads(this.leads_obj);
+        var leads = this.run_filtered_leads(this.leads_obj)
+        //console.groupCollapsed('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'dashboard:', 'filtered_leads');
+        //console.log(leads);
+        //console.groupEnd();
+        return leads;
       },
 
       filtered_leads_prev: function(){
+        //console.groupCollapsed('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'dashboard:', 'filtered_leads_prev');
         var leads  = this.leads_obj_prev;
+
+        //console.log('\x1b[34m %s \x1b[0m' , 'Leads initial:');
+        //console.log(leads);
         var leads_filtered = [];
 
         for(id in leads){
@@ -1815,6 +1918,10 @@ if('undefined' !== typeof(is_dashboard)){
           }
         }
 
+        //console.log('\x1b[34m %s \x1b[0m' , 'Leads filtered:');
+        //console.log(leads_filtered);
+        //console.groupEnd();
+
         return leads_filtered;
       },
 
@@ -1823,6 +1930,7 @@ if('undefined' !== typeof(is_dashboard)){
       },
 
       revenue_val_prev: function(){
+        //console.groupCollapsed('\x1b[0m%s\x1b[31m %s \x1b[0m' , 'dashboard:', 'revenue_val_prev');
 
         if(!this.leads_obj_prev){
           return 0;
@@ -1833,12 +1941,15 @@ if('undefined' !== typeof(is_dashboard)){
           var value = this.filtered_leads_prev[id].meta.treatment_value.value;
           total += get_sum_from_price(value);
         }
+        //console.log(total);
+        //console.groupEnd();
 
         return total;
       },
 
       revenue_val: function(){
         var total = 0;
+        //console.groupCollapsed('\x1b[0m%s\x1b[31m %s \x1b[0m' , 'dashboard:', 'revenue_val');
 
         for(id in this.filtered_leads){
           if (this.filtered_leads[id].is_converted == 'yes'){
@@ -1849,53 +1960,59 @@ if('undefined' !== typeof(is_dashboard)){
           }
         }
 
+        //console.log(total);
+        //console.groupEnd();
+
         return total;
       },
 
       billed_this_period: function(){
-        var total = 0;
-
-        for(id in this.filtered_leads){
-          // if (this.filtered_leads[id].is_converted == 'yes'){
-            var value = this.filtered_leads[id].meta.treatment_value.billed
-
-            if(value){
-              total += get_sum_from_price(value);
-            }
-          // }
-        }
-
+        var total = this.get_billed_this_period(this.filtered_leads);
         return total;
       },
 
       billed_value: function(){
-
-        var date_from = new Date(_from);
-        var date_to   = new Date(_to);
-
-        billed_total = 0
-
-        for(id in this.billed_filtered_leads){
-          if(this.billed_filtered_leads[id].meta.start_date){
-
-            // if (this.billed_filtered_leads[id].is_converted == 'yes'){
-              var billed_start = new Date(this.billed_filtered_leads[id].meta.start_date);
-              var count =  count_billed_time(billed_start, date_from, date_to);
-
-              if(this.billed_filtered_leads[id].meta.treatment_value.mounthly){
-                  billed_total+= count*get_sum_from_price(this.billed_filtered_leads[id].meta.treatment_value.mounthly);
-              }
-            // }
-          }
-        }
-
-       var total = billed_total + this.billed_this_period;
-
+        var billed_total = this.get_billed_value(this.billed_filtered_leads);
+        var total = billed_total + this.billed_this_period;
+        //console.groupCollapsed('\x1b[0m%s\x1b[31m %s \x1b[0m' , 'dashboard:', 'billed_value');
+        //console.log(total);
+        //console.groupEnd();
         return '£'+ formatMoney(total, 2, ".", ",");
       },
 
+      billed_this_period_prev: function(){
+        var total = this.get_billed_this_period(this.filtered_leads_prev);
+        return total;
+      },
+
+      billed_value_prev: function(){
+        var billed_total = this.get_billed_value(this.billed_filtered_leads_prev);
+        var total = billed_total + this.billed_this_period_prev;
+
+        //console.groupCollapsed('\x1b[0m%s\x1b[31m %s \x1b[0m' , 'dashboard:', 'billed_value_prev');
+        //console.log(total);
+        //console.groupEnd();
+        return '£'+ formatMoney(total, 2, ".", ",");
+      },
+
+      _billed_value_prev: function(){
+        //console.log(get_sum_from_price(this.billed_value_prev));
+        return get_sum_from_price(this.billed_value_prev);
+      },
+
+
       billed_filtered_leads: function(){
+        //console.groupCollapsed('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'dashboard:', 'billed_filtered_leads');
+        //console.log(billed_posts);
+        //console.groupEnd();
          return this.run_filtered_leads(billed_posts);
+      },
+
+      billed_filtered_leads_prev: function(){
+        //console.groupCollapsed('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'dashboard:', 'billed_posts_prev');
+        //console.log(billed_posts_prev);
+        //console.groupEnd();
+        return this.run_filtered_leads(billed_posts_prev);
       },
 
       revenue: function(){
@@ -1929,6 +2046,14 @@ if('undefined' !== typeof(is_dashboard)){
         return (this.revenue_val >= this.revenue_val_prev)? icon_encr: icon_decr;
       },
 
+      icon_billed: function(){
+        if(!this.billed_filtered_leads_prev){
+          return '';
+        }
+
+        return (get_sum_from_price(this.billed_value) >= get_sum_from_price(this.billed_value_prev))? icon_encr: icon_decr;
+      },
+
       up_down: function(){
         if(!this.leads_obj_prev){
           return '';
@@ -1936,6 +2061,16 @@ if('undefined' !== typeof(is_dashboard)){
 
         return (this.revenue_val >= this.revenue_val_prev)? 'up': 'down';
       },
+
+      up_down_billed: function(){
+        if(!this.billed_filtered_leads_prev){
+          return '';
+        }
+
+        return (get_sum_from_price(this.billed_value) >= get_sum_from_price(this.billed_value_prev))? 'up': 'down';
+      },
+
+
 
       change_type: function(){
         if(!this.leads_obj_prev){
@@ -1945,15 +2080,31 @@ if('undefined' !== typeof(is_dashboard)){
         return (this.revenue_val >= this.revenue_val_prev)? 'encr': 'decr';
       },
 
+      change_type_billed: function(){
+        if(!this.billed_filtered_leads_prev){
+          return '';
+        }
+
+        return (get_sum_from_price(this.billed_value) >= get_sum_from_price(this.billed_value_prev))?  'encr': 'decr';
+      },
+
       percent_change: function(){
-        return Math.abs(100 - (this.revenue_val / this.revenue_val_prev)*100).toFixed(2);
+
+        var result = Math.abs((this.revenue_val_prev - this.revenue_val)*100/this.revenue_val).toFixed(2);
+        return result;
+      },
+
+      percent_change_billed: function(){
+        var billed_value = get_sum_from_price(this.billed_value);
+        var billed_value_prev = get_sum_from_price(this.billed_value_prev);
+        var result = Math.abs(((billed_value_prev - billed_value) * 100)/billed_value).toFixed(2);
+        return result;
       }
     },
 
     mounted: function(){
       var vm = this;
       vm.$nextTick(function(){
-        console.log('loaded');
         jQuery('.preload').removeClass('hidden')
         jQuery('.preload').removeClass('visuallyhidden')
         jQuery('.spinner-cont').remove();
@@ -1961,22 +2112,80 @@ if('undefined' !== typeof(is_dashboard)){
     },
 
     methods:{
+      get_billed_this_period: function(leads){
+        var total = 0;
+
+        for(id in leads){
+          if ('undefined' != typeof(leads[id].meta.treatment_value.billed)){
+            var value = leads[id].meta.treatment_value.billed
+
+            if(value){
+              total += get_sum_from_price(value);
+            }
+          }
+        }
+
+        return total;
+      },
+
+      get_billed_value: function(leads){
+
+        var date_from = new Date(_from);
+        var date_to   = new Date(_to);
+
+        billed_total = 0
+
+        for(var id in leads){
+          if('undefined' !== typeof(leads[id].meta.start_date)){
+            var billed_start = new Date(leads[id].meta.start_date);
+            var count =  count_billed_time(billed_start, date_from, date_to);
+
+            if('undefined' !== typeof(leads[id].meta.treatment_value.mounthly) && !isNaN(leads[id].meta.treatment_value.mounthly)){
+                billed_total+= count * get_sum_from_price(leads[id].meta.treatment_value.mounthly);
+            }
+          }
+        }
+
+       return billed_total;
+      },
+
       set_value: function(key, value){
+        //console.log('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'dashboard:', 'set value');
         this[key] = value;
+        var vm = this;
+
+        Vue.nextTick(function(){
+          this.update_filters(this.filters);
+        });
       },
 
       update: function(){
+        //console.log('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'dashboard:', 'update totals');
         this.leads_obj      = dashboard_leads_data;
         this.leads_obj_prev = dashboard_leads_data_prev;
+
+        var vm = this;
+        Vue.nextTick(function(){
+          vm.update_filters(this.filters);
+        });
      },
 
       update_filters: function(filters){
+        //console.groupCollapsed('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'dashboard:', 'update_filters');
+        //console.log(filters);
         this.filters = filters;
+        //console.log(this.filters);
+
+        //console.groupEnd();
+
+        var vm = this;
+        Vue.nextTick(function(){
+          vm.$forceUpdate();
+        })
       },
 
       run_filtered_leads: function(leads){
         var leads_filtered = [];
-
         for(id in leads){
           var is_match = true;
 
@@ -2014,7 +2223,7 @@ if('undefined' !== typeof(is_dashboard)){
 function update_dashboard_totals(days_count){
   if('undefined' !== typeof(is_dashboard)){
     vue_dashboard_totals.update();
-      vue_dashboard_totals.set_value('days_count', days_count);
+    vue_dashboard_totals.set_value('days_count', days_count);
   }
 }
 
@@ -2036,462 +2245,527 @@ function count_billed_time(date, _from, _to, count){
 
   return count;
 }
-
 if('undefined' !== typeof(is_dashboard)){
-  var top_items = ['source', 'treatment', 'clinic', 'campaign'];
-
-  for(top_type in top_items){
-    vue_top_items[top_items[top_type]] = new Vue({
-      el: '#top_'+top_items[top_type],
-
-      data: {
-        leads_obj         : dashboard_leads_data,
-        label             : 'leads',
-        type              : top_items[top_type],
-        display_type      : 'Leads',
-      },
-
-      computed: {
-        data_by_source: function(){
-          var data = {};
-
-          for(id in this.leads_obj){
-            var meta         = this.leads_obj[id].meta;
-            var patient_data = meta.patient_data;
-
-            if(patient_data[this.type] === null || typeof(patient_data[this.type]) === 'undefined') continue;
-
-            if(typeof(data[patient_data[this.type]]) === 'undefined'){
-              data[patient_data[this.type]] = {items: [], total: 0, converted: 0, revenue: 0};
-            }
-            var revenue = get_sum_from_price(meta.treatment_value.value);
-
-            data[patient_data[this.type]].items.push(this.leads_obj[id]);
-            data[patient_data[this.type]].total++;
-            data[patient_data[this.type]].converted = ('yes' == this.leads_obj[id].is_converted)?  data[patient_data[this.type]].converted + 1:  data[patient_data[this.type]].converted ;
-            data[patient_data[this.type]].revenue += revenue;
-          }
-          return data;
-        },
-
-        name: function(){
-          switch(this.display_type){
-            case 'Leads':
-              var result    = 'Unavailable';
-              var max_leads = -1;
-              var leads_converted = -1;
-              for(id in this.data_by_source){
-                result = (this.data_by_source[id].total >= max_leads && this.data_by_source[id].converted >= leads_converted)? id : result;
-                max_leads = Math.max(max_leads, this.data_by_source[id].total);
-                leads_converted = Math.max(leads_converted, this.data_by_source[id].converted);
-
-              }
-              return result;
-
-              break;
-            case 'Revenue':
-              var result    = 'Unavailable';
-              var max_revenue = -1;
-
-              for(id in this.data_by_source){
-                result = (this.data_by_source[id].revenue >= max_revenue)? id : result;
-                max_revenue = Math.max(max_revenue, this.data_by_source[id].revenue);
-              }
-
-              return result;
-              break;
-          }
-        },
-
-        leads: function(){
-          if(typeof(this.data_by_source[this.name]) === 'undefined'){
-            return 'no';
-          }
-          return this.data_by_source[this.name].total;
-        },
-
-        leads_total: function(){
-          return this.leads_obj.length;
-        },
-
-        revenue: function(){
-          if(typeof(this.data_by_source[this.name]) === 'undefined'){
-            return '-';
-          }
-
-          revenue = this.data_by_source[this.name].revenue;
-
-          return '£'+ formatMoney(revenue, 2, ".", ",");
-        },
-
-        rate: function(){
-          if(typeof(this.data_by_source[this.name]) === 'undefined'){
-            return '-';
-          };
-
-          return (((this.data_by_source[this.name].converted * 100) / this.leads_total)).toFixed(2);
-        },
-      },
-
-      mounted: function(){
-        var vm = this;
-        vm.init_select();
-
-        Vue.nextTick(function() {
-          vm.$refs.display_type.resert_width();
-        });
-      },
-
-      methods: {
-        update: function(){
-          this.leads_obj = dashboard_leads_data;
-        },
-
-        run_update_data: function(event){
-          if('undefined' !== event.val){
-            this.display_type = event.val;
-          }
-        },
-
-        init_select: function(){
-          var props =  {
-            select_name: 'select_'+top_items[top_type],
-            options: ['Leads', "Revenue"],
-            selected: 'Leads',
-            isExpanded: '',
-            isSelected: [],
-            isHiddenSelect: true,
-            isHiddenImitation: false,
-          };
-
-          for( id in props){
-            this.$refs.display_type.set_value(id, props[id]);
-          }
-        },
-      },
-    })
-  }
-}
-
-function update_top_sources(){
-  if('undefined' !== typeof(is_dashboard)){
-    for(top_type in top_items){
-      vue_top_items[top_items[top_type]].update();
-    }
-  }
-}
-
-function collapse_top_lists(name){
-  if('undefined' !== typeof(is_dashboard)){
-    for(top_type in top_items){
-      if(name !== top_items[top_type]){
-        vue_top_items[top_items[top_type]].$refs.display_type.discard_select();
-      }
-    }
-  }
-}
-
-if('undefined' !== typeof(is_dashboard)){
-  vue_team_perfomance = new Vue({
-    el: '#team_perfomance',
-
-    data:{
-      team_data: team_perfomance.team,
-    },
-
-    computed: {
-      team: function(){
-        return this.team_data;
-      }
-    },
-
-    mounted: function(){
-
-      this.update_list();
-
-      vue_select_components.push(this.$refs.posts_list);
-    },
-
-    methods:{
-      run_update_list: function(event){
-        if(typeof(event.val) !=='undefined'){
-          if(event.val === 'all'){
-            this.team_data = team_perfomance.team;
-          }else{
-            var new_team = {};
-            for(id in team_perfomance.team){
-              if(team_perfomance.team[id].user_position === event.val){
-                new_team[id] = team_perfomance.team[id];
-              }
-            }
-            this.team_data = new_team;
-          }
-        }
-      },
-
-      update_list: function(){
-        var props =  {
-          select_name: 'team_perfomance_list',
-          options: team_perfomance.positions,
-          selected: team_perfomance.positions[0],
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-        };
-
-        for( id in props){
-          this.$refs.posts_list.set_value(id, props[id]);
-        }
-      },
-    },
-  })
-}
-
-
-function update_team_perfomance(){
-  if('undefined' !== typeof(is_dashboard)){
-    vue_team_perfomance.run_update_list({val: 'all'});
-  }
-}
-
-
-function discard_selects(){
-  for(id in vue_select_components){
-    vue_select_components[id].discard_select();
-  }
-}
-if('undefined' !== typeof(is_dashboard)){
-  dashboard_convertions =new Vue({
-    el: '#dashboard-convertions',
+  perfomance = new Vue({
+    el: '#statistic_data',
 
     data: {
-      leads_obj: dashboard_leads_data,
-      leads_obj_prev : dashboard_leads_data_prev,
-      days_count: 30,
-      display_type: 'Leads',
-      doughnut: {},
+      filter        : false,
+      leads         : dashboard_leads_data,
+      leads_prev    : dashboard_leads_data_prev,
+      elements      : [],
+      billed_posts  : billed_posts,
+      billed_posts_prev  : billed_posts_prev,
     },
 
     computed: {
-      convertions: function(){
-        var convertions_by_type = {};
+      rows: function(){
+        console.groupCollapsed('\x1b[0m%s\x1b[32m %s \x1b[0m' , 'perfomance:', 'rows calculated');
+        var rows = [];
+        for(var id in this.elements){
 
-        for(id in this.leads_obj){
-          var lead = this.leads_obj[id];
-          var source = lead.meta.patient_data.source;
-          // var exp = new RegExp("\\D", "gi");
-          source = (source === null || source === '')? 'Other' : source;
+          var item = this.elements[id];
+          item.name = id;
+          item.billed = this.get_billed_this_period(item.leads) + this.get_billed_value(item.leads_billed);
 
-          if(typeof(convertions_by_type[source]) === 'undefined'){
-            convertions_by_type[source] = [];
+          item.billed_cha = 0;
+
+          // billed change
+          if('undefined' != typeof(item.prev) && 'undefined' != typeof(item.prev.leads)){
+            var billed_prev_c = ('undefined' == typeof(item.prev.leads))? this.get_billed_this_period(item.prev.leads) : 0;
+
+            var billed_prev = billed_prev_c + this.get_billed_value(item.prev.leads_billed);
+
+            item.billed_prev = billed_prev;
+
+            item.billed_cha = ( get_sum_from_price(item.billed) !== 0 )? ((billed_prev * 100) / get_sum_from_price(item.billed)) : 0;
+
+            item.billed_cha = ((get_sum_from_price(item.billed) - billed_prev )*100)/billed_prev;
+
+            item.billed_prev = billed_prev;
           }
 
-          if('yes' === lead.is_converted){
+          item.billed_cha = item.billed_cha.toFixed(2);
 
-            summ = get_sum_from_price(lead.meta.treatment_value.value);
+          item.billed = '£'+ formatMoney(item.billed, 2, ".", ",");
+          item.booked = this.calc_revenue_val(item.leads);
+          item.booked = '£'+ formatMoney(item.booked, 2, ".", ",");
 
-            convertions_by_type[source].push({
-              time_converted : lead.converted_time,
-              time_created   : lead.post_date,
-              summ           : summ,
-            });
+          item.width = (get_sum_from_price(item.billed) / get_sum_from_price(this.billed_value)) * 100 + '%';
+
+          item.show = get_sum_from_price(item.billed) > 0;
+
+
+          var converted =(item.converted/item.count)*100;
+
+          item.converted_percents = converted;
+          item.converted_percents = (isNaN(item.converted_percents))? "0.00%" :item.converted_percents.toFixed(2) + '%';
+
+          item.converted_percents_cha  = 0;
+
+          // booked changed
+
+          if('undefined' != typeof(item.prev) && 'undefined' != typeof(item.prev.converted)){
+            var converted_prev = (item.prev.converted/item.prev.count)*100;
+            item.converted_percents_cha = (((converted - converted_prev )*100)/ converted_prev);
+            item.converted_prev = converted_prev;
+            item._converted = converted;
           }
-        }
-        return convertions_by_type;
-      },
 
-      convertion_rate: function(){
-        total = 0;
+          item.converted_percents_cha = item.converted_percents_cha.toFixed(2);
 
-        for(id in this.leads_obj){
-          var lead = this.leads_obj[id];
-          if('yes' === lead.is_converted){
-            total++;
+          item.leads_cha = 0;
+
+          if('undefined' != typeof(item.prev) && 'undefined' != typeof(item.prev.count)){
+
+            item.leads_cha = (( item.count - item.prev.count ) * 100) / item.prev.count;
           }
-        }
 
-        return Math.ceil((total/this.total_leads)*100);
-      },
+          item.leads_cha = item.leads_cha.toFixed(2);
+          item.cha_booked = 0;
 
-      convertion_rate_prev: function(){
-        total = 0;
+          if('undefined' != typeof(item.prev) && 'undefined' != typeof(item.prev.leads)){
 
-        if(!this.leads_obj_prev || this.leads_obj_prev.length==0){
-          return 0;
-        }
+            var revenue = this.calc_revenue_val(item.leads);
+            var revenue_prev = this.calc_revenue_val(item.prev.leads);
 
-        for(id in this.leads_obj_prev){
-          var lead = this.leads_obj_prev[id];
-          if('yes' === lead.is_converted){
-            total++;
+            item.cha_booked = ((revenue - revenue_prev) * 100)/revenue_prev;
+            item.revenue_val = revenue;
+            item.revenue_prev = revenue_prev;
           }
+
+          item.cha_booked = item.cha_booked.toFixed(2);
+          rows.push(item);
         }
-
-        return Math.ceil((total/this.total_leads_prev)*100);
+        console.log(rows);
+        console.groupEnd();
+        return rows;
       },
 
-      total_leads: function(){
-        return this.leads_obj.length;
+      revenue_val: function(){
+        return this.calc_revenue_val(this.leads);
       },
 
-      total_leads_prev: function(){
-        return this.leads_obj_prev.length;
+      booked_value: function (){
+        return '£'+ formatMoney(this.revenue_val, 2, ".", ",");
       },
 
-      diagram_info: function(){
-        var info = {
-          labels : [],
-          data: [],
-        };
+      billed_value: function(){
+         var total = this.get_billed_this_period(this.leads) + this.get_billed_value(this.billed_posts)
 
-        if(this.display_type === 'Leads'){
-          for(id in this.convertions){
-            percents = (this.convertions[id].length / this.total_leads) * 100;
-            info.labels.push(id);
-            info.data.push(percents.toFixed(2));
-          };
-        }
-
-        if(this.display_type === 'Revenue'){
-          for(id in this.convertions){
-            info.labels.push(id);
-            var summ = 0;
-
-            for(i in  this.convertions[id]){
-              summ += this.convertions[id][i].summ;
-            }
-
-            // summ = formatMoney(summ, 2, ".", ",")
-            info.data.push(summ);
-          };
-        }
-        return info;
-      },
-
-      suffix: function(){
-        return (this.display_type === 'Leads')? '%' : false
-      },
-
-      prefix: function(){
-        return (this.display_type === 'Revenue')? '£' : false
-      },
-
-      average_time: function(){
-        var total_time = 0;
-        var counter =0;
-
-        for(id in this.convertions){
-          for(i in this.convertions[id]){
-            var time_created = new Date(this.convertions[id][i].time_created);
-            var time_converted = new Date(this.convertions[id][i].time_converted);
-            counter++;
-
-            total_time += time_converted - time_created;
-          }
-        }
-
-        if(counter === 0){
-          return 'Unavailable';
-        }
-
-        var average_time = Math.ceil(total_time/counter);
-
-        var t = date_difference.construct(0,  average_time);
-
-        return t;
-      },
-
-      icon: function(){
-        return (this.convertion_rate > this.convertion_rate_prev)? icon_encr: icon_decr;
-      },
-
-      delta: function(){
-        if(this.convertion_rate_prev <= 0){
-          return 100;
-        }
-
-        return Math.abs(100 - ((this.convertion_rate /this.convertion_rate_prev) * 100)).toFixed(2);
-      },
-
-      up_down: function(){
-        return (this.convertion_rate >= this.convertion_rate_prev)? 'up': 'down';
-      },
-
-      change_type: function(){
-         return (this.convertion_rate >= this.convertion_rate_prev)? 'encr': 'decr';
+         return '£'+ formatMoney(total, 2, ".", ",");
       },
     },
 
     mounted: function(){
-      var vm = this;
-      vm.init_select();
+      console.groupCollapsed('\x1b[0m%s\x1b[35m %s \x1b[0m' , 'perfomance:', 'perfomance mounted');
+      var props =  {
+        options: ['clinics', "treatments", "campaigns", "sources", "team"],
+        selected: 'campaigns',
+        isExpanded: '',
+        isSelected: [],
+        isHiddenSelect: true,
+        isHiddenImitation: false,
+      };
 
-      Vue.nextTick(function() {
-        vm.draw_doughnut();
+      for( id in props){
+        this.$refs.perfomance_type.set_value(id, props[id]);
+      };
+
+
+
+      this.elements = this.get_rows();
+
+      var vm = this;
+
+      Vue.nextTick(function(){
+        vm.$forceUpdate();
       });
+
+      console.log('dashboard_leads_data');
+      console.log(dashboard_leads_data);
+      console.log('dashboard_leads_data_prev');
+      console.log(dashboard_leads_data_prev);
+      console.groupEnd();
     },
 
     methods: {
-      update: function(days_count){
+      calc_revenue_val: function(leads){
+        var total = 0;
+
+        for(var id in leads){
+          if (leads[id].is_converted == 'yes' && 'undefined' != typeof(leads[id].meta.treatment_value.value) ){
+            var value = leads[id].meta.treatment_value.value;
+            if(value){
+              total += get_sum_from_price(value);
+            }
+          }
+        }
+        return total;
+      },
+
+      get_billed_this_period: function(leads){
+        var total = 0;
+
+        for(var id in leads){
+          if ('undefined' !== typeof(leads[id].meta.treatment_value.billed)){
+            var value = leads[id].meta.treatment_value.billed
+
+            if(value){
+              total += get_sum_from_price(value);
+            }
+          }
+        }
+        return total;
+      },
+
+      get_billed_value: function(leads){
+        var date_from = new Date(_from);
+        var date_to   = new Date(_to);
+
+        billed_total = 0
+
+        for(id in leads){
+          if('undefined' !== typeof(leads[id].meta.start_date)){
+
+              var billed_start = new Date(leads[id].meta.start_date);
+
+
+              var count =  count_billed_time(billed_start, date_from, date_to);
+
+              if('undefined' !== typeof(leads[id].meta.treatment_value.mounthly) && !isNaN(leads[id].meta.treatment_value.mounthly)){
+                  billed_total+= count * get_sum_from_price(leads[id].meta.treatment_value.mounthly);
+
+              }
+          }
+        }
+       return billed_total;
+      },
+
+
+      change_perfomance: function(event){
+        this.filter = event.val;
+        this.elements = this.get_rows();
+      },
+
+      get_rows: function(){
+        var rows;
+        switch(this.filter){
+          case 'team':
+            rows = this.get_rows_object();
+            break;
+          default:
+            rows = this.get_rows_string();
+            break;
+        }
+
+        return rows;
+      },
+
+      //gets rows' data if a target filter item is a string
+      get_rows_string: function(){
+        var rows = []
+        var rows_prev = []
+
+
+        if(this.filter){
+          rows = this.get_rows_leads_data(this.leads, this.filter);
+
+          rows_prev = this.get_rows_leads_data(this.leads_prev, this.filter);
+
+          for(var k in rows){
+            rows[k].prev = rows_prev[k]
+          }
+
+          for(var id in this.billed_posts){
+            var billed_lead = this.billed_posts[id];
+            var row_name = billed_lead.filter_data[this.filter];
+            row_name = (!row_name)? 'Others' : row_name;
+            row_name = (row_name == '--Select--')? 'Others' : row_name;
+
+            if('undefined' == typeof(rows[row_name])){
+              rows[row_name] = {
+                'count': 0,
+                'converted' : 0,
+                'leads'     :    [],
+                'leads_billed' : [],
+              };
+            }
+
+            rows[row_name].leads_billed.push(billed_lead);
+          }
+
+          for(var id in this.billed_posts_prev){
+            var billed_lead = this.billed_posts_prev[id];
+            var row_name = billed_lead.filter_data[this.filter];
+            row_name = (!row_name)? 'Others' : row_name;
+            row_name = (row_name == '--Select--')? 'Others' : row_name;
+
+            if('undefined' == typeof(rows[row_name])){
+              rows[row_name] = {
+                'count': 0,
+                'converted' : 0,
+                'leads'     :    [],
+                'leads_billed' : [],
+              };
+            }
+
+            if('undefined' == typeof(rows[row_name].prev)){
+              rows[row_name].prev = {
+                leads_billed: [],
+              };
+            }
+
+            rows[row_name].prev.leads_billed.push(billed_lead);
+          }
+        }
+
+        return rows;
+      },
+
+      get_rows_leads_data: function(leads, filter){
+        var rows = [];
+
+        for(var id in leads){
+          var lead     = leads[id];
+          var row_name = lead.filter_data[filter];
+          row_name = (!row_name)? 'Others' : row_name;
+          row_name = (row_name == '--Select--')? 'Others' : row_name;
+          row_name = (row_name.length < 3)? 'Others' : row_name;
+
+          if('undefined' == typeof(rows[row_name])){
+            rows[row_name] = {
+              'count': 0,
+              'converted'  : 0,
+              'leads'      : [],
+              'leads_billed' : []
+            };
+          }
+
+          rows[row_name].leads.push(lead);
+          rows[row_name].converted = (lead.is_converted == 'yes')? rows[row_name].converted + 1: rows[row_name].converted;
+          rows[row_name].count++;
+        }
+
+        return rows;
+      },
+
+      //gets rows' data if a target filter item is an object
+      get_rows_object: function(){
+        var rows = []
+        var total = 0;
+
+        if(this.filter){
+          for(var id in this.leads){
+
+            //get lead
+            var lead = this.leads[id];
+
+            //select a filter value object from a lead's data
+            var row_names = this.leads[id].filter_data[this.filter];
+
+
+            var row_name  = false;
+
+            //create new rows if they don't exists and if object not empty
+            for(var j in row_names){
+
+              // defined an index of possible new row
+              var row_name;
+
+              row_name = (!row_names[j])? 'Others' : row_names[j];
+              row_name = (row_name == '--Select--')? 'Others' : row_name;
+              row_name = (row_name.length < 3)? 'Others' : row_name;
+
+              //create a row if not exist
+              if('undefined' == typeof(rows[row_name])){
+                rows[row_name] = {
+                  'count': 0,
+                  'converted' : 0,
+                  'leads'      : [],
+                  'leads_billed' : [],
+                };
+              }
+            }
+
+            // if no data set or object is empty create others row
+            if(!row_name &&  'undefined' == typeof(rows['Others']) ){
+             var row_names = ['Others'];
+              rows['Others'] = {
+                'count': 0,
+                'converted' : 0,
+                  'leads'      : [],
+                  'leads_billed' : [],
+              }
+            }
+
+              if(!row_name || row_names.length <= 0){
+               var row_names = ['Others'];
+              }
+
+            //add values for each name
+            for(var k in row_names){
+              var row_name = row_names[k];
+              row_name = (row_name.length < 3)? 'Others' : row_name;
+
+              rows[row_name].leads.push(lead);
+
+              // calculate converted rows
+              rows[row_name].converted = (this.leads[id].is_converted == 'yes')? rows[row_name].converted + 1: rows[row_name].converted;
+
+              // calculate total number of rows
+              rows[row_name].count++;
+            }
+          }
+
+          // calculation of billed value from othe periods
+
+          var date_from = new Date(_from);
+          var date_to   = new Date(_to);
+
+
+          // parse every billed lead
+          for(var id in this.billed_posts){
+            var billed_lead = this.billed_posts[id];
+            var filtered_lead = this.billed_posts[id];
+            var row_names = filtered_lead.filter_data[this.filter];
+            var row_name  = false;
+
+            //create new rows if they don't exists and if object not empty
+            for(var j in row_names){
+              row_name = (!row_names[j])? 'Others' : row_names[j];
+              row_name = (row_name == '--Select--')? 'Others' : row_name;
+              row_name = (row_name.length < 3)? 'Others' : row_name;
+
+              if('undefined' == typeof(rows[row_name])){
+                rows[row_name] = {
+                  'count': 0,
+                  'converted' : 0,
+                  'leads'      : [],
+                  'leads_billed' : [],
+                };
+              }
+
+               rows[row_name].leads_billed.push(billed_lead);
+            }
+
+             // if no data set or object is empty create others row
+            if(!row_name && 'undefined' == typeof(rows['Others'])){
+              row_name = 'Others';
+              rows['Others'] = {
+                'count':    0,
+                'converted' : 0,
+                'leads'      : [],
+                'leads_billed' : [],
+               }
+
+              rows[row_name].leads_billed.push(billed_lead);
+            }
+          }
+        }
+
+        return rows;
+      },
+
+      update: function(key, value){
+        this[key] = value;
         var vm = this;
-        vm.leads_obj      = dashboard_leads_data;
-        vm.leads_obj_prev = dashboard_leads_data_prev;
-        vm.days_count = days_count;
-        vm.update_doughnut();
+
+        Vue.nextTick(function(){
+          vm.elements = vm.get_rows();
+          vm.$forceUpdate();
+        });
       },
 
-      draw_doughnut: function(){
-        var config = prepare_donnut_data(this.diagram_info.data, this.diagram_info.labels, this.suffix, this.prefix);
-
-        document.getElementById('convertions-canvas').height = jQuery(window).width() < 768 ? '300' : '250';
-
-        var ctx = document.getElementById('convertions-canvas').getContext('2d');
-        this.doughnut = new Chart(ctx, config);
+      show_item: function(id){
+        jQuery('.revenue-proportion > div').removeClass('shown');
+        jQuery('.revenue-proportion').find('.color-'+id).addClass('shown');
       },
 
-      run_update_convertions: function(event){
-        if('undefined' !== typeof(event.val)){
-          var vm = this;
-          vm.display_type = event.val;
-          vm.update_doughnut();
+      hide_all: function(){
+        jQuery('.revenue-proportion > div').removeClass('shown');
+      },
+
+      load_csv: function(){
+        var formatted_data = [];
+
+        var filters = [];
+
+        for(var j in this.filters){
+         if(this.filters[j].match('All')){
+         }else{
+            filters.push(this.filters[j]);
+          }
         }
-      },
 
-      update_doughnut: function(){
-        var vm = this;
-        if('undefined' !== typeof(vm.doughnut.data)){
-          _prefix = this.prefix;
-          _suffix = this.suffix;
-          vm.doughnut.data.datasets[0].data = vm.diagram_info.data;
-          vm.doughnut.data.labels = vm.diagram_info.labels;
-          vm.doughnut.update();
+        filters = filters.length ==0 ? ['No filters']: filters;
+
+        filename = jQuery('.range-datepicker__text').text() + '_' + filters.join('-')
+
+        filename = filename.split(' ').join('_');
+
+        if(jQuery('.search__field').val()){
+          filename+='__searched_for%'+ jQuery('.search__field').val()
         }
-      },
 
-      init_select: function(){
-        var props =  {
-          select_name: 'team_perfomance_list',
-          options: ['Leads', "Revenue"],
-          selected: 'Leads',
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-        };
+        for(var lead_id in this.leads){
+          column_data = this.leads[lead_id];
 
-        for( id in props){
-          this.$refs.display_type.set_value(id, props[id]);
+          console.log(column_data);
+
+          var temp = {
+            name: column_data.name,
+            treatment: column_data.treatment,
+            clinic: column_data.clinic,
+            campaign: column_data.campaign,
+            notes: '',
+            proposed: '£' + formatMoney(column_data.for_csv.proposed, 2, '.', ',') ,
+            billed: '£' + formatMoney(column_data.for_csv.billed, 2, '.', ',') ,
+          };
+
+
+          temp.dentists = typeof(column_data.for_csv.dentists) === 'object'? column_data.for_csv.dentists.join(';') : 'none';
+
+          if(typeof(column_data.for_csv.notes) === 'object'){
+            var notes = [];
+            for (var i in column_data.for_csv.notes){
+                notes.push(column_data.for_csv.notes[i].text);
+            }
+            temp.notes = notes.join(';');
+          }else{
+            temp.notes = 'none';
+          }
+
+          var temp_arr = [];
+
+          for(var i in temp){
+            var reg = new RegExp("[\n|,|\"]");
+            if(temp[i] && temp[i].match("/\r\n|\n|\r|,/gm")){
+            }
+
+             var _t = temp[i]? '"' + temp[i].split("\n").join(' ').split('"').join(' ').split('#').join(' ') + '"': 'none';
+
+             temp_arr.push(_t);
+          }
+
+          formatted_data.push(temp_arr);
         }
-      },
-    }
+
+
+          var csvContent = "data:text/csv;charset=utf-8,name,treatment,clinic,campaign,notes,proposed,billed,dentists" + "\r\n"
+              + formatted_data.map(e => e.join(",")).join("\r\n");
+
+          var encodedUri = encodeURI(csvContent);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", filename + ".csv");
+          document.body.appendChild(link); // Required for FF
+
+          link.click();
+
+      }
+    },
   });
-}
-
-function update_confertions(days_count){
-  if('undefined' !== typeof(dashboard_convertions)){
-    dashboard_convertions.update(days_count);
-  }
 }
 var vue_leads_list;
 

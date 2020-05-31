@@ -535,78 +535,104 @@ if(!class_exists('theme_ajax_action')){
 
 
     public static function get_leads_by_dates_cb(){
-      define('DOING_AJAX', true);
+      try {
+        define('DOING_AJAX', true);
 
-      $from = new DateTime($_POST['from']);
-      $to = new DateTime($_POST['to']);
-
-
-      $from_formated = $from->format('M d Y');
-      $to_formated   = $to->format('M d Y');
-
-      $leads = get_posts_by_dates($from_formated , $to_formated );
-
-      $leads = get_leads_meta($leads);
-
-      $team_perfomance = get_users_leads($from_formated , $to_formated);
-
-      // prepare data for filters
-
-      $filter_data = get_filters_by_leads( $leads );
-
-      $data_4_billed_revenue_period = get_billed_totals($from->format('Y-m-d H:i:s') ,$to->format('Y-m-d H:i:s'));
-
-      $_args = array(
-       'post_type' => velesh_theme_posts::$lead,
-       'include' => $data_4_billed_revenue_period['ids']
-      );
-
-      $billed_posts = get_posts( $_args );
-      $billed_posts = get_leads_meta($billed_posts);
+        $from = new DateTime($_POST['from']);
+        $to = new DateTime($_POST['to']);
 
 
-      $data = array(
-        'leads'             => $leads,
-        'filter_data'       => $filter_data,
-        'from_formated'     => $from_formated,
-        'to_formated'       => $to_formated,
-        'team_perfomance'   => $team_perfomance,
-        'leads_prev'        => false,
-        'days_count_prev'   => -1,
-        'billed_posts'       => $billed_posts,
-        'from'              => $from->format('Y-m-d H:i:s'),
-        'to'                => $to->format('Y-m-d H:i:s'),
-      );
+        $from_formated = $from->format('M d Y');
+        $to_formated   = $to->format('M d Y');
 
-      $period_compared = array(
-        'Past 7 Days'  => 7,
-        'Past 30 Days' => 30,
-        'Past 90 Days' => 90,
-      );
+        $leads = get_posts_by_dates($from_formated , $to_formated );
 
-      if(isset($_POST['get_previous_data']) && $_POST['get_previous_data'] && in_array($_POST['label'], array_keys($period_compared) )){
+        $leads = get_leads_meta($leads);
 
-        $delta = ($period_compared[$_POST['label']] + 1);
 
-        $date_prev_period_end   = new DateTime($_POST['from']);
-        $date_prev_period_start = new DateTime($_POST['from']);
+        $team_perfomance = get_users_leads($from_formated , $to_formated);
 
-        $date_prev_period_start->modify('-'. $delta.' days');
-        $date_prev_period_end->modify('-1 days');
+        // prepare data for filters
 
-        $from_formated_prev = $date_prev_period_start->format('M d Y');
-        $to_formatted_prev  = $date_prev_period_end->format('M d Y');
 
-        $leads_prev = get_posts_by_dates($from_formated_prev , $to_formatted_prev );
+        $filter_data = get_filters_by_leads( $leads );
 
-        $leads_prev = get_leads_meta($leads_prev);
 
-        $data['leads_prev'] =  $leads_prev;
-        $data['days_count_prev'] =  $period_compared[$_POST['label']];
+        $data_4_billed_revenue_period = get_billed_totals($from->format('Y-m-d H:i:s') ,$to->format('Y-m-d H:i:s'));
+
+
+        $_args = array(
+         'post_type' => velesh_theme_posts::$lead,
+         'include' => $data_4_billed_revenue_period['ids'],
+         'posts_per_page' => -1,
+        );
+
+        $billed_posts = get_posts( $_args );
+        $billed_posts = get_leads_meta($billed_posts);
+
+
+        $data = array(
+          'leads'             => $leads,
+          'filter_data'       => $filter_data,
+          'from_formated'     => $from_formated,
+          'to_formated'       => $to_formated,
+          'team_perfomance'   => $team_perfomance,
+          'leads_prev'        => false,
+          'days_count_prev'   => -1,
+          'billed_posts'       => $billed_posts,
+          'from'              => $from->format('Y-m-d H:i:s'),
+          'to'                => $to->format('Y-m-d H:i:s'),
+          'POST' =>$_POST,
+        );
+
+        $period_compared = array(
+          'Past 7 Days'  => 7,
+          'Past 30 Days' => 30,
+          'Past 90 Days' => 90,
+        );
+
+
+        if(isset($_POST['get_previous_data']) && $_POST['get_previous_data'] && in_array($_POST['label'], array_keys($period_compared) )){
+
+          $delta = ($period_compared[$_POST['label']] + 1);
+
+          $date_prev_period_end   = new DateTime($_POST['from']);
+          $date_prev_period_start = new DateTime($_POST['from']);
+
+          $date_prev_period_start->modify('-'. $delta.' days');
+          $date_prev_period_end->modify('-1 days');
+
+          $from_formated_prev = $date_prev_period_start->format('M d Y');
+          $to_formatted_prev  = $date_prev_period_end->format('M d Y');
+
+          $leads_prev = get_posts_by_dates($from_formated_prev , $to_formatted_prev );
+          $leads_prev = get_leads_meta($leads_prev);
+
+          $data['from_formated_prev'] = $from_formated_prev;
+          $data['to_formatted_prev'] = $to_formatted_prev;
+
+          $data['leads_prev'] =  $leads_prev;
+          $data['days_count_prev'] =  $period_compared[$_POST['label']];
+
+          $data_4_billed_revenue_period_prev = get_billed_totals($date_prev_period_start->format('Y-m-d H:i:s') , $date_prev_period_end->format('Y-m-d H:i:s'));
+
+          $_args = array(
+           'post_type' => velesh_theme_posts::$lead,
+           'include' => $data_4_billed_revenue_period['ids'],
+           'posts_per_page' => -1,
+          );
+
+          $billed_posts_prev = get_posts( $_args );
+          $billed_posts_prev = get_leads_meta($billed_posts_prev);
+
+          $data['billed_posts_prev'] =  $billed_posts_prev;
+
+        }
+
+        wp_send_json($data);
+      }catch (Exception $e) {
+        wp_send_json($e->getMessage());
       }
-
-
-      wp_send_json($data);
     }
   }
 }

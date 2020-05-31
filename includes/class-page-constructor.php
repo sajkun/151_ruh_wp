@@ -64,7 +64,7 @@ class theme_construct_page{
         }
       }
     }else{
-      add_action('do_theme_header', array('theme_content_output', 'print_login_form'));
+      add_action('do_theme_content', array('theme_content_output', 'print_login_form'), 1);
     }
   }
 

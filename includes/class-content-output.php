@@ -66,91 +66,98 @@ class theme_content_output{
   * @hookedto
   */
   public static function print_dashboard(){
-
+    $rustart = getrusage();
     global $theme_init;
 
+    // define that it is a dashboard for a script
+
+    wp_localize_script($theme_init->main_script_slug, 'is_dashboard', 'yes');
+
     // Get date range default
+    $today          = new DateTime();
+    $current_month  = $today->format('m');
+    $current_year   = $today->format('Y');
+    $today_formated = $today->format('M d Y');
 
-      $today = new DateTime();
-
-      wp_localize_script($theme_init->main_script_slug, 'is_dashboard', 'yes');
-
-      $current_month = $today->format('m');
-      $current_year  = $today->format('Y');
-
-      $today_formated = $today->format('M d Y');
-
-
-      $days_30_before_today = new DateTime();
-      $days_30_before_today = $days_30_before_today->modify('-30 days');
-      $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
+    $days_30_before_today = new DateTime();
+    $days_30_before_today = $days_30_before_today->modify('-30 days');
+    $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
 
     // Get leads by dates
+    $leads = array();
+    $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
+    $leads = get_leads_meta( $leads );
 
-      $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
+    wp_localize_script( $theme_init->main_script_slug , 'dashboard_leads_data' , $leads );
 
-      $leads = get_leads_meta($leads);
+    $from_prev_period = new DateTime($days_30_before_today_formatted);
+    $to_prev_period   = new DateTime($days_30_before_today_formatted);
 
-      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
+    $to_prev_period->modify('-1 days');
+    $from_prev_period->modify('-31 day');
 
+    $to_prev_period_fromatted = $to_prev_period->format('M d Y');
+    $from_prev_period_fromatted = $from_prev_period->format('M d Y');
 
-      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
+    $leads_prev = array();
+    $leads_prev = get_posts_by_dates( $from_prev_period_fromatted , $to_prev_period_fromatted );
+    $leads_prev = get_leads_meta($leads_prev);
 
-      // leads for previous preriod
-
-      $from_prev_period = new DateTime();
-      $to_prev_period   = new DateTime();
-      $from_prev_period->modify('-1 day');
-      $to_prev_period->modify('-31 days');
-      $from_prev_period_fromatted = $from_prev_period->format('M d Y');
-      $to_prev_period_fromatted = $to_prev_period->format('M d Y');
-
-      $leads_prev = get_posts_by_dates( $from_prev_period_fromatted , $to_prev_period_fromatted );
-
-      $leads_prev = get_leads_meta($leads_prev);
-
-      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_prev', $leads_prev);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_prev', $leads_prev);
 
     // prepare data for filters
+    $filter_data = get_filters_by_leads( $leads );
 
-      $filter_data = get_filters_by_leads( $leads );
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
 
+    $annual_income = get_annually_income();
 
-      wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
+    // get data for annual statistic
+    wp_localize_script($theme_init->main_script_slug, 'income_month_data',  $annual_income );
 
+    // get post for billed values
+    $data_4_billed_revenue_period = get_billed_totals($days_30_before_today->format('Y-m-d H:i:s') , $today->format('Y-m-d H:i:s'));
 
-    // team perfomance
-
-      $user_data = get_users_leads( $days_30_before_today_formatted , $today_formated);
-
-      wp_localize_script($theme_init->main_script_slug, 'team_perfomance', $user_data);
-
-      wp_localize_script($theme_init->main_script_slug, 'income_month_data', get_annually_income());
-
-
-     // get post for billed values
-     $data_4_billed_revenue_period = get_billed_totals($days_30_before_today->format('Y-m-d H:i:s') ,$today->format('Y-m-d H:i:s'));
-
-     $_args = array(
-       'post_type' => velesh_theme_posts::$lead,
-       'include' => $data_4_billed_revenue_period['ids']
-      );
-
-     $billed_posts = get_posts( $_args );
-     $billed_posts = get_leads_meta($billed_posts);
-
-     wp_localize_script($theme_init->main_script_slug, 'billed_posts', $billed_posts);
-
-     wp_localize_script($theme_init->main_script_slug, '_from', $days_30_before_today->format('Y-m-d H:i:s'));
-     wp_localize_script($theme_init->main_script_slug, '_to',$today->format('Y-m-d H:i:s'));
+     $data_4_billed_revenue_period_prev = get_billed_totals($from_prev_period->format('Y-m-d H:i:s') , $to_prev_period->format('Y-m-d H:i:s'));
 
 
-      $args = array(
-        'daterange' => array(
-          'from' => $days_30_before_today_formatted,
-          'to'   => $today_formated
-        ),
-      );
+    $_args = array(
+      'post_type' => velesh_theme_posts::$lead,
+      'include' => $data_4_billed_revenue_period['ids'],
+      'posts_per_page' => -1,
+    );
+
+    $_args_prev = array(
+      'posts_per_page' => -1,
+      'post_type' => velesh_theme_posts::$lead,
+      'include' => $data_4_billed_revenue_period_prev['ids'],
+    );
+
+    $billed_posts = get_posts( $_args );
+    $billed_posts = get_leads_meta($billed_posts);
+    $billed_posts_prev = get_posts( $_args_prev );
+    $billed_posts_prev = get_leads_meta( $billed_posts_prev );
+
+    wp_localize_script($theme_init->main_script_slug, 'billed_posts', $billed_posts);
+    wp_localize_script($theme_init->main_script_slug, 'billed_posts_prev', $billed_posts_prev);
+    wp_localize_script($theme_init->main_script_slug, '_from', $days_30_before_today->format('Y-m-d H:i:s'));
+    wp_localize_script($theme_init->main_script_slug, '_to', $today->format('Y-m-d H:i:s'));
+
+    $filter_items = array(
+      'team',
+      'clinics',
+      'sources',
+      'campaigns',
+      'treatments',
+    );
+
+    $args = array(
+      'filter_items' => $filter_items,
+      'daterange' => array(
+         'from' => $days_30_before_today_formatted,
+         'to'   => $today_formated
+       ),
+    );
 
     print_theme_template_part('dashboard', 'globals', $args);
   }
@@ -177,6 +184,17 @@ class theme_content_output{
       $days_30_before_today = new DateTime();
       $days_30_before_today = $days_30_before_today->modify('-30 days');
       $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
+
+      if(isset($_COOKIE['list_data_settings'])){
+        $data = $_COOKIE['list_data_settings'];
+        $data = str_replace('\\', '', $data );
+        $data = json_decode($data);
+
+        $today = new DateTime($data->_to);
+        $today_formated = $today->format('M d Y');
+        $days_30_before_today = new DateTime($data->_from);
+        $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
+      }
 
     // Get leads by dates
 
@@ -205,11 +223,12 @@ class theme_content_output{
       }
 
       $user = get_user_by('id', get_current_user_id());
-      $user_name =  theme_get_user_name($user);
+
+      $user_name = theme_get_user_name($user);
 
       $user_id = get_current_user_id();
 
-      $user_meta=get_userdata($user_id);
+      $user_meta = get_userdata($user_id);
 
       $user_roles = $user_meta->roles;
 
@@ -501,6 +520,7 @@ class theme_content_output{
       'text_save_btn'         => 'Create Lead',
       'text_save_del'         => 'Cancel',
       'time_lead_created'     => $lead_created_time->format('d M Y') . ' at '. $lead_created_time->format('H:i'),
+      'can_delete' => false,
     );
 
     $clinics = get_option('clinics_list');

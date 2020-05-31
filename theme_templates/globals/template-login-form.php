@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="spacer-h-50 spacer-h-lg-150"></div>
 
 <div class="login-form">
-  <a href="" class="logo"><img src="http://localhost/ruh/wp-content/themes/velesh_theme/assets/images/logo.svg" alt=""><span class="logo__text"> tracker</span></a>
+  <a href="" class="logo"><img src="<?php echo THEME_URL; ?>/assets/images/logo.svg" alt=""><span class="logo__text"> tracker</span></a>
   <br><br>
 
   <form action="javascript:void(0)" id="login-form">

@@ -445,7 +445,6 @@ if(!function_exists('get_posts_by_dates')){
       $args['date_query'][0]['after'] = $date->format('Y-m-d');
       dlog('from: '.  $args['date_query'][0]['after']);
     }
-
     if(!$to){
       unset($args['date_query']['before']);
     }else{
@@ -516,16 +515,16 @@ if(!function_exists('get_leads_meta')){
         $meta['patient_data'] = array();
       }
 
-      if(!$meta['patient_data']['source']){
+      if(!isset($meta['patient_data']['source'])){
         $meta['patient_data']['source'] = '';
       }
 
       //prepare data for filtering
       $filter_data = array(
-        'clinics'    => ($meta['patient_data']['clinic'])? $meta['patient_data']['clinic'] : '',
-        'treatments'    => ($meta['patient_data']['treatment'])? $meta['patient_data']['treatment'] : '',
-        'campaigns'    => ($meta['patient_data']['campaign'])? $meta['patient_data']['campaign'] : '',
-        'sources'    => ($meta['patient_data']['source'])? $meta['patient_data']['source'] : '',
+        'clinics'    => (isset($meta['patient_data']['clinic']))? $meta['patient_data']['clinic'] : '',
+        'treatments'    => (isset($meta['patient_data']['treatment']))? $meta['patient_data']['treatment'] : '',
+        'campaigns'    => (isset($meta['patient_data']['campaign']))? $meta['patient_data']['campaign'] : '',
+        'sources'    => (isset($meta['patient_data']['source']))? $meta['patient_data']['source'] : '',
         'team'       => array(),
       );
 
@@ -541,6 +540,8 @@ if(!function_exists('get_leads_meta')){
       foreach ($lead_specialists as $user_id => $assigned) {
         if('yes' === $assigned){
           $user = get_user_by('id', $user_id);
+
+          if(!$user){continue;}
           $name =  theme_get_user_name($user);
           $user_position = get_the_author_meta('user_position', $user->ID);
 
@@ -588,18 +589,18 @@ if(!function_exists('get_leads_meta')){
           $exists = $st['name'] === $stage ? true :  $exists;
         }
 
-        $leads[$lead_id]->lead_stage  = ($exists)? $stage : $stages[0]['name'];
-
+        $leads[$lead_id]->lead_stage = $lead_stage  = ($exists)? $stage : $stages[0]['name'];
 
       }else{
-        $leads[$lead_id]->lead_stage   = '';
+        $leads[$lead_id]->lead_stage = $lead_stage  = '';
       }
 
       // detect if lead is failed or converted
 
       $leads[$lead_id]->is_converted = (in_array($leads[$lead_id]->lead_stage, get_converted_stages()) )? 'yes': 'no';
 
-      $leads[$lead_id]->is_failed = ($lead_stage === get_failed_stage_name())? 'yes': 'no';
+      $leads[$lead_id]->is_failed = (isset($lead_stage) && $lead_stage === get_failed_stage_name())? 'yes': 'no';
+
       $leads[$lead_id]->permalink = esc_url(get_permalink($post));
 
       $order = get_post_meta($post->ID, '_lead_order', true);
@@ -645,7 +646,10 @@ if(!function_exists('theme_get_user_name')){
        $user = get_user_by('slug', $user);
      }
 
-     $last_name     = get_the_author_meta('last_name', $user->ID);
+     if(!$user){
+       return '';
+     }
+      $last_name     = get_the_author_meta('last_name', $user->ID);
      $first_name    = get_the_author_meta('first_name', $user->ID);
      $name = $first_name  . ' '. $last_name ;
      $name = trim($name)? $name : $user->data->display_name;
@@ -681,10 +685,10 @@ if(!function_exists('get_filters_by_leads')){
     foreach ($leads as $key => $lead) {
       $meta      = $lead->meta;
 
-      $clinic    = $meta['patient_data']['clinic'];
-      $treatment = $meta['patient_data']['treatment'];
+      $clinic    = isset($meta['patient_data']['clinic'])? $meta['patient_data']['clinic'] : '' ;
+      $treatment = isset($meta['patient_data']['treatment'])?  $meta['patient_data']['treatment'] : '';
       $source    = $meta['patient_data']['source'];
-      $campaign  = $meta['patient_data']['campaign'];
+      $campaign  = isset($meta['patient_data']['campaign'])? $meta['patient_data']['campaign'] : '' ;
       $team      = $meta['lead_specialists'];
 
       if(!in_array( $clinic ,$data['clinics']) && !empty(trim( $clinic))){
@@ -974,6 +978,7 @@ function get_billed_totals($sheck_date_start = false, $check_date_end = false,  
       OR str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') <= str_to_date('$sheck_date_start ', '%Y-%m-%d %H:%i:%s')
     )
   ";
+
   $request = $wpdb->get_results($querystr, OBJECT);
   $ids_start = array_column($request, 'post_id');
 
