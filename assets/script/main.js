@@ -1694,6 +1694,7 @@ var vue_team_perfomance;
 var dashboard_convertions;
 var perfomance;
 var vue_top_items = {};
+var print_popup = {};
 /**
 **
 **/
@@ -2765,6 +2766,75 @@ if('undefined' !== typeof(is_dashboard)){
 
       }
     },
+  });
+}
+if(is_dashboard){
+  print_popup = new Vue({
+    el: '#popup-print-options',
+
+    data: {
+      filter:{
+        clinics: [],
+        treatments: [],
+        campaigns: [],
+        sources: [],
+        team: [],
+      },
+
+      show: false,
+
+      filter_data : false,
+
+      leads_obj   : dashboard_leads_data,
+
+      max_items : false,
+    },
+
+    computed: {
+
+    },
+
+    mounted: function(){
+      this.filter_data = dashboard_filter_data;
+      var max_items = 0;
+
+      if(this.filter_data){
+        for(var id in this.filter_data){
+          max_items = Math.max(max_items, this.filter_data[id].length);
+        }
+      }
+
+      this.max_items = max_items
+
+    },
+
+    methods: {
+      do_filter: function(filter, value){
+        var id = this.filter[filter].indexOf(value);
+
+        if(id < 0){
+          this.filter[filter].push(value);
+        }else{
+          this.filter[filter].splice(id, 1);
+        }
+      },
+
+      do_filter_all: function(filter, value){
+        if(this.filter_data[filter].length === this.filter[filter].length){
+          this.filter[filter] = [];
+
+          for(id in this.$refs['filter.'+filter]){
+            jQuery(this.$refs['filter.'+filter][id]).prop({'checked' : 0});
+          }
+
+        }else{
+          this.filter[filter] = this.filter_data[filter];
+          for(id in this.$refs['filter.'+filter]){
+            jQuery(this.$refs['filter.'+filter][id]).prop({'checked' : 1});
+          }
+        }
+      }
+    }
   });
 }
 var vue_leads_list;

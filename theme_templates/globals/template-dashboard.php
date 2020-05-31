@@ -240,7 +240,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   <table>
     <thead>
       <th col="4">
-        <svg width="13" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 13 13" class="print-icon"><defs></defs><g><g><title>Shape</title><path d="M10.17677,5.50884h-1.10305c-0.2393,0 -0.43334,-0.19482 -0.43334,-0.43516c0,-0.24034 0.19401,-0.43516 0.43334,-0.43516h1.10305c0.2393,0 0.43334,0.19482 0.43334,0.43516c0,0.24034 -0.19401,0.43516 -0.43334,0.43516zM9.73336,11.26302h-6.47671c0,-0.08504 0,-3.45494 0,-3.56012h6.47673c-0.00002,0.10783 -0.00002,3.47835 -0.00002,3.56012zM3.25656,0.87032h6.47687v2.08332h-6.47687zM11.98889,2.95364h-1.37878v-2.51848c0,-0.24031 -0.19401,-0.43516 -0.43334,-0.43516h-7.35354c-0.2393,0 -0.43334,0.19482 -0.43334,0.43516v2.51848h-1.37878c-0.55753,0 -1.01111,0.45551 -1.01111,1.01538v4.37791c0,0.55987 0.45358,1.01535 1.01111,1.01535h1.37886v2.33589c0,0.24031 0.19401,0.43516 0.43334,0.43516h7.35338c0.23931,0 0.43334,-0.19482 0.43334,-0.43516v-2.33589h1.37886c0.55753,0 1.01111,-0.45548 1.01111,-1.01535v-4.37791c0,-0.55985 -0.45358,-1.01538 -1.01111,-1.01538z" fill="#838993" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.25708,8.67h-3.52082c-0.22435,0 -0.40626,0.19398 -0.40626,0.43327c0,0.2393 0.18188,0.43328 0.40626,0.43328h3.5208c0.22435,0 0.40625,-0.19398 0.40625,-0.43328c0,-0.23929 -0.18188,-0.43327 -0.40623,-0.43327z" fill="#838993" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.25708,9.53h-3.52082c-0.22435,0 -0.40626,0.19401 -0.40626,0.43333c0,0.23933 0.18188,0.43334 0.40626,0.43334h3.5208c0.22435,0 0.40625,-0.19401 0.40625,-0.43334c0,-0.23932 -0.18188,-0.43333 -0.40623,-0.43333z" fill="#838993" fill-opacity="1"></path></g><g><title>printing</title><g><title>Path</title><path d="M8.25708,9.53h-3.52082c-0.22435,0 -0.40626,0.19401 -0.40626,0.43333c0,0.23933 0.18188,0.43334 0.40626,0.43334h3.5208c0.22435,0 0.40625,-0.19401 0.40625,-0.43334c0,-0.23932 -0.18188,-0.43333 -0.40623,-0.43333z" fill="#838993" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.25708,8.67h-3.52082c-0.22435,0 -0.40626,0.19398 -0.40626,0.43327c0,0.2393 0.18188,0.43328 0.40626,0.43328h3.5208c0.22435,0 0.40625,-0.19398 0.40625,-0.43328c0,-0.23929 -0.18188,-0.43327 -0.40623,-0.43327z" fill="#838993" fill-opacity="1"></path></g><g><title>Shape</title><path d="M10.17677,5.50884h-1.10305c-0.2393,0 -0.43334,-0.19482 -0.43334,-0.43516c0,-0.24034 0.19401,-0.43516 0.43334,-0.43516h1.10305c0.2393,0 0.43334,0.19482 0.43334,0.43516c0,0.24034 -0.19401,0.43516 -0.43334,0.43516zM9.73336,11.26302h-6.47671c0,-0.08504 0,-3.45494 0,-3.56012h6.47673c-0.00002,0.10783 -0.00002,3.47835 -0.00002,3.56012zM3.25656,0.87032h6.47687v2.08332h-6.47687zM11.98889,2.95364h-1.37878v-2.51848c0,-0.24031 -0.19401,-0.43516 -0.43334,-0.43516h-7.35354c-0.2393,0 -0.43334,0.19482 -0.43334,0.43516v2.51848h-1.37878c-0.55753,0 -1.01111,0.45551 -1.01111,1.01538v4.37791c0,0.55987 0.45358,1.01535 1.01111,1.01535h1.37886v2.33589c0,0.24031 0.19401,0.43516 0.43334,0.43516h7.35338c0.23931,0 0.43334,-0.19482 0.43334,-0.43516v-2.33589h1.37886c0.55753,0 1.01111,-0.45548 1.01111,-1.01535v-4.37791c0,-0.55985 -0.45358,-1.01538 -1.01111,-1.01538z" fill="#838993" fill-opacity="1"></path></g></g></g></svg>
+        <svg width="20" height="20" class="print-popup" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 13 13" class="print-icon"><defs></defs><g><g><title>Shape</title><path d="M10.17677,5.50884h-1.10305c-0.2393,0 -0.43334,-0.19482 -0.43334,-0.43516c0,-0.24034 0.19401,-0.43516 0.43334,-0.43516h1.10305c0.2393,0 0.43334,0.19482 0.43334,0.43516c0,0.24034 -0.19401,0.43516 -0.43334,0.43516zM9.73336,11.26302h-6.47671c0,-0.08504 0,-3.45494 0,-3.56012h6.47673c-0.00002,0.10783 -0.00002,3.47835 -0.00002,3.56012zM3.25656,0.87032h6.47687v2.08332h-6.47687zM11.98889,2.95364h-1.37878v-2.51848c0,-0.24031 -0.19401,-0.43516 -0.43334,-0.43516h-7.35354c-0.2393,0 -0.43334,0.19482 -0.43334,0.43516v2.51848h-1.37878c-0.55753,0 -1.01111,0.45551 -1.01111,1.01538v4.37791c0,0.55987 0.45358,1.01535 1.01111,1.01535h1.37886v2.33589c0,0.24031 0.19401,0.43516 0.43334,0.43516h7.35338c0.23931,0 0.43334,-0.19482 0.43334,-0.43516v-2.33589h1.37886c0.55753,0 1.01111,-0.45548 1.01111,-1.01535v-4.37791c0,-0.55985 -0.45358,-1.01538 -1.01111,-1.01538z" fill="#838993" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.25708,8.67h-3.52082c-0.22435,0 -0.40626,0.19398 -0.40626,0.43327c0,0.2393 0.18188,0.43328 0.40626,0.43328h3.5208c0.22435,0 0.40625,-0.19398 0.40625,-0.43328c0,-0.23929 -0.18188,-0.43327 -0.40623,-0.43327z" fill="#838993" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.25708,9.53h-3.52082c-0.22435,0 -0.40626,0.19401 -0.40626,0.43333c0,0.23933 0.18188,0.43334 0.40626,0.43334h3.5208c0.22435,0 0.40625,-0.19401 0.40625,-0.43334c0,-0.23932 -0.18188,-0.43333 -0.40623,-0.43333z" fill="#838993" fill-opacity="1"></path></g><g><title>printing</title><g><title>Path</title><path d="M8.25708,9.53h-3.52082c-0.22435,0 -0.40626,0.19401 -0.40626,0.43333c0,0.23933 0.18188,0.43334 0.40626,0.43334h3.5208c0.22435,0 0.40625,-0.19401 0.40625,-0.43334c0,-0.23932 -0.18188,-0.43333 -0.40623,-0.43333z" fill="#838993" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.25708,8.67h-3.52082c-0.22435,0 -0.40626,0.19398 -0.40626,0.43327c0,0.2393 0.18188,0.43328 0.40626,0.43328h3.5208c0.22435,0 0.40625,-0.19398 0.40625,-0.43328c0,-0.23929 -0.18188,-0.43327 -0.40623,-0.43327z" fill="#838993" fill-opacity="1"></path></g><g><title>Shape</title><path d="M10.17677,5.50884h-1.10305c-0.2393,0 -0.43334,-0.19482 -0.43334,-0.43516c0,-0.24034 0.19401,-0.43516 0.43334,-0.43516h1.10305c0.2393,0 0.43334,0.19482 0.43334,0.43516c0,0.24034 -0.19401,0.43516 -0.43334,0.43516zM9.73336,11.26302h-6.47671c0,-0.08504 0,-3.45494 0,-3.56012h6.47673c-0.00002,0.10783 -0.00002,3.47835 -0.00002,3.56012zM3.25656,0.87032h6.47687v2.08332h-6.47687zM11.98889,2.95364h-1.37878v-2.51848c0,-0.24031 -0.19401,-0.43516 -0.43334,-0.43516h-7.35354c-0.2393,0 -0.43334,0.19482 -0.43334,0.43516v2.51848h-1.37878c-0.55753,0 -1.01111,0.45551 -1.01111,1.01538v4.37791c0,0.55987 0.45358,1.01535 1.01111,1.01535h1.37886v2.33589c0,0.24031 0.19401,0.43516 0.43334,0.43516h7.35338c0.23931,0 0.43334,-0.19482 0.43334,-0.43516v-2.33589h1.37886c0.55753,0 1.01111,-0.45548 1.01111,-1.01535v-4.37791c0,-0.55985 -0.45358,-1.01538 -1.01111,-1.01538z" fill="#838993" fill-opacity="1"></path></g></g></g></svg>
           Export Columns
       </th>
       <th class="text-right">
@@ -253,20 +253,99 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <table class="setting-table">
     <thead>
-      <th>Leads</th>
-      <th>Clinics</th>
-      <th>Treatments</th>
-      <th>Campaigns</th>
-      <th>Sources</th>
-      <th>Team</th>
+      <tr>
+        <th>Clinics</th>
+        <th>Treatments</th>
+        <th>Campaigns</th>
+        <th>Sources</th>
+        <th>Team</th>
+      </tr>
     </thead>
     <tbody>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <tr>
+        <td>
+          <label class="checkbox-imitation" >
+            <input type="checkbox" v-on:change="do_filter_all('clinics', 'all')" ref="filter.clinics_all" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">All</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation">
+            <input type="checkbox" v-on:change="do_filter_all('treatments', 'all')" ref="filter.treatments_all" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">All</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation">
+            <input type="checkbox" v-on:change="do_filter_all('campaigns', 'all')" ref="filter.campaigns_all" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">All</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation">
+            <input type="checkbox" v-on:change="do_filter_all('sources', 'all')" ref="filter.sources_all" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">All</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation">
+            <input type="checkbox" v-on:change="do_filter_all('team', 'all')" ref="filter.team_all">
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">All</span>
+          </label>
+        </td>
+      </tr>
+      <tr v-for="n in max_items">
+        <td>
+          <label class="checkbox-imitation" v-if="filter_data.clinics[n]">
+            <input type="checkbox" v-on:change="do_filter('clinics', filter_data.clinics[n])" ref="filter.clinics" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">{{filter_data.clinics[n]}}</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation"  v-if="filter_data.treatments[n]">
+            <input type="checkbox" v-on:change="do_filter('treatments', filter_data.treatments[n])" ref="filter.treatments" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">{{filter_data.treatments[n]}}</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation" v-if="filter_data.campaigns[n]">
+            <input type="checkbox" v-on:change="do_filter('campaigns', filter_data.campaigns[n])" ref="filter.campaigns" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">{{filter_data.campaigns[n]}}</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation"  v-if="filter_data.sources[n]">
+            <input type="checkbox" v-on:change="do_filter('sources', filter_data.sources[n])" ref="filter.sources" >
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">{{filter_data.sources[n]}}</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation" v-if="filter_data.team[n]">
+            <input type="checkbox" v-on:change="do_filter('team', filter_data.team[n])" ref="filter.team">
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">{{filter_data.team[n]}}</span>
+          </label>
+        </td>
+      </tr>
     </tbody>
   </table>
 

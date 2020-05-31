@@ -7727,6 +7727,11 @@ html {
   text-align: left;
 }
 
+.print-popup {
+  vertical-align: -5px;
+  margin-right: 5px;
+}
+
 .revenue-proportion {
   background-color: #838993;
   height: 14px;
@@ -7966,7 +7971,10 @@ html {
 .popup-print-options table td,
 .popup-print-options table th {
   padding-left: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-align: left;
+  border-bottom: 1px solid  #f7f7f9;
 }
 
 .popup-print-options table td:first-child,
@@ -7981,6 +7989,44 @@ html {
 
 .text-right {
   text-align: right;
+}
+
+.text-right .button {
+  float: right;
+}
+
+.checkbox-imitation__view {
+  vertical-align: -2px;
+  margin-right: 5px;
+}
+
+.checkbox-imitation__text {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.button {
+  display: inline-block;
+  padding: 0 15px;
+  text-decoration: none;
+  color: #fff;
+  line-height: 38px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  background-color: #01c58d;
+  -webkit-transition: .2s all;
+  transition: .2s all;
+  font-size: 14px;
+  font-family: "HelveticaFont_", sans-serif;
+  font-weight: 500;
+}
+
+.button svg {
+  margin-right: 5px;
+}
+
+.button:hover {
+  background-color: #019269;
 }
 
 @media (min-width: 1600px) {
