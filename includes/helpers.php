@@ -511,6 +511,9 @@ if(!function_exists('get_leads_meta')){
         'end_date'              => get_post_meta($post->ID, '_end_date', true),
       );
 
+
+
+
       if(!$meta['patient_data']){
         $meta['patient_data'] = array();
       }

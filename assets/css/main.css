@@ -7957,10 +7957,27 @@ html {
   margin: 50px auto 0;
   display: block;
   position: fixed;
-  z-index: 10000;
+  z-index: 10;
   top: 0;
   right: 0;
   left: 0;
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+}
+
+.popup-print-options .icon-close {
+  position: absolute;
+  z-index: 10;
+  font-weight: 100;
+  font-size: 48px;
+  right: 5px;
+  top: 5px;
+  width: 24px;
+  height: 24px;
+  color: #eee;
+  line-height: 24px;
+  vertical-align: top;
+  cursor: pointer;
 }
 
 .popup-print-options table {
@@ -7968,22 +7985,38 @@ html {
   margin: 0 0 30px;
 }
 
-.popup-print-options table td,
 .popup-print-options table th {
-  padding-left: 30px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 5px 10px;
   text-align: left;
-  border-bottom: 1px solid  #f7f7f9;
 }
 
-.popup-print-options table td:first-child,
 .popup-print-options table th:first-child {
   padding-left: 30px;
 }
 
-.popup-print-options table td:last-child,
 .popup-print-options table th:last-child {
+  padding-right: 30px;
+}
+
+.popup-print-options table thead td {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border: 0 !important;
+}
+
+.popup-print-options table td {
+  padding-left: 30px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: left;
+  border-bottom: 1px solid  #f7f7f9;
+}
+
+.popup-print-options table td:first-child {
+  padding-left: 30px;
+}
+
+.popup-print-options table td:last-child {
   padding-right: 30px;
 }
 
@@ -8027,6 +8060,21 @@ html {
 
 .button:hover {
   background-color: #019269;
+}
+
+.filename {
+  width: 100%;
+  max-width: 320px;
+  line-height: 24px;
+  border: 1px solid  #eee;
+  padding: 5px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+.popup-title {
+  display: inline-block;
+  line-height: 38px;
+  margin-right: 5px;
 }
 
 @media (min-width: 1600px) {
@@ -8509,7 +8557,7 @@ body.admin-bar {
   bottom: 0;
   z-index: 100;
   background: rgba(0, 0, 0, 0.5);
-  top: 93px;
+  top: 0;
   text-align: center;
   display: -moz-flex;
   display: -ms-flex;
