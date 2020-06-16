@@ -433,7 +433,7 @@ jQuery(document.body).on('get_popup_leads_by_dates', function(e, data){
         };
 
         print_popup.update('leads_obj', data.leads);
-        print_popup.update('filter_data_', data.filter_data);
+        print_popup.update('filter_data_', data.filter_data_csv);
         print_popup.update('filter', filter);
       }
 
@@ -471,8 +471,8 @@ if('undefined' !== typeof(is_dashboard)){
   var current_year = date.getFullYear();
 
   months = [
-    ['January', 'May',   'July',      "October" ],
-    ['February','April', "August",    'November'],
+    ['January', 'April',   'July',      "October" ],
+    ['February','May', "August",    'November'],
     ['March',   'June',  "September", 'December'],
   ];
 
@@ -550,7 +550,7 @@ if('undefined' !== typeof(is_dashboard)){
               backgroundColor: 'rgb(237, 240, 255)',
               data: [
                 income_month_data['Jan']['sum'],
-                income_month_data['May']['sum'],
+                income_month_data['Apr']['sum'],
                 income_month_data['Jul']['sum'],
                 income_month_data['Oct']['sum']
                 ], // january, may, july, october
@@ -561,7 +561,7 @@ if('undefined' !== typeof(is_dashboard)){
           }, {
               data: [
                 income_month_data['Feb']['sum'],
-                income_month_data['Apr']['sum'],
+                income_month_data['May']['sum'],
                 income_month_data['Aug']['sum'],
                 income_month_data['Nov']['sum']
                 ], //february, april, august, november
@@ -2321,11 +2321,12 @@ if('undefined' != typeof(is_dashboard)){
         campaigns: [],
         sources: [],
         team: [],
+        lead_stage: [],
       },
 
       is_shown: false,
 
-      filter_data_ : dashboard_filter_data,
+      filter_data_ : dashboard_filter_data_csv,
 
       leads_obj   : dashboard_leads_data,
 
@@ -2403,6 +2404,19 @@ if('undefined' != typeof(is_dashboard)){
 
          }
       },
+
+      "filter.lead_stage": function(val){
+        if(val.length == 0){
+         jQuery(this.$refs['filter.lead_stage_all']).prop({'checked': 0})
+        }
+
+         if(this.filter_data['lead_stage'].length - 1 === this.filter['lead_stage'].length){
+          jQuery(this.$refs['filter.lead_stage_all' ]).prop({'checked': 1})
+         }else{
+         jQuery(this.$refs['filter.lead_stage_all']).prop({'checked': 0})
+
+         }
+      },
     },
 
     computed: {
@@ -2428,10 +2442,6 @@ if('undefined' != typeof(is_dashboard)){
         jQuery('.popup-print-options').removeClass('visuallyhidden')
         return this.is_shown ? '' : 'hidden';
       }
-
-      // filtered_leads: function(){
-      //   return this.filter_leads(this.leads_obj);
-      // }
     },
 
     mounted: function(){
@@ -2510,11 +2520,13 @@ if('undefined' != typeof(is_dashboard)){
             treatment: lead.meta.patient_data.treatment,
             clinic:    lead.meta.patient_data.clinic,
             campaign:  lead.meta.patient_data.campaign,
-            booked:    get_sum_from_price(lead.meta.treatment_value.value),
-            billed:    get_sum_from_price(billed),
+            lead_stage: lead.lead_stage,
+            booked:    get_sum_from_price(lead.meta.treatment_value.value).toString(),
+            billed:    get_sum_from_price(billed).toString(),
             dentists:  lead.meta.treatment_coordinator.specialist,
             notes:     "",
           };
+
 
           // check and modify data about dentists
           // format it to string
@@ -2535,7 +2547,8 @@ if('undefined' != typeof(is_dashboard)){
             var temp_arr = [];
             for(var i in for_csv){
               var reg = new RegExp("[\n|,|\"]");
-              if(for_csv[i] && for_csv[i].match("/\r\n|\n|\r|,/gm")){
+
+                if(for_csv[i] && for_csv[i].match("/\r\n|\n|\r|,/gm")){
               }
 
                var _t = for_csv[i]? '"' + for_csv[i].split("\n").join(' ').split('"').join(' ').split('#').join(' ') + '"': 'none';
@@ -2555,7 +2568,7 @@ if('undefined' != typeof(is_dashboard)){
         var leads = this.filter_leads(this.leads_obj);
         var formatted_data = this.gen_csv_file(leads);
 
-        var csvContent = "data:text/csv;charset=utf-8,name,email,phone,source,treatment,clinic,campaign,proposed,billed,dentists,notes" + "\r\n"
+        var csvContent = "data:text/csv;charset=utf-8,name,email,phone,source,treatment,clinic,campaign,stage,proposed,billed,dentists,notes" + "\r\n"
             + formatted_data.map(e => e.join(",")).join("\r\n");
 
         var filename = this.filename;
@@ -2602,10 +2615,7 @@ if('undefined' != typeof(is_dashboard)){
               case 'object':
                 if(Object.keys(val).length > 0){
                   //  run check
-                  for(var i in val){
-                    add_it = filter.indexOf(val[i]) < 0? false: add_it;
-                  }
-
+                  add_it = (Intersec(filter, val).length == 0)? false: add_it;
                 }else{
                   // consider, that lead doesn't match filters
                   add_it = false;
@@ -2687,6 +2697,19 @@ if('undefined' != typeof(is_dashboard)){
       }
     }
   });
+}
+
+function Intersec(arr1,arr2){
+
+ var idx = 0, arr3 = [];
+
+ for (var i = 0; i < arr2.length; i++)
+     {
+     idx = arr1.indexOf(arr2[i]);
+       if (idx >= 0) arr3.push(arr2[i]);
+     }
+
+ return arr3;
 }
 if('undefined' !== typeof(is_dashboard)){
   perfomance = new Vue({
@@ -3471,6 +3494,13 @@ if('undefined' !== typeof(is_lead_list)){
         return (a.order > b.order)? 1 : -1;
       },
 
+      sort_by_id: function(lead_a,lead_b){
+        if(lead_a.post_id === lead_b.post_id){
+          return 0;
+        }
+        return (lead_a.post_id > lead_b.post_id)? 1 : -1;
+      },
+
       update_leads: function(leads){
         //console.log('Update leads');
         var temp_leads = {};
@@ -3484,7 +3514,7 @@ if('undefined' !== typeof(is_lead_list)){
         }
 
         for(id in temp_leads){
-          temp_leads[id].sort(this.sort_by_order);
+          temp_leads[id].sort(this.sort_by_id);
         }
 
         this.leads = temp_leads;

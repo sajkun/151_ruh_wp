@@ -7948,8 +7948,8 @@ html {
 }
 
 .popup-print-options {
-  max-width: 1122px;
-  width: 100%;
+  min-width: 1000px;
+  max-width: 1300px;
   box-shadow: 0 1px 30px rgba(0, 0, 0, 0.26);
   border-radius: 9px;
   background-color: #ffffff;
@@ -7959,9 +7959,9 @@ html {
   position: fixed;
   z-index: 10;
   top: 0;
-  right: 0;
-  left: 0;
-  max-height: calc(100vh - 200px);
+  right: 2vw;
+  left: 2vw;
+  max-height: calc(100vh - 70px);
   overflow: auto;
 }
 
@@ -10036,6 +10036,10 @@ body.admin-bar {
   background-color: #eff0f3;
   color: #545d6b;
   border-radius: 12px;
+}
+
+.note-block__body.manager-note {
+  padding-right: 30px;
 }
 
 .message-block {

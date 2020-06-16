@@ -288,6 +288,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <td>Campaigns</td>
         <td>Sources</td>
         <td>Team</td>
+        <td>Lead's Stage</td>
       </tr>
     </thead>
     <tbody>
@@ -327,6 +328,14 @@ if ( ! defined( 'ABSPATH' ) ) {
         <td>
           <label class="checkbox-imitation">
             <input type="checkbox" v-on:change="do_filter_all('team', 'all')" ref="filter.team_all">
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">All</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation">
+            <input type="checkbox" v-on:change="do_filter_all('lead_stage', 'all')" ref="filter.lead_stage_all">
 
             <span class="checkbox-imitation__view"></span>
             <span class="checkbox-imitation__text">All</span>
@@ -372,6 +381,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             <span class="checkbox-imitation__view"></span>
             <span class="checkbox-imitation__text">{{filter_data.team[n]}}</span>
+          </label>
+        </td>
+        <td>
+          <label class="checkbox-imitation" v-if="filter_data.lead_stage[n]">
+            <input type="checkbox" v-on:change="do_filter('lead_stage', filter_data.lead_stage[n])" ref="filter.lead_stage">
+
+            <span class="checkbox-imitation__view"></span>
+            <span class="checkbox-imitation__text">{{filter_data.lead_stage[n]}}</span>
           </label>
         </td>
       </tr>

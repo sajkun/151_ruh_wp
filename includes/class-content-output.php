@@ -107,8 +107,10 @@ class theme_content_output{
 
     // prepare data for filters
     $filter_data = get_filters_by_leads( $leads );
+    $filter_data_csv = get_filters_by_leads( $leads, true );
 
     wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data_csv', $filter_data_csv);
 
     $annual_income = get_annually_income();
 
@@ -211,6 +213,7 @@ class theme_content_output{
       $filter_data = get_filters_by_leads( $leads );
 
       wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
+
 
     // get available stages
 

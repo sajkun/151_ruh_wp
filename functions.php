@@ -78,7 +78,7 @@ class velesh_init_theme{
     define('THEME_PATH', get_stylesheet_directory());
     define('THEME_URL', get_template_directory_uri());
     define('HOME_URL', get_home_url());
-    define('THEME_VERSION', '1.0');
+    define('THEME_VERSION', '2.2');
     define('DUMMY_ADMIN', THEME_URL.'/assets/images/admin/blank.png');
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');

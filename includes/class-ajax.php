@@ -556,6 +556,7 @@ if(!class_exists('theme_ajax_action')){
 
 
         $filter_data = get_filters_by_leads( $leads );
+        $filter_data_csv = get_filters_by_leads( $leads, true );
 
 
         $data_4_billed_revenue_period = get_billed_totals($from->format('Y-m-d H:i:s') ,$to->format('Y-m-d H:i:s'));
@@ -574,6 +575,7 @@ if(!class_exists('theme_ajax_action')){
         $data = array(
           'leads'             => $leads,
           'filter_data'       => $filter_data,
+          'filter_data_csv'  => $filter_data_csv,
           'from_formated'     => $from_formated,
           'to_formated'       => $to_formated,
           'team_perfomance'   => $team_perfomance,

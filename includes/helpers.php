@@ -529,6 +529,7 @@ if(!function_exists('get_leads_meta')){
         'campaigns'    => (isset($meta['patient_data']['campaign']))? $meta['patient_data']['campaign'] : '',
         'sources'    => (isset($meta['patient_data']['source']))? $meta['patient_data']['source'] : '',
         'team'       => array(),
+
       );
 
       //get array of specialists assigned
@@ -552,7 +553,7 @@ if(!function_exists('get_leads_meta')){
           $image =  wp_get_attachment_url( $user_photo_id );
           $image = ($image) ? $image : DUMMY_ADMIN;
 
-          array_push($filter_data['team'] , trim($name));
+          array_push($filter_data['team'] , 'Stuff');
 
           array_push($specialists , array(
             'image'    => $image,
@@ -563,13 +564,17 @@ if(!function_exists('get_leads_meta')){
         }
       }
 
-
       if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
+
         foreach ($coordinator_data['specialist'] as $name) {
           if(!$name) continue;
-          array_push($filter_data['team'] , trim($name));
+          array_push($filter_data['team'] , 'Dentists');
         }
       }
+
+      $filter_data['team'] = array_values(array_unique($filter_data['team'] ));
+
+      // clog(get_post_meta($post->ID));
 
       $leads[$lead_id]->converted_time = get_post_meta($post->ID, '_time_converted', true);
 
@@ -580,7 +585,6 @@ if(!function_exists('get_leads_meta')){
       $leads[$lead_id]->meta = $meta;
 
       // add filter, stage, order field to lead
-      $leads[$lead_id]->filter_data = $filter_data;
 
       $stages_formatted = [];
 
@@ -592,12 +596,15 @@ if(!function_exists('get_leads_meta')){
           $exists = $st['name'] === $stage ? true :  $exists;
         }
 
-        $leads[$lead_id]->lead_stage = $lead_stage  = ($exists)? $stage : $stages[0]['name'];
+        $leads[$lead_id]->lead_stage = $filter_data['lead_stage'] =  $lead_stage  = ($exists)? $stage : $stages[0]['name'];
+
 
       }else{
         $leads[$lead_id]->lead_stage = $lead_stage  = '';
+        $filter_data['lead_stage'] = '';
       }
 
+      $leads[$lead_id]->filter_data = $filter_data;
       // detect if lead is failed or converted
 
       $leads[$lead_id]->is_converted = (in_array($leads[$lead_id]->lead_stage, get_converted_stages()) )? 'yes': 'no';
@@ -625,7 +632,6 @@ if(!function_exists('get_leads_meta')){
       $leads[$lead_id]->payment_end_date =  get_post_meta($post->ID, '_end_date' , true);
     }
 
-    dlog($leads);
     dlog('-------------', false, true);
     return $leads;
   }
@@ -671,7 +677,7 @@ if(!function_exists('get_filters_by_leads')){
   *
   * @return array
   */
-  function get_filters_by_leads($leads = false){
+  function get_filters_by_leads($leads = false, $add_stages = false){
 
     dlog('Get filter data by leads', true, false);
 
@@ -680,8 +686,19 @@ if(!function_exists('get_filters_by_leads')){
       'treatments' => array('All Treatments'),
       'campaigns'  => array('All Campaigns'),
       'sources'    => array('All Sources'),
-      'team'       => array('All Team'),
+      'team'       => array('All Team', 'Dentists', 'Stuff'),
     );
+
+    if($add_stages){
+       $stages_formatted = array('All Stages' => true);
+       $all_stages =  get_option('leads_stages');
+
+       foreach ($all_stages as $key => $st) {
+          $stages_formatted[$st['name']] = false;
+       }
+
+    }
+
 
     if(!$leads) return $data;
 
@@ -709,25 +726,34 @@ if(!function_exists('get_filters_by_leads')){
         array_push($data['campaigns'], $campaign);
       }
 
-      foreach ($team as $member_id => $member) {
-        if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
-          array_push($data['team'], $member['name']);
+      // foreach ($team as $member_id => $member) {
+      //   if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
+      //     array_push($data['team'], $member['name']);
 
-          dlog($member['name']);
-        }
+      //     dlog($member['name']);
+      //   }
 
+      // }
+
+
+        if($add_stages && array_key_exists($lead->lead_stage, $stages_formatted )){
+          $stages_formatted[$lead->lead_stage] = true;
       }
 
-      $coordinator_data = $meta['treatment_coordinator'];
 
 
-      if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
+      // add lead stage filter for scv data
 
-        foreach ($coordinator_data['specialist'] as $name) {
-          if(!$name || strlen($name) < 3) continue;
-          array_push($data['team'] , trim($name));
-        }
-      }
+      // $coordinator_data = $meta['treatment_coordinator'];
+
+
+      // if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
+
+      //   foreach ($coordinator_data['specialist'] as $name) {
+      //     if(!$name || strlen($name) < 3) continue;
+      //     array_push($data['team'] , trim($name));
+      //   }
+      // }
 
 
     }
@@ -735,6 +761,18 @@ if(!function_exists('get_filters_by_leads')){
 
     dlog($data);
     dlog('-------------', false, true);
+
+
+
+    if ($add_stages) {
+      foreach ($stages_formatted as $key => $show) {
+        if(!$show){
+          unset($stages_formatted[$key]);
+        }
+      }
+      $data['lead_stage'] = array_keys($stages_formatted);
+    }
+
 
     return $data;
   }
@@ -948,55 +986,56 @@ if(!function_exists('my_upload_dir')){
   }
 }
 
+if(!function_exists('get_billed_totals')){
+
+  function get_billed_totals($sheck_date_start = false, $check_date_end = false,  $start_period_day = 1, $end_period_day = 31){
+
+    if(!$sheck_date_start || !$check_date_end){
+      return array(
+        'mounthly_total' => 0,
+        'ids' => array(),
+      );
+    }
+
+    global $wpdb;
 
 
-function get_billed_totals($sheck_date_start = false, $check_date_end = false,  $start_period_day = 1, $end_period_day = 31){
+    $querystr = "
+      SELECT $wpdb->postmeta.post_id
+      FROM  $wpdb->postmeta
+      WHERE $wpdb->postmeta.meta_key = '_end_date'
+      AND (str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') >= str_to_date('$check_date_end ', '%Y-%m-%d %H:%i:%s')
+        OR str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') >= str_to_date('$sheck_date_start ', '%Y-%m-%d %H:%i:%s')
+      )
+    ";
 
-  if(!$sheck_date_start || !$check_date_end){
+    $request = $wpdb->get_results($querystr, OBJECT);
+    $ids_end = array_column($request, 'post_id');
+    $querystr = "
+      SELECT $wpdb->postmeta.post_id
+      FROM  $wpdb->postmeta
+      WHERE $wpdb->postmeta.meta_key = '_start_date'
+      AND (str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') <= str_to_date('$check_date_end ', '%Y-%m-%d %H:%i:%s')
+        OR str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') <= str_to_date('$sheck_date_start ', '%Y-%m-%d %H:%i:%s')
+      )
+    ";
+
+    $request = $wpdb->get_results($querystr, OBJECT);
+    $ids_start = array_column($request, 'post_id');
+
+    $ids = array_intersect ($ids_end, $ids_start);
+
+    $_ids = array();
+
+    foreach($ids as $i){
+      $_ids[] = (int)$i;
+    }
+
+    $mounthly_total = 0;
     return array(
-      'mounthly_total' => 0,
-      'ids' => array(),
+      'mounthly_total' =>$mounthly_total,
+      'ids' => $_ids,
     );
   }
-
-  global $wpdb;
-
-
-  $querystr = "
-    SELECT $wpdb->postmeta.post_id
-    FROM  $wpdb->postmeta
-    WHERE $wpdb->postmeta.meta_key = '_end_date'
-    AND (str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') >= str_to_date('$check_date_end ', '%Y-%m-%d %H:%i:%s')
-      OR str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') >= str_to_date('$sheck_date_start ', '%Y-%m-%d %H:%i:%s')
-    )
-  ";
-
-  $request = $wpdb->get_results($querystr, OBJECT);
-  $ids_end = array_column($request, 'post_id');
-  $querystr = "
-    SELECT $wpdb->postmeta.post_id
-    FROM  $wpdb->postmeta
-    WHERE $wpdb->postmeta.meta_key = '_start_date'
-    AND (str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') <= str_to_date('$check_date_end ', '%Y-%m-%d %H:%i:%s')
-      OR str_to_date($wpdb->postmeta.meta_value, '%Y-%m-%d %H:%i:%s') <= str_to_date('$sheck_date_start ', '%Y-%m-%d %H:%i:%s')
-    )
-  ";
-
-  $request = $wpdb->get_results($querystr, OBJECT);
-  $ids_start = array_column($request, 'post_id');
-
-  $ids = array_intersect ($ids_end, $ids_start);
-
-  $_ids = array();
-
-  foreach($ids as $i){
-    $_ids[] = (int)$i;
-  }
-
-  $mounthly_total = 0;
-  return array(
-    'mounthly_total' =>$mounthly_total,
-    'ids' => $_ids,
-  );
 }
 
