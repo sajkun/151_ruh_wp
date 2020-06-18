@@ -300,6 +300,11 @@ class theme_content_output{
 
     if($_lead_notes){
       foreach ($_lead_notes as $key => $n) {
+
+        if(!isset($n['show'])){
+          $n['show'] = 1;
+        }
+
         $lead_notes[] = $n;
       }
     }
@@ -348,7 +353,7 @@ class theme_content_output{
 
     $treatment_coordinator = get_post_meta($lead->ID, '_treatment_coordinator', true);
 
-    if(($treatment_coordinator['specialist'])){
+    if(isset($treatment_coordinator['specialist']) && $treatment_coordinator['specialist']){
       foreach ($treatment_coordinator['specialist'] as $key => $value) {
         if(!$value || empty($value)){
           unset($treatment_coordinator['specialist'][$key]);
@@ -376,6 +381,7 @@ class theme_content_output{
 
 
     $stages = get_option('leads_stages');
+
 
 
     $args = array(
@@ -415,12 +421,12 @@ class theme_content_output{
     $phone_count = get_post_meta($lead->ID, '_phone_count', true);
     $phone_count = ($phone_count) ? $phone_count : 0;
 
-    wp_localize_script($theme_init->main_script_slug, 'phone_count', $phone_count);
+    wp_localize_script($theme_init->main_script_slug, 'phone_count', (string)$phone_count);
 
     $message_count = get_post_meta($lead->ID, '_message_count', true);
     $message_count = ($message_count) ? $message_count : 0;
 
-    wp_localize_script($theme_init->main_script_slug, 'message_count', $message_count);
+    wp_localize_script($theme_init->main_script_slug, 'message_count',  (string)$message_count);
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
     wp_localize_script($theme_init->main_script_slug, 'assigned_dentists', $assigned_dentists);
     wp_localize_script($theme_init->main_script_slug, 'assigned_treatments', $assigned_treatments);
@@ -433,17 +439,16 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'lead_files', $lead_files);
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
 
-    $date_created = $lead->post_date;
-
     $meta = get_post_meta($lead->ID, '_patient_data', true);
 
-    $parts = explode('at',  $meta['date_time'] );
+    $date_start = $lead->post_date;
 
-    $date_planned = new DateTime(  implode(' ', $parts));
+    if(isset($meta['date_time'])){
+      $parts = explode('at',  $meta['date_time'] );
+      $date_planned = new DateTime(  implode(' ', $parts));
+      $date_start   =  $date_planned->format('Y-m-d H:i:s');
+    }
 
-    $date_planned = $date_planned->format('Y-m-d H:i:s');
-
-    $date_start = (isset($meta['date_time']))? $date_planned : $date_created;
 
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 

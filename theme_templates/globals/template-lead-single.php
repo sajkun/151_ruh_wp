@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div id="single-lead">
 
-  <input-field _type="hidden" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="user_id" _value="<?php echo $user_id?>"></input-field>
+  <input-field _type="hidden" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="user_id" _value="<?php echo $user_id?>" ref="current_user_id"></input-field>
 
   <input-field _type="hidden" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="user_name" _value="<?php echo $user_name?>"></input-field>
 
@@ -373,10 +373,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </tr>
 
                 <tr>
-                  <td style="vertical-align: top">
-                    <svg class="icon svg-icon-leaps" style="margin-top: 10px"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leaps"></use> </svg>
+
+                  <td <?php echo 'style="vertical-align: top"';  ?>>
+                    <svg class="icon svg-icon-leaps" <?php echo'style="margin-top: 10px"';  ?>> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leaps"></use> </svg>
                   </td>
-                  <td  style="vertical-align: top"><p class="leads-block__label">Dentist Seen</p></td>
+                  <td  <?php echo 'style="vertical-align: top"';  ?>><p class="leads-block__label">Dentist Seen</p></td>
                   <td>
                     <div class="dentist-name" v-for="dentist in c_dentists">{{dentist}}</div>
                   </td>
@@ -442,7 +443,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           <h2 class="leads-block__title">Notes <span class="info-helper" title="use Enter for line breaks, use Alt+Enter to add note">?</span>
           </h2>
           <div class="leads-block__row">
-            <div v-for="note,key in notes" class="note-block">
+            <div v-for="note,key in notes" class="note-block" v-if="note.show == 1">
               <div class="note-block__header clearfix">
                 <span class="name">{{note.user_name}}</span>
                 <span class="date">{{note.date}}</span>
@@ -451,6 +452,9 @@ if ( ! defined( 'ABSPATH' ) ) {
               <div class="note-block__body" v-bind:class="{'manager-note': note.is_manager == 'yes'}">
                 {{note.text}}
 
+                <i class="remove-note-icon" v-if=" lead_data.user_name === note.user_name" v-on:click="delete_note(key)">
+                  <svg class="icon svg-icon-trash"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use></svg>
+                </i>
 
                 <i class="icon-manager-done" v-on:click="mark_note_done(key, 'no')" v-if="note.is_manager == 'yes' && note.done =='yes'"></i>
 

@@ -10028,7 +10028,7 @@ body.admin-bar {
 }
 
 .note-block__body {
-  padding: 11px 20px;
+  padding: 11px 40px 11px 20px;
   font-size: 13px;
   font-family: "HelveticaFont_", sans-serif;
   line-height: 17px;
@@ -10039,7 +10039,7 @@ body.admin-bar {
 }
 
 .note-block__body.manager-note {
-  padding-right: 30px;
+  padding-right: 50px;
 }
 
 .message-block {
@@ -10602,4 +10602,20 @@ input.error {
   vertical-align: middle;
   width: 15px;
   height: 15px;
+}
+
+.remove-note-icon {
+  position: absolute;
+  cursor: pointer;
+  right: 30px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 10px;
+  height: 12px;
+  display: block;
+}
+
+.remove-note-icon svg {
+  fill: #545d6b;
 }

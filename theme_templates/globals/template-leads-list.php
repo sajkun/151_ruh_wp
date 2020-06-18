@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   <div class="spacer-h-40" ref="spacer2"></div>
 
   <div class="preload-timer">
-    <span class="text-center">Featching leads</span>
+    <span class="text-center">Fetching Leads</span>
     <img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt="">
   </div>
 
@@ -71,7 +71,10 @@ if ( ! defined( 'ABSPATH' ) ) {
           ?>
           <div class="leads-column">
             <div class="leads-column__head">
-              <span class="leads-column__tag" style="background-color: <?php echo $st['bg_color'] ?>;color: <?php echo $st['text_color'] ?>;"><?php echo $st['name'] ?></span>
+              <?php
+                $style='style="background-color:'.$st['bg_color'].';color: '.$st['text_color'].';"'
+              ?>
+              <span class="leads-column__tag" <?php echo $style ?>><?php echo $st['name'] ?></span>
 
               <span class="leads-column__count">{{ get_leads_total('<?php echo $st['name'] ?>') }}</span>
 

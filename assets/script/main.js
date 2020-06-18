@@ -330,6 +330,10 @@ function init_date_range(){
           last_90_str,
           today_str
         ],
+        'All time':[
+          '01/01/1999',
+          today_str,
+        ],
     },
     "alwaysShowCalendars": true,
     "startDate": last_30_str,
@@ -1437,33 +1441,42 @@ var date_difference = {
   ms_to_hour   : 3600000,
   ms_to_day    : 86400000,
 
+
   construct: function(d1, d2){
     var date_diff = d2 - d1;
-
-    if(date_diff < this.ms_to_minute){
-      return 'Just recieved';
-    }
-
-
-    // how many days
-
     var days_data = this.get_days_passed(date_diff);
-
-
     var hours_data = this.get_hours_passed(days_data.date_diff);
-
     var minutes_data = this.get_minutes_passed(hours_data.date_diff);
-
     var time_passed = '';
     var days_text     = (days_data.value > 1)? 'd ' : 'd ';
     var hours_text    = (hours_data.value > 1)? 'h ' : 'h ';
-    var minutes_text = (minutes_data.value > 1)? 'm ' : 'm ';
+    var minutes_text  =  (minutes_data.value > 1)? 'm ' : 'm ';
 
-    time_passed += (days_data.value > 0)?  days_data.value + days_text : '';
-    time_passed += (hours_data.value > 0)? hours_data.value + hours_text : '';
-    time_passed += (minutes_data.value > 0)?  minutes_data.value + minutes_text : '';
+    if(date_diff < this.ms_to_minute){
+      return 'Just recieved';
+    } else if(date_diff < this.ms_to_day && date_diff >= this.ms_to_minute){
+      // how many days
 
-    return time_passed;
+      time_passed += (days_data.value > 0)?  days_data.value + days_text : '';
+      time_passed += (hours_data.value > 0)? hours_data.value + hours_text : '';
+      time_passed += (minutes_data.value > 0)?  minutes_data.value + minutes_text : '';
+
+    } else if(date_diff > this.ms_to_day && date_diff < this.ms_to_day * 31 ){
+        time_passed = (days_data.value > 0)?  days_data.value + days_text : '';
+    } else if(date_diff >= this.ms_to_day * 31 ){
+      var date1    = new Date(d1);
+      var date2    = new Date(d2);
+
+      var months;
+      months = (date2.getFullYear() - date1.getFullYear()) * 12;
+      months -= date1.getMonth();
+      months += date2.getMonth();
+      var month_text  =  (months > 1)? 'mos' : 'mo';
+
+      time_passed = months+month_text;
+    }
+
+     return time_passed;
   },
 
   get_minutes_passed: function(date_diff){
@@ -3900,7 +3913,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
           },
 
           error: function(xhr, textStatus, errorThrown) {}
@@ -3931,6 +3944,8 @@ if('undefined' !== typeof(is_single_lead)){
       this.specialists_data  = specialists_data;
       this.init_select();
 
+
+
     },
 
     methods: {
@@ -3950,7 +3965,7 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       update_dates: function(){
-        console.log(this);
+        // console.log(this);
       },
 
       value_to_price: function(ref){
@@ -4139,7 +4154,11 @@ if('undefined' !== typeof(is_single_lead)){
         this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
 
 
-        console.log(this.lead_data);
+        if(key_meta  === 'lead_notes'){
+          this.show_confirmation_popup = false;
+        }
+
+        // console.log(this.lead_data);
 
 
         if((!this.patient_data.name || !this.patient_data.phone || !this.patient_data.email) && this.lead_data.lead_id < 0){
@@ -4173,7 +4192,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
             vm.$refs.lead_id_input.set_value(data.post_id);
             jQuery('.button-create span').text('Save Changes');
           },
@@ -4185,7 +4204,7 @@ if('undefined' !== typeof(is_single_lead)){
               if(response_text.data[0] === 'name was found'){
                 var confirm = window.confirm("Are you sure you want to add lead for " + vm.patient_data.name +'? Lead for patient with this name already exists');
 
-                console.log(confirm);
+                // console.log(confirm);
 
                 if(confirm){
                   posted_data.confirmed= 1;
@@ -4216,7 +4235,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
             vm.$refs.lead_id_input.set_value(data.post_id);
             jQuery('.button-create span').text('Save Changes');
           },
@@ -4224,7 +4243,7 @@ if('undefined' !== typeof(is_single_lead)){
           error: function(xhr, textStatus, errorThrown) {
             if(xhr.status === 418){
               var response_text = JSON.parse(xhr.responseText);
-              console.log(xhr);
+              // console.log(xhr);
               alert(response_text.data[0]);
             }else{
               alert(xhr.status + ' ' +errorThrown);
@@ -4339,7 +4358,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
             if('undefined' != typeof(data.redirect)){
               location.href = data.redirect;
             }
@@ -4358,7 +4377,7 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       add_note: function(){
-        console.log(is_manager);
+        // console.log(is_manager);
 
         if(!this.note_text){
           alert('Please enter some text');
@@ -4378,9 +4397,11 @@ if('undefined' !== typeof(is_single_lead)){
         var new_note = {
           'date'       : date_formatted,
           'user_name'  : this.lead_data.user_name,
+          'user_id'    : this.lead_data.user_id,
           'text'       : this.note_text,
           'is_manager' : is_manager,
           'done'       : 'no',
+          'show'       : 1,
         };
 
 
@@ -4388,6 +4409,11 @@ if('undefined' !== typeof(is_single_lead)){
         this.note_text = '';
         this.$refs.note_textarea.style.height = '';
 
+        this.save_lead_meta('lead_notes', 'notes');
+      },
+
+      delete_note: function(key){
+        this.notes[key].show = 0;
         this.save_lead_meta('lead_notes', 'notes');
       },
 
@@ -4471,7 +4497,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
             vm.$refs.lead_id_input.set_value(data.post_id);
           },
 
@@ -4488,7 +4514,7 @@ if('undefined' !== typeof(is_single_lead)){
 
 
       load_file: function(){
-        console.log('load_file');
+        // console.log('load_file');
 
         wait_block.show();
 
@@ -4519,7 +4545,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
             vm.files.push(data.file_data);
           },
 
@@ -4561,7 +4587,7 @@ if('undefined' !== typeof(is_single_lead)){
             },
 
             success: function(data, textStatus, xhr) {
-              console.log(data);
+              // console.log(data);
             },
 
             error: function(xhr, textStatus, errorThrown) {
@@ -4611,7 +4637,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
            },
 
           error: function(xhr, textStatus, errorThrown) {
@@ -4619,7 +4645,7 @@ if('undefined' !== typeof(is_single_lead)){
           }
         })
 
-        console.log('change_phone');
+        // console.log('change_phone');
       },
 
       clear_reminder: function(){
@@ -4640,7 +4666,7 @@ if('undefined' !== typeof(is_single_lead)){
 
         this.messages = Math.min(3, messages);
 
-        console.log('change_message');
+        // console.log('change_message');
 
         var data = {
           lead_id: this.lead_data.lead_id,
@@ -4658,7 +4684,7 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
+            // console.log(data);
           },
 
           error: function(xhr, textStatus, errorThrown) {
