@@ -83,7 +83,7 @@ class velesh_init_theme{
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
-    define('THEME_DEBUG', false);
+    define('THEME_DEBUG', true);
   }
 
 
@@ -140,9 +140,11 @@ class velesh_init_theme{
 
     wp_enqueue_script('theme-date-range-picker', THEME_URL.'/assets/libs/datepicker/daterangepicker.js', array('jquery'), THEME_VERSION, true);
 
-    // wp_enqueue_script('theme-vue-js', 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js', array('jquery'), THEME_VERSION, true);
-
     wp_enqueue_script($this->main_script_slug, THEME_URL.$this->main_script, array('jquery'), THEME_VERSION, true);
+
+    if(THEME_DEBUG){
+      wp_localize_script($this->main_script_slug, 'theme_debug', 'yes');
+    }
   }
 
 
@@ -231,17 +233,6 @@ class velesh_init_theme{
     global $pagenow;
     include_once(THEME_PATH.'/includes/helpers.php');
     include_php_from_dir(THEME_PATH.'/includes/');
-    // include_once(THEME_PATH.'/includes/class-custom-posts.php');
-    // include_once(THEME_PATH.'/includes/class-theme-customizer.php');
-    // include_once(THEME_PATH.'/includes/class-page-constructor.php');
-    // include_once(THEME_PATH.'/includes/class-filters.php');
-    // include_once(THEME_PATH.'/includes/widgets.php');
-
-    if($pagenow == 'nav-menus.php'){
-      // include_once(THEME_PATH.'/includes/class-menu-edit.php');
-      // $menu_image = new custom_edit_menu_image();
-    }
-
   }
 
 
@@ -256,9 +247,6 @@ class velesh_init_theme{
     add_action('wp_enqueue_scripts', array($this,'prepare_template_data'),9992);
 
     add_action('wp_enqueue_scripts', array($this,'inline_custom_data'), 9990);
-
-
-    // add_action('wp_enqueue_scripts', array($this,'merge_all_styles'), 9995);
 
     add_action('do_theme_after_head', array($this,'print_theme_inline_styles'), 9999);
 
@@ -629,89 +617,11 @@ class velesh_init_theme{
    * merges all javascripts into 1 and puts file into a theme folder
    *
    * @hookedto - wp_enqueue_scripts 9999
+   *
+   * @deprecated
    */
 
   public function merge_all_scripts(){
-
-   if(is_admin() || is_customize_preview()) return;
-
-   do_action('theme_before_merge_scrypts');
-
-   if(isset($_GET['elementor-preview'])) return;
-
-   global $post;
-
-   if(function_exists('is_checkout')){
-      if(is_checkout() || is_cart() || is_product()){
-        return;
-      }
-   }
-
-    $do_not_merge = get_post_meta($post->ID, '_merge_scipt');
-
-    if($do_not_merge  == "1"){
-      return false;
-    }
-
-    global $wp_scripts;
-
-    $wp_scripts->all_deps($wp_scripts->queue);
-
-
-    $merged_file_location = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'merged-script.js';
-
-    $merged_script = array();
-
-
-    // $exclude = array('jquery', 'jquery-core');
-
-    $exclude = array();
-
-    // if(!file_exists($merged_file_location)):
-
-      foreach( $wp_scripts->to_do as $handle) {
-
-      if(!in_array($handle, $exclude)){
-
-        $src = strtok($wp_scripts->registered[$handle]->src, '?');
-
-        if (strpos($src, 'http') !== false) {
-          $site_url = site_url();
-
-          if (strpos($src, $site_url) !== false)
-            $js_file_path = str_replace($site_url, '', $src);
-          else
-            $js_file_path = $src;
-          $js_file_path = ltrim($js_file_path, '/');
-        } else {
-          $js_file_path = ltrim($src, '/');
-        }
-
-        if (file_exists($js_file_path)) {
-          $localize = '';
-          if (@key_exists('data', $wp_scripts->registered[$handle]->extra)) {
-            $localize = $wp_scripts->registered[$handle]->extra['data'] . ';';
-          }
-          $merged_script[] = $localize;
-          $merged_script[] = file_get_contents($js_file_path);
-        }
-       }
-     }
-
-     $merged_script = implode(PHP_EOL,$merged_script);
-
-      file_put_contents ($merged_file_location , $merged_script);
-
-    // endif;
-
-    wp_enqueue_script('merged-script', get_stylesheet_directory_uri() . '/merged-script.js', array(), '',  true);
-
-    foreach( $wp_scripts->to_do as $handle ) {
-      if(!in_array($handle, $exclude)){
-        wp_deregister_script($handle);
-      }
-    }
-    global $wp_scripts;
   }
 
 

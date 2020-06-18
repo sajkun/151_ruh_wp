@@ -175,6 +175,24 @@ function get_sum_from_price(sum){
 
   return 0;
 }
+
+
+
+function clog(content, label){
+  if('undefined' === typeof(theme_debug)){
+    return;
+  }
+
+  if('undefined' !== typeof(label)){
+    console.group(label);
+  }
+
+  console.log(content);
+
+  if('undefined' !== typeof(label)){
+    console.groupEnd();
+  }
+}
 jQuery('.search-open').click(function(){
   jQuery('.search__wrapper').toggleClass('shown');
 });
@@ -1230,6 +1248,7 @@ var parse_leads = {
       data.message_count = this.leads[id].message_count;
       data.for_csv      = for_csv;
       data.manager_noted = manager_noted;
+      data.post_modified = this.leads[id].post_modified;
 
       if('undefined' !== typeof(this.leads[id].order)){
         data.order = this.leads[id].order;
@@ -3238,6 +3257,10 @@ if('undefined' !== typeof(is_lead_list)){
         }
       },
 
+      /**
+      * gets array of leads that matches current filter set
+      *
+      */
       leads_filtered: function(){
         var leads_filtered = {};
         var filters = {};
@@ -3299,9 +3322,6 @@ if('undefined' !== typeof(is_lead_list)){
             }
           }
         }
-
-        // console.log('leads_filtered');
-        // console.log(leads_filtered);
 
         return leads_filtered;
       },
@@ -3501,6 +3521,16 @@ if('undefined' !== typeof(is_lead_list)){
         return (lead_a.post_id > lead_b.post_id)? 1 : -1;
       },
 
+      sort_by_date: function(lead_a,lead_b){
+        var date_lead_a = new Date(lead_a.post_modified);
+        var date_lead_b = new Date(lead_b.post_modified);
+
+        if(date_lead_a === date_lead_b){
+          return 0;
+        }
+        return (date_lead_a > date_lead_b)? -1 : 1;
+      },
+
       update_leads: function(leads){
         //console.log('Update leads');
         var temp_leads = {};
@@ -3514,7 +3544,7 @@ if('undefined' !== typeof(is_lead_list)){
         }
 
         for(id in temp_leads){
-          temp_leads[id].sort(this.sort_by_id);
+          temp_leads[id].sort(this.sort_by_date);
         }
 
         this.leads = temp_leads;
@@ -3606,7 +3636,6 @@ if('undefined' !== typeof(is_lead_list)){
           document.body.appendChild(link); // Required for FF
 
           link.click();
-
       }
     },
   })

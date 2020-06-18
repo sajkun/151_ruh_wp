@@ -85,7 +85,10 @@ if(!class_exists('theme_ajax_action')){
         $updated2 = add_post_meta( $post_id,  '_start_date', $date_start_formatted, true );
       }
 
-       wp_send_json($updated);
+      $update = array( 'ID' => $post_id  );
+      wp_update_post( $update );
+
+      wp_send_json($updated);
     }
 
 
@@ -101,6 +104,9 @@ if(!class_exists('theme_ajax_action')){
         $updated = add_post_meta( $post_id,  '_phone_count', $_POST['count'], true );
       }
 
+      $update = array( 'ID' => $post_id  );
+      wp_update_post( $update );
+
       wp_send_json($updated);
     }
 
@@ -115,6 +121,9 @@ if(!class_exists('theme_ajax_action')){
       if(!$updated ){
         $updated = add_post_meta( $post_id,  '_message_count', $_POST['count'], true );
       }
+
+      $update = array( 'ID' => $post_id  );
+      wp_update_post( $update );
 
       wp_send_json($updated);
     }
@@ -402,6 +411,9 @@ if(!class_exists('theme_ajax_action')){
       $meta['post_id'] = $post_id;
       $meta['POST'] = $_POST;
 
+      $update = array( 'ID' => $post_id  );
+      wp_update_post( $update );
+
       wp_send_json($meta);
     }
 
@@ -428,6 +440,9 @@ if(!class_exists('theme_ajax_action')){
       }else{
         $removed = delete_post_meta( $post_id, '_lead_files');
       }
+
+      $update = array( 'ID' => $post_id  );
+      wp_update_post( $update );
 
       wp_send_json( $removed );
     }
@@ -477,6 +492,10 @@ if(!class_exists('theme_ajax_action')){
 
         $upload['meta']      = $lead_files;
         $upload['file_data'] = $file_data;
+
+        $update = array( 'ID' => $post_id  );
+        wp_update_post( $update );
+
         wp_send_json($upload);
       }
     }
