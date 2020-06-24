@@ -174,7 +174,6 @@ class theme_content_output{
     global $theme_init;
 
     // Get date range default
-      wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
 
       $today = new DateTime();
 
@@ -204,16 +203,10 @@ class theme_content_output{
 
       $leads = get_leads_meta($leads);
 
-      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
-
-      wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
 
     // prepare data for filters
 
       $filter_data = get_filters_by_leads( $leads );
-
-      wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
-
 
     // get available stages
 
@@ -248,7 +241,35 @@ class theme_content_output{
         ),
       );
 
+
     print_theme_template_part('leads-list', 'globals', $args);
+
+    wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
+
+
+    // data for single lead
+    $stages = get_option('leads_stages');
+    $stages_names = array();
+
+    foreach ($stages as $key => $st) {
+       $stages_names[] = $st['name'];
+    }
+
+    $clinics    = get_option('clinics_list');
+    $treatments = get_option('treatments_list');
+    $campaigns  = get_option('campaigns_list');
+    $clinics    = $clinics ? $clinics: array();
+    $treatments = $treatments ? $treatments: array();
+    $campaigns  = $campaigns ? $campaigns: array();
+
+    wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+    wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);
+    wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+    wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
+    wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
   }
 
 
@@ -349,7 +370,6 @@ class theme_content_output{
 
     $user_roles = $user_meta->roles;
 
-    $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
 
     $treatment_coordinator = get_post_meta($lead->ID, '_treatment_coordinator', true);
 
@@ -380,8 +400,8 @@ class theme_content_output{
     }
 
 
-    $stages = get_option('leads_stages');
 
+    $stages = get_option('leads_stages');
 
 
     $args = array(
@@ -406,14 +426,20 @@ class theme_content_output{
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
     $campaigns = $campaigns ? $campaigns: array();
+
     $stages_names = array();
 
     foreach ($stages as $key => $st) {
        $stages_names[] = $st['name'];
     }
 
-    wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
 
+    $message_count = get_post_meta($lead->ID, '_message_count', true);
+    $message_count = ($message_count) ? $message_count : 0;
+
+
+    $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
+    wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
     wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
@@ -421,11 +447,18 @@ class theme_content_output{
     $phone_count = get_post_meta($lead->ID, '_phone_count', true);
     $phone_count = ($phone_count) ? $phone_count : 0;
 
+
+    $meta = get_post_meta($lead->ID, '_patient_data', true);
+
+    $date_start = $lead->post_date;
+
+    if(isset($meta['date_time'])){
+      $parts = explode('at',  $meta['date_time'] );
+      $date_planned = new DateTime(  implode(' ', $parts));
+      $date_start   =  $date_planned->format('Y-m-d H:i:s');
+    }
+
     wp_localize_script($theme_init->main_script_slug, 'phone_count', (string)$phone_count);
-
-    $message_count = get_post_meta($lead->ID, '_message_count', true);
-    $message_count = ($message_count) ? $message_count : 0;
-
     wp_localize_script($theme_init->main_script_slug, 'message_count',  (string)$message_count);
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
     wp_localize_script($theme_init->main_script_slug, 'assigned_dentists', $assigned_dentists);
@@ -438,20 +471,7 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
     wp_localize_script($theme_init->main_script_slug, 'lead_files', $lead_files);
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
-
-    $meta = get_post_meta($lead->ID, '_patient_data', true);
-
-    $date_start = $lead->post_date;
-
-    if(isset($meta['date_time'])){
-      $parts = explode('at',  $meta['date_time'] );
-      $date_planned = new DateTime(  implode(' ', $parts));
-      $date_start   =  $date_planned->format('Y-m-d H:i:s');
-    }
-
-
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
-
 
     print_theme_template_part('lead-single', 'globals', $args);
   }
@@ -587,5 +607,15 @@ class theme_content_output{
 
     $args = array();
     print_theme_template_part('login-form', 'globals', $args);
+  }
+
+
+  public static function print_debug_info(){
+
+    if(!THEME_DEBUG){
+      return false;
+    }
+
+    // print_theme_template_part('debug-window','globals', array());
   }
 }

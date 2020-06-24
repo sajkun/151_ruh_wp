@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
 }
 ?>
-<div id="leads-list" ref="parent">
+<div id="leads-list" ref="parent" v-if="show">
 
   <input type="hidden" id="user_name" name="user_name" value="<?php echo $user_name?>">
   <input type="hidden" id="user_id" name="user_id" value="<?php echo $user_id?>">
@@ -72,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           <div class="leads-column">
             <div class="leads-column__head">
               <?php
-                $style='style="background-color:'.$st['bg_color'].';color: '.$st['text_color'].';"'
+                $style='style="background-color:'.$st['bg_color'].'; color: '.$st['text_color'].';"'
               ?>
               <span class="leads-column__tag" <?php echo $style ?>><?php echo $st['name'] ?></span>
 
@@ -89,7 +89,12 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <ul class="leads-list" name="lead-list" data-list="<?php echo $st['name'] ?>"
                  >
                   <li v-for="data in leads_filtered['<?php echo $st['name'] ?>']" v-bind:key="data.post_id">
-                    <a :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>" >
+                    <a :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>"
+
+                      <?php if (RELOAD_LEAD): ?>
+                      v-on:click.prevent="show_single_lead(data.post_id, data)"
+                      <?php endif ?>
+                      >
                        <div class="clearfix">
                         <div class="row justify-content-start">
                           <div class="col-7">
@@ -134,3 +139,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
   </div><!-- container-fluid -->
 </div>
+
+<?php if (RELOAD_LEAD): ?>
+<div>
+  <?php print_theme_template_part('lead-single-in-list', 'globals', array()); ?>
+</div>
+<?php endif ?>

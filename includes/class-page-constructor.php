@@ -66,6 +66,10 @@ class theme_construct_page{
     }else{
       add_action('do_theme_content', array('theme_content_output', 'print_login_form'), 1);
     }
+
+    if(THEME_DEBUG){
+      add_action('do_theme_after_footer', array('theme_content_output','print_debug_info'));
+    }
   }
 
 

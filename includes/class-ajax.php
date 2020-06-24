@@ -176,6 +176,7 @@ if(!class_exists('theme_ajax_action')){
 
       $response = array(
         'posted'  => $_POST,
+        'url'     => get_permalink($post_id ),
         'created' => array(
           'updated' => $updated,
           'post_id' => $post_id,
@@ -324,7 +325,9 @@ if(!class_exists('theme_ajax_action')){
         }
       }
 
+      $reload = false;
       if($post_id < 0){
+        $reload = true;
         $_name = array($meta['patient_data']['name'], $meta['patient_data']['treatment'],$meta['patient_data']['clinic']);
 
         $name = array();
@@ -410,6 +413,8 @@ if(!class_exists('theme_ajax_action')){
 
       $meta['post_id'] = $post_id;
       $meta['POST'] = $_POST;
+      $meta['reload'] = $reload;
+      $meta['url']  = get_permalink($post_id);
 
       $update = array( 'ID' => $post_id  );
       wp_update_post( $update );

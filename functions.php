@@ -48,7 +48,6 @@ class velesh_init_theme{
     $this->define_theme_globals();
     $this->define_theme_supports();
     $this->define_image_sizes();
-    $this->replace_3rd_party_pugins_hooks();
     $this->remove_actions();
     $this->init_hooks();
     $this->include_global();
@@ -83,7 +82,8 @@ class velesh_init_theme{
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
-    define('THEME_DEBUG', false);
+    define('THEME_DEBUG', true);
+    define('RELOAD_LEAD', false);
   }
 
 
@@ -265,8 +265,6 @@ class velesh_init_theme{
 
     add_filter('upload_mimes', array($this, 'cc_mime_types'), 10);
 
-    add_action( 'widgets_init', array($this, 'register_sidebars' ));
-
 
     add_action('theme_start_page_header',array($this,'print_inline_data_body'));
 
@@ -279,6 +277,12 @@ class velesh_init_theme{
     add_action('admin_menu', array($this,'add_option_pages'));
 
     add_action('init', array($this, 'manager_cant_see_dashboard'));
+
+     if(THEME_DEBUG){
+        add_action('wp_footer', 'exec_clog', PHP_INT_MAX);
+        add_action('admin_footer', 'exec_clog', PHP_INT_MAX);
+     }
+
   }
 
 
@@ -328,33 +332,6 @@ class velesh_init_theme{
   public function print_inline_data_body(){
     print_inline_style(THEME_URL.'/assets/fonts/fonts.css', 'theme_fonts_151_2');
     add_svg_sprite($this->svg_sprite_slug, THEME_URL.'/assets/svg_sprite/symbol_sprite.html');
-  }
-
-
-  /**
-   * prepares and prints variable data for javascripts
-   *
-   * @prints-for-js $wc_urls - {WP_URLS}
-   * @prints-for-js $user_data - {USER_DATA}
-   */
-  public function register_sidebars(){
-
-    // register_sidebar( array(
-    //   'name'          => __('Home page after content', 'theme-translations'),
-    //   'id'            => 'home_page_after_content',
-    //   'before_widget' => '',
-    //   'after_widget'  => '',
-    //   'before_title'  => '<h3 class="hidden">',
-    //   'after_title'   => '</h3>',
-    // ));
-  }
-
-
-  /**
-   * replaces 3rd party pugins to theme designed positions
-   *
-   */
-  public function replace_3rd_party_pugins_hooks(){
   }
 
 
