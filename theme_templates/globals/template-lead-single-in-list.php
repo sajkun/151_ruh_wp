@@ -22,27 +22,24 @@ if ( ! defined( 'ABSPATH' ) ) {
             <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
             <span class="label">Set Reminder</span>
 
-            <datepicker v-on:input_value_changed="update_lead($event, 'reminder')" v-bind:class="'value'" v-bind:placeholder="'MM dd YYYY hh:mm'" _name="reminder" _value="<?php echo $reminder; ?>"></datepicker>
+            <datepicker v-on:input_value_changed="update_lead($event, 'reminder')" v-bind:class="'value'" v-bind:placeholder="'MM dd YYYY hh:mm'" _name="reminder"></datepicker>
 
-            <span href="javascript:void(0)" v-on:click="clear_reminder()" class="clear-reminder <?php echo ( empty($reminder) ) ? 'hidden' : '';?>">clear</span>
+            <span href="javascript:void(0)" v-on:click="clear_reminder()" class="clear-reminder">clear</span>
           </a>
 
-          <span class="lead-tag <?php echo $lead_type['class'] ?>"><?php echo $lead_type['text'] ?></span>
+          <span class="lead-tag">{{lead_type}}</span>
         </div><!-- row no-gutters justify-content-center justify-content-start-sm -->
       </div><!-- col-12 col-md-8 -->
 
       <div class="col-12 col-md-4 text-center text-right-md">
 
-
-        <?php if ($can_delete && $lead_id >=0 ): ?>
-          <a href="<?php echo $return_url; ?>" v-on:click.prevent v-on:click="do_delete_or_return('<?php echo $return_url; ?>')" class="button-cancel"><?php echo $text_save_del; ?></a>
-        <?php endif ?>
+        <a href="" v-on:click.prevent v-on:click="do_delete_or_return('')" class="button-cancel"></a>
 
         <?php wp_nonce_field('update_meta_nonce_id', 'lead_data', false); ?>
 
         <a href="javascript:void(0)" class="button-create" v-on:click="save_lead_meta()">
             <svg class="icon svg-icon-ok"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-ok"></use> </svg>
-          <span><?php echo $text_save_btn; ?></span>
+          <span>{{text_save_btn}}</span>
         </a>
       </div><!-- col-12 col-md-4 text-center text-right-md -->
     </div><!-- row -->
@@ -79,7 +76,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                   <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="name" v-model="patient_data.name" v-bind:class="'leads-block__input lg'"></input-field>
 
-                  <span class="leads-block__comment"> <?php echo isset($patient_data['date_time'])? 'Added '.$patient_data['date_time']: ''?></span>
+                  <span class="leads-block__comment"></span>
                 </div>
                 <table class="leads-block__data">
                   <tr>
@@ -273,9 +270,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                       v-model = "treatment_value.payment_method"
                      v-on:update_list="update_lead($event, 'treatment_value')"
                      ref="payment_method_select"
-                     _selected="<?php
-                        echo isset($treatment_value['payment_method']) ? $treatment_value['payment_method'] : '';
-                        ?>"
+                     _selected=""
                       ></select-imitation>
                   </div>
                   </td>
@@ -308,10 +303,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </tr>
 
                 <tr>
-                  <td >
+                  <td <?php echo 'style="vertical-align: top;"'; ?>>
                     <svg class="icon svg-icon-tooth green" > <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
                   </td>
-                  <td><p class="leads-block__label">Treatment</p></td>
+                  <td <?php echo 'style="vertical-align: top;"'; ?>><p class="leads-block__label">Treatment</p></td>
                   <td>
                     <div class="dentist-name" v-for="treatment in c_treatments">{{treatment}}</div>
                   </td>
@@ -353,7 +348,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </td>
                   <td><p class="leads-block__label">Consultation Date</p></td>
                   <td>
-                    <datepicker v-on:input_value_changed="update_lead($event, 'treatment_coordinator')" v-bind:class="'leads-block__input sm'" _name="consultation_date" _value="<?php echo isset($treatment_coordinator['consultation_date'])? $treatment_coordinator['consultation_date']: ''; ?>"></datepicker>
+                    <datepicker
+                    v-on:input_value_changed="update_lead($event, 'treatment_coordinator')"
+                    v-bind:class="'leads-block__input sm'"
+                    _name="consultation_date"
+                    _value=""
+                    v-model="treatment_coordinator.consultation_date"
+                    ></datepicker>
                   </td>
                 </tr>
                 <tr>
@@ -362,7 +363,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </td>
                   <td><p class="leads-block__label">Reason for Appt.</p></td>
                   <td>
-                    <input-field v-on:input_value_changed="update_lead($event, 'treatment_coordinator')" _name="reason" _value="<?php echo isset($treatment_coordinator['reason'])? $treatment_coordinator['reason']: ''; ?>" v-bind:class="'sm'"></input-field>
+                    <input-field
+                    v-on:input_value_changed="update_lead($event, 'treatment_coordinator')"
+                     _name="reason"
+                     _value=""
+                     v-bind:class="'sm'"
+                     v-model="treatment_coordinator.reason"
+                     ></input-field>
                   </td>
                 </tr>
                 <tr>
@@ -371,12 +378,17 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </td>
                   <td><p class="leads-block__label">Follow Up</p></td>
                   <td>
-                    <input-field v-on:input_value_changed="update_lead($event, 'treatment_coordinator')" _name="follow" _value="<?php echo isset($treatment_coordinator['follow'])? $treatment_coordinator['follow']: ''?>" v-bind:class="'sm'"></input-field>
+                    <input-field
+                    v-on:input_value_changed="update_lead($event, 'treatment_coordinator')"
+                    _name="follow"
+                    _value=""
+                    v-bind:class="'sm'"
+                    v-model="treatment_coordinator.follow"
+                    ></input-field>
                   </td>
                 </tr>
 
                 <tr>
-
                   <td <?php echo 'style="vertical-align: top"';  ?>>
                     <svg class="icon svg-icon-leaps" <?php echo'style="margin-top: 10px"';  ?>> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leaps"></use> </svg>
                   </td>
@@ -393,7 +405,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                    _select_name="specialist"
                    v-on:update_list="update_lead($event, 'treatment_coordinator')"
                    ref="specialist_select"
-                   _selected="<?php echo isset($treatment_value['specialist'])? $treatment_value['specialist'] : ''?>"
+                   _selected=""
                     ></select-imitation>
 
                     <br>
@@ -430,7 +442,7 @@ if ( ! defined( 'ABSPATH' ) ) {
              </div>
            </div>
 
-           <form method="POST" action="<?php echo $url; ?>" v-on:submit.prevent enctype="multipart/form-data" v-on:submit = "load_file">
+           <form method="POST" action="" v-on:submit.prevent enctype="multipart/form-data" v-on:submit = "load_file">
              <input type="file" name="file" class="hidden" id="new_file" ref="file_input" v-on:change="file_changed">
              <div class="leads-block__form">
                <label class="add-documents" for="new_file"><span> Add New </span><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></label>
@@ -501,7 +513,7 @@ if ( ! defined( 'ABSPATH' ) ) {
            </div>
            <div class="leads-block__row">
 
-            <select-imitation _select_name="lead_specialissts" v-on:update_list="update_specialists($event)" v-bind:class="'fullwidth'" ref="lead_specialissts_select"></select-imitation>
+            <select-imitation _select_name="lead_specialists" v-on:update_list="update_specialists($event)" v-bind:class="'fullwidth'" ref="lead_specialists_select"></select-imitation>
 
             <span class="button-assign" v-if="show_add_specialist_button" v-on:click="assign_specialist()">assign specialist</span>
            </div><!-- leads-block__row -->
@@ -515,7 +527,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <i class="state-none icon-activity"></i>
                 <span class="leads-block__activity-text">
                   <span class="action">Lead Created</span>
-                  <span class="date"><?php echo $time_lead_created ?></span>
+                  <span class="date"></span>
                 </span>
 
                 <span class="length">0d 0h 0m</span>
@@ -554,7 +566,7 @@ if ( ! defined( 'ABSPATH' ) ) {
        v-bind:class="'fullwidth'"
        _name="lead_stage"
        _select_name="lead_stage"
-       _selected ="<?php echo $lead_stage; ?>"
+       _selected =""
        v-on:update_list="update_lead_stage($event, 'treatment_value')"
        ref="lead_stage_select2"
       ></select-imitation>

@@ -580,8 +580,6 @@ if(!function_exists('get_leads_meta')){
       );
 
 
-
-
       if(!$meta['patient_data']){
         $meta['patient_data'] = array();
       }
@@ -597,7 +595,7 @@ if(!function_exists('get_leads_meta')){
         'campaigns'    => (isset($meta['patient_data']['campaign']))? $meta['patient_data']['campaign'] : '',
         'sources'    => (isset($meta['patient_data']['source']))? $meta['patient_data']['source'] : '',
         'team'       => array(),
-
+        'dentists'   => array(),
       );
 
       //get array of specialists assigned
@@ -621,7 +619,7 @@ if(!function_exists('get_leads_meta')){
           $image =  wp_get_attachment_url( $user_photo_id );
           $image = ($image) ? $image : DUMMY_ADMIN;
 
-          array_push($filter_data['team'] , 'Stuff');
+          array_push($filter_data['team'] , $name );
 
           array_push($specialists , array(
             'image'    => $image,
@@ -635,8 +633,9 @@ if(!function_exists('get_leads_meta')){
       if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
 
         foreach ($coordinator_data['specialist'] as $name) {
-          if(!$name) continue;
-          array_push($filter_data['team'] , 'Dentists');
+          $name = trim($name);
+          if(!$name && !empty($name) && strlen($name) < 2) continue;
+          array_push($filter_data['dentists'] , trim($name));
         }
       }
 
@@ -754,7 +753,8 @@ if(!function_exists('get_filters_by_leads')){
       'treatments' => array('All Treatments'),
       'campaigns'  => array('All Campaigns'),
       'sources'    => array('All Sources'),
-      'team'       => array('All Team', 'Dentists', 'Stuff'),
+      'team'       => array('All Team'),
+      'dentists'   => array('All Dentists'),
     );
 
     if($add_stages){
@@ -794,17 +794,17 @@ if(!function_exists('get_filters_by_leads')){
         array_push($data['campaigns'], $campaign);
       }
 
-      // foreach ($team as $member_id => $member) {
-      //   if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
-      //     array_push($data['team'], $member['name']);
+      foreach ($team as $member_id => $member) {
+        if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
+          array_push($data['team'], $member['name']);
 
-      //     dlog($member['name']);
-      //   }
+          dlog($member['name']);
+        }
 
-      // }
+      }
 
 
-        if($add_stages && array_key_exists($lead->lead_stage, $stages_formatted )){
+      if($add_stages && array_key_exists($lead->lead_stage, $stages_formatted )){
           $stages_formatted[$lead->lead_stage] = true;
       }
 
@@ -812,20 +812,20 @@ if(!function_exists('get_filters_by_leads')){
 
       // add lead stage filter for scv data
 
-      // $coordinator_data = $meta['treatment_coordinator'];
+      $coordinator_data = $meta['treatment_coordinator'];
 
 
-      // if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
+      if($coordinator_data && isset($coordinator_data ['specialist']) && is_array($coordinator_data ['specialist'])){
 
-      //   foreach ($coordinator_data['specialist'] as $name) {
-      //     if(!$name || strlen($name) < 3) continue;
-      //     array_push($data['team'] , trim($name));
-      //   }
-      // }
+        foreach ($coordinator_data['specialist'] as $name) {
+          if(!$name || strlen($name) < 3) continue;
+          array_push($data['dentists'] , trim($name));
+        }
+      }
 
 
     }
-     $data['team'] = array_values( array_unique($data['team']));
+     $data['dentists'] = array_values( array_unique($data['dentists']));
 
     dlog($data);
     dlog('-------------', false, true);
