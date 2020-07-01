@@ -847,13 +847,13 @@ if(!function_exists('get_filters_by_leads')){
 }
 
 
-if(!function_exists('get_failed_stage_name')){
+if(!function_exists('get_converted_stages')){
   /**
   * Gets names of stages set for converted leads
   *
   * @return array
   */
-  function get_converted_stages(){
+  function get_converted_stages($return = 'array'){
     $stages              = get_option('leads_stages');
     $stage_for_failed    = (int)get_option('stage_for_failed');
     $stage_for_converted = (int)get_option('stage_for_converted');
@@ -866,7 +866,16 @@ if(!function_exists('get_failed_stage_name')){
       }
     }
 
-    return $converted_stages;
+    switch ($return ) {
+      case 'string':
+        return $converted_stages[0];
+        break;
+
+      default:
+        return $converted_stages;
+        break;
+    }
+
   }
 }
 

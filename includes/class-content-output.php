@@ -213,6 +213,7 @@ class theme_content_output{
 
       $stages = get_option('leads_stages');
 
+
       if(!$stages){
         echo '<div class="spacer-h-40"></div>';
         echo '<p class="text-center">No stages configured, Leads can not be ordered. Please Configure stages first</p>';
@@ -250,9 +251,12 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
     wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
 
+    wp_localize_script($theme_init->main_script_slug, 'failed_lead_name', get_converted_stages());
+
+    wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
+
 
     // data for single lead
-    $stages = get_option('leads_stages');
     $stages_names = array();
 
     foreach ($stages as $key => $st) {
