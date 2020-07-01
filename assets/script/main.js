@@ -333,7 +333,7 @@ jQuery(document.body).on('get_popup_leads_by_dates', function(e, data){
 
   data.get_previous_data = typeof(is_dashboard) !== 'undefined';
 
-  Cookie.set('list_data_settings', JSON.stringify(data));
+  Cookie.set('list_data_settings', JSON.stringify(data), 1);
 
   wait_block.show();
 
@@ -4736,1136 +4736,1136 @@ if('undefined' !== typeof(is_single_lead)){
     },
   })
 }
-if('undefined' !== typeof(is_lead_list)){
-var assigned_dentists = {};
-var assigned_treatments = {};
-var specialists_data    = {};
-var specialists         = available_staff;
-var lead_notes = {};
-var lead_files = {};
-var lead_logs  = {};
-
-
-single_lead = new Vue({
-    el: '#single-lead-in-list',
-
-    data: {
-      run_update_lead: false,
-      base_lead : {},
-      lead_type : '',
-      text_save_del : 'delete',
-      text_save_btn : 'save',
-      patient_data: {
-        name: '',
-        phone: '',
-        clinic: '',
-        treatment: '',
-        source: '',
-      },
-
-      treatment_value: {
-        billed: 0,
-        value     : 0,
-        terms     : '',
-        mounthly  : '',
-        treatment : [] ,
-        date_end : '',
-      },
-
-      treatment_coordinator: {
-        specialist: [],
-        reason: '',
-        consultation_date: '',
-        follow: '',
-      },
-
-      notes       : [],
-      files       : [],
-      logs        : [],
-      lead_data   : {},
-      note_text   : '',
-      reminder    : '',
-      new_file    : '',
-      phones      : 0,
-      messages    : 0,
-      requre_save : false,
-      save_text           : 'Save Changes',
-      specialists_data    : {},
-      selected_specialist : false,
-      lead_stage: '',
-      show_confirmation_popup: false
-    },
-
-    computed:{
-
-      messages_left : function(){
-        //clog('messages_left')
-        return Math.max(0, 3 - this.messages);
-      },
-
-      phones_left : function(){
-        //clog('phones_left')
-        return Math.max(0, 3 - parseInt(this.phones));
-      },
-
-      phones_count: function(){
-        //clog('phones_count')
-        return parseInt(this.phones);
-      },
-
-      messages_count: function(){
-        //clog('messages_count')
-        return parseInt(this.messages);
-      },
-
-      file_is_prepared: function(){
-        //clog('file_is_prepared')
-        return this.new_file.length > 0
-      },
-
-      files_updated: function(){
-        //clog('files_updated')
-        return this.files;
-      },
-
-      is_requre_save: function(){
-        //clog('is_requre_save')
-        return this.requre_save;
-      },
-
-      get_logs: function(){
-        //clog('get_logs')
-        return this.logs;
-      },
-
-      show_add_specialist_button: function(){
-        //clog('show_add_specialist_button')
-        return !!this.selected_specialist;
-      },
-
-      visible_specialists: function(){
-        //clog('visible_specialists')
-        var shown = [];
-
-        for(id in this.specialists_data){
-          if('yes' === this.specialists_data[id].show){
-            shown.push(this.specialists_data[id]);
-          }
-        }
-
-        return shown;
-      },
-
-      get_treatment_value: function(){
-        //clog('get_treatment_value')
-        return this.treatment_value.value;
-      },
-
-      get_billed_value: function(){
-        //clog('get_billed_value')
-        return this.treatment_value.billed;
-      },
-
-      get_terms_count: function(){
-        //clog('get_terms_count')
-        $return = 1;
-        switch(this.treatment_value.terms){
-          case '12 Months':
-             $return = 12;
-            break;
-          case '18 Months':
-             $return = 18;
-            break;
-          case '24 Months':
-             $return = 24;
-            break;
-          case '36 Months':
-             $return = 36;
-            break;
-          case '48 Months':
-             $return = 48;
-            break;
-          default:
-             $return = 1;
-            break;
-        }
-
-        return  $return;
-      },
-
-      monthly_payment: function(){
-        //clog('monthly_payment')
-        var billed = get_sum_from_price(this.get_billed_value);
-        var summ = (get_sum_from_price(this.get_treatment_value) - get_sum_from_price(this.get_billed_value))/this.get_terms_count;
-        summ = summ.toFixed(2);
-        this.treatment_value.mounthly = summ;
-        return   '£'+ formatMoney(summ, 2, ".", ",");
-      },
-
-      c_dentists: function(){
-        //clog('c_dentists')
-        var dentists = [];
-        for (s in this.treatment_coordinator.specialist){
-           if(this.treatment_coordinator.specialist[s])
-
-            dentists.push(this.treatment_coordinator.specialist[s]);
-        }
-
-        return dentists;
-      },
-
-      c_treatments: function(){
-        //clog('c_treatments')
-        var treatments = [];
-        for (s in this.treatment_value.treatment){
-           if(this.treatment_value.treatment[s])
-
-            treatments.push(this.treatment_value.treatment[s]);
-        }
-
-        return treatments;
-      },
-    },
-
-
-    watch: {
-      base_lead: function(){
-        var vm = this;
-
-        if(!vm.run_update_lead){
-          return;
-        }
-
-        var meta = [
-          'patient_data',
-          'treatment_value',
-          'treatment_coordinator',
-        ];
-
-        start_date = vm.base_lead.meta.start_date;
-
-        for(var id in meta) {
-
-          if('undefined' !== typeof(vm.base_lead) && 'undefined' !== typeof(vm.base_lead.meta[meta[id]]) && vm.base_lead.meta[meta[id]]){
-            vm[meta[id]] = vm.base_lead.meta[meta[id]];
-          }
-        }
-
-        if('undefined' !== vm.$refs.terms_select && 'undefined' !== typeof(vm.base_lead.meta.treatment_value)){
-          vm.$refs.terms_select.selected = vm.base_lead.meta.treatment_value.terms;
-        }
-
-        //clog(vm.base_lead);
-        //clog(vm.base_lead.messages_count,  'message_count');
-
-        vm.phones   = vm.base_lead.phone_count || 0;
-        vm.messages = vm.base_lead.message_count || 0;
-        vm.notes    = vm.base_lead.meta.lead_notes || [];
-        vm.files    = vm.base_lead.meta.lead_files || [];
-      },
-
-      note_text: function(){
-        this.$refs.note_textarea.style.height = '';
-        this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
-      },
-
-      'treatment_value.terms': function(val){
-        //clog('treatment_value.terms')
-
-        var count = 0;
-
-        switch(val){
-          case '12 Months' :
-            count = 12;
-            break;
-          case '18 Months' :
-            count = 18;
-            break;
-          case '24 Months' :
-            count = 24;
-            break;
-          case '36 Months' :
-            count = 36;
-            break;
-          case '48 Months' :
-            count = 48;
-            break;
-        }
-
-        if(count > 0){
-          var date = new Date(date_start);
-          date.setMonth(date.getMonth() + count);
-
-          var month = (date.getMonth() < 9)? "0" + (date.getMonth() + 1) : (date.getMonth() + 1) ;
-
-          var _date = date.getDate() < 10? '0' + date.getDate() : date.getDate();
-
-          var hours =  date.getHours() < 10? '0' + date.getHours() : date.getHours();
-
-          var minutes =  date.getMinutes() < 10? '0' + date.getMinutes() : date.getMinutes();
-
-          var date_end = date.getFullYear() + '-' + month  + '-' + _date + ' ' + hours + ':'+ minutes + ':'+ '00';
-
-          this.treatment_value.date_end = date_end;
-        }else{
-          this.treatment_value.date_end = date_start;
-        }
-
-        posted_data = {
-          date: this.treatment_value.date_end,
-          lead_id: this.lead_data.lead_id,
-          action: 'save_lead_end_date',
-        }
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: posted_data,
-
-          complete: function(xhr, textStatus) {
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-          },
-
-          error: function(xhr, textStatus, errorThrown) {}
-        });
-      },
-
-      'patient_data.name': function(){
-        jQuery('input[name=name]').removeClass('error');
-      },
-
-      'patient_data.clinic': function(value){
-        if('undefined' !== this.$refs.clinic_select){
-          this.$refs.clinic_select.selected = value;
-        }
-      },
-
-      'patient_data.treatment': function(value){
-        if('undefined' !== this.$refs.treatments_select){
-          this.$refs.treatments_select.selected = value;
-        }
-      },
-
-      'patient_data.source': function(value){
-        if('undefined' !== this.$refs.source_select){
-          this.$refs.source_select.selected = value;
-        }
-      },
-
-      'patient_data.campaign': function(value){
-        if('undefined' !== this.$refs.campaign_select){
-          this.$refs.campaign_select.selected = value;
-        }
-      },
-
-      'patient_data.phone': function(){
-        jQuery('input[name=phone]').removeClass('error');
-      },
-
-      'patient_data.email': function(){
-        jQuery('input[name=email]').removeClass('error');
-      },
-
-      'treatment_value.payment_method': function(value){
-        //clog('treatment_value.payment_method');
-        if('undefined' !== this.$refs.payment_method_select){
-          this.$refs.payment_method_select.selected = value;
-        }
-      },
-    },
-
-    created: function(){},
-
-    mounted: function(){
-      this.notes = lead_notes;
-      this.files = lead_files;
-      this.logs  = lead_logs;
-      this.specialists_data  = specialists_data;
-      this.init_select();
-
-       var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: available_dentists,
-        };
-
-        for( id in props){
-          this.$refs['specialist_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['specialist_select']);
-
-    },
-
-    methods: {
-      price_to_value: function(ref){
-        var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
-
-        switch(ref){
-          case 'price_input_field':
-            var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
-            break;
-          case 'input_billed':
-            var summ = (!!this.treatment_value.billed)? this.treatment_value.billed : 0;
-            break;
-        }
-        summ = get_sum_from_price(summ);
-        this.$refs[ref].set_value(summ);
-      },
-
-      update_dates: function(){
-        // console.log(this);
-      },
-
-      value_to_price: function(ref){
-        switch(ref){
-          case 'price_input_field':
-            var summ = '£' + formatMoney(this.treatment_value.value,2, '.',',');
-            break;
-          case 'input_billed':
-            var summ = '£' + formatMoney(this.treatment_value.billed,2, '.',',');
-            break;
-        }
-         this.$refs[ref].set_value(summ);
-      },
-
-      init_select: function(){
-
-       var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-        };
-
-        if(jQuery(window).width()< 768){
-          props.isHiddenSelect = false;
-          props.isHiddenImitation =  true;
-        }
-
-        props.options = [
-          'Live Chat',
-          'Instagram',
-          'Slaine Instagram',
-          'Riz Instagram',
-          'Andy Instagram',
-          'Pete Instagram',
-          'Sonnie Instagram',
-          'Google PPC',
-          'Website',
-          'Phone',
-          "Walk In",
-          "Other"
-        ];
-
-        for( id in props){
-          this.$refs['source_select'].set_value(id, props[id]);
-        }
-
-        props.options = available_staff;
-
-        for( id in props){
-          this.$refs['lead_specialists_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['source_select']);
-        vue_select_components.push(this.$refs['lead_specialists_select']);
-
-
-        var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: treatments,
-        };
-
-        for( id in props){
-          this.$refs['treatments_select'].set_value(id, props[id]);
-          this.$refs['treatments_select2'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['treatments_select']);
-        vue_select_components.push(this.$refs['treatments_select2']);
-
-        this.$refs['treatments_select'].resert_width();
-
-        var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: clinics,
-        };
-
-        for( id in props){
-          this.$refs['clinic_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['clinic_select']);
-
-        var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: campaigns,
-        };
-
-        for( id in props){
-          this.$refs['campaign_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['campaign_select']);
-
-
-        var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: ['Full Payment', '12 Months','18 Months' , '24 Months', '36 Months', '48 Months'],
-        };
-
-        for( id in props){
-          this.$refs['terms_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['terms_select']);
-
-        var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: ['Cash', 'Bacs','Card' , 'Finance', 'Go Cardless'],
-        };
-
-        for( id in props){
-          this.$refs['payment_method_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['payment_method_select']);
-
-       var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: available_dentists,
-        };
-
-        for( id in props){
-          this.$refs['specialist_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['specialist_select']);
-
-       var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: stages,
-        };
-
-        for( id in props){
-          this.$refs['lead_stage_select2'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['lead_stage_select2']);
-      },
-
-      save_lead_meta: function(key_meta, key_this){
-        var vm = this;
-
-        if(typeof(key_meta) !== 'string'){
-          var meta = {
-            patient_data          : this.patient_data,
-            treatment_value       : this.treatment_value,
-            treatment_coordinator : this.treatment_coordinator,
-            lead_notes            : this.notes,
-            reminder              : this.reminder,
-          };
-        }else{
-          var  meta = {};
-          meta[key_meta] = this[key_this];
-        }
-
-        var posted_data = {
-          confirmed: 0,
-          meta: meta,
-          action                : 'update_lead_meta',
-          lead_data             : this.lead_data,
-          nonce                 : jQuery('[name=lead_data]').val(),
-        };
-
-        this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
-
-
-        if(key_meta  === 'lead_notes'){
-          this.show_confirmation_popup = false;
-        }
-
-        // console.log(this.lead_data);
-
-
-        if((!this.patient_data.name || !this.patient_data.phone || !this.patient_data.email) && this.lead_data.lead_id < 0){
-
-
-          if(!this.patient_data.phone){
-            jQuery('input[name=phone]').addClass('error');
-          }
-
-          if(!this.patient_data.name){
-            jQuery('input[name=name]').addClass('error');
-          }
-
-          if(!this.patient_data.email){
-            jQuery('input[name=email]').addClass('error');
-          }
-          return false;
-        }
-
-        var vm = this;
-
-        wait_block.show();
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: posted_data,
-
-          complete: function(xhr, textStatus) {
-             wait_block.hide();
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-            vm.$refs.lead_id_input.set_value(data.post_id);
-            jQuery('.button-create span').text('Save Changes');
-          },
-
-          error: function(xhr, textStatus, errorThrown) {
-            if(xhr.status === 418){
-              var response_text = JSON.parse(xhr.responseText);
-
-              if(response_text.data[0] === 'name was found'){
-                var confirm = window.confirm("Are you sure you want to add lead for " + vm.patient_data.name +'? Lead for patient with this name already exists');
-
-                // console.log(confirm);
-
-                if(confirm){
-                  posted_data.confirmed= 1;
-                  wait_block.show();
-                  vm.second_request(posted_data)
-                }
-
-              }else{
-                alert(response_text.data[0]);
-              }
-            }else{
-              alert(xhr.status + ' ' +errorThrown);
-            }
-          }
-        })
-      },
-
-
-      second_request: function(posted_data){
-        var vm = this;
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: posted_data,
-
-          complete: function(xhr, textStatus) {
-             wait_block.hide();
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-            vm.$refs.lead_id_input.set_value(data.post_id);
-            jQuery('.button-create span').text('Save Changes');
-          },
-
-          error: function(xhr, textStatus, errorThrown) {
-            if(xhr.status === 418){
-              var response_text = JSON.parse(xhr.responseText);
-              // console.log(xhr);
-              alert(response_text.data[0]);
-            }else{
-              alert(xhr.status + ' ' +errorThrown);
-            }
-          }
-        })
-      },
-
-      update_lead: function(data, key){
-        var vm = this;
-
-        if(!vm.run_update_lead){
-          return;
-        }
-
-        if('object' === typeof(data)){
-          if(key === 'treatment_coordinator' && data.name === 'specialist' ){
-
-            if('undefined' === typeof(this[key][data.name])){
-              this[key][data.name] = []
-            }
-
-            if(this[key][data.name].indexOf(data.val) < 0){
-              this[key][data.name].push(data.val);
-            }else{
-              var ind = this[key][data.name].indexOf(data.val);
-              this[key][data.name].splice(ind, 1);
-            }
-
-          }else if(key === 'treatment_value' && data.name === 'treatment' ){
-            if('undefined' === typeof(this[key][data.name])){
-              this[key][data.name] = []
-            }
-
-            if(this[key][data.name].indexOf(data.val) < 0){
-              this[key][data.name].push(data.val);
-            }else{
-              var ind = this[key][data.name].indexOf(data.val);
-              this[key][data.name].splice(ind, 1);
-            }
-          }else{
-            if('object' === typeof(this[key])){
-              var val = (data.name === 'value' && key == 'treatment_value')? (data.val) : data.val;
-              this[key][data.name] = val;
-            }
-            if('string' === typeof(this[key])){
-              this[key] = data.val;
-            }
-          }
-
-          this.requre_save = true;
-          var vm = this;
-
-          Vue.nextTick(function(){
-            vm.$forceUpdate();
-          });
-        }
-
-       if(this.reminder){
-        jQuery('.clear-reminder').removeClass('hidden');
-       }else{
-        jQuery('.clear-reminder').addClass('hidden');
-       }
-      },
-
-      update_lead_stage: function(data, key){
-        this.lead_data.lead_stage_prev = this.lead_data.lead_stage ;
-        this.lead_data.lead_stage = data.val;
-      },
-
-      save_new_stage: function(){
-
-        if(this.lead_data.lead_stage === this.lead_data.lead_stage_prev){
-          this.show_confirmation_popup = false;
-          return true;
-        }
-
-        var list_id_prev  = this.lead_data.lead_stage_prev;
-        var list_id       = this.lead_data.lead_stage ;
-        var user_name     = this.lead_data.user_name;
-        var user_id       = this.lead_data.user_id;
-        var post_id       = this.lead_data.lead_id;
-
-        jQuery(document.body).trigger('update_lead_log', {
-          post_id: post_id,
-          list_id_prev: list_id_prev,
-          list_id_new: list_id,
-          user_name: user_name ,
-          user_id:   user_id ,
-          event: 'stage_changed'
-        });
-
-        jQuery(document.body).trigger('save_dragged_item', {post_id: post_id, list_id: list_id})
-
-        this.show_confirmation_popup = false;
-      },
-
-      do_delete_or_return: function(url){
-        wait_block.show();
-        if(parseInt(this.lead_data.lead_id) < 0){
-          wait_block.hide();
-          location.href = url;
-        }else{
-          var data = {
-            action  : 'delete_lead',
-            lead_id : parseInt(this.lead_data.lead_id),
-            nonce   : jQuery('[name=lead_data]').val(),
-            url     : url,
-          };
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: data,
-
-          complete: function(xhr, textStatus) {
-             wait_block.hide();
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-            if('undefined' != typeof(data.redirect)){
-              location.href = data.redirect;
-            }
-          },
-
-          error: function(xhr, textStatus, errorThrown) {
-            if(xhr.status === 418){
-              var response_text = JSON.parse(xhr.responseText);
-              alert(response_text.data[0]);
-            }else{
-              alert(xhr.status + ' ' +errorThrown);
-            }
-          }
-        })
-        }
-      },
-
-      add_note: function(){
-        // console.log(is_manager);
-
-        if(!this.note_text){
-          alert('Please enter some text');
-          return false;
-        }
-
-        this.requre_save = true;
-
-        var date = new Date();
-
-        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May','Jun', 'Jul', 'Aug', "Sep", 'Oct', "Nov", "Dec"];
-
-        var minutes =  (date.getMinutes() < 10)?  '0' + date.getMinutes():  date.getMinutes();
-
-        var date_formatted = months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' at ' + date.getHours() + ':' + minutes;
-
-        var new_note = {
-          'date'       : date_formatted,
-          'user_name'  : this.lead_data.user_name,
-          'user_id'    : this.lead_data.user_id,
-          'text'       : this.note_text,
-          'is_manager' : is_manager,
-          'done'       : 'no',
-          'show'       : 1,
-        };
-
-
-        this.notes.push(new_note);
-        this.note_text = '';
-        this.$refs.note_textarea.style.height = '';
-
-        this.save_lead_meta('lead_notes', 'notes');
-      },
-
-      delete_note: function(key){
-        this.notes[key].show = 0;
-        this.save_lead_meta('lead_notes', 'notes');
-      },
-
-      mark_note_done: function(key, val){
-        this.notes[key].done = val;
-        this.save_lead_meta('lead_notes', 'notes');
-      },
-
-      update_specialists: function(event){
-        if('undefined' !== typeof(event.val) ){
-
-          if(this.lead_data.lead_id < 0){
-            alert('Create lead before assigning it to a specialist, please');
-            return false;
-          };
-
-          if(this.specialists_data[event.val].show === 'yes')
-            {
-               return false;
-            };
-
-          this.specialists_data[event.val].show = 'yes';
-          this.save_sepcialists_meta();
-
-          jQuery(document.body).trigger('update_lead_log', {
-            post_id     : parseInt(this.lead_data.lead_id),
-            nonce       : jQuery('[name=lead_data]').val(),
-            user_name   : this.lead_data.user_name,
-            user_id     : this.lead_data.user_id,
-            event       : 'specialist_updated',
-            text: 'Assined to ' +  event.val + ' by ' + this.lead_data.user_name,
-          })
-        }
-      },
-
-      assign_specialist: function(){
-        // this.selected_specialist = false;
-        // this.save_sepcialists_meta();
-      },
-
-      remove_specialist: function(name){
-        if(window.confirm("Confirm unassigning " + name + " from this lead")){
-          this.specialists_data[name].show = 'no';
-          this.save_sepcialists_meta();
-
-          jQuery(document.body).trigger('update_lead_log', {
-            post_id     : parseInt(this.lead_data.lead_id),
-            nonce       : jQuery('[name=lead_data]').val(),
-            user_name   : this.lead_data.user_name,
-            user_id     : this.lead_data.user_id,
-            event       : 'specialist_updated',
-            text: 'Unassined from ' +  name + ' by ' + this.lead_data.user_name,
-          })
-        }
-      },
-
-      save_sepcialists_meta: function(){
-        var meta = {};
-        for(id in specialists_data){
-          meta[specialists_data[id].user_id] = specialists_data[id].show;
-        }
-
-        var data = {
-          meta: {
-            lead_specialists: meta,
-          },
-          action                : 'update_lead_meta',
-          lead_data             : this.lead_data,
-          nonce                 : jQuery('[name=lead_data]').val(),
-        };
-
-        var vm = this;
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: data,
-
-          complete: function(xhr, textStatus) {
-             wait_block.hide();
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-            vm.$refs.lead_id_input.set_value(data.post_id);
-          },
-
-          error: function(xhr, textStatus, errorThrown) {
-            if(xhr.status === 418){
-              var response_text = JSON.parse(xhr.responseText);
-              alert(response_text.data[0]);
-            }else{
-              alert(xhr.status + ' ' +errorThrown);
-            }
-          }
-        })
-      },
-
-
-      load_file: function(){
-        // console.log('load_file');
-
-        wait_block.show();
-
-        var file_pierces = this.$refs.file_input.value.split('\\');
-        var file_name = file_pierces[file_pierces.length-1];
-        var file = jQuery(this.$refs.file_input).prop('files')[0];
-        var fd   = new FormData();
-
-        var vm = this;
-
-        fd.append('file',file);
-        fd.append('lead_id',this.lead_data.lead_id);
-        fd.append('user_name',this.lead_data.user_name);
-        fd.append('action', 'upload_new_document');
-        fd.append('file_nonce',jQuery('[name=file_nonce]').val());
-        fd.append('_wp_http_referer',jQuery('[name=_wp_http_referer]').val());
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          processData: false,
-          contentType: false,
-          data: fd,
-
-          complete: function(xhr, textStatus) {
-            single_lead.new_file = '';
-            wait_block.hide();
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-            vm.files.push(data.file_data);
-          },
-
-          error: function(xhr, textStatus, errorThrown) {
-            if(xhr.status === 418){
-              var response_text = JSON.parse(xhr.responseText);
-              alert(response_text.data[0]);
-            }else{
-              alert(xhr.status + ' ' +errorThrown);
-            }
-           }
-        })
-      },
-
-
-      remove_file: function(file_id){
-        var vm = this;
-
-        if(window.confirm("Confirm deleting file " + this.files[file_id].name)){
-
-          var file_data = vm.files[file_id];
-
-          vm.files.splice(file_id, 1);
-
-          var data = {
-            file_data: file_data,
-            lead_id: vm.lead_data.lead_id,
-            user_name: vm.lead_data.user_name,
-            action: 'delete_file_from_lead',
-          };
-
-          jQuery.ajax({
-            url: WP_URLS.wp_ajax_url,
-            type: 'POST',
-            data: data,
-
-            complete: function(xhr, textStatus) {
-
-            },
-
-            success: function(data, textStatus, xhr) {
-              // console.log(data);
-            },
-
-            error: function(xhr, textStatus, errorThrown) {
-              if(xhr.status === 418){
-                var response_text = JSON.parse(xhr.responseText);
-                alert(response_text.data[0]);
-              }else{
-                alert(xhr.status + ' ' +errorThrown);
-              }
-            }
-          })
-        }
-      },
-
-      file_changed: function(){
-        var file_pierces = this.$refs.file_input.value.split('\\');
-        var file_name = file_pierces[file_pierces.length-1];
-        this.new_file = file_name;
-      },
-
-      change_phone: function(action){
-        var phone = this.phones;
-
-        if(action === 'add'){
-          phone++;
-        }
-
-        if(action === 'remove'){
-          phone--;
-        }
-
-        this.phones = Math.min(3, phone);
-
-        var data = {
-          lead_id: this.lead_data.lead_id,
-          count: this.phones,
-          action: 'save_phones_count',
-        }
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: data,
-
-          complete: function(xhr, textStatus) {
-
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-           },
-
-          error: function(xhr, textStatus, errorThrown) {
-
-          }
-        })
-
-        // console.log('change_phone');
-      },
-
-      clear_reminder: function(){
-        this.reminder = '';
-        jQuery('[name=reminder]').val('');
-        jQuery('.clear-reminder').addClass('hidden');
-      },
-
-      change_message: function(action){
-        var messages = this.messages;
-        if(action === 'add'){
-          messages++;
-        }
-
-        if(action === 'remove'){
-          messages--;
-        }
-
-        this.messages = Math.min(3, messages);
-
-        // console.log('change_message');
-
-        var data = {
-          lead_id: this.lead_data.lead_id,
-          count:   this.messages,
-          action:  'save_messages_count',
-        }
-
-        jQuery.ajax({
-          url: WP_URLS.wp_ajax_url,
-          type: 'POST',
-          data: data,
-
-          complete: function(xhr, textStatus) {
-
-          },
-
-          success: function(data, textStatus, xhr) {
-            // console.log(data);
-          },
-
-          error: function(xhr, textStatus, errorThrown) {
-
-          }
-        })
-      },
-
-
-      /**
-      * show single lead on click on a lead item on a list
-      */
-      show_single_lead: function(id){
-        console.log('cliked');
-        //clog(id, 0 , 1);
-      },
-    },
-
-});
-
-}
+// if('undefined' !== typeof(is_lead_list)){
+// var assigned_dentists = {};
+// var assigned_treatments = {};
+// var specialists_data    = {};
+// var specialists         = available_staff;
+// var lead_notes = {};
+// var lead_files = {};
+// var lead_logs  = {};
+
+
+// single_lead = new Vue({
+//     el: '#single-lead-in-list',
+
+//     data: {
+//       run_update_lead: false,
+//       base_lead : {},
+//       lead_type : '',
+//       text_save_del : 'delete',
+//       text_save_btn : 'save',
+//       patient_data: {
+//         name: '',
+//         phone: '',
+//         clinic: '',
+//         treatment: '',
+//         source: '',
+//       },
+
+//       treatment_value: {
+//         billed: 0,
+//         value     : 0,
+//         terms     : '',
+//         mounthly  : '',
+//         treatment : [] ,
+//         date_end : '',
+//       },
+
+//       treatment_coordinator: {
+//         specialist: [],
+//         reason: '',
+//         consultation_date: '',
+//         follow: '',
+//       },
+
+//       notes       : [],
+//       files       : [],
+//       logs        : [],
+//       lead_data   : {},
+//       note_text   : '',
+//       reminder    : '',
+//       new_file    : '',
+//       phones      : 0,
+//       messages    : 0,
+//       requre_save : false,
+//       save_text           : 'Save Changes',
+//       specialists_data    : {},
+//       selected_specialist : false,
+//       lead_stage: '',
+//       show_confirmation_popup: false
+//     },
+
+//     computed:{
+
+//       messages_left : function(){
+//         //clog('messages_left')
+//         return Math.max(0, 3 - this.messages);
+//       },
+
+//       phones_left : function(){
+//         //clog('phones_left')
+//         return Math.max(0, 3 - parseInt(this.phones));
+//       },
+
+//       phones_count: function(){
+//         //clog('phones_count')
+//         return parseInt(this.phones);
+//       },
+
+//       messages_count: function(){
+//         //clog('messages_count')
+//         return parseInt(this.messages);
+//       },
+
+//       file_is_prepared: function(){
+//         //clog('file_is_prepared')
+//         return this.new_file.length > 0
+//       },
+
+//       files_updated: function(){
+//         //clog('files_updated')
+//         return this.files;
+//       },
+
+//       is_requre_save: function(){
+//         //clog('is_requre_save')
+//         return this.requre_save;
+//       },
+
+//       get_logs: function(){
+//         //clog('get_logs')
+//         return this.logs;
+//       },
+
+//       show_add_specialist_button: function(){
+//         //clog('show_add_specialist_button')
+//         return !!this.selected_specialist;
+//       },
+
+//       visible_specialists: function(){
+//         //clog('visible_specialists')
+//         var shown = [];
+
+//         for(id in this.specialists_data){
+//           if('yes' === this.specialists_data[id].show){
+//             shown.push(this.specialists_data[id]);
+//           }
+//         }
+
+//         return shown;
+//       },
+
+//       get_treatment_value: function(){
+//         //clog('get_treatment_value')
+//         return this.treatment_value.value;
+//       },
+
+//       get_billed_value: function(){
+//         //clog('get_billed_value')
+//         return this.treatment_value.billed;
+//       },
+
+//       get_terms_count: function(){
+//         //clog('get_terms_count')
+//         $return = 1;
+//         switch(this.treatment_value.terms){
+//           case '12 Months':
+//              $return = 12;
+//             break;
+//           case '18 Months':
+//              $return = 18;
+//             break;
+//           case '24 Months':
+//              $return = 24;
+//             break;
+//           case '36 Months':
+//              $return = 36;
+//             break;
+//           case '48 Months':
+//              $return = 48;
+//             break;
+//           default:
+//              $return = 1;
+//             break;
+//         }
+
+//         return  $return;
+//       },
+
+//       monthly_payment: function(){
+//         //clog('monthly_payment')
+//         var billed = get_sum_from_price(this.get_billed_value);
+//         var summ = (get_sum_from_price(this.get_treatment_value) - get_sum_from_price(this.get_billed_value))/this.get_terms_count;
+//         summ = summ.toFixed(2);
+//         this.treatment_value.mounthly = summ;
+//         return   '£'+ formatMoney(summ, 2, ".", ",");
+//       },
+
+//       c_dentists: function(){
+//         //clog('c_dentists')
+//         var dentists = [];
+//         for (s in this.treatment_coordinator.specialist){
+//            if(this.treatment_coordinator.specialist[s])
+
+//             dentists.push(this.treatment_coordinator.specialist[s]);
+//         }
+
+//         return dentists;
+//       },
+
+//       c_treatments: function(){
+//         //clog('c_treatments')
+//         var treatments = [];
+//         for (s in this.treatment_value.treatment){
+//            if(this.treatment_value.treatment[s])
+
+//             treatments.push(this.treatment_value.treatment[s]);
+//         }
+
+//         return treatments;
+//       },
+//     },
+
+
+//     watch: {
+//       base_lead: function(){
+//         var vm = this;
+
+//         if(!vm.run_update_lead){
+//           return;
+//         }
+
+//         var meta = [
+//           'patient_data',
+//           'treatment_value',
+//           'treatment_coordinator',
+//         ];
+
+//         start_date = vm.base_lead.meta.start_date;
+
+//         for(var id in meta) {
+
+//           if('undefined' !== typeof(vm.base_lead) && 'undefined' !== typeof(vm.base_lead.meta[meta[id]]) && vm.base_lead.meta[meta[id]]){
+//             vm[meta[id]] = vm.base_lead.meta[meta[id]];
+//           }
+//         }
+
+//         if('undefined' !== vm.$refs.terms_select && 'undefined' !== typeof(vm.base_lead.meta.treatment_value)){
+//           vm.$refs.terms_select.selected = vm.base_lead.meta.treatment_value.terms;
+//         }
+
+//         //clog(vm.base_lead);
+//         //clog(vm.base_lead.messages_count,  'message_count');
+
+//         vm.phones   = vm.base_lead.phone_count || 0;
+//         vm.messages = vm.base_lead.message_count || 0;
+//         vm.notes    = vm.base_lead.meta.lead_notes || [];
+//         vm.files    = vm.base_lead.meta.lead_files || [];
+//       },
+
+//       note_text: function(){
+//         this.$refs.note_textarea.style.height = '';
+//         this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+//       },
+
+//       'treatment_value.terms': function(val){
+//         //clog('treatment_value.terms')
+
+//         var count = 0;
+
+//         switch(val){
+//           case '12 Months' :
+//             count = 12;
+//             break;
+//           case '18 Months' :
+//             count = 18;
+//             break;
+//           case '24 Months' :
+//             count = 24;
+//             break;
+//           case '36 Months' :
+//             count = 36;
+//             break;
+//           case '48 Months' :
+//             count = 48;
+//             break;
+//         }
+
+//         if(count > 0){
+//           var date = new Date(date_start);
+//           date.setMonth(date.getMonth() + count);
+
+//           var month = (date.getMonth() < 9)? "0" + (date.getMonth() + 1) : (date.getMonth() + 1) ;
+
+//           var _date = date.getDate() < 10? '0' + date.getDate() : date.getDate();
+
+//           var hours =  date.getHours() < 10? '0' + date.getHours() : date.getHours();
+
+//           var minutes =  date.getMinutes() < 10? '0' + date.getMinutes() : date.getMinutes();
+
+//           var date_end = date.getFullYear() + '-' + month  + '-' + _date + ' ' + hours + ':'+ minutes + ':'+ '00';
+
+//           this.treatment_value.date_end = date_end;
+//         }else{
+//           this.treatment_value.date_end = date_start;
+//         }
+
+//         posted_data = {
+//           date: this.treatment_value.date_end,
+//           lead_id: this.lead_data.lead_id,
+//           action: 'save_lead_end_date',
+//         }
+
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           data: posted_data,
+
+//           complete: function(xhr, textStatus) {
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//           },
+
+//           error: function(xhr, textStatus, errorThrown) {}
+//         });
+//       },
+
+//       'patient_data.name': function(){
+//         jQuery('input[name=name]').removeClass('error');
+//       },
+
+//       'patient_data.clinic': function(value){
+//         if('undefined' !== this.$refs.clinic_select){
+//           this.$refs.clinic_select.selected = value;
+//         }
+//       },
+
+//       'patient_data.treatment': function(value){
+//         if('undefined' !== this.$refs.treatments_select){
+//           this.$refs.treatments_select.selected = value;
+//         }
+//       },
+
+//       'patient_data.source': function(value){
+//         if('undefined' !== this.$refs.source_select){
+//           this.$refs.source_select.selected = value;
+//         }
+//       },
+
+//       'patient_data.campaign': function(value){
+//         if('undefined' !== this.$refs.campaign_select){
+//           this.$refs.campaign_select.selected = value;
+//         }
+//       },
+
+//       'patient_data.phone': function(){
+//         jQuery('input[name=phone]').removeClass('error');
+//       },
+
+//       'patient_data.email': function(){
+//         jQuery('input[name=email]').removeClass('error');
+//       },
+
+//       'treatment_value.payment_method': function(value){
+//         //clog('treatment_value.payment_method');
+//         if('undefined' !== this.$refs.payment_method_select){
+//           this.$refs.payment_method_select.selected = value;
+//         }
+//       },
+//     },
+
+//     created: function(){},
+
+//     mounted: function(){
+//       this.notes = lead_notes;
+//       this.files = lead_files;
+//       this.logs  = lead_logs;
+//       this.specialists_data  = specialists_data;
+//       this.init_select();
+
+//        var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: available_dentists,
+//         };
+
+//         for( id in props){
+//           this.$refs['specialist_select'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['specialist_select']);
+
+//     },
+
+//     methods: {
+//       price_to_value: function(ref){
+//         var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
+
+//         switch(ref){
+//           case 'price_input_field':
+//             var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
+//             break;
+//           case 'input_billed':
+//             var summ = (!!this.treatment_value.billed)? this.treatment_value.billed : 0;
+//             break;
+//         }
+//         summ = get_sum_from_price(summ);
+//         this.$refs[ref].set_value(summ);
+//       },
+
+//       update_dates: function(){
+//         // console.log(this);
+//       },
+
+//       value_to_price: function(ref){
+//         switch(ref){
+//           case 'price_input_field':
+//             var summ = '£' + formatMoney(this.treatment_value.value,2, '.',',');
+//             break;
+//           case 'input_billed':
+//             var summ = '£' + formatMoney(this.treatment_value.billed,2, '.',',');
+//             break;
+//         }
+//          this.$refs[ref].set_value(summ);
+//       },
+
+//       init_select: function(){
+
+//        var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//         };
+
+//         if(jQuery(window).width()< 768){
+//           props.isHiddenSelect = false;
+//           props.isHiddenImitation =  true;
+//         }
+
+//         props.options = [
+//           'Live Chat',
+//           'Instagram',
+//           'Slaine Instagram',
+//           'Riz Instagram',
+//           'Andy Instagram',
+//           'Pete Instagram',
+//           'Sonnie Instagram',
+//           'Google PPC',
+//           'Website',
+//           'Phone',
+//           "Walk In",
+//           "Other"
+//         ];
+
+//         for( id in props){
+//           this.$refs['source_select'].set_value(id, props[id]);
+//         }
+
+//         props.options = available_staff;
+
+//         for( id in props){
+//           this.$refs['lead_specialists_select'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['source_select']);
+//         vue_select_components.push(this.$refs['lead_specialists_select']);
+
+
+//         var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: treatments,
+//         };
+
+//         for( id in props){
+//           this.$refs['treatments_select'].set_value(id, props[id]);
+//           this.$refs['treatments_select2'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['treatments_select']);
+//         vue_select_components.push(this.$refs['treatments_select2']);
+
+//         this.$refs['treatments_select'].resert_width();
+
+//         var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: clinics,
+//         };
+
+//         for( id in props){
+//           this.$refs['clinic_select'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['clinic_select']);
+
+//         var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: campaigns,
+//         };
+
+//         for( id in props){
+//           this.$refs['campaign_select'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['campaign_select']);
+
+
+//         var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: ['Full Payment', '12 Months','18 Months' , '24 Months', '36 Months', '48 Months'],
+//         };
+
+//         for( id in props){
+//           this.$refs['terms_select'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['terms_select']);
+
+//         var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: ['Cash', 'Bacs','Card' , 'Finance', 'Go Cardless'],
+//         };
+
+//         for( id in props){
+//           this.$refs['payment_method_select'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['payment_method_select']);
+
+//        var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: available_dentists,
+//         };
+
+//         for( id in props){
+//           this.$refs['specialist_select'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['specialist_select']);
+
+//        var props =  {
+//           isExpanded: '',
+//           isSelected: [],
+//           isHiddenSelect: true,
+//           isHiddenImitation: false,
+//           options: stages,
+//         };
+
+//         for( id in props){
+//           this.$refs['lead_stage_select2'].set_value(id, props[id]);
+//         }
+
+//         vue_select_components.push(this.$refs['lead_stage_select2']);
+//       },
+
+//       save_lead_meta: function(key_meta, key_this){
+//         var vm = this;
+
+//         if(typeof(key_meta) !== 'string'){
+//           var meta = {
+//             patient_data          : this.patient_data,
+//             treatment_value       : this.treatment_value,
+//             treatment_coordinator : this.treatment_coordinator,
+//             lead_notes            : this.notes,
+//             reminder              : this.reminder,
+//           };
+//         }else{
+//           var  meta = {};
+//           meta[key_meta] = this[key_this];
+//         }
+
+//         var posted_data = {
+//           confirmed: 0,
+//           meta: meta,
+//           action                : 'update_lead_meta',
+//           lead_data             : this.lead_data,
+//           nonce                 : jQuery('[name=lead_data]').val(),
+//         };
+
+//         this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
+
+
+//         if(key_meta  === 'lead_notes'){
+//           this.show_confirmation_popup = false;
+//         }
+
+//         // console.log(this.lead_data);
+
+
+//         if((!this.patient_data.name || !this.patient_data.phone || !this.patient_data.email) && this.lead_data.lead_id < 0){
+
+
+//           if(!this.patient_data.phone){
+//             jQuery('input[name=phone]').addClass('error');
+//           }
+
+//           if(!this.patient_data.name){
+//             jQuery('input[name=name]').addClass('error');
+//           }
+
+//           if(!this.patient_data.email){
+//             jQuery('input[name=email]').addClass('error');
+//           }
+//           return false;
+//         }
+
+//         var vm = this;
+
+//         wait_block.show();
+
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           data: posted_data,
+
+//           complete: function(xhr, textStatus) {
+//              wait_block.hide();
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//             vm.$refs.lead_id_input.set_value(data.post_id);
+//             jQuery('.button-create span').text('Save Changes');
+//           },
+
+//           error: function(xhr, textStatus, errorThrown) {
+//             if(xhr.status === 418){
+//               var response_text = JSON.parse(xhr.responseText);
+
+//               if(response_text.data[0] === 'name was found'){
+//                 var confirm = window.confirm("Are you sure you want to add lead for " + vm.patient_data.name +'? Lead for patient with this name already exists');
+
+//                 // console.log(confirm);
+
+//                 if(confirm){
+//                   posted_data.confirmed= 1;
+//                   wait_block.show();
+//                   vm.second_request(posted_data)
+//                 }
+
+//               }else{
+//                 alert(response_text.data[0]);
+//               }
+//             }else{
+//               alert(xhr.status + ' ' +errorThrown);
+//             }
+//           }
+//         })
+//       },
+
+
+//       second_request: function(posted_data){
+//         var vm = this;
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           data: posted_data,
+
+//           complete: function(xhr, textStatus) {
+//              wait_block.hide();
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//             vm.$refs.lead_id_input.set_value(data.post_id);
+//             jQuery('.button-create span').text('Save Changes');
+//           },
+
+//           error: function(xhr, textStatus, errorThrown) {
+//             if(xhr.status === 418){
+//               var response_text = JSON.parse(xhr.responseText);
+//               // console.log(xhr);
+//               alert(response_text.data[0]);
+//             }else{
+//               alert(xhr.status + ' ' +errorThrown);
+//             }
+//           }
+//         })
+//       },
+
+//       update_lead: function(data, key){
+//         var vm = this;
+
+//         if(!vm.run_update_lead){
+//           return;
+//         }
+
+//         if('object' === typeof(data)){
+//           if(key === 'treatment_coordinator' && data.name === 'specialist' ){
+
+//             if('undefined' === typeof(this[key][data.name])){
+//               this[key][data.name] = []
+//             }
+
+//             if(this[key][data.name].indexOf(data.val) < 0){
+//               this[key][data.name].push(data.val);
+//             }else{
+//               var ind = this[key][data.name].indexOf(data.val);
+//               this[key][data.name].splice(ind, 1);
+//             }
+
+//           }else if(key === 'treatment_value' && data.name === 'treatment' ){
+//             if('undefined' === typeof(this[key][data.name])){
+//               this[key][data.name] = []
+//             }
+
+//             if(this[key][data.name].indexOf(data.val) < 0){
+//               this[key][data.name].push(data.val);
+//             }else{
+//               var ind = this[key][data.name].indexOf(data.val);
+//               this[key][data.name].splice(ind, 1);
+//             }
+//           }else{
+//             if('object' === typeof(this[key])){
+//               var val = (data.name === 'value' && key == 'treatment_value')? (data.val) : data.val;
+//               this[key][data.name] = val;
+//             }
+//             if('string' === typeof(this[key])){
+//               this[key] = data.val;
+//             }
+//           }
+
+//           this.requre_save = true;
+//           var vm = this;
+
+//           Vue.nextTick(function(){
+//             vm.$forceUpdate();
+//           });
+//         }
+
+//        if(this.reminder){
+//         jQuery('.clear-reminder').removeClass('hidden');
+//        }else{
+//         jQuery('.clear-reminder').addClass('hidden');
+//        }
+//       },
+
+//       update_lead_stage: function(data, key){
+//         this.lead_data.lead_stage_prev = this.lead_data.lead_stage ;
+//         this.lead_data.lead_stage = data.val;
+//       },
+
+//       save_new_stage: function(){
+
+//         if(this.lead_data.lead_stage === this.lead_data.lead_stage_prev){
+//           this.show_confirmation_popup = false;
+//           return true;
+//         }
+
+//         var list_id_prev  = this.lead_data.lead_stage_prev;
+//         var list_id       = this.lead_data.lead_stage ;
+//         var user_name     = this.lead_data.user_name;
+//         var user_id       = this.lead_data.user_id;
+//         var post_id       = this.lead_data.lead_id;
+
+//         jQuery(document.body).trigger('update_lead_log', {
+//           post_id: post_id,
+//           list_id_prev: list_id_prev,
+//           list_id_new: list_id,
+//           user_name: user_name ,
+//           user_id:   user_id ,
+//           event: 'stage_changed'
+//         });
+
+//         jQuery(document.body).trigger('save_dragged_item', {post_id: post_id, list_id: list_id})
+
+//         this.show_confirmation_popup = false;
+//       },
+
+//       do_delete_or_return: function(url){
+//         wait_block.show();
+//         if(parseInt(this.lead_data.lead_id) < 0){
+//           wait_block.hide();
+//           location.href = url;
+//         }else{
+//           var data = {
+//             action  : 'delete_lead',
+//             lead_id : parseInt(this.lead_data.lead_id),
+//             nonce   : jQuery('[name=lead_data]').val(),
+//             url     : url,
+//           };
+
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           data: data,
+
+//           complete: function(xhr, textStatus) {
+//              wait_block.hide();
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//             if('undefined' != typeof(data.redirect)){
+//               location.href = data.redirect;
+//             }
+//           },
+
+//           error: function(xhr, textStatus, errorThrown) {
+//             if(xhr.status === 418){
+//               var response_text = JSON.parse(xhr.responseText);
+//               alert(response_text.data[0]);
+//             }else{
+//               alert(xhr.status + ' ' +errorThrown);
+//             }
+//           }
+//         })
+//         }
+//       },
+
+//       add_note: function(){
+//         // console.log(is_manager);
+
+//         if(!this.note_text){
+//           alert('Please enter some text');
+//           return false;
+//         }
+
+//         this.requre_save = true;
+
+//         var date = new Date();
+
+//         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May','Jun', 'Jul', 'Aug', "Sep", 'Oct', "Nov", "Dec"];
+
+//         var minutes =  (date.getMinutes() < 10)?  '0' + date.getMinutes():  date.getMinutes();
+
+//         var date_formatted = months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' at ' + date.getHours() + ':' + minutes;
+
+//         var new_note = {
+//           'date'       : date_formatted,
+//           'user_name'  : this.lead_data.user_name,
+//           'user_id'    : this.lead_data.user_id,
+//           'text'       : this.note_text,
+//           'is_manager' : is_manager,
+//           'done'       : 'no',
+//           'show'       : 1,
+//         };
+
+
+//         this.notes.push(new_note);
+//         this.note_text = '';
+//         this.$refs.note_textarea.style.height = '';
+
+//         this.save_lead_meta('lead_notes', 'notes');
+//       },
+
+//       delete_note: function(key){
+//         this.notes[key].show = 0;
+//         this.save_lead_meta('lead_notes', 'notes');
+//       },
+
+//       mark_note_done: function(key, val){
+//         this.notes[key].done = val;
+//         this.save_lead_meta('lead_notes', 'notes');
+//       },
+
+//       update_specialists: function(event){
+//         if('undefined' !== typeof(event.val) ){
+
+//           if(this.lead_data.lead_id < 0){
+//             alert('Create lead before assigning it to a specialist, please');
+//             return false;
+//           };
+
+//           if(this.specialists_data[event.val].show === 'yes')
+//             {
+//                return false;
+//             };
+
+//           this.specialists_data[event.val].show = 'yes';
+//           this.save_sepcialists_meta();
+
+//           jQuery(document.body).trigger('update_lead_log', {
+//             post_id     : parseInt(this.lead_data.lead_id),
+//             nonce       : jQuery('[name=lead_data]').val(),
+//             user_name   : this.lead_data.user_name,
+//             user_id     : this.lead_data.user_id,
+//             event       : 'specialist_updated',
+//             text: 'Assined to ' +  event.val + ' by ' + this.lead_data.user_name,
+//           })
+//         }
+//       },
+
+//       assign_specialist: function(){
+//         // this.selected_specialist = false;
+//         // this.save_sepcialists_meta();
+//       },
+
+//       remove_specialist: function(name){
+//         if(window.confirm("Confirm unassigning " + name + " from this lead")){
+//           this.specialists_data[name].show = 'no';
+//           this.save_sepcialists_meta();
+
+//           jQuery(document.body).trigger('update_lead_log', {
+//             post_id     : parseInt(this.lead_data.lead_id),
+//             nonce       : jQuery('[name=lead_data]').val(),
+//             user_name   : this.lead_data.user_name,
+//             user_id     : this.lead_data.user_id,
+//             event       : 'specialist_updated',
+//             text: 'Unassined from ' +  name + ' by ' + this.lead_data.user_name,
+//           })
+//         }
+//       },
+
+//       save_sepcialists_meta: function(){
+//         var meta = {};
+//         for(id in specialists_data){
+//           meta[specialists_data[id].user_id] = specialists_data[id].show;
+//         }
+
+//         var data = {
+//           meta: {
+//             lead_specialists: meta,
+//           },
+//           action                : 'update_lead_meta',
+//           lead_data             : this.lead_data,
+//           nonce                 : jQuery('[name=lead_data]').val(),
+//         };
+
+//         var vm = this;
+
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           data: data,
+
+//           complete: function(xhr, textStatus) {
+//              wait_block.hide();
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//             vm.$refs.lead_id_input.set_value(data.post_id);
+//           },
+
+//           error: function(xhr, textStatus, errorThrown) {
+//             if(xhr.status === 418){
+//               var response_text = JSON.parse(xhr.responseText);
+//               alert(response_text.data[0]);
+//             }else{
+//               alert(xhr.status + ' ' +errorThrown);
+//             }
+//           }
+//         })
+//       },
+
+
+//       load_file: function(){
+//         // console.log('load_file');
+
+//         wait_block.show();
+
+//         var file_pierces = this.$refs.file_input.value.split('\\');
+//         var file_name = file_pierces[file_pierces.length-1];
+//         var file = jQuery(this.$refs.file_input).prop('files')[0];
+//         var fd   = new FormData();
+
+//         var vm = this;
+
+//         fd.append('file',file);
+//         fd.append('lead_id',this.lead_data.lead_id);
+//         fd.append('user_name',this.lead_data.user_name);
+//         fd.append('action', 'upload_new_document');
+//         fd.append('file_nonce',jQuery('[name=file_nonce]').val());
+//         fd.append('_wp_http_referer',jQuery('[name=_wp_http_referer]').val());
+
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           processData: false,
+//           contentType: false,
+//           data: fd,
+
+//           complete: function(xhr, textStatus) {
+//             single_lead.new_file = '';
+//             wait_block.hide();
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//             vm.files.push(data.file_data);
+//           },
+
+//           error: function(xhr, textStatus, errorThrown) {
+//             if(xhr.status === 418){
+//               var response_text = JSON.parse(xhr.responseText);
+//               alert(response_text.data[0]);
+//             }else{
+//               alert(xhr.status + ' ' +errorThrown);
+//             }
+//            }
+//         })
+//       },
+
+
+//       remove_file: function(file_id){
+//         var vm = this;
+
+//         if(window.confirm("Confirm deleting file " + this.files[file_id].name)){
+
+//           var file_data = vm.files[file_id];
+
+//           vm.files.splice(file_id, 1);
+
+//           var data = {
+//             file_data: file_data,
+//             lead_id: vm.lead_data.lead_id,
+//             user_name: vm.lead_data.user_name,
+//             action: 'delete_file_from_lead',
+//           };
+
+//           jQuery.ajax({
+//             url: WP_URLS.wp_ajax_url,
+//             type: 'POST',
+//             data: data,
+
+//             complete: function(xhr, textStatus) {
+
+//             },
+
+//             success: function(data, textStatus, xhr) {
+//               // console.log(data);
+//             },
+
+//             error: function(xhr, textStatus, errorThrown) {
+//               if(xhr.status === 418){
+//                 var response_text = JSON.parse(xhr.responseText);
+//                 alert(response_text.data[0]);
+//               }else{
+//                 alert(xhr.status + ' ' +errorThrown);
+//               }
+//             }
+//           })
+//         }
+//       },
+
+//       file_changed: function(){
+//         var file_pierces = this.$refs.file_input.value.split('\\');
+//         var file_name = file_pierces[file_pierces.length-1];
+//         this.new_file = file_name;
+//       },
+
+//       change_phone: function(action){
+//         var phone = this.phones;
+
+//         if(action === 'add'){
+//           phone++;
+//         }
+
+//         if(action === 'remove'){
+//           phone--;
+//         }
+
+//         this.phones = Math.min(3, phone);
+
+//         var data = {
+//           lead_id: this.lead_data.lead_id,
+//           count: this.phones,
+//           action: 'save_phones_count',
+//         }
+
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           data: data,
+
+//           complete: function(xhr, textStatus) {
+
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//            },
+
+//           error: function(xhr, textStatus, errorThrown) {
+
+//           }
+//         })
+
+//         // console.log('change_phone');
+//       },
+
+//       clear_reminder: function(){
+//         this.reminder = '';
+//         jQuery('[name=reminder]').val('');
+//         jQuery('.clear-reminder').addClass('hidden');
+//       },
+
+//       change_message: function(action){
+//         var messages = this.messages;
+//         if(action === 'add'){
+//           messages++;
+//         }
+
+//         if(action === 'remove'){
+//           messages--;
+//         }
+
+//         this.messages = Math.min(3, messages);
+
+//         // console.log('change_message');
+
+//         var data = {
+//           lead_id: this.lead_data.lead_id,
+//           count:   this.messages,
+//           action:  'save_messages_count',
+//         }
+
+//         jQuery.ajax({
+//           url: WP_URLS.wp_ajax_url,
+//           type: 'POST',
+//           data: data,
+
+//           complete: function(xhr, textStatus) {
+
+//           },
+
+//           success: function(data, textStatus, xhr) {
+//             // console.log(data);
+//           },
+
+//           error: function(xhr, textStatus, errorThrown) {
+
+//           }
+//         })
+//       },
+
+
+//       /**
+//       * show single lead on click on a lead item on a list
+//       */
+//       show_single_lead: function(id){
+//         console.log('cliked');
+//         //clog(id, 0 , 1);
+//       },
+//     },
+
+// });
+
+// }
 if(typeof(is_lead_list) !=='undefined' || typeof(is_dashboard) !=='undefined' || typeof(is_single_lead) !=='undefined' ){
   var search = new Vue({
     el: '#search-form',
