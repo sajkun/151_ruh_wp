@@ -203,8 +203,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
           <div class="spacer-h-30"></div>
 
-          <h2 class="leads-block__title">Enquiry Notes <span class="info-helper" title="use Enter for line breaks, use Alt+Enter to add note">?</span>
-          </h2>
+          <h2 class="leads-block__title">Enquiry Notes</h2>
 
            <div class="spacer-h-20"></div>
 
@@ -353,7 +352,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                   <p class="leads-block__label no-margin">Balance </p>
                 </td>
                 <td class="text-right">
-                 <span class="leads-block__total"><span class="currency">$</span> {{balance}}</span>
+                 <span class="leads-block__total"><span class="currency">£</span> {{balance}}</span>
                 </td>
               </tr>
             </table>
@@ -361,8 +360,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
           <div class="spacer-h-20"></div>
 
-            <h2 class="leads-block__title">TCO Notes <span class="info-helper" title="use Enter for line breaks, use Alt+Enter to add note">?</span>
-            </h2>
+            <h2 class="leads-block__title">TCO Notes </h2>
             <div class="leads-block__row">
               <div v-for="note,key in tco_notes_c" class="note-block">
                 <div class="note-block__header clearfix">
