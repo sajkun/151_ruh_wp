@@ -1445,6 +1445,10 @@ var icons_selects = {
   'team': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
 
   'dentists': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
+
+  'human': '<svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>',
+
+  'card': '<svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>',
 };
 var select_mixin = {
   data: function () {
@@ -1633,6 +1637,40 @@ input_field = Vue.component('input-field', {
   },
 
   template : '<input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="leads-block__input":readonly="readonly == 1">',
+
+});
+
+
+input_field_decorated = Vue.component('input-decorated', {
+  data: function () {
+    return {
+      type: (this._type)? this._type : 'text',
+      name:  this._name,
+      value : this._value,
+      icon : this._icon,
+      readonly : this._readonly,
+      placeholder : (this._placeholder)? this._placeholder : 'Add',
+    }
+  },
+
+  props:['_value', '_name', '_readonly', '_placeholder', '_type', '_icon'],
+
+  mounted: function(){
+    this.$emit('input_value_changed', {name: this.name, val: this.value});
+  },
+
+  methods:{
+    input: function(){
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    },
+
+    set_value:function(val){
+      this.value = val;
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    }
+  },
+
+  template : '<div class="wrapper-input"><span v-html="icon"></span><input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="":readonly="readonly == 1"></div>',
 
 });
 animation_mixin = {
@@ -3733,11 +3771,10 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       treatment_value: {
-        billed: 0,
+        billed    : 0,
         value     : 0,
         terms     : '',
         mounthly  : '',
-        treatment :(!!assigned_treatments && typeof(assigned_treatments) === 'object')? Object.values(assigned_treatments) : [] ,
         date_end : date_start,
       },
 
@@ -3745,11 +3782,17 @@ if('undefined' !== typeof(is_single_lead)){
         specialist: Object.values(assigned_dentists),
       },
 
+      treatment_data: treatment_data,
+
       notes       : [],
+      notes_tco   : [],
+      enquery_notes_count: 1,
+      tco_notes_count: 1,
       files       : [],
       logs        : [],
       lead_data   : {},
       note_text   : '',
+      note_text_tco    : '',
       reminder    : '',
       new_file    : '',
       phones      : 0,
@@ -3759,10 +3802,79 @@ if('undefined' !== typeof(is_single_lead)){
       specialists_data    : {},
       selected_specialist : false,
       lead_stage: '',
-      show_confirmation_popup: false
+      show_confirmation_popup: false,
+      balance: 0,
     },
 
     computed:{
+      enquery_notes_c: function(){
+        var notes = this.notes;
+        var notes_c = [];
+        var counter = 0;
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1 && counter < this.enquery_notes_count){
+              note.key =  notes.length -1 - id;
+              notes_c.push(note);
+              counter++;
+           }
+        }
+
+        return notes_c;
+      },
+
+      enquery_notes_count_c: function(){
+        var counter = 0;
+        var notes = this.notes;
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1){
+              counter++;
+           }
+        }
+
+        return counter;
+      },
+
+      tco_notes_c: function(){
+        var notes = this.notes_tco;
+        var notes_c = [];
+        var counter = 0;
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1 && counter < this.tco_notes_count){
+              note.key =  notes.length -1 - id;
+              notes_c.push(note);
+              counter++;
+           }
+        }
+
+        return notes_c;
+      },
+
+      tco_notes_count_c: function(){
+        var counter = 0;
+        var notes = this.notes_tco;
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1){
+              counter++;
+           }
+        }
+
+        return counter;
+      },
+
+
+
       messages_left : function(){
         return Math.max(0, 3 - this.messages);
       },
@@ -3810,6 +3922,45 @@ if('undefined' !== typeof(is_single_lead)){
 
         return shown;
       },
+
+      visible_specialists_tco: function(){
+        var shown = [];
+
+        for(id in this.specialists_data){
+          if('yes' === this.specialists_data[id].show_tco){
+            shown.push(this.specialists_data[id]);
+          }
+        }
+
+        return shown;
+      },
+
+
+      visible_specialists_show_select: function(){
+        var shown = [];
+
+        for(id in this.specialists_data){
+          if('yes' === this.specialists_data[id].show){
+            shown.push(this.specialists_data[id]);
+          }
+        }
+
+        return shown.length > 0 ? 'hidden': '';
+      },
+
+
+      visible_specialists_show_select_tco: function(){
+        var shown = [];
+
+        for(id in this.specialists_data){
+          if('yes' === this.specialists_data[id].show_tco){
+            shown.push(this.specialists_data[id]);
+          }
+        }
+
+        return shown.length > 0 ? 'hidden': '';
+      },
+
 
       get_treatment_value: function(){
         return this.treatment_value.value;
@@ -3880,6 +4031,35 @@ if('undefined' !== typeof(is_single_lead)){
       note_text: function(){
         this.$refs.note_textarea.style.height = '';
         this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+      },
+
+      note_text_tco: function(){
+        this.$refs.note_textarea_tco.style.height = '';
+        this.$refs.note_textarea_tco.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+      },
+
+
+      'treatment_value.billed': function(val){
+
+        var balance = get_sum_from_price(this.treatment_value.value) - get_sum_from_price(this.treatment_value.billed);
+
+
+        this.treatment_value.terms = get_sum_from_price(this.treatment_value.value) === get_sum_from_price(this.treatment_value.billed)? 'Full Payment' :  '12 Months';
+
+        this.treatment_value.mounthly =  get_sum_from_price(this.treatment_value.value) === get_sum_from_price(this.treatment_value.billed)? 0 : balance/12;
+        this.balance = formatMoney(balance,2, '.',',');
+      },
+
+
+      'treatment_value.value': function(val){
+
+        var balance = get_sum_from_price(this.treatment_value.value) - get_sum_from_price(this.treatment_value.billed);
+
+
+        this.treatment_value.terms = get_sum_from_price(this.treatment_value.value) === get_sum_from_price(this.treatment_value.billed)? 'Full Payment' :  '12 Months';
+
+        this.treatment_value.mounthly =  get_sum_from_price(this.treatment_value.value) === get_sum_from_price(this.treatment_value.billed)? 0 : balance/12;
+        this.balance = formatMoney(balance,2, '.',',');
       },
 
       'treatment_value.terms': function(val){
@@ -3964,18 +4144,71 @@ if('undefined' !== typeof(is_single_lead)){
       this.phones = phone_count;
       this.messages = message_count;
       this.notes = lead_notes;
+      this.notes_tco = lead_notes_tco;
       this.files = lead_files;
       this.logs  = lead_logs;
       this.specialists_data  = specialists_data;
       this.init_select();
-
-      clog( 0 , 'List mounted');
-      clog(this.leads)
-      clog(0);
-
+      this.treatment_data_selects();
     },
 
     methods: {
+      update_treatment_data: function(e, key){
+        if(typeof(e.val)  !== 'undefined'){
+          this.treatment_data[key][e.name] = e.val;
+
+          var total = 0;
+
+          for(var id in this.treatment_data){
+            total += get_sum_from_price(this.treatment_data[id].billed);
+          }
+
+          this.treatment_value.value =  '£' + formatMoney(total,2, '.',',');
+        }
+      },
+
+      add_treatment_dentist: function(){
+
+        this.treatment_data.push({
+          'treatment': '',
+          'dentist': '',
+          'billed' : 0,
+        })
+
+        var vm = this;
+        Vue.nextTick(function(){
+
+         var select_id = vm.treatment_data.length - 1;
+
+         var props =  {
+            isExpanded: '',
+            isSelected: [],
+            isHiddenSelect: true,
+            isHiddenImitation: false,
+            icon: icons_selects['human'],
+            options: available_dentists,
+          };
+
+          for( var id in props){
+            vm.$refs['select_dentist'][select_id].set_value(id, props[id]);
+          }
+
+
+         var props =  {
+            icon: icons_selects['treatments'],
+            isExpanded: '',
+            isSelected: [],
+            isHiddenSelect: true,
+            isHiddenImitation: false,
+            options: treatments,
+          };
+
+          for( var id in props){
+            vm.$refs['select_treatment'][select_id].set_value(id, props[id]);
+          }
+        })
+      },
+
       price_to_value: function(ref){
         var summ = (!!this.treatment_value.value)? this.treatment_value.value : 0;
 
@@ -4006,6 +4239,55 @@ if('undefined' !== typeof(is_single_lead)){
         }
          this.$refs[ref].set_value(summ);
       },
+
+
+      treatment_data_selects: function(){
+        var vm = this;
+
+        var total = 0;
+
+        for(var id in vm.treatment_data){
+
+         var select_id = id;
+
+         var props =  {
+            isExpanded: '',
+            isSelected: [],
+            isHiddenSelect: true,
+            isHiddenImitation: false,
+            icon: icons_selects['human'],
+            options: available_dentists,
+          };
+
+          for( var i in props){
+            vm.$refs['select_dentist'][select_id].set_value(i, props[i]);
+          }
+
+
+         var props =  {
+            icon: icons_selects['treatments'],
+            isExpanded: '',
+            isSelected: [],
+            isHiddenSelect: true,
+            isHiddenImitation: false,
+            options: treatments,
+          };
+
+          for( var i in props){
+            vm.$refs['select_treatment'][select_id].set_value(i, props[i]);
+          }
+
+          var data = vm.treatment_data[id];
+          vm.$refs.select_dentist[id].set_value('selected', data['dentist']);
+          vm.$refs.select_treatment[id].set_value('selected', data['treatment']);
+          vm.$refs.select_billed[id].set_value( data['billed']);
+
+          total += get_sum_from_price(data['billed']);
+        }
+
+        vm.treatment_value.value = total;
+      },
+
 
       init_select: function(){
 
@@ -4044,10 +4326,12 @@ if('undefined' !== typeof(is_single_lead)){
 
         for( id in props){
           this.$refs['lead_specialissts_select'].set_value(id, props[id]);
+          this.$refs['lead_specialissts_select_tco'].set_value(id, props[id]);
         }
 
         vue_select_components.push(this.$refs['source_select']);
         vue_select_components.push(this.$refs['lead_specialissts_select']);
+        vue_select_components.push(this.$refs['lead_specialissts_select_tco']);
 
 
         var props =  {
@@ -4060,7 +4344,6 @@ if('undefined' !== typeof(is_single_lead)){
 
         for( id in props){
           this.$refs['treatments_select'].set_value(id, props[id]);
-          this.$refs['treatments_select2'].set_value(id, props[id]);
         }
 
         vue_select_components.push(this.$refs['treatments_select']);
@@ -4097,48 +4380,6 @@ if('undefined' !== typeof(is_single_lead)){
         vue_select_components.push(this.$refs['campaign_select']);
 
 
-        var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: ['Full Payment', '12 Months','18 Months' , '24 Months', '36 Months', '48 Months'],
-        };
-
-        for( id in props){
-          this.$refs['terms_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['terms_select']);
-
-        var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: ['Cash', 'Bacs','Card' , 'Finance', 'Go Cardless'],
-        };
-
-        for( id in props){
-          this.$refs['payment_method_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['payment_method_select']);
-
-       var props =  {
-          isExpanded: '',
-          isSelected: [],
-          isHiddenSelect: true,
-          isHiddenImitation: false,
-          options: available_dentists,
-        };
-
-        for( id in props){
-          this.$refs['specialist_select'].set_value(id, props[id]);
-        }
-
-        vue_select_components.push(this.$refs['specialist_select']);
-
        var props =  {
           isExpanded: '',
           isSelected: [],
@@ -4160,9 +4401,11 @@ if('undefined' !== typeof(is_single_lead)){
         if(typeof(key_meta) !== 'string'){
           var meta = {
             patient_data          : this.patient_data,
+            treatment_data        : this.treatment_data,
             treatment_value       : this.treatment_value,
             treatment_coordinator : this.treatment_coordinator,
             lead_notes            : this.notes,
+            lead_notes_tco        : this.notes_tco,
             reminder              : this.reminder,
           };
         }else{
@@ -4181,7 +4424,7 @@ if('undefined' !== typeof(is_single_lead)){
         this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
 
 
-        if(key_meta  === 'lead_notes'){
+        if(key_meta  === 'lead_notes' || key_meta  === 'lead_notes_tco' ){
           this.show_confirmation_popup = false;
         }
 
@@ -4219,7 +4462,6 @@ if('undefined' !== typeof(is_single_lead)){
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
 
             if(data.reload){
               location.href = data.url;
@@ -4408,10 +4650,14 @@ if('undefined' !== typeof(is_single_lead)){
         }
       },
 
-      add_note: function(){
+      add_note: function(type){
         // console.log(is_manager);
+        type = 'undefined' !== typeof(type)? type : 'enquery';
 
-        if(!this.note_text){
+        if(!this.note_text && type == 'enquery'){
+          alert('Please enter some text');
+          return false;
+        }else  if(!this.note_text_tco && type == 'tco'){
           alert('Please enter some text');
           return false;
         }
@@ -4437,47 +4683,80 @@ if('undefined' !== typeof(is_single_lead)){
         };
 
 
-        this.notes.push(new_note);
-        this.note_text = '';
-        this.$refs.note_textarea.style.height = '';
+        if(type == 'enquery'){
+          this.notes.push(new_note);
+          this.note_text = '';
+          this.$refs.note_textarea.style.height = '';
+          this.save_lead_meta('lead_notes', 'notes');
+        }else if (type =='tco'){
+          new_note.text = this.note_text_tco;
+          this.notes_tco.push(new_note);
+          this.note_text_tco = '';
+          this.$refs.note_textarea_tco.style.height = '';
+           this.save_lead_meta('lead_notes_tco', 'notes_tco');
+        }
 
-        this.save_lead_meta('lead_notes', 'notes');
+
       },
 
-      delete_note: function(key){
-        this.notes[key].show = 0;
-        this.save_lead_meta('lead_notes', 'notes');
+      delete_note: function(key , type){
+        type = 'undefined' !== typeof(type)? type : 'enquery';
+
+       if(type == 'enquery'){
+          key = this.notes.length - key - 1;
+          this.notes[key].show = 0;
+          this.save_lead_meta('lead_notes', 'notes');
+        }
+       if(type == 'tco'){
+          key = this.notes_tco.length - key - 1;
+          this.notes_tco[key].show = 0;
+          this.save_lead_meta('lead_notes_tco', 'notes_tco');
+        }
       },
 
-      mark_note_done: function(key, val){
-        this.notes[key].done = val;
-        this.save_lead_meta('lead_notes', 'notes');
+      mark_note_done: function(key, val, type){
+        type = 'undefined' !== typeof(type)? type : 'enquery';
+
+        if(type == 'enquery'){
+          key = this.notes.length - key - 1;
+          this.notes[key].done = val;
+          this.save_lead_meta('lead_notes', 'notes');
+        }
       },
 
-      update_specialists: function(event){
+      update_specialists: function(event, type){
         if('undefined' !== typeof(event.val) ){
 
           if(this.lead_data.lead_id < 0){
             alert('Create lead before assigning it to a specialist, please');
             return false;
           };
+          type = 'undefined' !== typeof(type)? type : 'enquery';
 
-          if(this.specialists_data[event.val].show === 'yes')
-            {
-               return false;
-            };
+          if(type == 'enquery'){
 
-          this.specialists_data[event.val].show = 'yes';
-          this.save_sepcialists_meta();
 
-          jQuery(document.body).trigger('update_lead_log', {
-            post_id     : parseInt(this.lead_data.lead_id),
-            nonce       : jQuery('[name=lead_data]').val(),
-            user_name   : this.lead_data.user_name,
-            user_id     : this.lead_data.user_id,
-            event       : 'specialist_updated',
-            text: 'Assined to ' +  event.val + ' by ' + this.lead_data.user_name,
-          })
+            if(this.specialists_data[event.val].show === 'yes')
+              {
+                 return false;
+              };
+
+            this.specialists_data[event.val].show = 'yes';
+            this.save_specialists_meta();
+          }
+
+          if(type == 'tco'){
+
+
+            if(this.specialists_data[event.val].show_tco === 'yes')
+              {
+                 return false;
+              };
+
+            this.specialists_data[event.val].show_tco = 'yes';
+
+               this.save_specialists_meta();
+          }
         }
       },
 
@@ -4489,7 +4768,8 @@ if('undefined' !== typeof(is_single_lead)){
       remove_specialist: function(name){
         if(window.confirm("Confirm unassigning " + name + " from this lead")){
           this.specialists_data[name].show = 'no';
-          this.save_sepcialists_meta();
+          this.specialists_data[name].show_tco = 'no';
+          this.save_specialists_meta();
 
           jQuery(document.body).trigger('update_lead_log', {
             post_id     : parseInt(this.lead_data.lead_id),
@@ -4502,20 +4782,28 @@ if('undefined' !== typeof(is_single_lead)){
         }
       },
 
-      save_sepcialists_meta: function(){
-        var meta = {};
+      save_specialists_meta: function(){
+        var meta     = {};
+        var meta_tco = {};
+
         for(id in specialists_data){
           meta[specialists_data[id].user_id] = specialists_data[id].show;
         }
+        for(id in specialists_data){
+          meta_tco[specialists_data[id].user_id] = specialists_data[id].show_tco;
+        }
+
 
         var data = {
           meta: {
             lead_specialists: meta,
+            lead_specialists_tco: meta_tco,
           },
           action                : 'update_lead_meta',
           lead_data             : this.lead_data,
           nonce                 : jQuery('[name=lead_data]').val(),
         };
+
 
         var vm = this;
 

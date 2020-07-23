@@ -331,8 +331,10 @@ class theme_content_output{
 
     // gets lead logs, notes and files
     $lead_notes = array();
+    $lead_notes_tco = array();
     $lead_files = array();
     $_lead_notes = get_post_meta($lead->ID, '_lead_notes', true);
+    $_lead_notes_tco = get_post_meta($lead->ID, '_lead_notes_tco', true);
     $_lead_files = get_post_meta($lead->ID, '_lead_files', true);
     $lead_logs   = get_post_meta($lead->ID, '_lead_log', true);
 
@@ -365,6 +367,17 @@ class theme_content_output{
       }
     }
 
+    if($_lead_notes_tco){
+      foreach ($_lead_notes_tco as $key => $n) {
+
+        if(!isset($n['show'])){
+          $n['show'] = 1;
+        }
+
+        $lead_notes_tco[] = $n;
+      }
+    }
+
     if($_lead_files){
       foreach ($_lead_files as $key => $n) {
         $lead_files[] = $n;
@@ -373,7 +386,15 @@ class theme_content_output{
 
     // get assigned specialists data
 
-    $specialists_assigned = get_post_meta($lead->ID, '_lead_specialists', true);
+    $specialists_assigned     = get_post_meta($lead->ID, '_lead_specialists', true);
+    $specialists_assigned_tco = get_post_meta($lead->ID, '_lead_specialists_tco', true);
+    $treatment_data           = get_post_meta($lead->ID, '_treatment_data', true);
+
+    $treatment_data           = $treatment_data?: array();
+
+
+    clog($treatment_data);
+
     $users = get_users();
     $specialists_data = array();
 
@@ -387,14 +408,17 @@ class theme_content_output{
       $image    = ($image) ? $image : DUMMY_ADMIN;
       $position = esc_html( get_the_author_meta( 'user_position', $user->ID ) );
       $name     = theme_get_user_name($user);
+
       $specialists_data[$name] = array(
         'photo'     => $image,
         'position'  => $position,
         'user_id'   => $user->ID,
         'name'      => $name,
-        'show'      => (isset($specialists_assigned[$user->ID]) && 'yes' === $specialists_assigned[$user->ID])? 'yes' : 'no'
+        'show'      => (isset($specialists_assigned[$user->ID]) && 'yes' === $specialists_assigned[$user->ID])? 'yes' : 'no',
+        'show_tco'  => (isset($specialists_assigned_tco[$user->ID]) && 'yes' === $specialists_assigned_tco[$user->ID])? 'yes' : 'no'
       );
     }
+
     // get other leads info
     $leads_id          = (int)get_option('theme_page_leads');
     $lead_created_time = new DateTime($lead->post_date);
@@ -500,15 +524,17 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'assigned_treatments', $assigned_treatments);
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
+        wp_localize_script($theme_init->main_script_slug, 'treatment_data', $treatment_data);
 
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', $lead_notes);
+    wp_localize_script($theme_init->main_script_slug, 'lead_notes_tco', $lead_notes_tco);
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
     wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
     wp_localize_script($theme_init->main_script_slug, 'lead_files', $lead_files);
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 
-    print_theme_template_part('lead-single', 'globals', $args);
+    print_theme_template_part('lead-single2', 'globals', $args);
   }
 
 
@@ -612,8 +638,9 @@ class theme_content_output{
     }
 
     wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);
-
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+
+    wp_localize_script($theme_init->main_script_slug, 'treatment_data', array());
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
 
     wp_localize_script($theme_init->main_script_slug, 'phone_count', [0]);
@@ -621,6 +648,7 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());
+    wp_localize_script($theme_init->main_script_slug, 'lead_notes_tco', array());
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
     wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
     wp_localize_script($theme_init->main_script_slug, 'lead_files', array());
@@ -634,7 +662,7 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 
-    print_theme_template_part('lead-single', 'globals', $args);
+    print_theme_template_part('lead-single2', 'globals', $args);
   }
 
 

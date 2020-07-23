@@ -35,7 +35,7 @@ class velesh_init_theme{
   public $main_script_slug = 'theme-main-script-dev1';
 
   /* svg sprites files slug for local storage */
-  public $svg_sprite_slug = 'svg_sprite_151_2';
+  public $svg_sprite_slug = 'svg_sprite_151_3';
 
   /* merged style file name */
   public $merged_style_name = 'merged-style3.css';

@@ -569,6 +569,7 @@ if(!function_exists('get_leads_meta')){
 
       $meta = array(
         'lead_notes'            => get_post_meta($post->ID, '_lead_notes', true),
+        'lead_notes_tco'        => get_post_meta($post->ID, '_lead_notes_tco', true),
         'lead_files'            => get_post_meta($post->ID, '_lead_files', true),
         'treatment_coordinator' => $coordinator_data,
         'treatment_value'       => get_post_meta($post->ID, '_treatment_value', true),
@@ -601,13 +602,40 @@ if(!function_exists('get_leads_meta')){
       //get array of specialists assigned
 
       $lead_specialists  = get_post_meta($post->ID, '_lead_specialists', true);
+      $lead_specialists_tco  = get_post_meta($post->ID, '_lead_specialists_tco', true);
       $specialists       = array();
 
       if(!$lead_specialists){
         $lead_specialists = array();
       }
+      if(!$lead_specialists_tco){
+        $lead_specialists_tco = array();
+      }
 
       foreach ($lead_specialists as $user_id => $assigned) {
+        if('yes' === $assigned){
+          $user = get_user_by('id', $user_id);
+
+          if(!$user){continue;}
+          $name =  theme_get_user_name($user);
+          $user_position = get_the_author_meta('user_position', $user->ID);
+
+          $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
+          $image =  wp_get_attachment_url( $user_photo_id );
+          $image = ($image) ? $image : DUMMY_ADMIN;
+
+          array_push($filter_data['team'] , $name );
+
+          array_push($specialists , array(
+            'image'    => $image,
+            'user_id'  => $user_id,
+            'name'     => trim($name),
+            'position' => $user_position,
+          ));
+        }
+      }
+
+      foreach ($lead_specialists_tco as $user_id => $assigned) {
         if('yes' === $assigned){
           $user = get_user_by('id', $user_id);
 
@@ -636,6 +664,14 @@ if(!function_exists('get_leads_meta')){
           $name = trim($name);
           if(!$name && !empty($name) && strlen($name) < 2) continue;
           array_push($filter_data['dentists'] , trim($name));
+        }
+      }
+
+      $treatment_data = get_post_meta($post->ID, '_treatment_data', true);
+
+      if($treatment_data){
+        foreach ($treatment_data as $key => $t) {
+          array_push($filter_data['dentists'] , trim($t['dentist']));
         }
       }
 
@@ -823,8 +859,15 @@ if(!function_exists('get_filters_by_leads')){
         }
       }
 
+      $treatment_data = get_post_meta($lead->ID, '_treatment_data', true);
 
+      if( $treatment_data){
+        foreach ($treatment_data as $key => $t) {
+          array_push($data['dentists'] , trim($t['dentist']));
+        }
+      }
     }
+
      $data['dentists'] = array_values( array_unique($data['dentists']));
 
     dlog($data);

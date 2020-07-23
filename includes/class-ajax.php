@@ -326,6 +326,7 @@ if(!class_exists('theme_ajax_action')){
       }
 
       $reload = false;
+
       if($post_id < 0){
         $reload = true;
         $_name = array($meta['patient_data']['name'], $meta['patient_data']['treatment'],$meta['patient_data']['clinic']);
