@@ -392,9 +392,6 @@ class theme_content_output{
 
     $treatment_data           = $treatment_data?: array();
 
-
-    clog($treatment_data);
-
     $users = get_users();
     $specialists_data = array();
 
@@ -403,6 +400,7 @@ class theme_content_output{
     $campaigns = get_option('campaigns_list');
 
     foreach ($users as $key => $user) {
+      if(!in_array('staff', $user->roles)){continue;}
       $photo_id = get_the_author_meta('user_photo_id', $user->ID);
       $image    =  wp_get_attachment_url( $photo_id );
       $image    = ($image) ? $image : DUMMY_ADMIN;
@@ -564,7 +562,9 @@ class theme_content_output{
     $users = get_users();
     $specialists_data = array();
 
+
     foreach ($users as $key => $user) {
+
       $photo_id = get_the_author_meta('user_photo_id', $user->ID);
       $image    =  wp_get_attachment_url( $photo_id );
       $image    = ($image) ? $image : DUMMY_ADMIN;
