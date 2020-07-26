@@ -162,7 +162,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <td>
                       <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
                     </td>
-                    <td><p class="leads-block__label">Enquery</p></td>
+                    <td><p class="leads-block__label">Enquiry</p></td>
                     <td>
 
                       <div class="clearfix">
