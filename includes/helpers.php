@@ -317,7 +317,6 @@ if(!function_exists('exec_upload_file')){
   */
   function exec_upload_file($file_name , $nonce_post ='', $nonce =''  ){
 
-    dlog('exec_upload ' .  $file_name , true, false, 'exec_upload');
 
     if ( ! function_exists( 'wp_handle_upload' ) )
       include_once( ABSPATH . 'wp-admin/includes/file.php' );
@@ -334,10 +333,6 @@ if(!function_exists('exec_upload_file')){
       $file      = & $_FILES[$file_name];
       $dir       = wp_upload_dir();
       $overrides = [ 'test_form' => false ];
-
-      dlog('file: ');
-      dlog($file);
-
 
      /**
      * check for errors on uploading file
@@ -386,18 +381,12 @@ if(!function_exists('exec_upload_file')){
          throw new Exception('Failed to load. '. $file_loaded['error']);
       }
 
-      dlog( "wp load processed");
-      dlog( $file_loaded );
-
 
       $p = explode('/', $file_loaded['file']);
       $file_name = end($p);
       $file_name_parts = explode('.', $file_name);
       $file_resolution = end($file_name_parts);
       $file_resolution_check = strtolower($file_resolution);
-
-
-      dlog('file type: ' . $file_resolution);
 
       if($file['type'] === 'image/png' || $file['type'] === 'image/jpg' || $file['type'] === 'image/jpeg'  ){
         $search     = '.'.$file_resolution;
@@ -415,16 +404,13 @@ if(!function_exists('exec_upload_file')){
 
       $upload_exeptions['success'][] = 'Upload of the file ' . $file['name'] . ' was completed successfully';
 
-      dlog('exec_upload finished successfully', false, true);
 
       return array(
         'file' => $file,
         'file_loaded' => $file_loaded,
       ) ;
     } catch(Exception $ex){
-      dlog($ex->getMessage());
       $upload_exeptions['error'][] = $ex->getMessage();
-      dlog('exec_upload finished with error', false, true);
     }
 
     return $upload_exeptions;
@@ -489,7 +475,7 @@ if(!function_exists('get_posts_by_dates')){
   */
 
   function get_posts_by_dates($from = false, $to = false, $post_type = false){
-    dlog('Get Posts by Date', true, false);
+    $start = microtime(true);
     $post_type = (! $post_type )? velesh_theme_posts::$lead :  $post_type ;
 
     $args = array(
@@ -511,14 +497,12 @@ if(!function_exists('get_posts_by_dates')){
     }else{
       $date = new DateTime($from);
       $args['date_query'][0]['after'] = $date->format('Y-m-d');
-      dlog('from: '.  $args['date_query'][0]['after']);
     }
     if(!$to){
       unset($args['date_query']['before']);
     }else{
       $date = new DateTime($to);
       $args['date_query'][0]['before'] = $date->format('Y-m-d');
-      dlog('to: '.  $args['date_query'][0]['before']);
     }
 
 
@@ -526,11 +510,8 @@ if(!function_exists('get_posts_by_dates')){
        unset($args['date_query']);
     }
 
-    dlog($args);
-
     $posts = get_posts($args);
-    dlog($posts);
-    dlog('-------------', false, true);
+    clog('get_posts_by_dates: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
 
     return $posts;
   }
@@ -538,9 +519,10 @@ if(!function_exists('get_posts_by_dates')){
 
 if(!function_exists('get_leads_meta')){
 
-  function get_leads_meta($leads){
-    dlog('Get Leads Meta', true, false);
 
+
+  function get_leads_meta($leads){
+    $start = microtime(true);
 
     $sources = array(
         'live-chat'  => 'Live Chat',
@@ -562,23 +544,118 @@ if(!function_exists('get_leads_meta')){
     $stage_for_failed    = (int)get_option('stage_for_failed');
     $stage_for_converted = (int)get_option('stage_for_converted');
 
+    $converted_stages  = get_converted_stages();
+    $failed_stage_name = get_failed_stage_name();
+
+    global $wpdb;
+
+    $lead_ids = array_map('get_leads_ids', $leads);
+
+    $lead_ids = join("','",$lead_ids);
+
+    $start2 = microtime(true);
+    $querystr = "
+      SELECT *
+      FROM   $wpdb->postmeta
+      WHERE  $wpdb->postmeta.post_id IN  ('$lead_ids')
+    ";
+
+    $request = $wpdb->get_results($querystr, OBJECT);
+    clog('request : '.round(microtime(true) - $start2, 4).' сек.' , 'blue');
+
+    $meta_parsed = array();
+
+    $start3 = microtime(true);
+    foreach ($request as $key => $item) {
+      if(!isset($meta_parsed[$item->post_id])){
+        $meta_parsed[$item->post_id] = array();
+      }
+      $meta_parsed[$item->post_id][$item->meta_key] = maybe_unserialize($item->meta_value);
+    }
+
+    clog('parse_meta : '.round(microtime(true) - $start3, 4).' сек.' , 'blue');
+
+
+
+
+    // get_all_users
+
+    $querystr = "
+      SELECT *
+      FROM   $wpdb->usermeta
+      WHERE  $wpdb->usermeta.meta_key = 'user_position' OR $wpdb->usermeta.meta_key = 'user_photo_id' OR $wpdb->usermeta.meta_key = 'first_name' OR $wpdb->usermeta.meta_key = 'last_name' OR $wpdb->usermeta.meta_key = 'nickname'
+    ";
+
+    $request = $wpdb->get_results($querystr, OBJECT);
+
+
+    $cached_user = theme_get_all_users();
+
     foreach ($leads as $lead_id => $post) {
       // get all metadata;
 
-      $coordinator_data =  get_post_meta($post->ID, '_treatment_coordinator', true);
 
-      $meta = array(
-        'lead_notes'            => get_post_meta($post->ID, '_lead_notes', true),
-        'lead_notes_tco'        => get_post_meta($post->ID, '_lead_notes_tco', true),
-        'lead_files'            => get_post_meta($post->ID, '_lead_files', true),
+      $post_meta = $meta_parsed[$post->ID];
+
+
+      // $coordinator_data =   get_post_meta($post->ID, '_treatment_coordinator', true);
+      $coordinator_data =   isset($post_meta['_treatment_coordinator'])? ($post_meta['_treatment_coordinator']): false;
+      // $coordinator_data =  isset($post_meta['_treatment_coordinator'])? unserialize($post_meta['_treatment_coordinator']): false;
+
+      // $meta = array(
+      //   'lead_notes'            => get_post_meta($post->ID, '_lead_notes', true),
+      //   'lead_notes_tco'        => get_post_meta($post->ID, '_lead_notes_tco', true),
+      //   'lead_files'            => get_post_meta($post->ID, '_lead_files', true),
+      //   'treatment_coordinator' => $coordinator_data,
+      //   'treatment_value'       => get_post_meta($post->ID, '_treatment_value', true),
+      //   'patient_data'          => get_post_meta($post->ID, '_patient_data', true),
+      //   'reminder'              => get_post_meta($post->ID, '_reminder', true),
+      //   'lead_stage'            => get_post_meta($post->ID, '_lead_stage', true),
+      //   'start_date'            => get_post_meta($post->ID, '_start_date', true),
+      //   'end_date'              => get_post_meta($post->ID, '_end_date', true),
+      // );
+
+       $meta = array(
+        'lead_notes'            =>  isset($post_meta['_lead_notes'])? ($post_meta['_lead_notes']): false,
+        'lead_notes_tco'        =>  isset($post_meta['_lead_notes_tco'])? ($post_meta['_lead_notes_tco']): false,
+        'lead_files'            =>  isset($post_meta['_lead_files'])? ($post_meta['_lead_files']): false,
         'treatment_coordinator' => $coordinator_data,
-        'treatment_value'       => get_post_meta($post->ID, '_treatment_value', true),
-        'patient_data'          => get_post_meta($post->ID, '_patient_data', true),
-        'reminder'              => get_post_meta($post->ID, '_reminder', true),
-        'lead_stage'            => get_post_meta($post->ID, '_lead_stage', true),
-        'start_date'            => get_post_meta($post->ID, '_start_date', true),
-        'end_date'              => get_post_meta($post->ID, '_end_date', true),
-      );
+        'treatment_value'       =>  isset($post_meta['_treatment_value'])? ($post_meta['_treatment_value']): false,
+        'patient_data'          =>  isset($post_meta['_patient_data'])? ($post_meta['_patient_data']): false,
+        'reminder'              =>  isset($post_meta['_reminder'])? ($post_meta['_reminder']): false,
+        'lead_stage'            =>  isset($post_meta['_lead_stage'])? ($post_meta['_lead_stage']): false,
+        'start_date'            =>  isset($post_meta['_start_date'])? ($post_meta['_start_date']): false,
+        'end_date'              =>  isset($post_meta['_end_date'])? ($post_meta['_end_date']): false,
+       );
+
+      // $lead_specialists      = get_post_meta($post->ID, '_lead_specialists', true);
+      $lead_specialists      = isset($post_meta['_lead_specialists'])? ($post_meta['_lead_specialists']): false;
+
+      // $lead_specialists_tco  = get_post_meta($post->ID, '_lead_specialists_tco', true);
+      $lead_specialists_tco  = isset($post_meta['_lead_specialists_tco'])? ($post_meta['_lead_specialists_tco']): false;
+
+      // $treatment_data = get_post_meta($post->ID, '_treatment_data', true);
+      $treatment_data        = isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): false;
+
+      // $time_converted        = get_post_meta($post->ID, '_time_converted', true);
+      $time_converted        = isset($post_meta['_time_converted'])? ($post_meta['_time_converted']): false;
+
+      // $order                 = get_post_meta($post->ID, '_lead_order', true);
+      $order                 = isset($post_meta['_lead_order'])? ($post_meta['_lead_order']): false;
+
+      // $phone_count           = get_post_meta($post->ID, '_phone_count', true);
+      $phone_count           = isset($post_meta['_phone_count'])? ($post_meta['_phone_count']): false;
+
+      // $message_count         = get_post_meta($post->ID, '_message_count', true);
+      $message_count         = isset($post_meta['_message_count'])? ($post_meta['_message_count']): false;
+
+      // $end_date              =  get_post_meta($post->ID, '_end_date' , true);
+      $end_date              = isset($post_meta['_end_date'])? ($post_meta['_end_date']): false;
+
+      // $stage = get_post_meta($post->ID, '_lead_stage', true);
+      $stage                 = isset($post_meta['_lead_stage'])? ($post_meta['_lead_stage']): false;
+
+
 
 
       if(!$meta['patient_data']){
@@ -591,18 +668,16 @@ if(!function_exists('get_leads_meta')){
 
       //prepare data for filtering
       $filter_data = array(
-        'clinics'    => (isset($meta['patient_data']['clinic']))? $meta['patient_data']['clinic'] : '',
+        'clinics'       => (isset($meta['patient_data']['clinic']))? $meta['patient_data']['clinic'] : '',
         'treatments'    => (isset($meta['patient_data']['treatment']))? $meta['patient_data']['treatment'] : '',
-        'campaigns'    => (isset($meta['patient_data']['campaign']))? $meta['patient_data']['campaign'] : '',
-        'sources'    => (isset($meta['patient_data']['source']))? $meta['patient_data']['source'] : '',
-        'team'       => array(),
-        'dentists'   => array(),
+        'campaigns'     => (isset($meta['patient_data']['campaign']))? $meta['patient_data']['campaign'] : '',
+        'sources'       => (isset($meta['patient_data']['source']))? $meta['patient_data']['source'] : '',
+        'team'          => array(),
+        'dentists'      => array(),
       );
 
       //get array of specialists assigned
 
-      $lead_specialists  = get_post_meta($post->ID, '_lead_specialists', true);
-      $lead_specialists_tco  = get_post_meta($post->ID, '_lead_specialists_tco', true);
       $specialists       = array();
 
       if(!$lead_specialists){
@@ -612,17 +687,20 @@ if(!function_exists('get_leads_meta')){
         $lead_specialists_tco = array();
       }
 
+
       foreach ($lead_specialists as $user_id => $assigned) {
         if('yes' === $assigned){
-          $user = get_user_by('id', $user_id);
 
-          if(!$user){continue;}
-          $name =  theme_get_user_name($user);
-          $user_position = get_the_author_meta('user_position', $user->ID);
 
-          $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
-          $image =  wp_get_attachment_url( $user_photo_id );
-          $image = ($image) ? $image : DUMMY_ADMIN;
+
+        if(!isset($cached_user[ $user_id ] )) {continue;}
+
+          $user           = $cached_user[ $user_id ];
+
+          $name           = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
+          $user_position  =  $user['user_position'];
+          $image          =  isset($user['image']) ?$user['image'] : DUMMY_ADMIN;
+
 
           array_push($filter_data['team'] , $name );
 
@@ -637,15 +715,14 @@ if(!function_exists('get_leads_meta')){
 
       foreach ($lead_specialists_tco as $user_id => $assigned) {
         if('yes' === $assigned){
-          $user = get_user_by('id', $user_id);
 
-          if(!$user){continue;}
-          $name =  theme_get_user_name($user);
-          $user_position = get_the_author_meta('user_position', $user->ID);
 
-          $user_photo_id = get_the_author_meta('user_photo_id', $user->ID);
-          $image =  wp_get_attachment_url( $user_photo_id );
-          $image = ($image) ? $image : DUMMY_ADMIN;
+           if(!isset($cached_user[ $user_id ])){continue;}
+           $user = $cached_user[ $user_id ];
+
+             $name           = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
+            $user_position  =  $user['user_position'];
+            $image          =  isset($user['image']) ?$user['image'] : DUMMY_ADMIN;
 
           array_push($filter_data['team'] , $name );
 
@@ -667,7 +744,6 @@ if(!function_exists('get_leads_meta')){
         }
       }
 
-      $treatment_data = get_post_meta($post->ID, '_treatment_data', true);
 
       if($treatment_data){
         foreach ($treatment_data as $key => $t) {
@@ -679,7 +755,7 @@ if(!function_exists('get_leads_meta')){
 
       // clog(get_post_meta($post->ID));
 
-      $leads[$lead_id]->converted_time = get_post_meta($post->ID, '_time_converted', true);
+      $leads[$lead_id]->converted_time = $time_converted;
 
 
       $meta['lead_specialists'] =  $specialists;
@@ -693,7 +769,7 @@ if(!function_exists('get_leads_meta')){
 
       if($stages){
         $exists = false;
-        $stage = get_post_meta($post->ID, '_lead_stage', true);
+
 
         foreach ($stages as $st) {
           $exists = $st['name'] === $stage ? true :  $exists;
@@ -710,32 +786,29 @@ if(!function_exists('get_leads_meta')){
       $leads[$lead_id]->filter_data = $filter_data;
       // detect if lead is failed or converted
 
-      $leads[$lead_id]->is_converted = (in_array($leads[$lead_id]->lead_stage, get_converted_stages()) )? 'yes': 'no';
+      $leads[$lead_id]->is_converted = (in_array($leads[$lead_id]->lead_stage, $converted_stages) )? 'yes': 'no';
 
-      $leads[$lead_id]->is_failed = (isset($lead_stage) && $lead_stage === get_failed_stage_name())? 'yes': 'no';
+      $leads[$lead_id]->is_failed = (isset($lead_stage) && $lead_stage === $failed_stage_name)? 'yes': 'no';
 
       $leads[$lead_id]->permalink = esc_url(get_permalink($post));
-
-      $order = get_post_meta($post->ID, '_lead_order', true);
 
       if($order){
         $leads[$lead_id]->order = $order;
       }
 
-      $phone_count   = get_post_meta($post->ID, '_phone_count', true);
 
       $phone_count = ($phone_count) ? $phone_count : 0;
 
-      $message_count   = get_post_meta($post->ID, '_message_count', true);
       $message_count = ($message_count) ? $message_count : 0;
 
       $leads[$lead_id]->message_count = (int)$message_count;
       $leads[$lead_id]->phone_count = (int)$phone_count;
 
-      $leads[$lead_id]->payment_end_date =  get_post_meta($post->ID, '_end_date' , true);
+      $leads[$lead_id]->payment_end_date =  $end_date;
     }
 
-    dlog('-------------', false, true);
+
+    clog('get_leads_meta: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
     return $leads;
   }
 }
@@ -761,11 +834,10 @@ if(!function_exists('theme_get_user_name')){
      if(!$user){
        return '';
      }
-      $last_name     = get_the_author_meta('last_name', $user->ID);
+     $last_name     = get_the_author_meta('last_name', $user->ID);
      $first_name    = get_the_author_meta('first_name', $user->ID);
      $name = $first_name  . ' '. $last_name ;
      $name = trim($name)? $name : $user->data->display_name;
-
      return trim($name);
    }
 
@@ -782,7 +854,7 @@ if(!function_exists('get_filters_by_leads')){
   */
   function get_filters_by_leads($leads = false, $add_stages = false){
 
-    dlog('Get filter data by leads', true, false);
+    $start = microtime(true);
 
     $data = array(
       'clinics'    => array('All Clinics'),
@@ -834,7 +906,6 @@ if(!function_exists('get_filters_by_leads')){
         if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
           array_push($data['team'], $member['name']);
 
-          dlog($member['name']);
         }
 
       }
@@ -870,11 +941,6 @@ if(!function_exists('get_filters_by_leads')){
 
      $data['dentists'] = array_values( array_unique($data['dentists']));
 
-    dlog($data);
-    dlog('-------------', false, true);
-
-
-
     if ($add_stages) {
       foreach ($stages_formatted as $key => $show) {
         if(!$show){
@@ -884,6 +950,7 @@ if(!function_exists('get_filters_by_leads')){
       $data['lead_stage'] = array_keys($stages_formatted);
     }
 
+    clog('get_filters_by_leads: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
 
     return $data;
   }
@@ -952,6 +1019,108 @@ if(!function_exists('get_users_leads')){
   *
   * @return array;
   */
+
+  // function get_users_leads($from = false, $to=false){
+  //   dlog('Get Users leads', true, false);
+  //   $data = array();
+  //   $posistions = array('all');
+
+  //   $converted_stages = get_converted_stages();
+
+
+
+  //   foreach (get_users() as $key => $user) {
+  //     $name = theme_get_user_name($user);
+  //     $user_position = strtolower(get_the_author_meta('user_position', $user->ID));
+  //     $assigned_posts = get_the_author_meta('_leads_assigned', $user->ID);
+
+  //     $photo_id = get_the_author_meta('user_photo_id', $user->ID);
+  //     $image =  wp_get_attachment_url( $photo_id );
+  //     $image = ($image) ? $image : DUMMY_ADMIN;
+
+  //     if( !$assigned_posts ){
+  //       $data[$name] = array(
+  //         'user_position' => $user_position,
+  //         'leads'         => array(),
+  //         'total_leads'   => 0,
+  //         'converted'     => 0,
+  //         'image'     => $image ,
+  //       );
+  //       continue;
+  //     }
+  //     // default args fo wp query
+  //     $args = array(
+  //       'post_type'      => velesh_theme_posts::$lead,
+  //       'post__in'       => $assigned_posts,
+  //       'posts_per_page' => -1,
+  //       'limit'          => -1,
+  //       'date_query' => array(
+
+  //         array(
+  //           'column' => 'post_date_gmt',
+  //           'after'     => '',
+  //           'before'    => '',
+  //           'inclusive' => true,
+  //         ),
+  //       ),
+  //     );
+
+  //     // check if data is set
+
+  //     if(!$from){
+  //       unset($args['date_query']['after']);
+  //     }else{
+  //       $date = new DateTime($from);
+  //       $args['date_query'][0]['after'] = $date->format('Y-m-d');
+  //     }
+
+  //     if(!$to){
+  //       unset($args['date_query']['before']);
+  //     }else{
+  //       $date = new DateTime($to);
+  //       $args['date_query'][0]['before'] = $date->format('Y-m-d');
+  //     }
+
+  //     if(!$from && !$to){
+  //        unset($args['date_query']);
+  //     }
+
+  //     $args_converted = $args;
+
+  //     $posts = get_posts($args);
+
+  //     // _lead_stage
+
+  //     $args_converted['meta_query'] = array('relation' => 'OR');
+
+  //     foreach (get_converted_stages() as $key => $_stage) {
+  //       $args_converted['meta_query'][] = array('key' =>'_lead_stage', 'value'=>$_stage);
+  //     }
+
+  //     if(!in_array($user_position, $posistions)){
+  //       array_push($posistions, $user_position );
+  //     }
+
+
+  //     $leads_converted = get_posts($args_converted);
+
+  //     $data[$name] = array(
+  //       'user_position' => $user_position,
+  //       'leads'         => get_leads_meta($posts),
+  //       'total_leads'   => count($posts),
+  //       'converted'     => count($leads_converted),
+  //       'image'         => $image ,
+  //     );
+  //   }
+
+  //   dlog('-------------', false, true);
+
+  //   return array(
+  //     'team' => $data,
+  //     'positions' => $posistions,
+  //   );
+  // }
+
   function get_users_leads($from = false, $to=false){
     dlog('Get Users leads', true, false);
     $data = array();
@@ -959,14 +1128,15 @@ if(!function_exists('get_users_leads')){
 
     $converted_stages = get_converted_stages();
 
-    foreach (get_users() as $key => $user) {
-      $name = theme_get_user_name($user);
-      $user_position = strtolower(get_the_author_meta('user_position', $user->ID));
-      $assigned_posts = get_the_author_meta('_leads_assigned', $user->ID);
+    $users = theme_get_all_users(true);
 
-      $photo_id = get_the_author_meta('user_photo_id', $user->ID);
-      $image =  wp_get_attachment_url( $photo_id );
-      $image = ($image) ? $image : DUMMY_ADMIN;
+    // foreach (get_users() as $key => $user) {
+    foreach ( $users  as $key => $user) {
+     $name         = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
+      $user_position = strtolower($user['user_position']);
+
+      $assigned_posts = isset($user['_leads_assigned'])? $user['_leads_assigned'] : false;
+      $image = isset($user['image']) ? $user['image'] : DUMMY_ADMIN;
 
       if( !$assigned_posts ){
         $data[$name] = array(
@@ -1159,3 +1329,60 @@ if(!function_exists('get_billed_totals')){
   }
 }
 
+
+
+function get_leads_ids($lead){
+  return $lead->ID;
+}
+
+
+function theme_get_all_users($get_assigned = false, $get_roles = false){
+
+  global $wpdb;
+
+  $querystr = "
+    SELECT *
+    FROM   $wpdb->usermeta
+    WHERE  $wpdb->usermeta.meta_key = 'user_position' OR $wpdb->usermeta.meta_key = 'user_photo_id' OR $wpdb->usermeta.meta_key = 'first_name' OR $wpdb->usermeta.meta_key = 'last_name' OR $wpdb->usermeta.meta_key = 'nickname'
+  ";
+
+  if($get_assigned ){
+     $querystr .= " OR $wpdb->usermeta.meta_key = '_leads_assigned' ";
+  }
+  if($get_roles ){
+     $querystr .= " OR $wpdb->usermeta.meta_key = 'wp_capabilities' ";
+  }
+
+  $request = $wpdb->get_results($querystr, OBJECT);
+
+  $cached_user = array();
+
+  foreach ($request as $key => $data) {
+
+    $user_id = (int)$data->user_id;
+
+    if(!isset($cached_user[ $user_id ])){
+      $cached_user[ $user_id ] = array();
+    }
+
+    switch ($data->meta_key) {
+      case "user_photo_id":
+          $user_photo_id                             =  (int)$data->meta_value;
+          $image                                     =  wp_get_attachment_url( $user_photo_id );
+          $cached_user[ $user_id ]['image']          = ($image) ? $image : DUMMY_ADMIN;
+        break;
+      case "_leads_assigned":
+        $cached_user[ $user_id ][$data->meta_key] = maybe_unserialize($data->meta_value);
+        break;
+      case "wp_capabilities":
+        $cached_user[ $user_id ]['roles']         = array_keys(maybe_unserialize($data->meta_value));
+         break;
+
+      default:
+        $cached_user[ $user_id ][$data->meta_key] = ($data->meta_value);
+        break;
+    }
+  }
+
+  return $cached_user;
+}

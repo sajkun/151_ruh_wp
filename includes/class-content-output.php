@@ -174,6 +174,8 @@ class theme_content_output{
   public static function print_leads_list(){
     global $theme_init;
 
+      $start = microtime(true);
+
     // Get date range default
 
       $today = new DateTime();
@@ -203,6 +205,7 @@ class theme_content_output{
       $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
 
       $leads = get_leads_meta($leads);
+
 
 
     // prepare data for filters
@@ -246,6 +249,7 @@ class theme_content_output{
 
     print_theme_template_part('leads-list', 'globals', $args);
 
+
     wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
     wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
     wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
@@ -254,6 +258,7 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'failed_lead_name', get_converted_stages());
 
     wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
+
 
 
     // data for single lead
@@ -270,41 +275,47 @@ class theme_content_output{
     $treatments = $treatments ? $treatments: array();
     $campaigns  = $campaigns ? $campaigns: array();
 
-    $args_dentists = array(
-        'role'    => 'dentist',
-        'orderby' => 'user_nicename',
-        'order'   => 'ASC'
-    );
-
-    $dentists = get_users( $args_dentists );
-    $available_dentists = array();
-    foreach ($dentists as $d) {
-      $available_dentists[]  = theme_get_user_name($d);
-    }
+    // $args_dentists = array(
+    //     'role'    => 'dentist',
+    //     'orderby' => 'user_nicename',
+    //     'order'   => 'ASC'
+    // );
 
 
 
-    $args_staff= array(
-      'role__in'    => array('staff', 'manager', 'administrator'),
-      'orderby' => 'user_nicename',
-      'order'   => 'ASC'
-    );
+    // $dentists = get_users( $args_dentists );
+    // $available_dentists = array();
+    // foreach ($dentists as $d) {
+    //   $available_dentists[]  = theme_get_user_name($d);
+    // }
 
-    $staff = get_users( $args_staff );
-    $available_staff = array();
+    // $args_staff= array(
+    //   'role__in'    => array('staff', 'manager', 'administrator'),
+    //   'orderby' => 'user_nicename',
+    //   'order'   => 'ASC'
+    // );
 
-    foreach ($staff as $d) {
-      $available_staff[]  = theme_get_user_name($d);
-    }
+    // $staff = get_users( $args_staff );
+    // $available_staff = array();
 
-    wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
-    wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
+
+    // foreach ($staff as $d) {
+    //   $available_staff[]  = theme_get_user_name($d);
+    // }
+
+
+
+    // wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
+    // wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
+
 
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
     wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
     wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
+
+    clog('print_lead_list: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
   }
 
 

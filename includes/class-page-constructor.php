@@ -68,7 +68,7 @@ class theme_construct_page{
     }
 
     if(THEME_DEBUG){
-      add_action('do_theme_after_footer', array('theme_content_output','print_debug_info'));
+      add_action('finish_page', array('theme_content_output','print_debug_info'));
     }
   }
 

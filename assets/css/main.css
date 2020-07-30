@@ -4426,6 +4426,12 @@ html {
   background-color: transparent;
 }
 
+#login-form .button-submit {
+  width: auto !important;
+  outline: 0 !important;
+  border: 0;
+}
+
 /*
   Table of Contents
 
@@ -9334,6 +9340,10 @@ body.admin-bar {
   height: 100%;
 }
 
+.leads-container {
+  overflow: auto;
+}
+
 .leads-container .row {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
@@ -9347,6 +9357,10 @@ body.admin-bar {
           flex: 1;
   height: 100%;
   overflow: auto;
+}
+
+.horizontal-scroll {
+  max-height: 60vh;
 }
 
 .button-back {

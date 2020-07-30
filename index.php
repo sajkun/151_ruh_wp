@@ -13,8 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 $data = get_queried_object();
-
+$start = microtime(true);
 ?>
+
 <div class="site-container" id="site-body">
   <?php
     do_action('do_theme_before_header');
@@ -36,6 +37,7 @@ $data = get_queried_object();
 </div>
 
 <?php
+    clog('print_document: '.round(microtime(true) - $start, 4).' сек.' , 'red');
  ?>
 
 <?php get_footer(); ?>

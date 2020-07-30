@@ -316,13 +316,13 @@ class velesh_init_theme{
    * @prints-for-js $user_data - {USER_DATA}
    */
   public function prepare_template_data(){
-    $wc_urls = array(
+    $wp_urls = array(
       'home_url'    => HOME_URL,
       'theme_url'   => THEME_URL,
       'wp_ajax_url' => admin_url('admin-ajax.php'),
     );
 
-    wp_localize_script($this->main_script_slug,'WP_URLS', $wc_urls);
+    wp_localize_script($this->main_script_slug,'WP_URLS', $wp_urls);
   }
 
 

@@ -57,10 +57,41 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_save_messages_count', array($this, 'save_messages_count_cb'));
       add_action('wp_ajax_nopriv_save_messages_count', array($this, 'save_messages_count_cb'));
 
+      add_action('wp_ajax_theme_get_users', array($this, 'theme_get_users_cb'));
+      add_action('wp_ajax_nopriv_theme_get_users', array($this, 'theme_get_users_cb'));
+
       add_action('wp_ajax_nopriv_run_login', array($this, 'run_login_cb'));
 
       add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
     }
+
+    public static function theme_get_users_cb(){
+      $available_dentists = array();
+      $available_staff = array();
+      $staff_roles = array('staff', 'manager', 'administrator');
+      $dentists_roles = array('dentist');
+
+      foreach (theme_get_all_users(false, true) as $user_id => $user) {
+
+       $name         = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
+
+
+        if(count(array_intersect($staff_roles, $user['roles'])) > 0){
+            $available_staff[] = $name;
+        }
+
+        if(count(array_intersect($dentists_roles, $user['roles'])) > 0){
+            $available_dentists[] = $name;
+        }
+      }
+
+      wp_send_json(array(
+        'available_dentists' => $available_dentists,
+        'available_staff'    => $available_staff,
+        'users'    => theme_get_all_users(false, true),
+      ));
+    }
+
 
     public static function save_lead_end_date_cb(){
        $post_id = (int)$_POST['lead_id'];
@@ -232,7 +263,7 @@ if(!class_exists('theme_ajax_action')){
     */
     public function update_leads_log_cb(){
       $post_id = (int)$_POST['post_id'];
-      $post = get_post($post_id);
+      $post    = get_post($post_id);
       $meta    = get_post_meta($post_id, '_lead_log', true);
 
       if(!$meta){
@@ -561,7 +592,7 @@ if(!class_exists('theme_ajax_action')){
 
     public static function get_leads_by_dates_cb(){
       try {
-        define('DOING_AJAX', true);
+        // define('DOING_AJAX', true);
 
         $from = new DateTime($_POST['from']);
         $to = new DateTime($_POST['to']);
@@ -572,7 +603,7 @@ if(!class_exists('theme_ajax_action')){
 
         $leads = get_posts_by_dates($from_formated , $to_formated );
 
-        $leads = get_leads_meta($leads);
+        $leads          = get_leads_meta($leads);
 
 
         $team_perfomance = get_users_leads($from_formated , $to_formated);

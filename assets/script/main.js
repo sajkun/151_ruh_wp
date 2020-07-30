@@ -1433,6 +1433,10 @@ var single_lead;
 var perfomance;
 var debug_vue;
 
+var $available_staff;
+var $available_dentists;
+
+
 var icons_selects = {
   'clinics': '<svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>',
 
@@ -3220,8 +3224,6 @@ if('undefined' !== typeof(is_lead_list)){
       get_convertion: function(){
         var vm = this;
 
-        clog(stages);
-
         return function (col_id) {
           var leads_total = 0;
           var leads_column_total = 0;
@@ -3427,6 +3429,7 @@ if('undefined' !== typeof(is_lead_list)){
 
       Vue.nextTick(function() {
         vm.handle_resize();
+        get_theme_users();
       });
 
       window.addEventListener('resize', vm.handle_resize);
@@ -3492,8 +3495,6 @@ if('undefined' !== typeof(is_lead_list)){
         var saved_filter = JSON.parse(Cookie.get('lead_list_filter2'));
 
         var all_props = {};
-
-        clog(dashboard_filter_data);
 
         for(var select_name in dashboard_filter_data){
 
@@ -3701,8 +3702,6 @@ if('undefined' !== typeof(is_lead_list)){
       show_single_lead: function(post_id, lead){
         clog(lead);
 
-        // this.show = false;
-
         var vm = this;
 
         date_start = lead.base_lead.post_date;
@@ -3715,6 +3714,27 @@ if('undefined' !== typeof(is_lead_list)){
       },
     },
   })
+
+}
+
+
+function get_theme_users(){
+  clog('user request sent')
+  jQuery.ajax({
+    url: WP_URLS.wp_ajax_url,
+    type: 'POST',
+    dataType: 'json',
+    data: {action: 'theme_get_users'},
+  })
+  .done(function() {
+    console.log("success");
+  })
+  .fail(function() {
+    console.log("error");
+  })
+  .always(function(e) {
+    console.log(e);
+  });
 
 }
 
