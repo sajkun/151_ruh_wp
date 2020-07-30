@@ -9223,16 +9223,30 @@ body.admin-bar {
   margin-top: 5px;
 }
 
+.horizontal-scroll {
+  position: relative;
+}
+
 .leads-column {
+  padding-top: 60px;
   width: 270px;
   margin: 0 15px 10px;
   flex-basis: 270px;
   flex-shrink: 0;
+  position: relative;
 }
 
 .leads-column__head {
   line-height: 33px;
   margin: 0 0 20px;
+  position: absolute;
+  background: #f5f7fa;
+  top: 0;
+  width: 270px;
+  display: block;
+  left: 0;
+  z-index: 100;
+  padding-bottom: 15px;
 }
 
 .leads-column__tag {
@@ -9247,6 +9261,8 @@ body.admin-bar {
   background: #eee;
   color: #999;
   margin-right: 10px;
+  position: relative;
+  z-index: 10;
 }
 
 .leads-column__count {
@@ -10555,6 +10571,14 @@ body.admin-bar {
 
 .reminder .icon {
   fill: #838993;
+}
+
+.reminder .icon.red {
+  fill: #eb0147;
+}
+
+.reminder .icon.green {
+  fill: #01c58d;
 }
 
 .reminder .label {

@@ -611,7 +611,7 @@ if(!class_exists('theme_ajax_action')){
         // prepare data for filters
 
 
-        $filter_data = get_filters_by_leads( $leads );
+        $filter_data     = get_filters_by_leads( $leads );
         $filter_data_csv = get_filters_by_leads( $leads, true );
 
 

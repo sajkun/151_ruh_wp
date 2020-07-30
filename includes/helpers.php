@@ -619,6 +619,7 @@ if(!function_exists('get_leads_meta')){
         'lead_notes'            =>  isset($post_meta['_lead_notes'])? ($post_meta['_lead_notes']): false,
         'lead_notes_tco'        =>  isset($post_meta['_lead_notes_tco'])? ($post_meta['_lead_notes_tco']): false,
         'lead_files'            =>  isset($post_meta['_lead_files'])? ($post_meta['_lead_files']): false,
+        'treatment_data'        =>  isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): false,
         'treatment_coordinator' => $coordinator_data,
         'treatment_value'       =>  isset($post_meta['_treatment_value'])? ($post_meta['_treatment_value']): false,
         'patient_data'          =>  isset($post_meta['_patient_data'])? ($post_meta['_patient_data']): false,
@@ -626,6 +627,8 @@ if(!function_exists('get_leads_meta')){
         'lead_stage'            =>  isset($post_meta['_lead_stage'])? ($post_meta['_lead_stage']): false,
         'start_date'            =>  isset($post_meta['_start_date'])? ($post_meta['_start_date']): false,
         'end_date'              =>  isset($post_meta['_end_date'])? ($post_meta['_end_date']): false,
+        'specialists_assigned'     => isset($post_meta['_lead_specialists'])? ($post_meta['_lead_specialists']): false,
+        'specialists_assigned_tco' => isset($post_meta['_lead_specialists_tco'])? ($post_meta['_lead_specialists_tco']): false,
        );
 
       // $lead_specialists      = get_post_meta($post->ID, '_lead_specialists', true);

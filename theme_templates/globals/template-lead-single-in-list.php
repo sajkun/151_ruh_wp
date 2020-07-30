@@ -6,40 +6,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 ?>
-<div id="single-lead-in-list">
+<div id="single-lead-in-list" v-show="run_update_lead">
+
+  <input-field _type="hidden" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="user_id" _value="" ref="current_user_id"></input-field>
+
+  <input-field _type="hidden" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="user_name" _value=""></input-field>
+
+  <input-field _type="hidden" ref="lead_id_input" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="lead_id" _value=""></input-field>
+
+  <input-field _type="hidden" ref="lead_stage" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="lead_stage" _value=""></input-field>
+
+  <input-field _type="hidden" ref="lead_stage_prev" v-on:input_value_changed="update_lead($event, 'lead_data')" _name="lead_stage_prev" _value=""></input-field>
 
   <div class="spacer-h-40"></div>
   <div class="container">
     <div class="row">
       <div class="col-12 col-md-8">
         <div class="row no-gutters justify-content-center justify-content-start-sm">
-          <a href="javascript:void(0)" class="button-back">
+          <a href="javascript:void(0)" class="button-back" v-on:click="return_to_list()">
             <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
             <span> Back to Leads</span>
           </a>
 
-          <a href="#" class="reminder">
-            <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+          <a href="javascript:void(0)" class="reminder">
+            <svg class="icon svg-icon-bell" v-if="!reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+            <svg class="icon svg-icon-bell green" v-if="reminder && !overdue"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use></svg>
+
+            <svg class="icon svg-icon-bell red"  v-if="reminder && overdue"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use></svg>
+
             <span class="label">Set Reminder</span>
 
-            <datepicker v-on:input_value_changed="update_lead($event, 'reminder')" v-bind:class="'value'" v-bind:placeholder="'MM dd YYYY hh:mm'" _name="reminder"></datepicker>
+            <datepicker v-on:input_value_changed="update_lead($event, 'reminder')" v-bind:class="'value'" v-bind:placeholder="'MM dd YYYY hh:mm'" _name="reminder" v-model="reminder"></datepicker>
 
-            <span href="javascript:void(0)" v-on:click="clear_reminder()" class="clear-reminder">clear</span>
+            <span v-on:click="clear_reminder()" class="clear-reminder" v-if="reminder">clear</span>
           </a>
 
-          <span class="lead-tag">{{lead_type}}</span>
+          <span class="lead-tag" :class="lead_class" >{{lead_type}}</span>
         </div><!-- row no-gutters justify-content-center justify-content-start-sm -->
       </div><!-- col-12 col-md-8 -->
 
       <div class="col-12 col-md-4 text-center text-right-md">
 
-        <a href="" v-on:click.prevent v-on:click="do_delete_or_return('')" class="button-cancel"></a>
+
+
+          <a href="<?php // echo $return_url; ?>" v-on:click.prevent v-on:click="do_delete_or_return('<?php // echo $return_url; ?>')" class="button-cancel"><?php// echo $text_save_del; ?></a>
+
 
         <?php wp_nonce_field('update_meta_nonce_id', 'lead_data', false); ?>
 
         <a href="javascript:void(0)" class="button-create" v-on:click="save_lead_meta()">
             <svg class="icon svg-icon-ok"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-ok"></use> </svg>
-          <span>{{text_save_btn}}</span>
+          <span>{{save_text}}</span>
         </a>
       </div><!-- col-12 col-md-4 text-center text-right-md -->
     </div><!-- row -->
@@ -57,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) {
              /************************************/?>
         <div class="leads-block">
           <form action="" id="patient_data">
-            <h2 class="leads-block__title">Patient Information
+            <h2 class="leads-block__title"><i class="icon-blue"></i> Reception Team
 
               <span class="icons">
                 <span class="phones">
@@ -70,38 +88,72 @@ if ( ! defined( 'ABSPATH' ) ) {
               </span>
             </h2>
 
+            <div class="hr"></div>
+
+              <div class="row no-gutters">
+                <div class="col-6 valign-center">
+                  <span class="leads-block__title">
+                     <svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>&nbsp;Assigned<span class="mark">*</span>
+                  </span>
+                </div>
+                <div class="col-6 valign-center padding-r-30">
+
+                   <select-imitation v-bind:class="visible_specialists_show_select" _select_name="lead_specialissts" v-on:update_list="update_specialists($event)" v-bind:class="'fullwidth'" ref="lead_specialissts_select"></select-imitation>
+
+                    <table class="team-leads" v-if="visible_specialists.length > 0">
+                      <tbody><tr v-for="(sp, index) in visible_specialists">
+                        <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.name)"></div></td>
+                        <td colspan="3">
+                          <div class="clearfix">
+                            <span class="team-leads__name" v-on:click="remove_specialist(sp.name)">{{sp.name}}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody></table>
+
+                </div>
+              </div>
+
+            <div class="hr"></div>
+
+            <span class="leads-block__title">
+              Patient Information
+            </span>
+
+            <div class="spacer-h-10"></div>
+
             <div class="leads-block__row">
               <form id="patient_data" method="POST">
                 <div class="leads-block__name">
 
                   <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="name" v-model="patient_data.name" v-bind:class="'leads-block__input lg'"></input-field>
 
-                  <span class="leads-block__comment"></span>
+                  <span class="leads-block__comment">time added</span>
                 </div>
                 <table class="leads-block__data">
                   <tr>
                     <td>
                       <svg class="icon svg-icon-phone"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-phone"></use> </svg>
                     </td>
-                    <td><p class="leads-block__label">Phone</p></td>
+                    <td><p class="leads-block__label">Phone <span class="mark">*</span></p></td>
                     <td>
-                      <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="phone" v-model="patient_data.phone"></input-field>
+                      <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="phone" v-model="patient_data.phone" ></input-field>
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <svg class="icon svg-icon-email"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-email"></use> </svg>
                     </td>
-                    <td><p class="leads-block__label">E-mail</p></td>
+                    <td><p class="leads-block__label">E-mail <span class="mark">*</span></p></td>
                     <td>
-                      <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="email"  v-model="patient_data.email" ></input-field>
+                      <input-field v-on:input_value_changed="update_lead($event, 'patient_data')" _name="email" v-model="patient_data.email"></input-field>
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>
                     </td>
-                    <td><p class="leads-block__label">Source</p></td>
+                    <td><p class="leads-block__label">Source <span class="mark">*</span></p></td>
                     <td>
                       <div id="select-imitation-sourses">
                         <select-imitation _select_name="source" v-on:update_list="update_lead($event, 'patient_data')" ref="source_select"  v-model="patient_data.source"
@@ -113,7 +165,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <td>
                       <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
                     </td>
-                    <td><p class="leads-block__label">Treatment</p></td>
+                    <td><p class="leads-block__label">Enquiry</p></td>
                     <td>
 
                       <div class="clearfix">
@@ -145,67 +197,55 @@ if ( ! defined( 'ABSPATH' ) ) {
                         ></select-imitation>
                     </td>
                   </tr>
-                  <tr>
-                    <td>
-                      <svg class="icon svg-icon-date"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-date"></use> </svg>
-                    </td>
-                    <td><p class="leads-block__label">Date / Time</p></td>
-                    <td>
-                      <datepicker v-on:input_value_changed="update_lead($event, 'patient_data')" v-bind:class="'leads-block__input sm'" _name="date_time" _value=""></datepicker>
-                    </td>
-                  </tr>
                 </table>
               </form>
             </div><!-- leads-block__row -->
           </form>
-        </div><!-- leads-block -->
 
-       <?php /************************************/
-             /************************************
-             /*********** MESSage CENTER  ********/
-             /************************************/
-             /************************************/?>
-        <div class="leads-block hidden">
-          <h2 class="leads-block__title">Message Center</h2>
+          <div class="spacer-h-30"></div>
 
+          <h2 class="leads-block__title">Enquiry Notes</h2>
+
+           <div class="spacer-h-20"></div>
 
           <div class="leads-block__row">
-            <span class="message-sent-to">Sent to <span class="marked">07741426253</span> via Ruh Tracker</span>
+            <div v-for="note,key in enquery_notes_c" class="note-block">
+              <div class="note-block__header clearfix">
+                <span class="name">{{note.user_name}}</span>
+                <span class="date">{{note.date}}</span>
 
-            <div class="message-block we">
-              <div class="message-block__header clearfix">
-                <span class="name">Ruh Dental</span>
-                <span class="date">Oct 23 12:15pm</span>
+                <i class="remove-note-icon" v-if=" lead_data.user_name === note.user_name" v-on:click="delete_note(note.key, 'enquery')">
+                  <svg class="icon svg-icon-trash"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use></svg>
+                </i>
               </div>
 
-              <div class="message-block__body">
-                Hi David, would you prefer a morning or afternoon appointment?
-              </div>
-            </div>
+              <div class="note-block__body" v-bind:class="{'manager-note': note.is_manager == 'yes'}">
+               <span class="inner">{{note.text}}</span>
+               <i class="icon-manager-done" v-on:click="mark_note_done(note.key, 'no')" v-if="note.is_manager == 'yes' && note.done =='yes'"></i>
 
-            <div class="message-block him">
-              <div class="message-block__header clearfix">
-                <span class="name">David Bloggs</span>
-                <span class="date">Oct 23 12:29pm</span>
-              </div>
-
-              <div class="message-block__body">
-                Morning would be great!
+                <i class="icon-manager-done not" v-on:click="mark_note_done(note.key, 'yes')" v-if="note.is_manager == 'yes' && note.done !='yes'"></i>
               </div>
             </div>
 
+            <span class="note-block__show-more" v-on:click="enquery_notes_count = notes.length" v-if="enquery_notes_count < enquery_notes_count_c"> <i class="icon"></i> Show {{enquery_notes_count_c - 1}} more</span>
+            <div class="spacer-h-15"></div>
           </div>
 
-            <form action="message-form" id="">
-              <div class="leads-block__form">
-                  <textarea name="text" placeholder="Start typing new message…"></textarea>
-                  <button type="submit">
-                    <svg class="icon svg-icon-send"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-send"></use> </svg>
-                  </button>
-              </div>
-            </form>
-        </div><!-- leads-block -->
-      </div><!-- col-12 col-lg-4 -->
+          <form id="message-form" v-on:submit.prevent  v-on:submit="add_note('enquery')" >
+            <div class="leads-block__form">
+
+            <textarea name="text" placeholder="Enter new note…" ref="note_textarea" v-model="note_text" @keyup.alt.enter="add_note('enquery')" @keyup.ctrl.enter="add_note('enquery')" title="use Enter for line breaks, use Alt+Enter to add note"></textarea>
+
+            <button type="submit" class="button-submit">
+              <svg class="icon svg-icon-send"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-send"></use> </svg>
+            </button>
+
+            </div>
+          </form>
+        </div>
+
+
+     </div><!-- col-12 col-lg-4 -->
 
       <div class="col-12 col-lg-4">
 
@@ -216,213 +256,158 @@ if ( ! defined( 'ABSPATH' ) ) {
              /************************************/?>
 
         <div class="leads-block">
-          <div class="leads-block__row">
-            <i class="icon-holder">
-              <svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
-            </i>
+          <h2 class="leads-block__title"><i class="icon-red"></i> TCO Team </h2>
+
+          <div class="hr"></div>
+
+          <div class="row no-gutters">
+              <div class="col-6 valign-center">
+                <span class="leads-block__title">
+                   <svg class="icon  svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>
+                   Assigned<span class="mark">*</span>
+                </span>
+              </div>
+              <div class="col-6 valign-center padding-r-30">
+
+                 <select-imitation v-bind:class="visible_specialists_show_select_tco" _select_name="lead_specialissts_tco" v-on:update_list="update_specialists($event, 'tco')" v-bind:class="'fullwidth'" ref="lead_specialissts_select_tco"></select-imitation>
+
+                  <table class="team-leads" v-if="visible_specialists_tco.length > 0">
+                    <tbody><tr v-for="(sp, index) in visible_specialists_tco">
+                      <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.name)"></div></td>
+                      <td colspan="3">
+                        <div class="clearfix">
+                          <span class="team-leads__name" v-on:click="remove_specialist(sp.name)">{{sp.name}}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody></table>
+
+              </div>
           </div>
 
-          <h2 class="leads-block__title">Proposed Treatment Value</h2>
+          <div class="hr"></div>
 
-          <form id="treatment_value" method="POST">
+           <span class="leads-block__title">First Appointment</span>
+
+          <div class="leads-block__row">
+            <table class="leads-block__data">
+              <tr>
+                <td>
+                  <svg class="icon svg-icon-date"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-date"></use> </svg>
+                </td>
+                <td><p class="leads-block__label">Date / Time</p></td>
+                <td>
+                  <datepicker v-on:input_value_changed="update_lead($event, 'patient_data')" v-bind:class="'leads-block__input sm'" _name="date_time" v-model="patient_data.date_time"></datepicker>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+
+           <div class="spacer-h-15"></div>
+              <span class="leads-block__title">Dentist & Treatment <span class="submit-button to-right" v-on:click="add_treatment_dentist()"><svg class="icon svg-icon-plus"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-plus"></use> </svg></span></span>
+
+              <div class="spacer-h-15"></div>
+
+              <div class="leads-block__row">
+                <div class="div clearfix" v-for = '(data, key) in treatment_data'  >
+
+                  <select-imitation-icon v-bind:class="'fullwidth'"  _select_name="dentist" v-on:update_list="update_treatment_data($event, key)" :ref="'select_dentist'"
+                  ></select-imitation-icon>
+
+                  <select-imitation-icon v-bind:class="'fullwidth'"  _select_name="treatment" v-on:update_list="update_treatment_data($event, key)" :ref="'select_treatment'"
+                  ></select-imitation-icon>
+
+                  <input-decorated v-on:input_value_changed="update_treatment_data($event, key)" :_icon="icons_selects['card']" _name="billed" v-bind:class="'leads-block__input sm styled text-left'" @focus.native="price_to_value('input_billed')" @blur.native="value_to_price('input_billed')" :ref="'select_billed'"  ></input-decorated>
+
+                  <div class="spacer-h-15"></div>
+                  <div class="hr"></div>
+                  <div class="spacer-h-15"></div>
+                </div>
+              </div>
+
+           <div class="leads-block__row">
+            <table class="leads-block__data">
+              <tr>
+                <td colspan="2">
+                  <p class="leads-block__label no-margin">Total Treatment Value</p>
+                </td>
+                <td class="text-right">
+                  <p class="leads-block__label no-margin">{{treatment_value.value}}</p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <p class="leads-block__label no-margin">Money Taken</p>
+                </td>
+                <td class="text-right">
+                  <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="billed" v-model="treatment_value.billed" v-bind:class="'leads-block__input sm text-right'" @focus.native="price_to_value('input_billed')" @blur.native="value_to_price('input_billed')" ref="input_billed"></input-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <i class="icon-holder">
+                    <svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
+                  </i>
+                </td>
+                <td>
+                  <p class="leads-block__label no-margin">Balance </p>
+                </td>
+                <td class="text-right">
+                 <span class="leads-block__total"><span class="currency">£</span> {{balance}}</span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="spacer-h-20"></div>
+
+            <h2 class="leads-block__title">TCO Notes </h2>
             <div class="leads-block__row">
-             <div class="leads-block__price">
+              <div v-for="note,key in tco_notes_c" class="note-block">
+                <div class="note-block__header clearfix">
+                  <span class="name">{{note.user_name}}</span>
+                  <span class="date">{{note.date}}</span>
 
-              <input-field
-              v-on:input_value_changed="update_lead($event, 'treatment_value')"
-              _name="value"
-              v-model = "treatment_value.value"
-              _placeholder="£00.00"
-              v-bind:class="'leads-block__input xxl'"
-              @focus.native="price_to_value('price_input_field')"
-              @blur.native="value_to_price('price_input_field')"
-              ref='price_input_field'
-              >
-              </input-field>
+                  <i class="remove-note-icon" v-if=" lead_data.user_name === note.user_name" v-on:click="delete_note(key, 'tco')">
+                    <svg class="icon svg-icon-trash"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use></svg>
+                  </i>
+                </div>
+
+                <div class="note-block__body" v-bind:class="{'manager-note': note.is_manager == 'yes'}">
+                 <span class="inner">{{note.text}}</span>
+
+                  <i class="icon-manager-done" v-on:click="mark_note_done(key, 'no')" v-if="note.is_manager == 'yes' && note.done =='yes'"></i>
+
+                  <i class="icon-manager-done not" v-on:click="mark_note_done(key, 'yes')" v-if="note.is_manager == 'yes' && note.done !='yes'"></i>
+                </div>
               </div>
             </div>
-
             <div class="leads-block__row">
-              <table class="leads-block__data">
-                <tr>
-                  <td><svg class="icon svg-icon-card green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg></td>
-                  <td><p class="leads-block__label">Billed</p></td>
-                  <td>
-                    <input-field
-                    v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="billed"
-                    v-model = "treatment_value.billed"
-                    v-bind:class="'leads-block__input sm'"
-                    @focus.native="price_to_value('input_billed')"
-                    @blur.native="value_to_price('input_billed')"
-                    ref="input_billed"></input-field>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <svg class="icon svg-icon-card green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
-                  </td>
-                  <td><p class="leads-block__label">Payment Method</p></td>
-                  <td>
-                  <div class="clearfix">
-                    <select-imitation
-                    v-bind:class="'style-less'"
-                     _select_name="payment_method"
-                      v-model = "treatment_value.payment_method"
-                     v-on:update_list="update_lead($event, 'treatment_value')"
-                     ref="payment_method_select"
-                     _selected=""
-                      ></select-imitation>
-                  </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <svg class="icon svg-icon-clock green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clock"></use> </svg>
-                  </td>
-                  <td><p class="leads-block__label">Payment Terms</p></td>
-                  <td>
-                    <select-imitation
-                    v-bind:class="'style-less'"
-                    _name="terms"
-                    _select_name="terms"
-                    v-on:update_list="update_lead($event, 'treatment_value')"
-                    ref="terms_select"
-                     v-model = "treatment_value.terms"
-                      ></select-imitation>
-
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <svg class="icon svg-icon-monthly green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-monthly"></use> </svg>
-                  </td>
-                  <td><p class="leads-block__label">Monthly</p></td>
-                  <td>
-                    <input type="text" readonly class="leads-block__input leads-block__input sm" v-bind:value="monthly_payment">
-                  </td>
-                </tr>
-
-                <tr>
-                  <td <?php echo 'style="vertical-align: top;"'; ?>>
-                    <svg class="icon svg-icon-tooth green" > <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
-                  </td>
-                  <td <?php echo 'style="vertical-align: top;"'; ?>><p class="leads-block__label">Treatment</p></td>
-                  <td>
-                    <div class="dentist-name" v-for="treatment in c_treatments">{{treatment}}</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">
-                     <select-imitation
-                       v-bind:class="'fullwidth'"
-                       _name="treatment"
-                       _select_name="treatment"
-                       v-on:update_list="update_lead($event, 'treatment_value')"
-                       ref="treatments_select2"
-                      ></select-imitation>
-                      <br>
-                    <small><i>Select a treatment to add it. <br> Select treatment again to remove it</i></small>
-                  </td>
-                </tr>
-              </table>
+              <span class="note-block__show-more" v-on:click="tco_notes_count = notes_tco.length" v-if="tco_notes_count < tco_notes_count_c"> <i class="icon"></i> Show {{tco_notes_count_c - 1}} more</span>
+              <div class="spacer-h-15"></div>
             </div>
-          </form>
-        </div><!-- leads-block -->
 
+            <form id="message-form" v-on:submit.prevent  v-on:submit="add_note('tco')" >
+              <div class="leads-block__form">
 
-       <?php /************************************/
-             /************************************/
-             /******* TREATMENT Co-Ordinator *****/
-             /************************************/
-             /************************************/?>
+              <textarea name="text" placeholder="Add new note…" ref="note_textarea_tco" v-model="note_text_tco" @keyup.alt.enter="add_note('tco')" @keyup.ctrl.enter="add_note('tco')" title="use Enter for line breaks, use Alt+Enter to add note"></textarea>
 
-        <div class="leads-block">
-          <h2 class="leads-block__title">Treatment Co-Ordinator</h2>
+              <button type="submit" class="button-submit">
+                <svg class="icon svg-icon-send"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-send"></use> </svg>
+              </button>
 
-          <div class="leads-block__row">
-            <form action="POST" id="treatment_coordinator">
-              <table class="leads-block__data">
-                <tr>
-                  <td>
-                    <svg class="icon svg-icon-date"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-date"></use> </svg>
-                  </td>
-                  <td><p class="leads-block__label">Consultation Date</p></td>
-                  <td>
-                    <datepicker
-                    v-on:input_value_changed="update_lead($event, 'treatment_coordinator')"
-                    v-bind:class="'leads-block__input sm'"
-                    _name="consultation_date"
-                    _value=""
-                    v-model="treatment_coordinator.consultation_date"
-                    ></datepicker>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <svg class="icon svg-icon-lamp"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-lamp"></use> </svg>
-                  </td>
-                  <td><p class="leads-block__label">Reason for Appt.</p></td>
-                  <td>
-                    <input-field
-                    v-on:input_value_changed="update_lead($event, 'treatment_coordinator')"
-                     _name="reason"
-                     _value=""
-                     v-bind:class="'sm'"
-                     v-model="treatment_coordinator.reason"
-                     ></input-field>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <svg class="icon svg-icon-chat"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-chat"></use> </svg>
-                  </td>
-                  <td><p class="leads-block__label">Follow Up</p></td>
-                  <td>
-                    <input-field
-                    v-on:input_value_changed="update_lead($event, 'treatment_coordinator')"
-                    _name="follow"
-                    _value=""
-                    v-bind:class="'sm'"
-                    v-model="treatment_coordinator.follow"
-                    ></input-field>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td <?php echo 'style="vertical-align: top"';  ?>>
-                    <svg class="icon svg-icon-leaps" <?php echo'style="margin-top: 10px"';  ?>> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leaps"></use> </svg>
-                  </td>
-                  <td  <?php echo 'style="vertical-align: top"';  ?>><p class="leads-block__label">Dentist Seen</p></td>
-                  <td>
-                    <div class="dentist-name" v-for="dentist in c_dentists">{{dentist}}</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">
-                   <select-imitation
-                   v-bind:class="'fullwidth'"
-                   _name="specialist"
-                   _select_name="specialist"
-                   v-on:update_list="update_lead($event, 'treatment_coordinator')"
-                   ref="specialist_select"
-                   _selected=""
-                    ></select-imitation>
-
-                    <br>
-                    <small><i>Select a name to add a dentist. <br> Select name again to remove a dentist</i></small>
-
-                  </td>
-                </tr>
-
-              </table>
+              </div>
             </form>
-          </div>
         </div><!-- leads-block -->
 
+      </div><!-- col-12 col-lg-4 -->
 
+      <div class="col-12 col-lg-4">
 
         <div class="leads-block">
            <h2 class="leads-block__title">Documents</h2>
+           <div class="spacer-h-15"></div>
            <div class="leads-block__row">
 
              <div class="document-block" v-for="(file , file_id ) in files_updated" >
@@ -442,7 +427,7 @@ if ( ! defined( 'ABSPATH' ) ) {
              </div>
            </div>
 
-           <form method="POST" action="" v-on:submit.prevent enctype="multipart/form-data" v-on:submit = "load_file">
+           <form method="POST" action="javascript:void(0)" v-on:submit.prevent enctype="multipart/form-data" v-on:submit = "load_file">
              <input type="file" name="file" class="hidden" id="new_file" ref="file_input" v-on:change="file_changed">
              <div class="leads-block__form">
                <label class="add-documents" for="new_file"><span> Add New </span><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></label>
@@ -453,96 +438,6 @@ if ( ! defined( 'ABSPATH' ) ) {
              </div>
            </form>
         </div>
-
-        <div class="leads-block">
-          <h2 class="leads-block__title">Notes <span class="info-helper" title="use Enter for line breaks, use Alt+Enter to add note">?</span>
-          </h2>
-          <div class="leads-block__row">
-            <div v-for="note,key in notes" class="note-block" v-if="note.show == 1">
-              <div class="note-block__header clearfix">
-                <span class="name">{{note.user_name}}</span>
-                <span class="date">{{note.date}}</span>
-              </div>
-
-              <div class="note-block__body" v-bind:class="{'manager-note': note.is_manager == 'yes'}">
-                {{note.text}}
-
-                <i class="remove-note-icon" v-if=" lead_data.user_name === note.user_name" v-on:click="delete_note(key)">
-                  <svg class="icon svg-icon-trash"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use></svg>
-                </i>
-
-                <i class="icon-manager-done" v-on:click="mark_note_done(key, 'no')" v-if="note.is_manager == 'yes' && note.done =='yes'"></i>
-
-                <i class="icon-manager-done not" v-on:click="mark_note_done(key, 'yes')" v-if="note.is_manager == 'yes' && note.done !='yes'"></i>
-              </div>
-            </div>
-          </div>
-
-          <form id="message-form" v-on:submit.prevent  v-on:submit="add_note()" >
-            <div class="leads-block__form">
-
-            <textarea name="text" placeholder="Add new note…" ref="note_textarea" v-model="note_text" @keyup.alt.enter="add_note()" @keyup.ctrl.enter="add_note()" title="use Enter for line breaks, use Alt+Enter to add note"></textarea>
-
-            <button type="submit" >
-              <svg class="icon svg-icon-plus"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-plus"></use> </svg>
-            </button>
-
-            </div>
-          </form>
-        </div><!-- leads-block -->
-      </div><!-- col-12 col-lg-4 -->
-
-      <div class="col-12 col-lg-4">
-        <div class="leads-block">
-           <h2 class="leads-block__title">Team</h2>
-
-            <table class="team-leads">
-              <tbody><tr v-for="(sp, index) in visible_specialists">
-                 <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name"></div></td>
-                <td colspan="3">
-                  <div class="clearfix">
-                    <span class="team-leads__name">{{sp.name}}</span>
-                    <span class="team-leads__post">{{sp.position}}</span>
-                  </div>
-                </td>
-                <td class="text-right">  <svg class="icon svg-icon-trash" v-on:click="remove_specialist(sp.name)"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use> </svg></td>
-
-              </tr>
-            </tbody></table>
-           <div class="leads-block__row">
-           </div>
-           <div class="leads-block__row">
-
-            <select-imitation _select_name="lead_specialists" v-on:update_list="update_specialists($event)" v-bind:class="'fullwidth'" ref="lead_specialists_select"></select-imitation>
-
-            <span class="button-assign" v-if="show_add_specialist_button" v-on:click="assign_specialist()">assign specialist</span>
-           </div><!-- leads-block__row -->
-        </div><!-- leads-block -->
-
-        <div class="leads-block">
-          <h2 class="leads-block__title">Activity</h2>
-          <div class="leads-block__row">
-            <ul class="leads-block__activity">
-              <li>
-                <i class="state-none icon-activity"></i>
-                <span class="leads-block__activity-text">
-                  <span class="action">Lead Created</span>
-                  <span class="date"></span>
-                </span>
-
-                <span class="length">0d 0h 0m</span>
-              </li>
-              <li v-for="(log, ind) in logs">
-                <i class="state-none icon-activity"></i>
-                <span class="leads-block__activity-text">
-                  <span class="action">{{log.text}}</span>
-                  <span class="date">{{log.date_formatted}}</span>
-                </span>
-                <span class="length">{{log.time_passed}}</span>
-              </li>
-            </ul>
-          </div>
-        </div><!-- leads-block -->
       </div><!-- col-12 col-lg-4 -->
     </div><!-- row -->
   </div><!-- container -->
@@ -550,8 +445,6 @@ if ( ! defined( 'ABSPATH' ) ) {
   <div class="spacer-h-70"></div>
 
   <div class="s-popup-wrapper" id="single-lead-popup" v-bind:class="{'shown': show_confirmation_popup}">
-
-
 
     <div class="s-popup">
       <i class="s-popup-icon">
@@ -566,7 +459,7 @@ if ( ! defined( 'ABSPATH' ) ) {
        v-bind:class="'fullwidth'"
        _name="lead_stage"
        _select_name="lead_stage"
-       _selected =""
+       v-model="lead_data.lead_stage"
        v-on:update_list="update_lead_stage($event, 'treatment_value')"
        ref="lead_stage_select2"
       ></select-imitation>

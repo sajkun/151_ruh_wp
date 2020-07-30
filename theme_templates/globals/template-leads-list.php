@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
 }
 ?>
-<div id="leads-list" ref="parent" v-if="show">
+<div id="leads-list" ref="parent" v-show="show">
 
   <input type="hidden" id="user_name" name="user_name" value="<?php echo $user_name?>">
   <input type="hidden" id="user_id" name="user_id" value="<?php echo $user_id?>">
