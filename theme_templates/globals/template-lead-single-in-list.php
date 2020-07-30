@@ -50,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 
-          <a href="<?php // echo $return_url; ?>" v-on:click.prevent v-on:click="do_delete_or_return('<?php // echo $return_url; ?>')" class="button-cancel"><?php// echo $text_save_del; ?></a>
+          <a href="javascript:void(0)" v-on:click.prevent v-on:click="do_delete_or_return()" class="button-cancel">Delete Lead</a>
 
 
         <?php wp_nonce_field('update_meta_nonce_id', 'lead_data', false); ?>

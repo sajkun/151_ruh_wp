@@ -701,7 +701,7 @@ if(!function_exists('get_leads_meta')){
           $user           = $cached_user[ $user_id ];
 
           $name           = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
-          $user_position  =  $user['user_position'];
+          $user_position  =  isset($user['user_position'])? $user['user_position'] : false;
           $image          =  isset($user['image']) ?$user['image'] : DUMMY_ADMIN;
 
 

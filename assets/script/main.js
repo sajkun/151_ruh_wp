@@ -6170,7 +6170,8 @@ single_lead = new Vue({
       },
 
       do_delete_or_return: function(url){
-        wait_block.show();
+
+
         if(parseInt(this.lead_data.lead_id) < 0){
           wait_block.hide();
           location.href = url;
@@ -6182,6 +6183,13 @@ single_lead = new Vue({
             url     : url,
           };
 
+        var vm = this;
+
+        if(!confirm('Are you sure you want to delete this lead?')){
+          return;
+        }
+
+        wait_block.show();
         jQuery.ajax({
           url: WP_URLS.wp_ajax_url,
           type: 'POST',
@@ -6192,10 +6200,17 @@ single_lead = new Vue({
           },
 
           success: function(data, textStatus, xhr) {
-            // console.log(data);
-            if('undefined' != typeof(data.redirect)){
-              location.href = data.redirect;
-            }
+            console.log(data);
+              for(var id in dashboard_leads_data){
+                if(dashboard_leads_data[id] == editing_object){
+
+                  dashboard_leads_data = dashboard_leads_data.splice(id, 1);
+
+                  vue_leads_list.init();
+                  break;
+                }
+              }
+             vm.return_to_list();
           },
 
           error: function(xhr, textStatus, errorThrown) {
@@ -6700,6 +6715,7 @@ single_lead = new Vue({
 
               dashboard_leads_data[id].meta.specialists_assigned = show;
               dashboard_leads_data[id].meta.specialists_assigned_tco = show_tco;
+              break;
           }
         }
 

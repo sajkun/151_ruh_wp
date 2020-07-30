@@ -244,11 +244,6 @@ if(!class_exists('theme_ajax_action')){
     * deletes a lead
     */
     public function delete_lead_cb(){
-      $verify =  wp_verify_nonce(  $_POST['nonce'], 'update_meta_nonce_id' );
-
-      if(!$verify){
-        wp_send_json_error(array('Nonce field check failed'), 418);
-      }
 
       $post_id = (int)$_POST['lead_id'];
 
@@ -606,7 +601,7 @@ if(!class_exists('theme_ajax_action')){
         $leads          = get_leads_meta($leads);
 
 
-        $team_perfomance = get_users_leads($from_formated , $to_formated);
+        // $team_perfomance = get_users_leads($from_formated , $to_formated);
 
         // prepare data for filters
 
