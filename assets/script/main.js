@@ -6190,6 +6190,7 @@ single_lead = new Vue({
         }
 
         wait_block.show();
+
         jQuery.ajax({
           url: WP_URLS.wp_ajax_url,
           type: 'POST',
@@ -6200,13 +6201,14 @@ single_lead = new Vue({
           },
 
           success: function(data, textStatus, xhr) {
-            console.log(data);
               for(var id in dashboard_leads_data){
-                if(dashboard_leads_data[id] == editing_object){
+                if(dashboard_leads_data[id].ID == editing_object){
+                  var index = dashboard_leads_data.indexOf(dashboard_leads_data[id]);
 
-                  dashboard_leads_data = dashboard_leads_data.splice(id, 1);
+                 dashboard_leads_data.splice(index, 1);
 
                   vue_leads_list.init();
+                  console.log('init finished');
                   break;
                 }
               }

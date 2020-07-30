@@ -9245,7 +9245,7 @@ body.admin-bar {
   width: 270px;
   display: block;
   left: 0;
-  z-index: 100;
+  z-index: 90;
   padding-bottom: 15px;
 }
 
