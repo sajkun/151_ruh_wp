@@ -1658,7 +1658,7 @@ datepicker_field = Vue.component('datepicker', {
     }
   },
 
-  template : '<input type="text" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" >',
+  template : '<input type="text" v-on:input="input" autocomplete="off" v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" >',
 });
 input_field = Vue.component('input-field', {
   data: function () {
@@ -1692,7 +1692,7 @@ input_field = Vue.component('input-field', {
     }
   },
 
-  template : '<input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="leads-block__input":readonly="readonly == 1">',
+  template : '<input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="leads-block__input":readonly="readonly == 1" autocomplete="off">',
 
 });
 
@@ -1726,7 +1726,7 @@ input_field_decorated = Vue.component('input-decorated', {
     }
   },
 
-  template : '<div class="wrapper-input"><span v-html="icon"></span><input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="":readonly="readonly == 1"></div>',
+  template : '<div class="wrapper-input"><span v-html="icon"></span><input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="":readonly="readonly == 1" autocomplete="off"></div>',
 
 });
 animation_mixin = {
