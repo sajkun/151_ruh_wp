@@ -9379,6 +9379,10 @@ body.admin-bar {
   max-height: 60vh;
 }
 
+.marked {
+  opacity: .3;
+}
+
 .button-back {
   display: inline-block;
   vertical-align: top;

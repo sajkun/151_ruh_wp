@@ -10,6 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
   <input type="hidden" id="user_id" name="user_id" value="<?php echo $user_id?>">
 
   <div class="spacer-h-40" ref="spacer1"></div>
+
+  <div class="text-center">
+    <a class="button-filter" href="javascript:location.reload()" >Update Data</a>
+  </div>
+
+  <div class="spacer-h-20"></div>
+
   <div class="container-fluid filter-container visuallyhidden" ref="container_filter">
      <div class="row no-gutters justify-content-start justify-content-center-lg switchers" id="leads-filters">
 
@@ -48,9 +55,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <select-imitation-icon _select_name="dentists" ref="dentists" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
-      <?php if ($is_manager === 'yes'): ?>
+      <?php /* if ($is_manager === 'yes'): ?>
         <span class="button-filter"  v-on:click="load_csv" >Download CSV</span>
-      <?php endif ?>
+      <?php endif */?>
 
       <span class="button-filter" v-bind:class="show_filter_clear_btn" v-on:click="resert_filters">Clear Filter</span>
 
@@ -91,7 +98,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <ul class="leads-list" name="lead-list" data-list="<?php echo $st['name'] ?>"
                  >
                   <li v-for="data in leads_filtered['<?php echo $st['name'] ?>']" v-bind:key="data.post_id">
-                    <a :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>"
+                    <a target="_blank" :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>" v-bind:class="[data.isMarked ? 'marked' : '']" v-on:click="data.isMarked = 1"
 
                       <?php if (RELOAD_LEAD): ?>
                       v-on:click.prevent="show_single_lead(data.post_id, data)"

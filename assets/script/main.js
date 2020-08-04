@@ -1214,6 +1214,7 @@ var parse_leads = {
       data.manager_noted = manager_noted;
       data.post_modified = this.leads[id].post_modified;
       data.base_lead     = this.leads[id];
+      data.isMarked     = false;
 
       if('undefined' !== typeof(this.leads[id].order)){
         data.order = this.leads[id].order;

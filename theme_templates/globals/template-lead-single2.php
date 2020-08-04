@@ -23,6 +23,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="row">
       <div class="col-12 col-md-8">
         <div class="row no-gutters justify-content-center justify-content-start-sm">
+          <a href="javascript:window.close()" class="button-back">
+            <span>Close Lead</span>
+          </a>
           <a href="<?php echo $return_url; ?>" class="button-back">
             <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
             <span> Back to Leads</span>
