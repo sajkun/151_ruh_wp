@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
             </form>
           </div>
-          <a href="<?php echo $new_lead_url?>" class="button-add"></a>
+          <a href="<?php echo $new_lead_url?>" target="_blank" v-on:click="close" class="button-add"></a>
         </div><!-- row -->
       </div><!-- search -->
 

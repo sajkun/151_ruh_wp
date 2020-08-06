@@ -324,11 +324,11 @@ if(!class_exists('theme_ajax_action')){
     */
     public function update_lead_meta_cb(){
 
-      $verify =  wp_verify_nonce(  $_POST['nonce'], 'update_meta_nonce_id' );
+      // $verify =  wp_verify_nonce(  $_POST['nonce'], 'update_meta_nonce_id' );
 
-      if(!$verify){
-        wp_send_json_error(array('Nonce field check failed'), 418);
-      }
+      // if(!$verify){
+      //   wp_send_json_error(array('Nonce field check failed'), 418);
+      // }
 
       $meta = $_POST['meta'];
 
@@ -483,12 +483,12 @@ if(!class_exists('theme_ajax_action')){
     public function upload_new_document_cb(){
       $upload = exec_upload_file('file');
       $upload['post'] = $_POST;
-      $verify =  wp_verify_nonce(  $_POST['file_nonce'], 'upload_file_nonce_id' );
+      // $verify =  wp_verify_nonce(  $_POST['file_nonce'], 'upload_file_nonce_id' );
       $upload['verify'] = $verify;
 
-      if(!$verify || $verify > 1 ){
-        wp_send_json_error(array('Nonce field check failed'), 418);
-      }
+      // if(!$verify || $verify > 1 ){
+      //   wp_send_json_error(array('Nonce field check failed'), 418);
+      // }
 
      if(isset($upload['error'])){
         wp_send_json_error($upload['error'], 418);

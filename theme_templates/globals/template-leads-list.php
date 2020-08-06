@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <div class="spacer-h-40" ref="spacer1"></div>
 
-  <div class="text-center">
-    <a class="button-filter" href="javascript:location.reload()" >Update Data</a>
-  </div>
 
-  <div class="spacer-h-20"></div>
 
   <div class="container-fluid filter-container visuallyhidden" ref="container_filter">
+      <div class="text-center">
+        <a class="button-filter" href="javascript:location.reload()" >Update Data</a>
+      </div>
+        <div class="spacer-h-20"></div>
      <div class="row no-gutters justify-content-start justify-content-center-lg switchers" id="leads-filters">
 
       <div class="alert"  v-bind:class="alarms.class">

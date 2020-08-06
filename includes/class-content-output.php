@@ -696,6 +696,7 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'assigned_dentists ', $assigned_dentists );
 
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
+    wp_localize_script($theme_init->main_script_slug, 'is_manager', $is_manager);
 
 
     $stages_names = array();

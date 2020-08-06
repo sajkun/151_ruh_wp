@@ -23,12 +23,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="row">
       <div class="col-12 col-md-8">
         <div class="row no-gutters justify-content-center justify-content-start-sm">
-          <a href="javascript:window.close()" class="button-back">
-            <span>Close Lead</span>
-          </a>
-          <a href="<?php echo $return_url; ?>" class="button-back">
-            <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
-            <span> Back to Leads</span>
+          <a href="#" class="button-back trigger-close" v-on:click="close_tab()">
+             <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
+            <span>Back</span>
           </a>
 
           <a href="#" class="reminder">
@@ -91,7 +88,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               <div class="row no-gutters">
                 <div class="col-6 valign-center">
                   <span class="leads-block__title">
-                     <svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>&nbsp;Assigned<span class="mark">*</span>
+                     <svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>&nbsp;Assigned
                   </span>
                 </div>
                 <div class="col-6 valign-center padding-r-30">
