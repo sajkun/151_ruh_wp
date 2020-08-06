@@ -45,6 +45,9 @@ class theme_content_output{
 
     $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
 
+
+    $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead );
+
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
       'dashboard_menu_class' => $dashboard_menu_class,
@@ -53,6 +56,7 @@ class theme_content_output{
       'new_lead_url'         => get_permalink($new_lead_id),
       'photo_url'            => $photo_url,
       'name'                 => $name,
+      'show_add'              => $show_add ,
       'is_admin'              => in_array('administrator', $user_roles) || in_array('manager', $user_roles),
     );
 
