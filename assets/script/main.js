@@ -2987,6 +2987,9 @@ if('undefined' !== typeof(is_dashboard)){
           case 'dentists':
             rows = this.get_rows_object();
             break;
+          case 'treatments':
+            rows = this.get_rows_object();
+            break;
           default:
             rows = this.get_rows_string();
             break;

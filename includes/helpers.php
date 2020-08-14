@@ -892,9 +892,6 @@ if(!function_exists('get_filters_by_leads')){
 
     foreach ($leads as $key => $lead) {
       $meta      = $lead->meta;
-
-      clog($lead->meta);
-
       $clinic    = isset($meta['patient_data']['clinic'])? $meta['patient_data']['clinic'] : '' ;
       $treatment = isset($meta['patient_data']['treatment'])?  $meta['patient_data']['treatment'] : '';
       $source    = $meta['patient_data']['source'];

@@ -65,8 +65,6 @@ class velesh_init_theme{
     if('no' !== get_option( 'woocommerce_cart_redirect_after_add' ) ){
       update_option('woocommerce_cart_redirect_after_add', 'no');
     }
-
-    $user = get_user_by('ID', 4);
   }
 
 
@@ -82,7 +80,7 @@ class velesh_init_theme{
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
-    define('THEME_DEBUG', true);
+    define('THEME_DEBUG', false);
     define('RELOAD_LEAD', false);
   }
 
