@@ -490,7 +490,28 @@ if(!function_exists('get_posts_by_dates')){
           'inclusive' => true,
         ),
       ),
+
     );
+
+    $user = wp_get_current_user();
+
+    if(in_array('dentist', $user->roles)){
+
+      $last_name  = get_user_meta($user->ID, 'last_name', true);
+      $first_name = get_user_meta($user->ID, 'first_name', true);
+      $nickname   = get_user_meta($user->ID, 'nickname', true);
+
+      $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
+
+     $args['meta_query'] =array(array(
+          'key'         => '_treatment_data',
+          'value'       =>  $name,
+          'compare_key' => 'LIKE',
+          'compare'     => 'LIKE',
+        ));
+    }
+
+
 
     if(!$from){
       unset($args['date_query']['after']);
@@ -575,9 +596,6 @@ if(!function_exists('get_leads_meta')){
 
     clog('parse_meta : '.round(microtime(true) - $start3, 4).' сек.' , 'blue');
 
-
-
-
     // get_all_users
 
     $querystr = "
@@ -597,23 +615,7 @@ if(!function_exists('get_leads_meta')){
 
       $post_meta = $meta_parsed[$post->ID];
 
-
-      // $coordinator_data =   get_post_meta($post->ID, '_treatment_coordinator', true);
       $coordinator_data =   isset($post_meta['_treatment_coordinator'])? ($post_meta['_treatment_coordinator']): false;
-      // $coordinator_data =  isset($post_meta['_treatment_coordinator'])? unserialize($post_meta['_treatment_coordinator']): false;
-
-      // $meta = array(
-      //   'lead_notes'            => get_post_meta($post->ID, '_lead_notes', true),
-      //   'lead_notes_tco'        => get_post_meta($post->ID, '_lead_notes_tco', true),
-      //   'lead_files'            => get_post_meta($post->ID, '_lead_files', true),
-      //   'treatment_coordinator' => $coordinator_data,
-      //   'treatment_value'       => get_post_meta($post->ID, '_treatment_value', true),
-      //   'patient_data'          => get_post_meta($post->ID, '_patient_data', true),
-      //   'reminder'              => get_post_meta($post->ID, '_reminder', true),
-      //   'lead_stage'            => get_post_meta($post->ID, '_lead_stage', true),
-      //   'start_date'            => get_post_meta($post->ID, '_start_date', true),
-      //   'end_date'              => get_post_meta($post->ID, '_end_date', true),
-      // );
 
        $meta = array(
         'lead_notes'            =>  isset($post_meta['_lead_notes'])? ($post_meta['_lead_notes']): false,
@@ -672,12 +674,19 @@ if(!function_exists('get_leads_meta')){
       //prepare data for filtering
       $filter_data = array(
         'clinics'       => (isset($meta['patient_data']['clinic']))? $meta['patient_data']['clinic'] : '',
-        'treatments'    => (isset($meta['patient_data']['treatment']))? $meta['patient_data']['treatment'] : '',
+        'treatments'    => (isset($meta['patient_data']['treatment']))? array($meta['patient_data']['treatment']) : array(),
         'campaigns'     => (isset($meta['patient_data']['campaign']))? $meta['patient_data']['campaign'] : '',
         'sources'       => (isset($meta['patient_data']['source']))? $meta['patient_data']['source'] : '',
         'team'          => array(),
         'dentists'      => array(),
       );
+
+
+      if($treatment_data){
+        foreach ($treatment_data as $key => $val) {
+          $filter_data['treatments'][] = $val['treatment'];
+        }
+      }
 
       //get array of specialists assigned
 
@@ -723,7 +732,7 @@ if(!function_exists('get_leads_meta')){
            if(!isset($cached_user[ $user_id ])){continue;}
            $user = $cached_user[ $user_id ];
 
-             $name           = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
+            $name           = ($user['last_name']) || ($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
             $user_position  =  $user['user_position'];
             $image          =  isset($user['image']) ?$user['image'] : DUMMY_ADMIN;
 
@@ -884,6 +893,8 @@ if(!function_exists('get_filters_by_leads')){
     foreach ($leads as $key => $lead) {
       $meta      = $lead->meta;
 
+      clog($lead->meta);
+
       $clinic    = isset($meta['patient_data']['clinic'])? $meta['patient_data']['clinic'] : '' ;
       $treatment = isset($meta['patient_data']['treatment'])?  $meta['patient_data']['treatment'] : '';
       $source    = $meta['patient_data']['source'];
@@ -893,9 +904,18 @@ if(!function_exists('get_filters_by_leads')){
       if(!in_array( $clinic ,$data['clinics']) && !empty(trim( $clinic))){
         array_push($data['clinics'], $clinic);
       }
+
       if(!in_array( $treatment , $data['treatments']) && !empty(trim( $treatment))){
         array_push($data['treatments'], $treatment);
       }
+
+      if($meta['treatment_data']){
+        foreach ($meta['treatment_data'] as $key => $val) {
+          array_push($data['treatments'], $val['treatment']);
+        }
+      }
+
+     $data['treatments'] =  array_unique( $data['treatments'] );
 
       if(!in_array($source ,$data['sources']) &&  $source != '-1' && !empty(trim( $source))){
         array_push($data['sources'], $source);
@@ -908,9 +928,7 @@ if(!function_exists('get_filters_by_leads')){
       foreach ($team as $member_id => $member) {
         if(!in_array( $member['name'] ,$data['team'])  && !empty(trim( $member['name'] ))){
           array_push($data['team'], $member['name']);
-
         }
-
       }
 
 
@@ -954,6 +972,20 @@ if(!function_exists('get_filters_by_leads')){
     }
 
     clog('get_filters_by_leads: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
+
+
+    $user = wp_get_current_user();
+
+    if(in_array('dentist', $user->roles)){
+
+      $last_name = get_user_meta($user->ID, 'last_name', true);
+      $first_name = get_user_meta($user->ID, 'first_name', true);
+      $nickname = get_user_meta($user->ID, 'nickname', true);
+
+      $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
+
+      $data['dentists'] = array($name);
+    }
 
     return $data;
   }
@@ -1386,6 +1418,8 @@ function theme_get_all_users($get_assigned = false, $get_roles = false){
         break;
     }
   }
+
+  $saved_users = $cached_user;
 
   return $cached_user;
 }

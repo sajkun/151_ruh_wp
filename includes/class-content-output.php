@@ -46,7 +46,7 @@ class theme_content_output{
     $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
 
 
-    $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead );
+    $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead ) || !$is_admin ;
 
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
@@ -252,18 +252,13 @@ class theme_content_output{
 
 
     print_theme_template_part('leads-list', 'globals', $args);
-
-
     wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
     wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
-
     wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
     wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
     wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
     wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
-
     wp_localize_script($theme_init->main_script_slug, 'failed_lead_name', get_converted_stages());
-
     wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
 
 
@@ -350,6 +345,8 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
     wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
+
+    $user = wp_get_current_user();
 
     clog('print_lead_list: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
   }
@@ -578,6 +575,23 @@ class theme_content_output{
       $date_start   =  $date_planned->format('Y-m-d H:i:s');
     }
 
+
+    $user = wp_get_current_user();
+
+    if(in_array('dentist', $user->roles)){
+      $last_name  = get_user_meta($user->ID, 'last_name', true);
+      $first_name = get_user_meta($user->ID, 'first_name', true);
+      $nickname   = get_user_meta($user->ID, 'nickname', true);
+
+      $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
+
+       wp_localize_script($theme_init->main_script_slug, 'is_dentist', 'yes');
+       wp_localize_script($theme_init->main_script_slug, 'dentist_name', $name  );
+    }else{
+       wp_localize_script($theme_init->main_script_slug, 'is_dentist', 'no');
+
+    }
+
     wp_localize_script($theme_init->main_script_slug, 'phone_count', (string)$phone_count);
     wp_localize_script($theme_init->main_script_slug, 'message_count',  (string)$message_count);
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
@@ -707,6 +721,23 @@ class theme_content_output{
 
     foreach ($stages as $key => $st) {
        $stages_names[] = $st['name'];
+    }
+
+
+    $user = wp_get_current_user();
+
+    if(in_array('dentist', $user->roles)){
+      $last_name  = get_user_meta($user->ID, 'last_name', true);
+      $first_name = get_user_meta($user->ID, 'first_name', true);
+      $nickname   = get_user_meta($user->ID, 'nickname', true);
+
+      $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
+
+       wp_localize_script($theme_init->main_script_slug, 'is_dentist', 'yes');
+       wp_localize_script($theme_init->main_script_slug, 'dentist_name', $name  );
+    }else{
+       wp_localize_script($theme_init->main_script_slug, 'is_dentist', 'no');
+
     }
 
     wp_localize_script($theme_init->main_script_slug, 'stages', $stages_names);

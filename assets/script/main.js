@@ -3408,7 +3408,7 @@ if('undefined' !== typeof(is_lead_list)){
       show_filter_clear_btn: function(){
         var show = false;
         for(var filter_name in this.filters){
-          show = (this.filters[filter_name].search('All') !== 0)? true: show;
+          show = (this.filters[filter_name] !== dashboard_filter_data[filter_name][0])? true: show;
         }
 
         return show ? '' : 'visuallyhidden';
@@ -3585,13 +3585,14 @@ if('undefined' !== typeof(is_lead_list)){
 
       // sets all filters' values to default value
       resert_filters: function(){
+
         this.filters = {
           clinics:    'All Clinics',
           treatments: 'All Treatments',
           campaigns:  'All Campaigns',
           sources:    'All Sources',
           team:       'All Team',
-          dentists:    'All Dentists',
+          dentists:    dashboard_filter_data['dentists'][0],
         };
 
         for(select_name in this.filters){
@@ -4269,6 +4270,10 @@ if('undefined' !== typeof(is_single_lead)){
             icon: icons_selects['human'],
             options: available_dentists,
           };
+
+          if(is_dentist === 'yes'){
+            props['selected'] = dentist_name;
+          }
 
           for( var id in props){
             vm.$refs['select_dentist'][select_id].set_value(id, props[id]);
