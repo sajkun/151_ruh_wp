@@ -6790,7 +6790,9 @@ if(typeof(is_lead_list) !=='undefined' || typeof(is_dashboard) !=='undefined' ||
       },
 
       close: function(){
-        window.close();
+        setTimeout(function(){
+          window.close();
+        },100);
       }
     }
 
