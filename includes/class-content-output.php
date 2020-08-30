@@ -615,6 +615,11 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 
     $sources = get_option('sources_list');
+    if (get_option('add_dentists_to_sources') == 'yes') {
+      $sources = array_merge($sources,$available_dentists );
+    }
+    $sources = array_unique($sources);
+
     foreach ($sources as $key => $value) {
       if(!$value){
         unset($sources[$key]);
@@ -690,6 +695,7 @@ class theme_content_output{
           $available_dentists[] = $name;
       }
     }
+
 
 
     $stages = get_option('leads_stages');
@@ -780,12 +786,20 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 
     $sources = get_option('sources_list');
+
+
+    if (get_option('add_dentists_to_sources') == 'yes') {
+      $sources = array_merge($sources,$available_dentists );
+    }
+
+
+    $sources = array_unique($sources);
+
     foreach ($sources as $key => $value) {
       if(!$value){
         unset($sources[$key]);
       }
     }
-
     wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
      );
     print_theme_template_part('lead-single2', 'globals', $args);

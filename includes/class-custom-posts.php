@@ -206,12 +206,16 @@ class velesh_theme_posts {
         }else{
           delete_option('sources_list');
         }
+        if(isset($_POST['add_dentists_to_sources'])){
+          update_option('add_dentists_to_sources', $_POST['add_dentists_to_sources']);
+        }
       }
 
       $clinics = get_option('clinics_list');
       $treatments = get_option('treatments_list');
       $campaigns = get_option('campaigns_list');
       $sources = get_option('sources_list');
+      $add_dentists_to_sources = get_option('add_dentists_to_sources');
 
       ?>
         <h3>Set clinics, and treatments names</h3>
@@ -235,14 +239,13 @@ class velesh_theme_posts {
                     <?php endif ?>
                   </div>
 
-
               <a href="javascript:void(0)" class="button" onclick="add_input('clinic')">Add clinic</a>
 
                 <input type="hidden" id="count_clinics" value="<?php echo  $clinics? count( $clinics): 0 ?>">
               </td>
-              <td colspan="2">
+              <td colspan="3">
                 <h4>Treatment</h4>
-                <div class="treatments-list" <?php echo 'style="column-count:2; column-gap:20px"' ?>>
+                <div class="treatments-list" <?php echo 'style="column-count:3; column-gap:20px"' ?>>
                     <?php if ($treatments):
                       $counter = 0;
                       ?>
@@ -261,7 +264,7 @@ class velesh_theme_posts {
                 <input type="hidden" id="count_treatment" value="<?php echo count($treatments); ?>">
                 <a href="javascript:void(0)" class="button" onclick="add_input('treatment')">Add treatment</a>
               </td>
-              <td></td>
+
             </tr>
 
             <tr>
@@ -269,14 +272,19 @@ class velesh_theme_posts {
                 <h4>Campaigns</h4>
 
                   <div class="campaigns-list">
-                    <?php if ($campaigns): ?>
+                    <?php if ($campaigns):
+                       $counter = 0;
+                      ?>
 
                     <?php foreach ($campaigns as $key => $cl): ?>
                       <div class="input-control">
-                        <p class="input-title">Campaign #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Campaign</a></p>
+                        <p class="input-title">Campaign #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Campaign</a></p>
                         <input type="text" class="fullwidth" name="campaign[<?php echo $key ?>]" value="<?php echo $cl ?>">
                       </div>
-                    <?php endforeach ?>
+                    <?php
+                      $counter++;
+                      endforeach;
+                     ?>
                     <?php endif ?>
                   </div>
 
@@ -284,18 +292,33 @@ class velesh_theme_posts {
 
                 <input type="hidden" id="count_campaign" value="<?php echo  $campaigns? count( $campaigns): 0 ?>">
               </td>
-              <td  colspan="1">
+              <td  colspan="2">
                 <h4>Sources</h4>
+<div>
 
-                  <div class="sources-list">
-                    <?php if ($sources): ?>
+                <label>
+                  <input type="hidden" name="add_dentists_to_sources" value="no">
+                  <input type="checkbox" <?php
+
+                  echo 'yes' ==  $add_dentists_to_sources?'checked="checked"' : ''; ?> name="add_dentists_to_sources" value="yes">Include dentists to sources from user roles</label>
+
+</div>
+
+
+                  <div class="sources-list" <?php echo 'style="column-count:2; column-gap:20px"' ?>>
+                    <?php if ($sources):
+                      $counter = 0;
+                      ?>
 
                     <?php foreach ($sources as $key => $cl): ?>
                       <div class="input-control">
-                        <p class="input-title">Source #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Source</a></p>
+                        <p class="input-title">Source #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Source</a></p>
                         <input type="text" class="fullwidth" name="sources[<?php echo $key ?>]" value="<?php echo $cl ?>">
                       </div>
-                    <?php endforeach ?>
+                  <?php
+                      $counter++;
+                      endforeach;
+                     ?>
                     <?php endif ?>
                   </div>
 
@@ -304,7 +327,6 @@ class velesh_theme_posts {
                 <input type="hidden" id="count_sources" value="<?php echo  $sources? count( $sources): 0 ?>">
               </td>
 
-              <td></td>
               <td></td>
             </tr>
           </table>
