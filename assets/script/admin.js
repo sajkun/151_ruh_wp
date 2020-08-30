@@ -286,6 +286,9 @@ function add_input(slug){
     case 'campaign':
       var count = parseInt(jQuery('#count_campaign').val()) || 0;
       break;
+    case 'sources':
+      var count = parseInt(jQuery('#count_sources').val()) || 0;
+      break;
   }
   var template = ' <div class="input-control"><p class="input-title">{slug} #{count} <a href="javascript:void(0)" onclick="delete_input(this)">Delete {slug}</a></p><input type="text" value="" class="fullwidth" name="{slug}[{count}]" /> <br /></div>'
 
@@ -311,6 +314,10 @@ function add_input(slug){
     case 'campaign':
       jQuery('.campaigns-list').append(html);
       jQuery('#count_campaign').val(count);
+      break;
+    case 'sources':
+      jQuery('.sources-list').append(html);
+      jQuery('#count_sources').val(count);
       break;
   }
 

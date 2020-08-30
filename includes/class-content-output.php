@@ -251,7 +251,12 @@ class theme_content_output{
       );
 
 
+
+
+
     print_theme_template_part('leads-list', 'globals', $args);
+
+
     wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
     wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
     wp_localize_script($theme_init->main_script_slug, 'is_lead_list', 'yes');
@@ -609,6 +614,15 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 
+    $sources = get_option('sources_list');
+    foreach ($sources as $key => $value) {
+      if(!$value){
+        unset($sources[$key]);
+      }
+    }
+    wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
+     );
+
     print_theme_template_part('lead-single2', 'globals', $args);
   }
 
@@ -765,6 +779,15 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
 
+    $sources = get_option('sources_list');
+    foreach ($sources as $key => $value) {
+      if(!$value){
+        unset($sources[$key]);
+      }
+    }
+
+    wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
+     );
     print_theme_template_part('lead-single2', 'globals', $args);
   }
 

@@ -198,11 +198,20 @@ class velesh_theme_posts {
         }else{
           delete_option('campaigns_list');
         }
+        if(isset($_POST['sources'])){
+          update_option('sources_list', $_POST['sources']);
+         ?>
+          <div class="notice notice-success is-dismissible"><p>Sources were saved succesfully</p></div>
+          <?php
+        }else{
+          delete_option('sources_list');
+        }
       }
 
       $clinics = get_option('clinics_list');
       $treatments = get_option('treatments_list');
       $campaigns = get_option('campaigns_list');
+      $sources = get_option('sources_list');
 
       ?>
         <h3>Set clinics, and treatments names</h3>
@@ -219,7 +228,7 @@ class velesh_theme_posts {
 
                     <?php foreach ($clinics as $key => $cl): ?>
                       <div class="input-control">
-                        <p class="input-title">Clinic #<?php echo $key ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete Clinic</a></p>
+                        <p class="input-title">Clinic #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?>onclick="delete_input(this)">Delete Clinic</a></p>
                         <input type="text" class="fullwidth" name="clinic[<?php echo $key ?>]" value="<?php echo $cl ?>">
                       </div>
                     <?php endforeach ?>
@@ -233,14 +242,14 @@ class velesh_theme_posts {
               </td>
               <td colspan="2">
                 <h4>Treatment</h4>
-                <div class="treatments-list" style="column-count:2; column-gap:20px">
+                <div class="treatments-list" <?php echo 'style="column-count:2; column-gap:20px"' ?>>
                     <?php if ($treatments):
                       $counter = 0;
                       ?>
 
                     <?php foreach ($treatments as $key => $cl): ?>
                       <div class="input-control">
-                        <p class="input-title">Treatment #<?php echo $counter;  ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete treatment</a></p>
+                        <p class="input-title">Treatment #<?php echo $counter;  ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete treatment</a></p>
                         <input type="text" class="fullwidth" name="treatment[<?php echo $counter ?>]" value="<?php echo $cl ?>">
                       </div>
                     <?php
@@ -264,7 +273,7 @@ class velesh_theme_posts {
 
                     <?php foreach ($campaigns as $key => $cl): ?>
                       <div class="input-control">
-                        <p class="input-title">Campaign #<?php echo $key ?> <a href="javascript:void(0)" style="float:right" onclick="delete_input(this)">Delete Campaign</a></p>
+                        <p class="input-title">Campaign #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Campaign</a></p>
                         <input type="text" class="fullwidth" name="campaign[<?php echo $key ?>]" value="<?php echo $cl ?>">
                       </div>
                     <?php endforeach ?>
@@ -275,7 +284,26 @@ class velesh_theme_posts {
 
                 <input type="hidden" id="count_campaign" value="<?php echo  $campaigns? count( $campaigns): 0 ?>">
               </td>
-              <td></td>
+              <td  colspan="1">
+                <h4>Sources</h4>
+
+                  <div class="sources-list">
+                    <?php if ($sources): ?>
+
+                    <?php foreach ($sources as $key => $cl): ?>
+                      <div class="input-control">
+                        <p class="input-title">Source #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Source</a></p>
+                        <input type="text" class="fullwidth" name="sources[<?php echo $key ?>]" value="<?php echo $cl ?>">
+                      </div>
+                    <?php endforeach ?>
+                    <?php endif ?>
+                  </div>
+
+                 <a href="javascript:void(0)" class="button" onclick="add_input('sources')">Add Source</a>
+
+                <input type="hidden" id="count_sources" value="<?php echo  $sources? count( $sources): 0 ?>">
+              </td>
+
               <td></td>
               <td></td>
             </tr>

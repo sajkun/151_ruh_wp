@@ -3845,6 +3845,21 @@ function exists_in_object(obj, search){
   return found;
 }
 if('undefined' !== typeof(is_single_lead)){
+  var default_sources = [
+          'Live Chat',
+          'Instagram',
+          'Slaine Instagram',
+          'Riz Instagram',
+          'Andy Instagram',
+          'Pete Instagram',
+          'Sonnie Instagram',
+          'Google PPC',
+          'Website',
+          'Phone',
+          "Walk In",
+          "Other"
+        ];
+
   single_lead = new Vue({
     el: '#single-lead',
 
@@ -4401,20 +4416,9 @@ if('undefined' !== typeof(is_single_lead)){
           props.isHiddenImitation =  true;
         }
 
-        props.options = [
-          'Live Chat',
-          'Instagram',
-          'Slaine Instagram',
-          'Riz Instagram',
-          'Andy Instagram',
-          'Pete Instagram',
-          'Sonnie Instagram',
-          'Google PPC',
-          'Website',
-          'Phone',
-          "Walk In",
-          "Other"
-        ];
+        props.options = typeof(theme_leads_sources)!== 'undefined'? theme_leads_sources: default_sources;
+
+
 
         for( id in props){
           this.$refs['source_select'].set_value(id, props[id]);
