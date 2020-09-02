@@ -531,7 +531,20 @@ if(!function_exists('get_posts_by_dates')){
        unset($args['date_query']);
     }
 
+    $t     = get_posts($args);
     $posts = get_posts($args);
+
+    if(in_array('dentist', $user->roles)){
+      unset($args['meta_query']);
+      $args['author']  = $user->ID;
+      $leads_created   = get_posts($args);
+
+      foreach ($leads_created as $key => $lead) {
+        $t[] = $lead;
+      }
+    }
+
+    $posts = $t;
     clog('get_posts_by_dates: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
 
     return $posts;
@@ -540,26 +553,23 @@ if(!function_exists('get_posts_by_dates')){
 
 if(!function_exists('get_leads_meta')){
 
-
-
   function get_leads_meta($leads){
     $start = microtime(true);
 
     $sources = array(
-        'live-chat'  => 'Live Chat',
-        'instagram'  => 'Instagram',
-        'slaine-instagram'  => 'Slaine Instagram',
-        'riz-instagram'  => 'Riz Instagram',
-        'andy-instagram'  => 'Andy Instagram',
-        'pete-instagram'  => 'Pete Instagram',
-        'sonnie-instagram'  => 'Sonnie Instagram',
-        'google-ppc' => 'Google PPC',
-        'website'    => 'Website',
-        'phone'      => 'Phone',
-        'walk-in'    => 'Walk In',
-        'other'      => 'Other',
+      'live-chat'  => 'Live Chat',
+      'instagram'  => 'Instagram',
+      'slaine-instagram'  => 'Slaine Instagram',
+      'riz-instagram'  => 'Riz Instagram',
+      'andy-instagram'  => 'Andy Instagram',
+      'pete-instagram'  => 'Pete Instagram',
+      'sonnie-instagram'  => 'Sonnie Instagram',
+      'google-ppc' => 'Google PPC',
+      'website'    => 'Website',
+      'phone'      => 'Phone',
+      'walk-in'    => 'Walk In',
+      'other'      => 'Other',
       );
-
 
     $stages              = get_option('leads_stages');
     $stage_for_failed    = (int)get_option('stage_for_failed');
@@ -970,19 +980,18 @@ if(!function_exists('get_filters_by_leads')){
 
     clog('get_filters_by_leads: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
 
-
     $user = wp_get_current_user();
 
-    if(in_array('dentist', $user->roles)){
+    // if(in_array('dentist', $user->roles)){
 
-      $last_name = get_user_meta($user->ID, 'last_name', true);
-      $first_name = get_user_meta($user->ID, 'first_name', true);
-      $nickname = get_user_meta($user->ID, 'nickname', true);
+    //   $last_name = get_user_meta($user->ID, 'last_name', true);
+    //   $first_name = get_user_meta($user->ID, 'first_name', true);
+    //   $nickname = get_user_meta($user->ID, 'nickname', true);
 
-      $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
+    //   $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
 
-      $data['dentists'] = array($name);
-    }
+    //   $data['dentists'] = array($name);
+    // }
 
     return $data;
   }

@@ -369,11 +369,13 @@ if(!class_exists('theme_ajax_action')){
 
         $date = new DateTime();
 
+        $current_user_id = get_current_user_id();
+
         $post_data = array(
           'post_title'    =>  $name_str,
           'post_content'  => '',
           'post_status'   => 'publish',
-          'post_author'   => 1,
+          'post_author'   => $current_user_id,
           'post_type'     => velesh_theme_posts::$lead,
           'post_date'     => $date->format('Y-m-d H:i:s'),
         );
@@ -439,9 +441,10 @@ if(!class_exists('theme_ajax_action')){
       }
 
       $meta['post_id'] = $post_id;
-      $meta['POST'] = $_POST;
-      $meta['reload'] = $reload;
-      $meta['url']  = get_permalink($post_id);
+      $meta['POST']    = $_POST;
+      $meta['reload']  = $reload;
+      $meta['url']     = get_permalink($post_id);
+      $meta['author']  = get_current_user_id();
 
       $update = array( 'ID' => $post_id  );
       wp_update_post( $update );
