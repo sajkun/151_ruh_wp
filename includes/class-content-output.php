@@ -35,6 +35,9 @@ class theme_content_output{
     $leads_id      = (int)get_option('theme_page_leads');
     $new_lead_id = (int)get_option('theme_page_create_leads');
 
+    $reception_id = (int)get_option('theme_page_reception');
+    $tco_id = (int)get_option('theme_page_tco');
+
     $user_id   = get_current_user_id();
     $user_meta = get_userdata($user_id);
     $user_roles = $user_meta->roles;
@@ -50,14 +53,17 @@ class theme_content_output{
 
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
+      'reception_id'         => $reception_id,
+      'tco_id'               => $tco_id,
       'dashboard_menu_class' => $dashboard_menu_class,
       'dashboard_url'        => get_permalink($dashboard_id),
       'lead_url'             => get_permalink($leads_id),
-      'new_lead_url'         => get_permalink($new_lead_id),
+      'reception_url'        => get_permalink($reception_id),
+      'tco_url'              => get_permalink($tco_id),
       'photo_url'            => $photo_url,
       'name'                 => $name,
-      'show_add'              => $show_add ,
-      'is_admin'              => in_array('administrator', $user_roles) || in_array('manager', $user_roles),
+      'show_add'             => $show_add ,
+      'is_admin'             => in_array('administrator', $user_roles) || in_array('manager', $user_roles),
     );
 
     print_theme_template_part('header', 'globals', $args);
@@ -70,7 +76,6 @@ class theme_content_output{
   * @hookedto
   */
   public static function print_dashboard(){
-    $rustart = getrusage();
     global $theme_init;
 
     // define that it is a dashboard for a script
@@ -211,21 +216,12 @@ class theme_content_output{
       $leads = get_leads_meta($leads);
 
 
-
     // prepare data for filters
 
       $filter_data = get_filters_by_leads( $leads );
 
     // get available stages
 
-      $stages = get_option('leads_stages');
-
-
-      if(!$stages){
-        echo '<div class="spacer-h-40"></div>';
-        echo '<p class="text-center">No stages configured, Leads can not be ordered. Please Configure stages first</p>';
-        return;
-      }
 
       $user = get_user_by('id', get_current_user_id());
 
@@ -237,22 +233,77 @@ class theme_content_output{
 
       $user_roles = $user_meta->roles;
 
+      $stages = get_option('leads_stages');
+
+      $theme_roles = get_theme_roles();
+
+      if( in_array($theme_roles['reception'], $user_roles )){
+        foreach ($stages as $id => $_stage) {
+          if( $_stage['reception'] == 0 ){
+            unset($stages[$id]);
+          }
+        }
+
+        wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
+        $theme_user_role = 'reception';
+
+      }else if( in_array($theme_roles['tco'], $user_roles )){
+        foreach ($stages as $id => $_stage) {
+          if( $_stage['tco'] == 0 ){
+            unset($stages[$id]);
+          }
+        }
+        wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
+        $theme_user_role = 'tco';
+      }else{
+
+        $reception_id = (int)get_option('theme_page_reception');
+        $tco_id = (int)get_option('theme_page_tco');
+
+        if(get_queried_object_id() == $reception_id ) {
+          foreach ($stages as $id => $_stage) {
+            if( $_stage['reception'] == 0 ){
+              unset($stages[$id]);
+            }
+          }
+
+          wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
+          $theme_user_role = 'reception';
+        }else if(get_queried_object_id() == $tco_id ){
+          foreach ($stages as $id => $_stage) {
+            if( $_stage['tco'] == 0 ){
+              unset($stages[$id]);
+            }
+          }
+          wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
+          $theme_user_role = 'tco';
+        }else{
+          wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'all' );
+           $theme_user_role = 'all';
+        }
+
+
+      }
+
+      if(!$stages){
+        echo '<div class="spacer-h-40"></div>';
+        echo '<p class="text-center">No stages configured, Leads can not be ordered. Please Configure stages first</p>';
+        return;
+      }
+
       $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
 
       $args = array(
-        'user_name' => $user_name,
-        'user_id' => get_current_user_id(),
-        'stages' => $stages,
-        'is_manager' => $is_manager,
-        'daterange' => array(
+        'user_name'       => $user_name,
+        'user_id'         => get_current_user_id(),
+        'stages'          => $stages,
+        'is_manager'      => $is_manager,
+        'theme_user_role' => $theme_user_role,
+        'daterange'       => array(
           'from' => $days_30_before_today_formatted,
           'to'   => $today_formated
         ),
       );
-
-
-
-
 
     print_theme_template_part('leads-list', 'globals', $args);
 
@@ -265,7 +316,6 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
     wp_localize_script($theme_init->main_script_slug, 'failed_lead_name', get_converted_stages());
     wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
-
 
 
     // data for single lead
@@ -327,12 +377,12 @@ class theme_content_output{
     $failed_stage_name = get_failed_stage_name();
 
     wp_localize_script($theme_init->main_script_slug, 'converted_stages', $converted_stages);
-    wp_localize_script($theme_init->main_script_slug, 'failed_stage_name', (string)$failed_stage_name);
+    wp_localize_script($theme_init->main_script_slug, 'failed_stage_name', $failed_stage_name);
 
     $available_dentists = array();
     $available_staff = array();
     $staff_roles = array('staff', 'manager', 'administrator');
-    $dentists_roles = array('dentist');
+    $dentists_roles = array(get_theme_roles('dentist'));
 
     foreach ( $users as $user_id => $user) {
 
@@ -371,7 +421,8 @@ class theme_content_output{
     // defines a type of a lead
     $lead_type  = array('class' => 'opened', 'text' => 'Opened Lead');
     $lead_type = (in_array( $lead_stage, $converted_stages ))? array('class' => 'converted', 'text' => 'Converted Lead'): $lead_type;
-    $lead_type = ($lead_stage === get_failed_stage_name())? array('class' => 'failed', 'text' => 'Failed Lead'): $lead_type;
+
+    $lead_type = in_array($lead_stage, get_failed_stage_name())? array('class' => 'failed', 'text' => 'Failed Lead'): $lead_type;
 
     // get current user data
     $user      = get_user_by('id', get_current_user_id());
@@ -388,7 +439,7 @@ class theme_content_output{
     $lead_logs   = get_post_meta($lead->ID, '_lead_log', true);
 
     $args = array(
-        'role'    => 'dentist',
+        'role'    => get_theme_roles('dentist'),
         'orderby' => 'user_nicename',
         'order'   => 'ASC'
     );
@@ -440,7 +491,16 @@ class theme_content_output{
     $available_dentists = array();
     $available_staff = array();
     $staff_roles = array('staff', 'manager', 'administrator');
-    $dentists_roles = array('dentist');
+
+    if(get_theme_roles('reception')){
+      $staff_roles[] = get_theme_roles('reception');
+    }
+
+    if(get_theme_roles('tco')){
+      $staff_roles[] = get_theme_roles('tco');
+    }
+
+    $dentists_roles = array(get_theme_roles('dentist'));
 
     foreach ( $users as $user_id => $user) {
 
@@ -521,10 +581,7 @@ class theme_content_output{
       $assigned_treatments = array();
     }
 
-
-
     $stages = get_option('leads_stages');
-
 
     $args = array(
       'treatment_coordinator' => $treatment_coordinator,
@@ -555,10 +612,16 @@ class theme_content_output{
        $stages_names[] = $st['name'];
     }
 
-
     $message_count = get_post_meta($lead->ID, '_message_count', true);
     $message_count = ($message_count) ? $message_count : 0;
 
+    $phone_count_tco       = get_post_meta($lead->ID, '_phone_count_tco', true);
+    $message_count_tco     = get_post_meta($lead->ID, '_message_count_tco', true);
+    $sms_count_tco         = get_post_meta($lead->ID, '_sms_count_tco', true);
+
+    $phone_count_tco = ($phone_count_tco) ? $phone_count_tco : 0;
+    $message_count_tco = ($message_count_tco) ? $message_count_tco : 0;
+    $sms_count_tco = ($sms_count_tco) ? $sms_count_tco : 0;
 
     $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
     wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
@@ -583,7 +646,7 @@ class theme_content_output{
 
     $user = wp_get_current_user();
 
-    if(in_array('dentist', $user->roles)){
+    if(in_array(get_theme_roles('dentist'), $user->roles)){
       $last_name  = get_user_meta($user->ID, 'last_name', true);
       $first_name = get_user_meta($user->ID, 'first_name', true);
       $nickname   = get_user_meta($user->ID, 'nickname', true);
@@ -598,7 +661,10 @@ class theme_content_output{
     }
 
     wp_localize_script($theme_init->main_script_slug, 'phone_count', (string)$phone_count);
+    wp_localize_script($theme_init->main_script_slug, 'phone_count_tco', (string)$phone_count_tco);
     wp_localize_script($theme_init->main_script_slug, 'message_count',  (string)$message_count);
+    wp_localize_script($theme_init->main_script_slug, 'message_count_tco', (string)$message_count_tco);
+    wp_localize_script($theme_init->main_script_slug, 'sms_count_tco',  (string)$sms_count_tco);
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
     wp_localize_script($theme_init->main_script_slug, 'assigned_dentists', $assigned_dentists);
     wp_localize_script($theme_init->main_script_slug, 'assigned_treatments', $assigned_treatments);
@@ -625,6 +691,7 @@ class theme_content_output{
         unset($sources[$key]);
       }
     }
+
     wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
      );
 
@@ -679,7 +746,16 @@ class theme_content_output{
 
 
     $staff_roles = array('staff', 'manager', 'administrator');
-    $dentists_roles = array('dentist');
+
+    if(get_theme_roles('reception')){
+      $staff_roles[] = get_theme_roles('reception');
+    }
+
+    if(get_theme_roles('tco')){
+      $staff_roles[] = get_theme_roles('tco');
+    }
+
+    $dentists_roles = array(get_theme_roles('dentist'));
 
 
     foreach ( $users as $user_id => $user) {
@@ -767,7 +843,10 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
 
     wp_localize_script($theme_init->main_script_slug, 'phone_count', [0]);
+    wp_localize_script($theme_init->main_script_slug, 'phone_count_tco', [0]);
     wp_localize_script($theme_init->main_script_slug, 'message_count', [0]);
+    wp_localize_script($theme_init->main_script_slug, 'message_count_tco', [0]);
+    wp_localize_script($theme_init->main_script_slug, 'sms_count_tco', [0]);
 
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());

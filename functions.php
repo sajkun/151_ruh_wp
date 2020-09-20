@@ -626,6 +626,8 @@ class velesh_init_theme{
     $options = array(
       'dashboard'        => __('Dashboard Page', 'theme-translations'),
       'leads'          => __('Leads Page', 'theme-translations'),
+      'reception'          => __('Reception Page', 'theme-translations'),
+      'tco'          => __('TCO Page', 'theme-translations'),
       'create_leads'         => __('Blank Lead Page', 'theme-translations'),
     );
 

@@ -842,7 +842,9 @@ function do_sort(){
           if(dashboard_leads_data[id].ID == post_id){
             dashboard_leads_data[id].lead_stage        = list_id;
             dashboard_leads_data[id].meta.lead_stage   = list_id;
-             dashboard_leads_data[id].is_failed =  list_id === failed_stage_name? 'yes' : 'no';
+             dashboard_leads_data[id].is_failed =  failed_stage_name.indexOf(list_id) >= 0? 'yes' : 'no';
+
+             clog('failed: ' + dashboard_leads_data[id].is_failed);
              dashboard_leads_data[id].is_converted =  converted_stages.indexOf(list_id) >=0 ? 'yes' : 'no';
             var date = new Date();
             var month = (date.getMonth() + 1) < 10? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
@@ -1216,7 +1218,10 @@ var parse_leads = {
       data.permalink   = this.leads[id].permalink;
       data.filter_data = this.leads[id].filter_data;
       data.phone_count = this.leads[id].phone_count;
+      data.phone_count_tco = this.leads[id].phone_count_tco;
       data.message_count = this.leads[id].message_count;
+      data.message_count_tco = this.leads[id].message_count_tco;
+      data.sms_count_tco = this.leads[id].sms_count_tco;
       data.for_csv       = for_csv;
       data.manager_noted = manager_noted;
       data.post_modified = this.leads[id].post_modified;
@@ -3896,7 +3901,10 @@ if('undefined' !== typeof(is_single_lead)){
       reminder    : '',
       new_file    : '',
       phones      : 0,
+      phones_tco  : 0,
+      sms_tco     : 0,
       messages    : 0,
+      messages_tco    : 0,
       requre_save : false,
       save_text           : 'Save Changes',
       specialists_data    : {},
@@ -4242,7 +4250,10 @@ if('undefined' !== typeof(is_single_lead)){
 
     mounted: function(){
       this.phones = phone_count;
+      this.phones_tco = parseInt(phone_count_tco);
+      this.sms_tco = parseInt(sms_count_tco);
       this.messages = message_count;
+      this.messages_tco = parseInt(message_count_tco);
       this.notes = lead_notes;
       this.notes_tco = lead_notes_tco;
       this.files = lead_files;
@@ -4250,6 +4261,8 @@ if('undefined' !== typeof(is_single_lead)){
       this.specialists_data  = specialists_data;
       this.init_select();
       this.treatment_data_selects();
+
+      console.log(this.phones_tco);
     },
 
     methods: {
@@ -5068,6 +5081,81 @@ if('undefined' !== typeof(is_single_lead)){
 
         // console.log('change_phone');
       },
+
+
+      change_phone_tco: function(action){
+        var vm= this;
+        switch(action){
+          case 'add':
+           vm.phones_tco = 1;
+           break;
+          case 'remove':
+           vm.phones_tco = 0;
+           break;
+        }
+
+        var data = {
+          lead_id: this.lead_data.lead_id,
+          count: this.phones_tco,
+          action: 'save_phones_count_tco',
+        }
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+
+          },
+
+          success: function(data, textStatus, xhr) {
+            // console.log(data);
+           },
+
+          error: function(xhr, textStatus, errorThrown) {
+
+          }
+        })
+      },
+
+      change_message_tco: function(action){
+        var vm= this;
+        switch(action){
+          case 'add':
+           vm.messages_tco = 1;
+           break;
+          case 'remove':
+           vm.messages_tco = 0;
+           break;
+        }
+
+
+        var data = {
+          lead_id: this.lead_data.lead_id,
+          count: this.messages_tco,
+          action: 'save_messages_count_tco',
+        }
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+
+          },
+
+          success: function(data, textStatus, xhr) {
+            // console.log(data);
+           },
+
+          error: function(xhr, textStatus, errorThrown) {
+
+          }
+        })
+      },
+
 
       clear_reminder: function(){
         this.reminder = '';

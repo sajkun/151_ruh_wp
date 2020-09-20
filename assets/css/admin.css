@@ -72,3 +72,7 @@
 .treatments-list .input-control{
   break-inside: avoid-column;
 }
+
+.th{
+  padding-top: 10px!important;
+}

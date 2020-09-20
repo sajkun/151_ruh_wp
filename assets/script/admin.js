@@ -365,3 +365,17 @@ jQuery(document).ready(function(){
   })
 
 })
+
+
+jQuery('.roles-list').on('change',function(){
+  var element = jQuery(this);
+  var value = element.val();
+  var _roles = jQuery('.roles-list');
+
+  _roles.each(function(ind, el){
+    if(jQuery(el).val() === value && jQuery(el).attr('id') != element.attr('id') && jQuery(el).val() !== 'none' ){
+      element.val('none');
+      alert('This role is already assigned');
+    }
+  })
+})

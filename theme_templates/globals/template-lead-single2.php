@@ -255,7 +255,17 @@ if ( ! defined( 'ABSPATH' ) ) {
              /************************************/?>
 
         <div class="leads-block">
-          <h2 class="leads-block__title"><i class="icon-red"></i> TCO Team </h2>
+          <h2 class="leads-block__title"><i class="icon-red"></i> TCO Team
+
+          <span class="icons">
+            <span class="phones">
+              <i class="phone-ok icon"  v-if="phones_tco > 0" v-on:click="change_phone_tco('remove')"></i>
+              <i class="phone-na icon"  v-if="phones_tco == 0" v-on:click="change_phone_tco('add')"></i>
+              <i class="message-ok icon" v-if="messages_tco > 0" v-on:click="change_message_tco('remove')"></i>
+              <i class="message-na icon" v-if="messages_tco == 0" v-on:click="change_message_tco('add')"></i>
+            </span>
+          </span>
+          </h2>
 
           <div class="hr"></div>
 

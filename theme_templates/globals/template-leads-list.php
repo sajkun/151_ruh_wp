@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <div class="spacer-h-40" ref="spacer1"></div>
 
-
-
   <div class="container-fluid filter-container visuallyhidden" ref="container_filter">
       <div class="text-center">
         <a class="button-filter" href="javascript:location.reload()" >Update Data</a>
@@ -21,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
      <div class="row no-gutters justify-content-start justify-content-center-lg switchers" id="leads-filters">
 
       <div class="alert"  v-bind:class="alarms.class">
-        <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+        <svg class="icon svg-icon-bell green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
 
         <span class="alert__count">{{alarms.total}}</span>
         <span class="alert__tag overdue" v-bind:class="alarms.class_overdue">{{alarms.overdue}} Ovderdue</span>
@@ -129,9 +127,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                             <svg class="icon svg-icon-bell green" v-if="data.reminder != '' && data.overdue == 'no'" v-bind:title="data.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
 
+                            <?php if ($theme_user_role != 'tco'): ?>
+                              <i class="icon-message-phone phone-na" v-if="data.phone_count == 0"></i>
+                              <i class="icon-message-phone phone-ok" v-else="data.phone_count > 0"><span class="counter">{{data.phone_count}}</span></i>
+                              <i class="icon-message-phone message-na" v-if="data.message_count == 0"></i>
+                              <i class="icon-message-phone message-ok" v-else="data.message_count > 0"><span class="counter">{{data.message_count}}</span></i>
+                            <?php endif ?>
 
+                            <?php if ($theme_user_role != 'reception'): ?>
+                                <i class="icon-message-phone phone-na" v-if="data.phone_count_tco == 0"></i>
+                                <i class="icon-message-phone phone-ok" v-if="data.phone_count_tco > 0"></i>
+                                <i class="icon-message-phone message-na" v-if="data.message_count_tco == 0"></i>
 
-                            <i class="icon-message-phone phone-na" v-if="data.phone_count == 0"></i><i class="icon-message-phone phone-ok" v-else="data.phone_count > 0"><span class="counter">{{data.phone_count}}</span></i><i class="icon-message-phone message-na" v-if="data.message_count == 0"></i><i class="icon-message-phone message-ok" v-else="data.message_count > 0"><span class="counter">{{data.message_count}}</span></i>
+                                <i class="icon-message-phone message-ok" v-if="data.message_count_tco > 0"></i>
+
+                                <i class="icon-message-phone sms" v-if="data.sms_count > 0"></i>
+                            <?php endif ?>
                           </span>
                        </div>
                     </a>

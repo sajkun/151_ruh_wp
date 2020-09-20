@@ -15,17 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
           <?php if ($is_admin): ?>
 
           <li class="menu-item <?php echo $dashboard_menu_class?>">
-            <a href="<?php echo $dashboard_url?>">
-              <svg class="icon svg-icon-dashboard"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dashboard"></use> </svg>
-                Dashboard
-              </a>
+            <a href="<?php echo $dashboard_url?>"> Dashboard </a>
           </li>
-          <?php endif ?>
+          <li class="menu-item <?php echo $reception_id == get_queried_object_id() ? 'active' : '' ?>">
+            <a href="<?php echo $reception_url?>"> Reception</a>
+          </li>
+          <li class="menu-item <?php echo $tco_id == get_queried_object_id() ? 'active' : '' ?>">
+            <a href="<?php echo $tco_url?>"> TCO</a>
+          </li>
+          <?php else: ?>
           <li class="menu-item <?php echo $leads_menu_class?>">
             <a href="<?php echo $lead_url?>">
-               <svg class="icon svg-icon-leads"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leads"></use> </svg>
             Leads</a>
           </li>
+          <?php endif ?>
         </ul>
       </nav>
       <div class="search" v-bind:class="classes"  id="search-form">

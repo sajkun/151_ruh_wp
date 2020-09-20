@@ -9070,7 +9070,6 @@ body.admin-bar {
 .menu .menu-item {
   display: inline-block;
   vertical-align: top;
-  width: 49%;
 }
 
 @media (min-width: 768px) {
@@ -9091,7 +9090,7 @@ body.admin-bar {
 
 .menu .menu-item a {
   display: block;
-  padding: 5px 18px 0 39px;
+  padding: 5px 9px 0 9px;
   text-decoration: none;
   color: #2b2f37;
   font-family: "HelveticaFont_", sans-serif;
@@ -9107,13 +9106,13 @@ body.admin-bar {
 
 @media (min-width: 768px) {
   .menu .menu-item a {
-    padding: 5px 18px 0 29px;
+    padding: 5px 9px 0 9px;
   }
 }
 
 @media (min-width: 992px) {
   .menu .menu-item a {
-    padding: 5px 25px 0 39px;
+    padding: 5px 12px 0 12px;
   }
 }
 
@@ -10678,6 +10677,12 @@ pre {
 .message-na {
   height: 10px;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAKCAYAAABv7tTEAAAA0UlEQVQoU43QQQ7BQBQG4P8fGztuIE6gN8AJOAJ7pTa6URLdYIUeQG+gbuAIjlA3qK3oPJnEJEUkneXLfPnf+xmuox0UWvh+AgdA/WNMXIKZ22W4ieQH/B/cA9+tc7U9DCg8loFCGS5m49iiDEAMoPYH36AxoKIz90c7u17CCj2t9Z7CXhEK5ayUmoiWGIJO4Lss3mTShm9gUiEUjzlTKJxsKd/IBiS5fk5RRaYelSVBr5hsUQqgUaYI88eiC4B2WZTrZ9Pc1BeKqf1aAl4D301eKiFWwQV8A2gAAAAASUVORK5CYII=);
+}
+
+.sms {
+  height: 13px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAANCAYAAAB2HjRBAAABHUlEQVQ4T5VSTU7CUBicKRoTNRFv4A2sVNfqDWrSJu7wCBwBb4AnUNbEpDewe0MoR/AElkRaiS1jipRCC0l9i/de5vtm8v0MsTym/dls7B+0Idg5VnkJL/2Z9QPvNMxizK4r98ucy3gD0NxJLAKhwfnt++A4oHkfnzUSjWoSc4kw3eMFLWf6ArBdCHMiKChXQNAEdFLg6tNy4nADJDwD7JXJc6hTmkdIy4lUo8+tKVUyMabklbNF2hDO13FabhSUQF+gX+1Z2QrNNfyDLTd+oPT839IJPS723HIin8B1bQFiPBwcmgtydi6daVcwOpvr2CInPKXprJu5bEUuROKb/C+q9zcPTgjYSfId5NZc2XNXuUvbjiDdDV+PKhv4BdEIbIf43pt5AAAAAElFTkSuQmCC);
+  width: 15px !important;
 }
 
 .icon-message-phone {

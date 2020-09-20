@@ -164,7 +164,73 @@ class velesh_theme_posts {
     add_submenu_page( 'edit.php?post_type=lead_item', 'Leads\' Stages', 'Leads\' Stages', 'manage_options', 'leads-stages', array(__CLASS__, 'print_leads_stages_cb'));
 
     add_submenu_page( 'edit.php?post_type=lead_item', 'Clinics, treatment configurations', 'Clinics, treatment configurations', 'manage_options', 'clinics-treatment-configurations', array(__CLASS__, 'print_clinics_treatment_configurations_cb'));
+
+    add_submenu_page( 'users.php', 'Role\'s Configuration', 'Role\'s Configuration', 'manage_options', 'user-role-configuration', array(__CLASS__, 'print_user_roles_cofiguration_cb'));
   }
+
+    public static function print_user_roles_cofiguration_cb(){
+      global $wp_roles;
+
+      if(isset($_POST['do_save']) && 'yes' === $_POST['do_save'] && isset($_POST['theme_roles'])){
+        update_option('theme_roles', $_POST['theme_roles']);
+      }
+      $all_roles = $wp_roles->roles;
+      $o = get_option('theme_roles');
+        ?>
+          <h3>Role's Configuration</h3>
+
+          <form action="<?php echo admin_url('users.php?page=user-role-configuration'); ?>" method="POST">
+
+            <table>
+              <tr>
+                <td>Dentist Roles:</td>
+                <td>
+                  <select name="theme_roles[dentist]" class="roles-list" id="dentist">
+                    <option value="none">-- Select a role --</option>
+                    <?php foreach ($all_roles as $role => $data) {
+                      $selected = ($role == $o['dentist'])? 'selected = "selected"': '';
+                      printf('<option value="%s" %s>%s</option>', $role,$selected, $data['name']);
+                    }
+                    ?>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Reception Role:</td>
+                <td>
+                  <select name="theme_roles[reception]" class="roles-list" id="reception">
+                    <option value="none">-- Select a role --</option>
+                    <?php foreach ($all_roles as $role => $data) {
+                      $selected = ($role == $o['reception'])? 'selected = "selected"': '';
+                      printf('<option value="%s" %s>%s</option>', $role,$selected, $data['name']);
+                    }
+                    ?>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>TCO Role:</td>
+                <td>
+                  <select name="theme_roles[tco]" class="roles-list" id="tco">
+                    <option value="none">-- Select a role --</option>
+                   <?php foreach ($all_roles as $role => $data) {
+                      $selected = ($role == $o['tco'])? 'selected = "selected"': '';
+                      printf('<option value="%s" %s>%s</option>', $role,$selected, $data['name']);
+                    }
+                    ?>
+                  </select>
+                </td>
+              </tr>
+            </table>
+
+            <i>Don't select a one role twice, It will cause an issue</i> <br><br>
+
+            <input type="hidden" name="do_save" value="yes">
+            <button type="submit" class="button button-primary"> Save</button>
+          </form>
+
+        <?php
+    }
 
     public static function print_clinics_treatment_configurations_cb(){
       // echo "<pre>";
@@ -385,6 +451,8 @@ class velesh_theme_posts {
       $stage_for_converted = get_option('stage_for_converted');
       $stage_for_failed    = get_option('stage_for_failed');
 
+      $stage_for_failed = !is_array($stage_for_failed ) ? array($stage_for_failed ) : $stage_for_failed ;
+
       if(!$stages){
         $stages = array();
       }
@@ -433,15 +501,34 @@ class velesh_theme_posts {
                       <label class="optional_label">
                       <input type="radio" name="stage_for_converted" class="stage_for_converted" value="<?php echo ($number) ?>" <?php echo  $stage_for_converted && (int)$number === (int)$stage_for_converted? 'checked="checked"': ''  ?>>
                       Is converted <br>
-                      <i>Leads on this stage, and all hire stages,  will be counted as converted</i>
+                      <i>Leads on this stage will be counted as converted</i>
                       </label>
 
                       <label class="optional_label">
-                      <input type="radio" name="stage_for_failed" class="stage_for_failed" value="<?php echo ($number) ?>" <?php echo !!$stage_for_failed && (int)$number === (int)$stage_for_failed? 'checked="checked"': ''  ?>>
+                      <input type="checkbox" name="stage_for_failed[]" class="stage_for_failed" value="<?php echo ($number) ?>" <?php echo is_array($stage_for_failed) && in_array($number, $stage_for_failed)? 'checked="checked"': ''  ?>>
                         Is failed <br>
                         <i>Leads on this stage, will be counted as failed</i>
                       </label>
                     </td></tr>
+
+                    <tr>
+                      <th>
+                        Show for role:
+                      </th>
+                      <td colspan="3" class="th">
+                        <label >
+                          <input type="hidden" value= "0" name = "leads_stages[<?php echo ($number) ?>][reception]">
+                          <input type="checkbox" value= "1" name = "leads_stages[<?php echo ($number) ?>][reception]"  <?php echo  isset($st['reception']) &&  1 == $st['reception'] ? 'checked="checked"' : ''; ?>>
+                          Reception
+                        </label>
+                        <label >
+                          <input type="hidden" value= "0" name = "leads_stages[<?php echo ($number) ?>][tco]">
+                          <input type="checkbox" value= "1" name = "leads_stages[<?php echo ($number) ?>][tco]" <?php echo  isset($st['tco']) &&  1 == $st['tco'] ? 'checked="checked"' : ''; ?>>
+                          TCO
+                        </label>
+                      </td>
+
+                    </tr>
                   </table>
                 </div>
               </li>

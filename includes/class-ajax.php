@@ -54,8 +54,15 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_save_phones_count', array($this, 'save_phones_count_cb'));
       add_action('wp_ajax_nopriv_save_phones_count', array($this, 'save_phones_count_cb'));
 
+
+      add_action('wp_ajax_save_phones_count_tco', array($this, 'save_phones_count_tco_cb'));
+      add_action('wp_ajax_nopriv_save_phones_count_tco', array($this, 'save_phones_count_tco_cb'));
+
       add_action('wp_ajax_save_messages_count', array($this, 'save_messages_count_cb'));
       add_action('wp_ajax_nopriv_save_messages_count', array($this, 'save_messages_count_cb'));
+
+      add_action('wp_ajax_save_messages_count_tco', array($this, 'save_messages_count_tco_cb'));
+      add_action('wp_ajax_nopriv_save_messages_count_tco', array($this, 'save_messages_count_tco_cb'));
 
       add_action('wp_ajax_theme_get_users', array($this, 'theme_get_users_cb'));
       add_action('wp_ajax_nopriv_theme_get_users', array($this, 'theme_get_users_cb'));
@@ -69,7 +76,17 @@ if(!class_exists('theme_ajax_action')){
       $available_dentists = array();
       $available_staff = array();
       $staff_roles = array('staff', 'manager', 'administrator');
-      $dentists_roles = array('dentist');
+
+      if(get_theme_roles('reception')){
+        $staff_roles[] = get_theme_roles('reception');
+      }
+
+      if(get_theme_roles('tco')){
+        $staff_roles[] = get_theme_roles('tco');
+      }
+
+      $dentists_roles = array(get_theme_roles('dentist'));
+
 
       foreach (theme_get_all_users(false, true) as $user_id => $user) {
 
@@ -140,6 +157,23 @@ if(!class_exists('theme_ajax_action')){
 
       wp_send_json($updated);
     }
+    /**
+    * saves meta data for marked messages icons
+    */
+    public function save_phones_count_tco_cb(){
+      $post_id = (int)$_POST['lead_id'];
+
+      $updated = update_post_meta($post_id,  '_phone_count_tco', $_POST['count']);
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_phone_count_tco', $_POST['count'], true );
+      }
+
+      $update = array( 'ID' => $post_id  );
+      wp_update_post( $update );
+
+      wp_send_json($updated);
+    }
 
     /**
     * saves meta data for marked messages icons
@@ -151,6 +185,23 @@ if(!class_exists('theme_ajax_action')){
 
       if(!$updated ){
         $updated = add_post_meta( $post_id,  '_message_count', $_POST['count'], true );
+      }
+
+      $update = array( 'ID' => $post_id  );
+      wp_update_post( $update );
+
+      wp_send_json($updated);
+    }
+    /**
+    * saves meta data for marked messages icons
+    */
+    public function save_messages_count_tco_cb(){
+      $post_id = (int)$_POST['lead_id'];
+
+      $updated = update_post_meta($post_id,  '_message_count_tco', $_POST['count']);
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_message_count_tco', $_POST['count'], true );
       }
 
       $update = array( 'ID' => $post_id  );

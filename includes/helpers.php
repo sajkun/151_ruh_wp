@@ -84,6 +84,19 @@ if(!function_exists('exec_clog')){
     }
 }
 
+if(!function_exists('get_theme_roles')){
+  function get_theme_roles($role = false){
+    $roles = get_option('theme_roles');
+    $roles = !$roles? array() : $roles;
+
+    if($role && isset($roles[$role])){
+      return $roles[$role] !== 'none'? $roles[$role] : false;
+    }else{
+      return $roles;
+    }
+  }
+}
+
 if(!function_exists('glog')){
   /**
  * prints an inline script with output in console
@@ -475,6 +488,9 @@ if(!function_exists('get_posts_by_dates')){
   */
 
   function get_posts_by_dates($from = false, $to = false, $post_type = false){
+    $theme_roles = get_theme_roles();
+    $stages_all  = get_option('leads_stages');
+
     $start = microtime(true);
     $post_type = (! $post_type )? velesh_theme_posts::$lead :  $post_type ;
 
@@ -495,20 +511,104 @@ if(!function_exists('get_posts_by_dates')){
 
     $user = wp_get_current_user();
 
-    if(in_array('dentist', $user->roles)){
+    $dentist_role =  $theme_roles['dentist'];
 
+    if(in_array( $dentist_role , $user->roles)){
       $last_name  = get_user_meta($user->ID, 'last_name', true);
       $first_name = get_user_meta($user->ID, 'first_name', true);
       $nickname   = get_user_meta($user->ID, 'nickname', true);
 
       $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
 
-     $args['meta_query'] =array(array(
-          'key'         => '_treatment_data',
-          'value'       =>  $name,
-          'compare_key' => 'LIKE',
-          'compare'     => 'LIKE',
-        ));
+      $args['meta_query'] =array(array(
+        'key'         => '_treatment_data',
+        'value'       =>  $name,
+        'compare_key' => 'LIKE',
+        'compare'     => 'LIKE',
+      ));
+    } else if (in_array( $theme_roles['reception'] , $user->roles)){
+      $stages = array();
+      foreach ($stages_all as $id => $stage) {
+        if($stage['reception'] == 1){
+          $stages[]  = $stage['name'];
+        }
+      }
+
+      $args['meta_query'] =array(
+        'relation' => "OR",
+        array(
+        'key'         => '_lead_stage',
+        'value'       =>  $stages,
+        'compare'     => 'IN',
+       ),
+        array(
+        'key'         => '_lead_stage',
+        'compare' => 'NOT EXISTS'
+      ));
+
+    } else if (in_array( $theme_roles['tco'] , $user->roles)){
+      $stages = array();
+      foreach ($stages_all as $id => $stage) {
+        if($stage['tco'] == 1){
+          $stages[]  = $stage['name'];
+        }
+      }
+
+      $args['meta_query'] =array(
+        'relation' => "OR",
+        array(
+        'key'         => '_lead_stage',
+        'value'       =>  $stages,
+        'compare'     => 'IN',
+       ),
+        array(
+        'key'         => '_lead_stage',
+        'compare' => 'NOT EXISTS'
+      ));
+    }
+
+
+    $reception_id = (int)get_option('theme_page_reception');
+    $tco_id = (int)get_option('theme_page_tco');
+
+    if(get_queried_object_id() == $reception_id ) {
+      $stages = array();
+      foreach ($stages_all as $id => $stage) {
+        if($stage['reception'] == 1){
+          $stages[]  = $stage['name'];
+        }
+      }
+
+      $args['meta_query'] =array(
+        'relation' => "OR",
+        array(
+        'key'         => '_lead_stage',
+        'value'       =>  $stages,
+        'compare'     => 'IN',
+       ),
+        array(
+        'key'         => '_lead_stage',
+        'compare' => 'NOT EXISTS'
+      ));
+    }else if(get_queried_object_id() == $tco_id ){
+      $stages = array();
+      foreach ($stages_all as $id => $stage) {
+        if($stage['tco'] == 1){
+          $stages[]  = $stage['name'];
+        }
+      }
+
+      $args['meta_query'] =array(
+        'relation' => "OR",
+        array(
+        'key'         => '_lead_stage',
+        'value'       =>  $stages,
+        'compare'     => 'IN',
+       ),
+        array(
+        'key'         => '_lead_stage',
+        'compare' => 'NOT EXISTS'
+      ));
     }
 
 
@@ -526,7 +626,6 @@ if(!function_exists('get_posts_by_dates')){
       $args['date_query'][0]['before'] = $date->format('Y-m-d');
     }
 
-
     if(!$from && !$to){
        unset($args['date_query']);
     }
@@ -534,7 +633,9 @@ if(!function_exists('get_posts_by_dates')){
     $t     = get_posts($args);
     $posts = get_posts($args);
 
-    if(in_array('dentist', $user->roles)){
+    $dentist_role = get_theme_roles('dentist');
+
+    if(in_array( $dentist_role , $user->roles)){
       unset($args['meta_query']);
       $args['author']  = $user->ID;
       $leads_created   = get_posts($args);
@@ -660,9 +761,13 @@ if(!function_exists('get_leads_meta')){
 
       // $phone_count           = get_post_meta($post->ID, '_phone_count', true);
       $phone_count           = isset($post_meta['_phone_count'])? ($post_meta['_phone_count']): false;
+      $phone_count_tco       = isset($post_meta['_phone_count_tco'])? ($post_meta['_phone_count_tco']): false;
 
       // $message_count         = get_post_meta($post->ID, '_message_count', true);
       $message_count         = isset($post_meta['_message_count'])? ($post_meta['_message_count']): false;
+      $message_count_tco     = isset($post_meta['_message_count_tco'])? ($post_meta['_message_count_tco']): false;
+
+      $sms_count_tco         = isset($post_meta['_sms_count_tco'])? ($post_meta['_sms_count_tco']): false;
 
       // $end_date              =  get_post_meta($post->ID, '_end_date' , true);
       $end_date              = isset($post_meta['_end_date'])? ($post_meta['_end_date']): false;
@@ -810,7 +915,7 @@ if(!function_exists('get_leads_meta')){
 
       $leads[$lead_id]->is_converted = (in_array($leads[$lead_id]->lead_stage, $converted_stages) )? 'yes': 'no';
 
-      $leads[$lead_id]->is_failed = (isset($lead_stage) && $lead_stage === $failed_stage_name)? 'yes': 'no';
+      $leads[$lead_id]->is_failed = isset($lead_stage) && in_array($lead_stage,$failed_stage_name)? 'yes': 'no';
 
       $leads[$lead_id]->permalink = esc_url(get_permalink($post));
 
@@ -820,11 +925,17 @@ if(!function_exists('get_leads_meta')){
 
 
       $phone_count = ($phone_count) ? $phone_count : 0;
+      $phone_count_tco = ($phone_count_tco) ? $phone_count_tco : 0;
 
       $message_count = ($message_count) ? $message_count : 0;
+      $message_count_tco = ($message_count_tco) ? $message_count_tco : 0;
+      $sms_count_tco = ($sms_count_tco) ? $sms_count_tco : 0;
 
-      $leads[$lead_id]->message_count = (int)$message_count;
-      $leads[$lead_id]->phone_count = (int)$phone_count;
+      $leads[$lead_id]->message_count     = (int)$message_count;
+      $leads[$lead_id]->phone_count       = (int)$phone_count;
+      $leads[$lead_id]->phone_count_tco   = (int)$phone_count_tco;
+      $leads[$lead_id]->message_count_tco = (int)$message_count_tco;
+      $leads[$lead_id]->sms_count_tco     = (int)$sms_count_tco    ;
 
       $leads[$lead_id]->payment_end_date =  $end_date;
     }
@@ -1006,16 +1117,9 @@ if(!function_exists('get_converted_stages')){
   */
   function get_converted_stages($return = 'array'){
     $stages              = get_option('leads_stages');
-    $stage_for_failed    = (int)get_option('stage_for_failed');
     $stage_for_converted = (int)get_option('stage_for_converted');
 
-    $converted_stages = array();
-
-    foreach ($stages as $key => $st) {
-      if((int)$st['number'] >= $stage_for_converted &&  (int)$st['number'] != $stage_for_failed ){
-        $converted_stages[] = $st['name'];
-      }
-    }
+    $converted_stages = array($stages[ $stage_for_converted ]['name']);
 
     switch ($return ) {
       case 'string':
@@ -1039,15 +1143,14 @@ if(!function_exists('get_failed_stage_name')){
   */
   function get_failed_stage_name(){
     $stages              = get_option('leads_stages');
-    $stage_for_failed    = (int)get_option('stage_for_failed');
+    $stage_for_failed    = get_option('stage_for_failed');
 
-    foreach ($stages as $key => $st) {
-      if((int)$st['number'] === $stage_for_failed){
-        return $st['name'];
-      }
+    $failed_stages = array();
+
+    foreach ($stage_for_failed as $id) {
+      $failed_stages[] = $stages[$id]['name'];
     }
-
-    return false;
+    return $failed_stages;
   }
 }
 
