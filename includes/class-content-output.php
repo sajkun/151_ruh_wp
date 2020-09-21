@@ -49,7 +49,7 @@ class theme_content_output{
     $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
 
 
-    $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead ) || !$is_admin ;
+    $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)$reception_id || $obj->ID === (int)$tco_id  || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead ) || !$is_admin ;
 
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
