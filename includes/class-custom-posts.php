@@ -221,9 +221,21 @@ class velesh_theme_posts {
                   </select>
                 </td>
               </tr>
-            </table>
+              <tr>
+                <td>Staff Role (Reception & TCO):  </td>
+                <td>
+                  <select name="theme_roles[staff]" class="roles-list" id="staff">
+                    <option value="none">-- Select a role --</option>
+                   <?php foreach ($all_roles as $role => $data) {
+                      $selected = ($role == $o['staff'])? 'selected = "selected"': '';
+                      printf('<option value="%s" %s>%s</option>', $role,$selected, $data['name']);
+                    }
+                    ?>
+                  </select>
 
-            <i>Don't select a one role twice, It will cause an issue</i> <br><br>
+                </td>
+              </tr>
+            </table>
 
             <input type="hidden" name="do_save" value="yes">
             <button type="submit" class="button button-primary"> Save</button>

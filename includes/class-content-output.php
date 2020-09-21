@@ -40,9 +40,12 @@ class theme_content_output{
 
     $user_id   = get_current_user_id();
     $user_meta = get_userdata($user_id);
+
     $user_roles = $user_meta->roles;
 
+
     $is_admin = in_array('administrator', $user_roles) || in_array('manager', $user_roles);
+    $is_staff = in_array(get_theme_roles('staff'), $user_roles);
 
     $leads_menu_class = ($obj->ID === $leads_id || $obj->ID === $new_lead_id ||  velesh_theme_posts::$lead === $obj->post_type || !$is_admin )? 'active' : '';
 
@@ -63,7 +66,8 @@ class theme_content_output{
       'photo_url'            => $photo_url,
       'name'                 => $name,
       'show_add'             => $show_add ,
-      'is_admin'             => in_array('administrator', $user_roles) || in_array('manager', $user_roles),
+      'is_admin'             =>  $is_admin,
+      'is_staff'             =>  $is_staff,
     );
 
     print_theme_template_part('header', 'globals', $args);
