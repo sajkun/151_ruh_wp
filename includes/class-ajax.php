@@ -75,7 +75,7 @@ if(!class_exists('theme_ajax_action')){
     public static function theme_get_users_cb(){
       $available_dentists = array();
       $available_staff = array();
-      $staff_roles = array('staff', 'manager', 'administrator');
+      $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
 
       if(get_theme_roles('reception')){
         $staff_roles[] = get_theme_roles('reception');

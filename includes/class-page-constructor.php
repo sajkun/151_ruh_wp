@@ -33,16 +33,16 @@ class theme_construct_page{
       add_action('do_theme_header', array('theme_content_output', 'print_header'));
 
       if(!$is_admin){
-        $leads_id     = (int)get_option('theme_page_leads');
-        $reception_id = (int)get_option('theme_page_reception');
-        $tco_id       = (int)get_option('theme_page_tco');
+        // $leads_id     = (int)get_option('theme_page_leads');
+        // $reception_id = (int)get_option('theme_page_reception');
+        // $tco_id       = (int)get_option('theme_page_tco');
 
-        if(get_queried_object_id() ==  $reception_id ||  $tco_id == get_queried_object_id()){
-          $url   = get_permalink($leads_id );
+        // if(get_queried_object_id() ==  $reception_id ||  $tco_id == get_queried_object_id()){
+        //   $url   = get_permalink($leads_id );
 
-          wp_safe_redirect( $url, 302, 'WordPress' );
-          exit();
-        }
+        //   wp_safe_redirect( $url, 302, 'WordPress' );
+        //   exit();
+        // }
 
         if(self:: is_page_type( 'dashboard' )){
           add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));

@@ -61,6 +61,7 @@ class theme_content_output{
       'dashboard_menu_class' => $dashboard_menu_class,
       'dashboard_url'        => get_permalink($dashboard_id),
       'lead_url'             => get_permalink($leads_id),
+      'new_lead_url'             => get_permalink($new_lead_id),
       'reception_url'        => get_permalink($reception_id),
       'tco_url'              => get_permalink($tco_id),
       'photo_url'            => $photo_url,
@@ -345,7 +346,9 @@ class theme_content_output{
 
 
 
-    $specialists_data = array();
+    $specialists_data           = array();
+    $specialists_data_reception = array();
+    $specialists_data_tco       = array();
 
     $clinics    = get_option('clinics_list');
     $treatments = get_option('treatments_list');
@@ -355,7 +358,7 @@ class theme_content_output{
     $users = theme_get_all_users(false, true);
 
     foreach ($users as $user_id => $user) {
-      if(!in_array('staff', $user['roles'])){continue;}
+      if(!in_array(get_theme_roles('staff'), $user['roles'] && !in_array(get_theme_roles('reception'), $user['roles'] )&& !in_array(get_theme_roles('tco'), $user['roles'] ) ) {continue;}
 
       $image    = (isset($user['image'])) ? $user['image'] : DUMMY_ADMIN;
 
@@ -374,6 +377,7 @@ class theme_content_output{
     }
 
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
+
     wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
 
 
@@ -385,7 +389,7 @@ class theme_content_output{
 
     $available_dentists = array();
     $available_staff = array();
-    $staff_roles = array('staff', 'manager', 'administrator');
+    $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
     $dentists_roles = array(get_theme_roles('dentist'));
 
     foreach ( $users as $user_id => $user) {
@@ -494,7 +498,7 @@ class theme_content_output{
 
     $available_dentists = array();
     $available_staff = array();
-    $staff_roles = array('staff', 'manager', 'administrator');
+    $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
 
     if(get_theme_roles('reception')){
       $staff_roles[] = get_theme_roles('reception');
@@ -520,7 +524,9 @@ class theme_content_output{
       }
     }
 
-    $specialists_data = array();
+    $specialists_data           = array();
+    $specialists_data_reception = array();
+    $specialists_data_tco       = array();
 
     $clinics    = get_option('clinics_list');
     $treatments = get_option('treatments_list');
@@ -528,7 +534,7 @@ class theme_content_output{
 
 
     foreach ($users as $user_id => $user) {
-      if(!in_array('staff', $user['roles'])){continue;}
+      if(!in_array(get_theme_roles('staff'), $user['roles']) && !in_array(get_theme_roles('tco'), $user['roles']) && !in_array(get_theme_roles('reception'), $user['roles'])){continue;}
 
       $image    = (isset($user['image'])) ? $user['image'] : DUMMY_ADMIN;
 
@@ -544,6 +550,29 @@ class theme_content_output{
         'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
         'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
       );
+
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('reception'), $user['roles'])){
+
+        $specialists_data_reception[$name] = array(
+          'photo'     => $image,
+          'position'  => $position,
+          'user_id'   => $user_id,
+          'name'      => $name,
+          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+        );
+      }
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['reception'])){
+
+        $specialists_data_tco[$name] = array(
+          'photo'     => $image,
+          'position'  => $position,
+          'user_id'   => $user_id,
+          'name'      => $name,
+          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+        );
+      }
     }
 
     // get other leads info
@@ -679,7 +708,8 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', $lead_notes);
     wp_localize_script($theme_init->main_script_slug, 'lead_notes_tco', $lead_notes_tco);
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
-    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data_reception));
+    wp_localize_script($theme_init->main_script_slug, 'specialists_tco', array_keys($specialists_data_tco));
     wp_localize_script($theme_init->main_script_slug, 'lead_files', $lead_files);
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  $lead_logs);
     wp_localize_script($theme_init->main_script_slug, 'date_start',  $date_start);
@@ -730,7 +760,7 @@ class theme_content_output{
     $users            = theme_get_all_users(false, true);
 
     foreach ($users as $user_id => $user) {
-      if(!in_array('staff', $user['roles'])){continue;}
+      if(!in_array(get_theme_roles('staff'), $user['roles']) && !in_array(get_theme_roles('tco'), $user['roles']) && !in_array(get_theme_roles('reception'), $user['roles'])){continue;}
 
       $image    = (isset($user['image'])) ? $user['image'] : DUMMY_ADMIN;
 
@@ -743,13 +773,36 @@ class theme_content_output{
         'position'  => $position,
         'user_id'   => $user_id,
         'name'      => $name,
-        'show'      => 'no',
-        'show_tco'  => 'no'
+        'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
+        'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
       );
+
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('reception'), $user['roles'])){
+
+        $specialists_data_reception[$name] = array(
+          'photo'     => $image,
+          'position'  => $position,
+          'user_id'   => $user_id,
+          'name'      => $name,
+          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+        );
+      }
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['reception'])){
+
+        $specialists_data_tco[$name] = array(
+          'photo'     => $image,
+          'position'  => $position,
+          'user_id'   => $user_id,
+          'name'      => $name,
+          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+        );
+      }
     }
 
 
-    $staff_roles = array('staff', 'manager', 'administrator');
+    $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
 
     if(get_theme_roles('reception')){
       $staff_roles[] = get_theme_roles('reception');
@@ -856,7 +909,8 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'lead_notes', array());
     wp_localize_script($theme_init->main_script_slug, 'lead_notes_tco', array());
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
-    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data_reception));
+    wp_localize_script($theme_init->main_script_slug, 'specialists_tco', array_keys($specialists_data_tco));
     wp_localize_script($theme_init->main_script_slug, 'lead_files', array());
     wp_localize_script($theme_init->main_script_slug, 'lead_logs',  array());
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);

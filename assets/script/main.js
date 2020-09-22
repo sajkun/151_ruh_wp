@@ -4441,6 +4441,18 @@ if('undefined' !== typeof(is_single_lead)){
 
         for( id in props){
           this.$refs['lead_specialissts_select'].set_value(id, props[id]);
+        }
+
+       var props =  {
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+        };
+
+        props.options = specialists_tco;
+
+        for( id in props){
           this.$refs['lead_specialissts_select_tco'].set_value(id, props[id]);
         }
 
