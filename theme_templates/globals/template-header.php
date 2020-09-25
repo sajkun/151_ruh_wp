@@ -12,11 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
       </div>
       <nav class="col-12 order-last order-md-0 col-md-4 col-lg-4 main-menu">
         <ul class="menu">
-          <?php if ($is_admin): ?>
 
+          <?php if ($is_admin): ?>
           <li class="menu-item <?php echo $dashboard_menu_class?>">
             <a href="<?php echo $dashboard_url?>"> Dashboard </a>
           </li>
+           <?php endif ?>
+          <?php if ($is_admin || $is_staff): ?>
           <li class="menu-item <?php echo $reception_id == get_queried_object_id() ? 'active' : '' ?>">
             <a href="<?php echo $reception_url?>"> Reception</a>
           </li>

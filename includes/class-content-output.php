@@ -358,7 +358,7 @@ class theme_content_output{
     $users = theme_get_all_users(false, true);
 
     foreach ($users as $user_id => $user) {
-      if(!in_array(get_theme_roles('staff'), $user['roles'] && !in_array(get_theme_roles('reception'), $user['roles'] )&& !in_array(get_theme_roles('tco'), $user['roles'] ) ) {continue;}
+      if(!in_array(get_theme_roles('staff'), $user['roles']) && !in_array(get_theme_roles('reception'), $user['roles'] )&& !in_array(get_theme_roles('tco'), $user['roles'] ) ) {continue;}
 
       $image    = (isset($user['image'])) ? $user['image'] : DUMMY_ADMIN;
 
@@ -562,7 +562,7 @@ class theme_content_output{
           'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
         );
       }
-      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['reception'])){
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['roles'])){
 
         $specialists_data_tco[$name] = array(
           'photo'     => $image,
@@ -788,7 +788,7 @@ class theme_content_output{
           'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
         );
       }
-      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['reception'])){
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['roles'])){
 
         $specialists_data_tco[$name] = array(
           'photo'     => $image,
@@ -800,6 +800,8 @@ class theme_content_output{
         );
       }
     }
+
+    clog(get_theme_roles());
 
 
     $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
