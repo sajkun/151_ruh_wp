@@ -1145,6 +1145,14 @@ if(!function_exists('get_failed_stage_name')){
     $stages              = get_option('leads_stages');
     $stage_for_failed    = get_option('stage_for_failed');
 
+    if(!$stage_for_failed) {
+      return array();
+    }
+
+    if(!is_array($stage_for_failed)){
+      return array($stages[$stage_for_failed]['name']);
+    }
+
     $failed_stages = array();
 
     foreach ($stage_for_failed as $id) {

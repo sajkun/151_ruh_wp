@@ -10935,3 +10935,27 @@ input.error {
 .leads-block .select-imitation {
   width: 100% !important;
 }
+
+.message-form .button-submit {
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  border: 1px solid #01c58d !important;
+  background-color: #01c58d !important;
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+  vertical-align: top;
+  padding: 0 11px;
+  height: 38px;
+  line-height: 38px;
+  margin-left: 10px;
+  cursor: pointer;
+  -webkit-transition: all .2s;
+  transition: all .2s;
+}
+
+.message-form .button-submit:hover {
+  border: 1px solid #01ac7b !important;
+  background-color: #01ac7b !important;
+}

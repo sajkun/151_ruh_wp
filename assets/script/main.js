@@ -3912,6 +3912,8 @@ if('undefined' !== typeof(is_single_lead)){
       lead_stage: '',
       show_confirmation_popup: false,
       balance: 0,
+      message_to_client: '',
+      sms_data: sms_data,
     },
 
     computed:{
@@ -5224,6 +5226,55 @@ if('undefined' !== typeof(is_single_lead)){
 
       close_tab: function(){
         window.close();
+      },
+
+      send_text_message: function(){
+        var phone = this.patient_data.phone;
+
+        if(!phone || phone.length < 4){
+          alert('phone not set');
+          return;
+        }
+
+        if(!this.message_to_client ){
+          alert('Type a message, please');
+          return;
+        }
+
+        if(!this.sms_data ){
+          alert('Messaging center is not configured');
+          return;
+        }
+
+        var data = {
+          sms_data: this.sms_data,
+          phone: phone,
+          text: this.message_to_client,
+        };
+
+
+        jQuery.ajax({
+          url: WP_URLS.theme_url+"/messaging/twilio_send.php",
+          type: 'POST',
+          dataType: 'json',
+          data: data,
+        })
+
+        .done(function(e) {
+          console.log("success");
+          if(e.error){
+            alert(e.error);
+          }
+
+        })
+        .fail(function() {
+          console.log("error");
+        })
+        .always(function(e) {
+          console.log(e);
+          console.log("complete");
+        });
+
       },
     },
   })

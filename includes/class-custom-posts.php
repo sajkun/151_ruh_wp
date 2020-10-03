@@ -10,9 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class velesh_theme_posts {
 
-
   public static $lead  = 'lead_item';
-
 
   /**
    * Hook in methods.
@@ -165,8 +163,55 @@ class velesh_theme_posts {
 
     add_submenu_page( 'edit.php?post_type=lead_item', 'Clinics, treatment configurations', 'Clinics, treatment configurations', 'manage_options', 'clinics-treatment-configurations', array(__CLASS__, 'print_clinics_treatment_configurations_cb'));
 
-    add_submenu_page( 'users.php', 'Role\'s Configuration', 'Role\'s Configuration', 'manage_options', 'user-role-configuration', array(__CLASS__, 'print_user_roles_cofiguration_cb'));
+    add_submenu_page( 'edit.php?post_type=lead_item', 'Twilio Configuration', 'Twilio Configuration', 'manage_options', 'twilio-configuration', array(__CLASS__, 'print_leads_messages_cb'));
+
+    add_submenu_page( 'users.php', 'Role\'s Configuration', 'Role\'s Configuration', 'manage_options', 'role-configuration', array(__CLASS__, 'print_user_roles_cofiguration_cb'));
   }
+
+    public static function print_leads_messages_cb(){
+      if (isset($_POST['do_save']) && 'yes' == $_POST['do_save']) {
+        update_option('message_data', $_POST['message_data']);
+      }
+      $o = get_option('message_data');
+      ?>
+        <h3>Twilio Configuration</h3>
+
+          <form action="<?php echo admin_url('edit.php?post_type=lead_item&page=twilio-configuration'); ?>" method="POST">
+
+            <table class="fullwidth">
+              <tr>
+                <th>
+                  Account SID
+                </th>
+                <td>
+                  <input type="text" class="large-text" name="message_data[sid]" value="<?php echo (isset($o['sid']))? $o['sid'] : ''; ?>">
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Auth token
+                </th>
+                <td>
+                  <input type="text" class="large-text" name="message_data[token]" value="<?php echo (isset($o['token']))? $o['token'] : ''; ?>">
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Phone Number
+                </th>
+                <td>
+                  <input type="text" class="regular-text" name="message_data[phone]" value="<?php echo (isset($o['phone']))? $o['phone'] : ''; ?>">
+                </td>
+              </tr>
+            </table>
+
+
+            <input type="hidden" name="do_save" value="yes">
+            <button type="submit" class="button button-primary"> Save</button>
+          </form>
+
+      <?php
+    }
 
     public static function print_user_roles_cofiguration_cb(){
       global $wp_roles;

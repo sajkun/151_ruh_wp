@@ -1,9 +1,11 @@
 <?php
 
-
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
 }
+
+
+
 
 /**
  * The main output class
@@ -70,6 +72,14 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_run_login', array($this, 'run_login_cb'));
 
       add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
+
+      add_action('wp_ajax_send_sms', array($this,'send_sms_cb'));
+      add_action('wp_ajax_nopriv_send_sms', array($this,'send_sms_cb'));
+    }
+
+    public static function send_sms_cb(){
+
+
     }
 
     public static function theme_get_users_cb(){

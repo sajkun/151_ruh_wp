@@ -718,16 +718,24 @@ class theme_content_output{
     if (get_option('add_dentists_to_sources') == 'yes') {
       $sources = array_merge($sources,$available_dentists );
     }
-    $sources = array_unique($sources);
 
-    foreach ($sources as $key => $value) {
-      if(!$value){
-        unset($sources[$key]);
+    if(is_array($sources )){
+
+      $sources = array_unique($sources);
+
+      foreach ($sources as $key => $value) {
+        if(!$value){
+          unset($sources[$key]);
+        }
       }
     }
 
     wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
      );
+
+    $sms_data = get_option('message_data')?: false;
+
+    wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
 
     print_theme_template_part('lead-single2', 'globals', $args);
   }
@@ -738,6 +746,10 @@ class theme_content_output{
    */
   public static function print_lead_content_blank(){
     global $theme_init;
+    $sms_data = get_option('message_data')?: false;
+
+    wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
+
     // get current user data
     $user      = get_user_by('id', get_current_user_id());
     $user_name =  theme_get_user_name($user);
