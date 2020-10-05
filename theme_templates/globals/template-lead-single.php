@@ -184,14 +184,13 @@ if ( ! defined( 'ABSPATH' ) ) {
              /************************************/?>
         <div class="leads-block hidden">
           <h2 class="leads-block__title">Message Center</h2>
-
-
           <div class="leads-block__row">
             <span class="message-sent-to">Sent to <span class="marked">07741426253</span> via Ruh Tracker</span>
 
-            <div class="message-block we">
+            <div class="message-block we" v-for="msg in text_messages">
               <div class="message-block__header clearfix">
                 <span class="name">Ruh Dental</span>
+                <span class="name">{{patient_data.name}}</span>
                 <span class="date">Oct 23 12:15pm</span>
               </div>
 
@@ -199,18 +198,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                 Hi David, would you prefer a morning or afternoon appointment?
               </div>
             </div>
-
-            <div class="message-block him">
-              <div class="message-block__header clearfix">
-                <span class="name">David Bloggs</span>
-                <span class="date">Oct 23 12:29pm</span>
-              </div>
-
-              <div class="message-block__body">
-                Morning would be great!
-              </div>
-            </div>
-
           </div>
 
             <form action="message-form" id="">

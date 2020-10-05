@@ -418,32 +418,50 @@ if ( ! defined( 'ABSPATH' ) ) {
               <h2 class="leads-block__title">Message Centre</h2>
               <div class="spacer-h-15"></div>
 
-              <div class="leads-block__row">
+
+              <div class="preloader-messages text-center">
+                <img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt="">
+              </div>
+
+              <div class="leads-block__row _messages hidden">
                 <span class="message-sent-to">Sent to <span class="marked">{{patient_data.phone}}</span> via Ruh Tracker</span>
 
-                <div class="message-block we">
-                  <div class="message-block__header clearfix">
-                    <span class="name">Ruh Dental</span>
-                    <span class="date">Oct 23 12:15pm</span>
-                  </div>
+                      <span class="note-block__show-more" v-on:click="text_messages_to_show = 99" v-if="text_messages_to_show == 2"> <i class="icon"></i> Show {{text_messages.length - 2}} more</span>
 
-                  <div class="message-block__body">
-                    Hi David, would you prefer a morning or afternoon appointment?
-                  </div>
-                </div>
+                      <div v-if="text_messages_to_show == 2"><br></div>
 
-                <div class="message-block him">
-                  <div class="message-block__header clearfix">
-                    <span class="name">David Bloggs</span>
-                    <span class="date">Oct 23 12:29pm</span>
-                  </div>
+                        <transition-group
+                          name="messages"
+                          tag="div"
+                          v-bind:css="false"
+                          v-on:before-enter="beforeEnter"
+                          v-on:enter="enter"
+                          v-on:leave="leave"
+                        >
+                        <div class="message-block" v-bind:class="msg.type" v-for="msg in text_messages_shown" v-bind:key="msg">
+                          <div class="message-block__header clearfix">
+                             <span class="name" v-if="msg.type=='we'">&nbsp; Ruh Dental </span>
+                             <span class="name" v-if="msg.type=='him'">&nbsp; {{patient_data.name}} </span>
+                            <span class="date">  {{msg.date_sent}} </span>
+                          </div>
 
-                  <div class="message-block__body">
-                    Morning would be great!
-                  </div>
-                </div>
+                          <div class="message-block__body">
+                            {{msg.body}}
+                          </div>
+                          <i class="message-status">{{msg.status}}</i>
+                        </div>
+                      </transition-group>
 
-              </div>
+
+
+                        <div class="" v-if="text_messages.length == 0">
+                          <br>
+                          <b class="text-center">No messages sent</b>
+                          <br>
+                          <br>
+                        </div>
+                      </div>
+
 
                 <form  method="POST" v-on:submit.prevent="send_text_message" >
                   <div class="leads-block__form">

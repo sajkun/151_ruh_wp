@@ -742,6 +742,8 @@ if(!function_exists('get_leads_meta')){
         'end_date'              =>  isset($post_meta['_end_date'])? ($post_meta['_end_date']): false,
         'specialists_assigned'     => isset($post_meta['_lead_specialists'])? ($post_meta['_lead_specialists']): false,
         'specialists_assigned_tco' => isset($post_meta['_lead_specialists_tco'])? ($post_meta['_lead_specialists_tco']): false,
+
+        'text_messages' => isset($post_meta['_text_messages'])? ($post_meta['_text_messages']): false,
        );
 
       // $lead_specialists      = get_post_meta($post->ID, '_lead_specialists', true);

@@ -287,7 +287,8 @@ class theme_content_output{
            $theme_user_role = 'all';
         }
 
-
+        $sms_data = get_option('message_data')?: false;
+        wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
       }
 
       if(!$stages){

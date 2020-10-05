@@ -1212,6 +1212,8 @@ var parse_leads = {
       data.clinic      = this.leads[id].meta.patient_data.clinic;
       data.treatment   = this.leads[id].meta.patient_data.treatment;
       data.sourse      = this.leads[id].meta.patient_data.sourse;
+      data.text_messages = this.leads[id].meta.text_messages ? this.leads[id].meta.text_messages.length : 0 ;
+      data.show_message_alert = false;
       data.team        = this.leads[id].meta.lead_specialists;
       data.lead_stage  = this.leads[id].lead_stage;
       data.reminder    = this.leads[id].meta.reminder;
@@ -1619,6 +1621,65 @@ var select_mixin = {
     }
   },
 }
+var animation_mixin = {
+  methods:{
+   beforeEnter: function (el) {
+      el.style.opacity = 0
+    },
+
+    enter: function (el, done) {
+      const width = getComputedStyle(el).width;
+
+      el.style.width = width;
+      el.style.position = 'absolute';
+      el.style.visibility = 'hidden';
+      el.style.height = 'auto';
+
+      const height = getComputedStyle(el).height;
+
+      el.style.width = null;
+      el.style.position = null;
+      el.style.visibility = null;
+      el.style.height = 0;
+
+      getComputedStyle(el).height;
+
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 1, height: height },
+          { complete: done }
+        )
+      }, delay)
+    },
+
+    leave: function (el, done) {
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 0, height: 0 },
+          { complete: done }
+        )
+      }, delay)
+    },
+
+    enterAfter: function(el){
+      el.style.height = 'auto';
+
+      if(typeof(this.update_scroll)!=='undefined'){
+        this.update_scroll();
+      }
+    },
+
+    leaveAfter: function(el){
+      if(typeof(this.update_scroll)!=='undefined'){
+        this.update_scroll();
+      }
+    }
+  }
+}
 select_imitation = Vue.component('select-imitation', {
 
   mixins: [select_mixin],
@@ -1754,14 +1815,13 @@ animation_mixin = {
       el.style.width = width;
       el.style.position = 'absolute';
       el.style.visibility = 'hidden';
-      el.style.height = 'auto';
 
       const height = getComputedStyle(el).height;
 
       el.style.width = null;
       el.style.position = null;
       el.style.visibility = null;
-      el.style.height = 0;
+      // el.style.height = 0;
 
       getComputedStyle(el).height;
 
@@ -1769,7 +1829,7 @@ animation_mixin = {
       setTimeout(function () {
         Velocity(
           el,
-          { opacity: 1, height: height },
+          { opacity: 1},
           { complete: done }
         )
       }, delay)
@@ -1780,14 +1840,13 @@ animation_mixin = {
       setTimeout(function () {
         Velocity(
           el,
-          { opacity: 0, height: 0 },
+          { opacity: 0 },
           { complete: done }
         )
       }, delay)
     },
 
     enterAfter: function(el){
-      el.style.height = 'auto';
 
       if(typeof(this.update_scroll)!=='undefined'){
         this.update_scroll();
@@ -3264,6 +3323,7 @@ if('undefined' !== typeof(is_lead_list)){
       },
 
       overdue_checked: false,
+      show_not_read_only: false,
 
       filters:{
         clinics:    'All Clinics',
@@ -3283,7 +3343,11 @@ if('undefined' !== typeof(is_lead_list)){
         dentists:   [],
       },
 
+      by_phones : [],
+
       search_value: '',
+
+      unread_messages: 0,
 
       leads:{},
     },
@@ -3351,6 +3415,7 @@ if('undefined' !== typeof(is_lead_list)){
       leads_filtered: function(){
         var leads_filtered = {};
         var filters = {};
+        var unread_messages = 0;
 
         for(var column_name in this.leads ){
           leads_filtered[column_name] = [];
@@ -3402,15 +3467,34 @@ if('undefined' !== typeof(is_lead_list)){
             if(this.overdue_checked){
               is_match = is_match && lead.reminder;
             }
+            var phone = lead.base_lead.meta.patient_data.phone;
 
+            if('undefined' != typeof(this.by_phones[phone])){
+              lead.show_message_alert = ( this.by_phones[phone] > lead.text_messages )? true: false;
+
+            }
+
+            if(is_match){
+              unread_messages =  lead.show_message_alert ? unread_messages + 1: unread_messages;
+            }
+
+            if(this.show_not_read_only){
+              is_match = is_match && lead.show_message_alert;
+            }
 
             if(is_match){
               leads_filtered[column_name].push(lead);
             }
+
+            this.unread_messages = unread_messages;
           }
         }
 
         return leads_filtered;
+      },
+
+      unread_messages_calc: function(){
+        return this.unread_messages;
       },
 
       show_filter_clear_btn: function(){
@@ -3498,6 +3582,10 @@ if('undefined' !== typeof(is_lead_list)){
       Vue.nextTick(function() {
         vm.handle_resize();
       });
+
+      vm.check_text_messages();
+
+      setInterval(function(){vm.check_text_messages()}, 120000);
 
       window.addEventListener('resize', vm.handle_resize);
      },
@@ -3782,6 +3870,36 @@ if('undefined' !== typeof(is_lead_list)){
       update_dashboard_lead_data: function(lead_id ){
 
       },
+
+      check_text_messages: function(){
+        console.log('update_text_message_data');
+        var vm = this;
+
+        var data = {
+          sms_data: sms_data,
+          phone: 'all',
+        };
+
+        jQuery.ajax({
+          url: WP_URLS.theme_url+"/messaging/twilio_update_msg.php",
+          type: 'POST',
+          dataType: 'json',
+          data: data,
+        })
+
+        .done(function(e) {
+          if(!e.error){
+              vm.by_phones = e.by_phones;
+          }
+        })
+
+        .fail(function() {
+        })
+
+        .always(function(e) {
+          console.log(e);
+        });
+      },
     },
   })
 
@@ -3850,6 +3968,20 @@ function exists_in_object(obj, search){
   return found;
 }
 if('undefined' !== typeof(is_single_lead)){
+  var months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   var default_sources = [
           'Live Chat',
           'Instagram',
@@ -3867,6 +3999,8 @@ if('undefined' !== typeof(is_single_lead)){
 
   single_lead = new Vue({
     el: '#single-lead',
+
+    mixins: [animation_mixin],
 
     data: {
       patient_data: {
@@ -3914,9 +4048,25 @@ if('undefined' !== typeof(is_single_lead)){
       balance: 0,
       message_to_client: '',
       sms_data: sms_data,
+      text_messages: [],
+      text_messages_to_show: 2,
+      intial_load : true,
     },
 
     computed:{
+      text_messages_shown: function(){
+
+        if(this.text_messages_to_show  == 2 && this.text_messages.length > 2){
+          var messages = [];
+          for(var i = 2; i > 0 ; i--){
+          messages.push(this.text_messages[this.text_messages.length - i]);
+          }
+          return messages;
+        }else{
+          return this.text_messages;
+        }
+      },
+
       enquery_notes_c: function(){
         var notes = this.notes;
         var notes_c = [];
@@ -4054,10 +4204,8 @@ if('undefined' !== typeof(is_single_lead)){
             shown.push(this.specialists_data[id]);
           }
         }
-
         return shown.length > 0 ? 'hidden': '';
       },
-
 
       visible_specialists_show_select_tco: function(){
         var shown = [];
@@ -4067,7 +4215,6 @@ if('undefined' !== typeof(is_single_lead)){
             shown.push(this.specialists_data[id]);
           }
         }
-
         return shown.length > 0 ? 'hidden': '';
       },
 
@@ -4263,8 +4410,13 @@ if('undefined' !== typeof(is_single_lead)){
       this.specialists_data  = specialists_data;
       this.init_select();
       this.treatment_data_selects();
+      this.update_text_messages();
+      var vm = this;
 
-      console.log(this.phones_tco);
+      setInterval(function(){
+        console.log('check messages');
+        vm.update_text_messages();
+      },30000)
     },
 
     methods: {
@@ -4363,14 +4515,11 @@ if('undefined' !== typeof(is_single_lead)){
          this.$refs[ref].set_value(summ);
       },
 
-
       treatment_data_selects: function(){
         var vm = this;
-
         var total = 0;
 
         for(var id in vm.treatment_data){
-
          var select_id = id;
 
          var props =  {
@@ -4388,7 +4537,6 @@ if('undefined' !== typeof(is_single_lead)){
 
 
           vue_select_components.push(vm.$refs['select_dentist'][select_id]);
-
 
          var props =  {
             icon: icons_selects['treatments'],
@@ -4536,6 +4684,7 @@ if('undefined' !== typeof(is_single_lead)){
             lead_notes            : this.notes,
             lead_notes_tco        : this.notes_tco,
             reminder              : this.reminder,
+            text_messages         : this.text_messages,
           };
         }else{
           var  meta = {};
@@ -4552,12 +4701,9 @@ if('undefined' !== typeof(is_single_lead)){
 
         this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
 
-
-        if(key_meta  === 'lead_notes' || key_meta  === 'lead_notes_tco' ){
+        if(key_meta  === 'lead_notes' || key_meta  === 'lead_notes_tco'  || key_meta == 'text_messages' ){
           this.show_confirmation_popup = false;
         }
-
-        // console.log(this.lead_data);
 
 
         if((!this.patient_data.name || !this.patient_data.phone || !this.patient_data.email) && this.lead_data.lead_id < 0){
@@ -4579,7 +4725,9 @@ if('undefined' !== typeof(is_single_lead)){
 
         var vm = this;
 
-        wait_block.show();
+       if(key_meta != 'text_messages' ){
+          wait_block.show();
+        }
 
         jQuery.ajax({
           url: WP_URLS.wp_ajax_url,
@@ -5092,8 +5240,6 @@ if('undefined' !== typeof(is_single_lead)){
 
           }
         })
-
-        // console.log('change_phone');
       },
 
 
@@ -5230,6 +5376,7 @@ if('undefined' !== typeof(is_single_lead)){
 
       send_text_message: function(){
         var phone = this.patient_data.phone;
+        var vm = this;
 
         if(!phone || phone.length < 4){
           alert('phone not set');
@@ -5261,21 +5408,85 @@ if('undefined' !== typeof(is_single_lead)){
         })
 
         .done(function(e) {
-          console.log("success");
           if(e.error){
             alert(e.error);
-          }
+          }else{
+            var date = new Date();
+            var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours() ;
 
+            var day = date.getDate() < 10 ? '0'+date.getDate() : date.getDate();
+
+            var ant = date.getHours() > 12 ? 'pm' : 'am';
+
+            var date_sent = months[date.getMonth()] + ' ' + day+ ' '+date.getFullYear() + ' '+ hours+':' + date.getMinutes() + ant;
+
+
+            vm.text_messages.push({
+              'body'      :  vm.message_to_client,
+              'date_sent' : date_sent,
+              'type'      : 'we',
+              'status'    : 'sent',
+            });
+
+            vm.save_lead_meta('text_messages', 'text_messages');
+
+            vm.message_to_client = '';
+          }
         })
+
         .fail(function() {
-          console.log("error");
         })
+
         .always(function(e) {
           console.log(e);
-          console.log("complete");
+        });
+      },
+
+
+      update_text_messages: function(){
+        var phone = this.patient_data.phone;
+        var vm = this;
+
+        var data = {
+          sms_data: this.sms_data,
+          phone: phone,
+        };
+
+        jQuery.ajax({
+          url: WP_URLS.theme_url+"/messaging/twilio_update_msg.php",
+          type: 'POST',
+          dataType: 'json',
+          data: data,
+        })
+
+        .done(function(e) {
+          if(e.error){
+            alert(e.error);
+          }else{
+            if(vm.text_messages.length < e.messages.length){
+              vm.text_messages = e.messages;
+
+              if(! vm.intial_load ){
+                var message = e.messages[e.messages.length-1];
+                // alert('New message from the patient: ' +  message.body);
+              }
+              vm.save_lead_meta('text_messages', 'text_messages');
+
+              vm.intial_load = false;
+            }
+          }
+        })
+
+        .fail(function() {
+        })
+
+        .always(function(e) {
+          jQuery('._messages').removeClass('hidden');
+          jQuery('.preloader-messages').addClass('hidden');
+          console.log(e);
         });
 
-      },
+      }
     },
   })
 }

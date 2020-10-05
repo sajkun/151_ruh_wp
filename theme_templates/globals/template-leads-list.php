@@ -32,6 +32,21 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
       </div>
 
+  <?php if ($theme_user_role != 'reception'): ?>
+
+      <div class="alert" v-if="unread_messages_calc > 0" title="Not read messages">
+        <i class="icon-message-phone sms"></i>
+        <span class="alert__count">{{unread_messages_calc}}</span>
+        <div class="checkbox-imitation inline">
+          <label>
+             <input type="checkbox" name="show_not_read_only" v-model="show_not_read_only">
+             <span class="checkbox-imitation__view"></span>
+          </label>
+        </div>
+      </div>
+
+    <?php endif ?>
+
       <div class="range-datepicker" id='picker'>
         <svg class="icon svg-icon-calendar"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-calendar"></use> </svg>
 
@@ -132,6 +147,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                               <i class="icon-message-phone phone-ok" v-else="data.phone_count > 0"><span class="counter">{{data.phone_count}}</span></i>
                               <i class="icon-message-phone message-na" v-if="data.message_count == 0"></i>
                               <i class="icon-message-phone message-ok" v-else="data.message_count > 0"><span class="counter">{{data.message_count}}</span></i>
+
                             <?php endif ?>
 
                             <?php if ($theme_user_role != 'reception'): ?>
@@ -141,7 +157,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                                 <i class="icon-message-phone message-ok" v-if="data.message_count_tco > 0"></i>
 
-                                <i class="icon-message-phone sms" v-if="data.sms_count > 0"></i>
+                                <i class="icon-message-phone sms" v-if="data.show_message_alert"></i>
                             <?php endif ?>
                           </span>
                        </div>
