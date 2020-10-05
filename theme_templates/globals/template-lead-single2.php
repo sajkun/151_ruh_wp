@@ -426,9 +426,9 @@ if ( ! defined( 'ABSPATH' ) ) {
               <div class="leads-block__row _messages hidden">
                 <span class="message-sent-to">Sent to <span class="marked">{{patient_data.phone}}</span> via Ruh Tracker</span>
 
-                      <span class="note-block__show-more" v-on:click="text_messages_to_show = 99" v-if="text_messages_to_show == 2"> <i class="icon"></i> Show {{text_messages.length - 2}} more</span>
+                      <span class="note-block__show-more" v-on:click="text_messages_to_show = 99" v-if="text_messages_to_show == 2 && text_messages.length > 2"> <i class="icon"></i> Show {{text_messages.length - 2}} more</span>
 
-                      <div v-if="text_messages_to_show == 2"><br></div>
+                      <div v-if="text_messages_to_show == 2 && text_messages.length > 2"><br></div>
 
                         <div class="message-block" v-bind:class="msg.type" v-for="msg in text_messages_shown" v-bind:key="msg">
                           <div class="message-block__header clearfix">
@@ -445,7 +445,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                         <div class="" v-if="text_messages.length == 0">
                           <br>
-                          <b class="text-center">No messages sent</b>
+                          <b class="text-center">There are no messages there yet</b>
                           <br>
                           <br>
                         </div>
