@@ -14,6 +14,7 @@ $token       = $_POST['sms_data']['token'];
 $phone_from  = $_POST['sms_data']['phone'];
 $phone_to    = $_POST['phone'];
 
+
 $twilio = new Client($sid, $token);
 
   try {
@@ -30,8 +31,8 @@ $twilio = new Client($sid, $token);
           'date_for_request' => $msg->dateSent->format('Y-m-d'),
           'date_sent'        => $msg->dateSent->format('M d Y g:ia'),
           'errorMessage'     => $msg->errorMessage,
-          'from'             => $msg->from,
-          'to'               => $msg->to,
+          'from'             => str_replace('+44', '0', $msg->from),
+          'to'               => str_replace('+44', '0', $msg->to),
           'type'             => $msg->from === $phone_from ?'we' : 'him',
         );
 
@@ -48,6 +49,12 @@ $twilio = new Client($sid, $token);
       }
 
     }else{
+      $first_symbol = substr( $phone_to, 0 , 1 );
+
+      if($first_symbol === "0"){
+        $phone_to = '+44'. substr( $phone_to, 1 ,strlen( $phone_to ) - 1 );
+      }
+
        $by_phones = false;
        $messages_to = $twilio->messages
                        ->read([
@@ -59,7 +66,7 @@ $twilio = new Client($sid, $token);
                         'from' => $phone_to,
                               ]);
 
-     $messages_all = array();
+       $messages_all = array();
 
      foreach ($messages_to as $msg) {
        $messages_all[] =  array(
@@ -91,6 +98,7 @@ $twilio = new Client($sid, $token);
       'POST'     => $_POST,
       'messages' => $messages_all,
       'by_phones' => $by_phones,
+      'phone_to ' => $phone_to ,
       'error'    => false,
   ));
 
