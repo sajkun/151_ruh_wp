@@ -12,15 +12,15 @@
   $twilio = new Client($sid, $token);
 
   try {
-    // $message = $twilio->messages
-    //                   ->create($_POST['phone'], // to
-    //                            ["from" => $phone, "body" => $_POST['text']]
-    //                   );
+    $message = $twilio->messages
+                      ->create($_POST['phone'], // to
+                               ["from" => $phone, "body" => $_POST['text']]
+                      );
 
     echo json_encode(array(
       'POST' => $_POST,
       'twilio' => $twilio,
-      // 'message' => $message->sid,
+      'message' => $message->sid,
       'error' => false,
     ));
 

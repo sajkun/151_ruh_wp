@@ -430,14 +430,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                       <div v-if="text_messages_to_show == 2"><br></div>
 
-                        <transition-group
-                          name="messages"
-                          tag="div"
-                          v-bind:css="false"
-                          v-on:before-enter="beforeEnter"
-                          v-on:enter="enter"
-                          v-on:leave="leave"
-                        >
                         <div class="message-block" v-bind:class="msg.type" v-for="msg in text_messages_shown" v-bind:key="msg">
                           <div class="message-block__header clearfix">
                              <span class="name" v-if="msg.type=='we'">&nbsp; Ruh Dental </span>
@@ -450,9 +442,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                           </div>
                           <i class="message-status">{{msg.status}}</i>
                         </div>
-                      </transition-group>
-
-
 
                         <div class="" v-if="text_messages.length == 0">
                           <br>

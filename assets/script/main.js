@@ -5463,9 +5463,9 @@ if('undefined' !== typeof(is_single_lead)){
           if(e.error){
             alert(e.error);
           }else{
-            if(vm.text_messages.length < e.messages.length){
               vm.text_messages = e.messages;
 
+            if(vm.text_messages.length < e.messages.length){
               if(! vm.intial_load ){
                 var message = e.messages[e.messages.length-1];
                 // alert('New message from the patient: ' +  message.body);
