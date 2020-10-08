@@ -10,10 +10,16 @@
   $token  = $_POST['sms_data']['token'];
   $phone  = $_POST['sms_data']['phone'];
   $twilio = new Client($sid, $token);
+  $phone_to = $_POST['phone'];
+  $first_symbol = substr( $phone_to, 0 , 1 );
+
+  if($first_symbol === "0"){
+    $phone_to = '+44'. substr( $phone_to, 1 ,strlen( $phone_to ) - 1 );
+  }
 
   try {
     $message = $twilio->messages
-                      ->create($_POST['phone'], // to
+                      ->create($phone_to, // to
                                ["from" => $phone, "body" => $_POST['text']]
                       );
 
