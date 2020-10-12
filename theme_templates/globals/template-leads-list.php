@@ -32,7 +32,6 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
       </div>
 
-  <?php if ($theme_user_role != 'reception'): ?>
 
       <div class="alert" v-if="unread_messages_calc > 0" title="Not read messages">
         <i class="icon-message-phone sms"></i>
@@ -45,7 +44,6 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
       </div>
 
-    <?php endif ?>
 
       <div class="range-datepicker" id='picker'>
         <svg class="icon svg-icon-calendar"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-calendar"></use> </svg>
@@ -156,9 +154,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                                 <i class="icon-message-phone message-na" v-if="data.message_count_tco == 0"></i>
 
                                 <i class="icon-message-phone message-ok" v-if="data.message_count_tco > 0"></i>
-
-                                <i class="icon-message-phone sms" v-if="data.show_message_alert"></i>
                             <?php endif ?>
+                               <i class="icon-message-phone sms" v-if="data.show_message_alert"></i>
                           </span>
                        </div>
                     </a>

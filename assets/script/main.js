@@ -3585,7 +3585,7 @@ if('undefined' !== typeof(is_lead_list)){
 
       vm.check_text_messages();
 
-      setInterval(function(){vm.check_text_messages()}, 120000);
+      setInterval(function(){vm.check_text_messages()}, 30000);
 
       window.addEventListener('resize', vm.handle_resize);
      },
@@ -3713,7 +3713,6 @@ if('undefined' !== typeof(is_lead_list)){
           var leads_filtered = leads.get_leads_for_list();
           this.update_leads(leads_filtered);
         }
-
       },
 
       // sort function forr manual drag and drop
@@ -3741,6 +3740,18 @@ if('undefined' !== typeof(is_lead_list)){
         return (date_lead_a > date_lead_b)? -1 : 1;
       },
 
+      sort_by_sms: function(lead_a,lead_b){
+        if(lead_a.show_message_alert && lead_b.show_message_alert){
+          return 0;
+        }
+        if(lead_a.show_message_alert && !lead_b.show_message_alert){
+          return -1;
+        }
+        if(!lead_a.show_message_alert && lead_b.show_message_alert){
+          return 1;
+        }
+      },
+
       update_leads: function(leads){
         //console.log('Update leads');
         var temp_leads = {};
@@ -3757,7 +3768,12 @@ if('undefined' !== typeof(is_lead_list)){
           temp_leads[id].sort(this.sort_by_date);
         }
 
+        for(id in temp_leads){
+          temp_leads[id].sort(this.sort_by_sms);
+        }
+
         this.leads = temp_leads;
+
       },
 
       set_data: function(key, value){
@@ -3855,9 +3871,7 @@ if('undefined' !== typeof(is_lead_list)){
       * @param {post_id} - integer WP_Post id,
       */
       show_single_lead: function(post_id, lead){
-        clog(lead);
         editing_object = post_id;
-
         var vm = this;
         date_start = lead.base_lead.post_date;
 
@@ -3872,7 +3886,6 @@ if('undefined' !== typeof(is_lead_list)){
       },
 
       check_text_messages: function(){
-        console.log('update_text_message_data');
         var vm = this;
 
         var data = {
@@ -3889,7 +3902,7 @@ if('undefined' !== typeof(is_lead_list)){
 
         .done(function(e) {
           if(!e.error){
-              vm.by_phones = e.by_phones;
+            vm.by_phones = e.by_phones;
           }
         })
 
@@ -3897,7 +3910,7 @@ if('undefined' !== typeof(is_lead_list)){
         })
 
         .always(function(e) {
-          console.log(e);
+          // console.log(e);
         });
       },
     },
@@ -3948,6 +3961,7 @@ function update_leads_filters(filters){
 function update_leads_list(){
   if('undefined' !== typeof(is_lead_list)){
     vue_leads_list.run_update_list();
+    vue_leads_list.check_text_messages();
   }
 }
 
@@ -5464,16 +5478,16 @@ if('undefined' !== typeof(is_single_lead)){
             alert(e.error);
           }else{
               vm.text_messages = e.messages;
+              vm.save_lead_meta('text_messages', 'text_messages');
+              vm.intial_load = false;
 
             if(vm.text_messages.length < e.messages.length){
               if(! vm.intial_load ){
                 var message = e.messages[e.messages.length-1];
                 // alert('New message from the patient: ' +  message.body);
               }
-              vm.save_lead_meta('text_messages', 'text_messages');
-
-              vm.intial_load = false;
             }
+
           }
         })
 
