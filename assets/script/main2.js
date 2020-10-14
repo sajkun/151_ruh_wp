@@ -763,11 +763,11 @@ function do_sort(){
 
       create:function(event, ui){},
 
-      receive: function( event, ui ){},
+      receive: function( event, ui ){
+      },
 
       over: function( event, ui ){
       },
-
 
       stop : function( event, ui ){
         jQuery(document).trigger('update_leads_list');
@@ -803,11 +803,9 @@ function do_sort(){
 
     jQuery(document.body).find( ".leads-list" ).on( "sortout", function( event, ui ) {
       jQuery(this).css({'background': 'none'});
-
     } );
 
     jQuery(document.body).find( ".leads-list" ).on( "sortreceive", function( event, ui ) {
-
 
       var order = -1;
       var post_id = ui.item.find('a').data('post_id');
@@ -815,7 +813,6 @@ function do_sort(){
       var list_id_prev = ui.item.children('a').data('list');
       var orders = [];
 
-      // set order for all items in list
       var items = jQuery(event.target).find('a');
 
 
@@ -838,29 +835,29 @@ function do_sort(){
       clog('Moved from: ' + list_id_prev + ' to: ' + list_id);
       clog('Sorted id: ' + post_id);
 
-        for(var id in dashboard_leads_data){
-          if(dashboard_leads_data[id].ID == post_id){
-            dashboard_leads_data[id].lead_stage        = list_id;
-            dashboard_leads_data[id].meta.lead_stage   = list_id;
-             dashboard_leads_data[id].is_failed =  failed_stage_name.indexOf(list_id) >= 0? 'yes' : 'no';
+      for(var id in dashboard_leads_data){
+        if(dashboard_leads_data[id].ID == post_id){
+          dashboard_leads_data[id].lead_stage        = list_id;
+          dashboard_leads_data[id].meta.lead_stage   = list_id;
+           dashboard_leads_data[id].is_failed =  failed_stage_name.indexOf(list_id) >= 0? 'yes' : 'no';
 
-             clog('failed: ' + dashboard_leads_data[id].is_failed);
-             dashboard_leads_data[id].is_converted =  converted_stages.indexOf(list_id) >=0 ? 'yes' : 'no';
-            var date = new Date();
-            var month = (date.getMonth() + 1) < 10? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+           clog('failed: ' + dashboard_leads_data[id].is_failed);
+           dashboard_leads_data[id].is_converted =  converted_stages.indexOf(list_id) >=0 ? 'yes' : 'no';
+          var date = new Date();
+          var month = (date.getMonth() + 1) < 10? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
 
-            var day = date.getDate() < 10? '0' + date.getDate() : date.getDate();
-            dashboard_leads_data[id].post_modified =
-              date.getFullYear() + '-' +
-              month + '-' +
-              day+ ' ' +
-              date.getHours() + ':' +
-              date.getMinutes() + ':' +
-              date.getSeconds();
+          var day = date.getDate() < 10? '0' + date.getDate() : date.getDate();
+          dashboard_leads_data[id].post_modified =
+            date.getFullYear() + '-' +
+            month + '-' +
+            day+ ' ' +
+            date.getHours() + ':' +
+            date.getMinutes() + ':' +
+            date.getSeconds();
 
-            vue_leads_list.init();
-          }
+          vue_leads_list.init();
         }
+      }
 
       // search item in global items array and update value for list
       for(ind in dashboard_leads_data){
@@ -1516,6 +1513,8 @@ var icons_selects = {
   'human': '<svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>',
 
   'card': '<svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>',
+
+  'currency': '<span class="currency-in-select">£</span>',
 };
 var select_mixin = {
   data: function () {
@@ -3344,6 +3343,7 @@ if('undefined' !== typeof(is_lead_list)){
       },
 
       by_phones : [],
+      by_phones_data : {},
 
       search_value: '',
 
@@ -3469,17 +3469,21 @@ if('undefined' !== typeof(is_lead_list)){
             }
             var phone = lead.base_lead.meta.patient_data.phone;
 
-            if('undefined' != typeof(this.by_phones[phone])){
-              lead.show_message_alert = ( this.by_phones[phone] > lead.text_messages )? true: false;
+            if('undefined' != typeof(this.by_phones_data[phone])){
+              var msgs =  this.by_phones_data[phone];
+              var type = msgs[msgs.length - 1].type;
 
+              lead.show_message_alert_him = type === 'him' ? true: false; // by him
+              lead.show_message_alert = type === 'him' ? false: true; // by us
             }
 
+
             if(is_match){
-              unread_messages =  lead.show_message_alert ? unread_messages + 1: unread_messages;
+              unread_messages =  lead.show_message_alert_him ? unread_messages + 1: unread_messages;
             }
 
             if(this.show_not_read_only){
-              is_match = is_match && lead.show_message_alert;
+              is_match = is_match && lead.show_message_alert_him;
             }
 
             if(is_match){
@@ -3488,6 +3492,11 @@ if('undefined' !== typeof(is_lead_list)){
 
             this.unread_messages = unread_messages;
           }
+        }
+
+
+        for(var column_id in leads_filtered){
+          leads_filtered[column_id].sort(this.sort_by_sms);
         }
 
         return leads_filtered;
@@ -3583,9 +3592,12 @@ if('undefined' !== typeof(is_lead_list)){
         vm.handle_resize();
       });
 
-      vm.check_text_messages();
 
-      setInterval(function(){vm.check_text_messages()}, 30000);
+      Vue.nextTick(function(){
+        vm.check_text_messages();
+      })
+
+      setInterval(function(){vm.check_text_messages()}, 60000);
 
       window.addEventListener('resize', vm.handle_resize);
      },
@@ -3741,13 +3753,13 @@ if('undefined' !== typeof(is_lead_list)){
       },
 
       sort_by_sms: function(lead_a,lead_b){
-        if(lead_a.show_message_alert && lead_b.show_message_alert){
+        if(lead_a.show_message_alert_him && lead_b.show_message_alert_him){
           return 0;
         }
-        if(lead_a.show_message_alert && !lead_b.show_message_alert){
+        if(lead_a.show_message_alert_him && !lead_b.show_message_alert){
           return -1;
         }
-        if(!lead_a.show_message_alert && lead_b.show_message_alert){
+        if(!lead_a.show_message_alert_him && lead_b.show_message_alert_him){
           return 1;
         }
       },
@@ -3903,6 +3915,8 @@ if('undefined' !== typeof(is_lead_list)){
         .done(function(e) {
           if(!e.error){
             vm.by_phones = e.by_phones;
+            vm.by_phones_data = e.by_phones_data;
+            console.log(e);
           }
         })
 
@@ -4022,6 +4036,8 @@ if('undefined' !== typeof(is_single_lead)){
         phone: '',
         email: '',
       },
+
+      tco_data: tco_data,
 
       treatment_value: {
         billed    : 0,
@@ -4299,6 +4315,14 @@ if('undefined' !== typeof(is_single_lead)){
     },
 
     watch: {
+      text_messages_to_show: function(val){
+        if(val > 2){
+          Vue.nextTick(function(){
+            jQuery('._messages')[0].scrollTop = jQuery('._messages')[0].scrollHeight;
+          })
+        }
+      },
+
       note_text: function(){
         this.$refs.note_textarea.style.height = '';
         this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
@@ -4454,13 +4478,16 @@ if('undefined' !== typeof(is_single_lead)){
           'treatment': '',
           'dentist': '',
           'billed' : 0,
-        })
+          'payment_method': ''
+        });
 
         var vm = this;
         Vue.nextTick(function(){
 
          var select_id = vm.treatment_data.length - 1;
 
+
+         // init dentists list
          var props =  {
             isExpanded: '',
             isSelected: [],
@@ -4478,9 +4505,8 @@ if('undefined' !== typeof(is_single_lead)){
             vm.$refs['select_dentist'][select_id].set_value(id, props[id]);
           }
 
-          vue_select_components.push(vm.$refs['select_dentist'][select_id]);
 
-
+         // init treatments list
          var props =  {
             icon: icons_selects['treatments'],
             isExpanded: '',
@@ -4494,7 +4520,24 @@ if('undefined' !== typeof(is_single_lead)){
             vm.$refs['select_treatment'][select_id].set_value(id, props[id]);
           }
 
+         var props =  {
+            icon: icons_selects['currency'],
+            isExpanded: '',
+            isSelected: [],
+            isHiddenSelect: true,
+            isHiddenImitation: false,
+            options: payment_methods,
+          };
+
+          for( var i in props){
+            vm.$refs['select_payment_method'][select_id].set_value(i, props[i]);
+          }
+
+
+
+          vue_select_components.push(vm.$refs['select_dentist'][select_id]);
           vue_select_components.push(vm.$refs['select_treatment'][select_id]);
+          vue_select_components.push(vm.$refs['select_payment_method'][select_id]);
         })
       },
 
@@ -4535,6 +4578,7 @@ if('undefined' !== typeof(is_single_lead)){
 
         for(var id in vm.treatment_data){
          var select_id = id;
+         var data = vm.treatment_data[id];
 
          var props =  {
             isExpanded: '',
@@ -4543,6 +4587,7 @@ if('undefined' !== typeof(is_single_lead)){
             isHiddenImitation: false,
             icon: icons_selects['human'],
             options: available_dentists,
+            selected: data['dentist'],
           };
 
           for( var i in props){
@@ -4559,6 +4604,7 @@ if('undefined' !== typeof(is_single_lead)){
             isHiddenSelect: true,
             isHiddenImitation: false,
             options: treatments,
+            selected: data['treatment']
           };
 
           for( var i in props){
@@ -4567,10 +4613,24 @@ if('undefined' !== typeof(is_single_lead)){
 
           vue_select_components.push(vm.$refs['select_treatment'][select_id]);
 
-          var data = vm.treatment_data[id];
-          vm.$refs.select_dentist[id].set_value('selected', data['dentist']);
-          vm.$refs.select_treatment[id].set_value('selected', data['treatment']);
-          vm.$refs.select_billed[id].set_value( data['billed']);
+         var props =  {
+            icon: icons_selects['currency'],
+            isExpanded: '',
+            isSelected: [],
+            isHiddenSelect: true,
+            isHiddenImitation: false,
+            options: payment_methods,
+            selected: data['payment_method']? data['payment_method']: 'Payment Method',
+          };
+
+          for( var i in props){
+            vm.$refs['select_payment_method'][select_id].set_value(i, props[i]);
+          }
+
+
+          vue_select_components.push(vm.$refs['select_payment_method'][select_id]);
+          vm.$refs.select_billed[select_id].set_value( data['billed']);
+
 
           total += get_sum_from_price(data['billed']);
         }
@@ -4699,6 +4759,7 @@ if('undefined' !== typeof(is_single_lead)){
             lead_notes_tco        : this.notes_tco,
             reminder              : this.reminder,
             text_messages         : this.text_messages,
+            tco_data              : this.tco_data,
           };
         }else{
           var  meta = {};
@@ -4715,7 +4776,15 @@ if('undefined' !== typeof(is_single_lead)){
 
         this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
 
-        if(key_meta  === 'lead_notes' || key_meta  === 'lead_notes_tco'  || key_meta == 'text_messages' ){
+
+        var no_popup_keys = [
+          'tco_data',
+          'lead_notes',
+          'lead_notes_tco',
+          'text_messages',
+        ];
+
+        if(no_popup_keys.indexOf(key_meta) >=0 ){
           this.show_confirmation_popup = false;
         }
 
@@ -4739,7 +4808,12 @@ if('undefined' !== typeof(is_single_lead)){
 
         var vm = this;
 
-       if(key_meta != 'text_messages' ){
+        var no_block_keys = [
+          'text_messages',
+          'tco_data',
+        ];
+
+       if( no_block_keys.indexOf(key_meta) < 0){
           wait_block.show();
         }
 
@@ -5392,6 +5466,8 @@ if('undefined' !== typeof(is_single_lead)){
         var phone = this.patient_data.phone;
         var vm = this;
 
+
+
         if(!phone || phone.length < 4){
           alert('phone not set');
           return;
@@ -5445,6 +5521,10 @@ if('undefined' !== typeof(is_single_lead)){
             vm.save_lead_meta('text_messages', 'text_messages');
 
             vm.message_to_client = '';
+
+            Vue.nextTick(function(){
+              jQuery('._messages')[0].scrollTop = jQuery('._messages')[0].scrollHeight;
+            })
           }
         })
 
@@ -5484,7 +5564,6 @@ if('undefined' !== typeof(is_single_lead)){
             if(vm.text_messages.length < e.messages.length){
               if(! vm.intial_load ){
                 var message = e.messages[e.messages.length-1];
-                // alert('New message from the patient: ' +  message.body);
               }
             }
 
@@ -5497,9 +5576,7 @@ if('undefined' !== typeof(is_single_lead)){
         .always(function(e) {
           jQuery('._messages').removeClass('hidden');
           jQuery('.preloader-messages').addClass('hidden');
-          console.log(e);
         });
-
       }
     },
   })

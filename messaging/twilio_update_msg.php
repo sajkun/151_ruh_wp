@@ -11,7 +11,7 @@ use Twilio\Rest\Client;
 
 $sid         = $_POST['sms_data']['sid'];
 $token       = $_POST['sms_data']['token'];
-$phone_from  = $_POST['sms_data']['phone'];
+$phone_from  = '+'.preg_replace('/\\D/','',$_POST['sms_data']['phone']);
 $phone_to    = $_POST['phone'];
 
 
@@ -25,7 +25,7 @@ $twilio = new Client($sid, $token);
                        ->read([]);
 
       foreach ($messages as $msg) {
-        $messages_all[] =  array(
+        $tmp_message =  array(
           'body'             => $msg->body,
           'date'             => $msg->dateSent,
           'date_for_request' => $msg->dateSent->format('Y-m-d'),
@@ -33,8 +33,16 @@ $twilio = new Client($sid, $token);
           'errorMessage'     => $msg->errorMessage,
           'from'             => str_replace('+44', '0', $msg->from),
           'to'               => str_replace('+44', '0', $msg->to),
-          'type'             => $msg->from === $phone_from ?'we' : 'him',
+          'type'             => $msg->from === $phone_from ? 'we' : 'him',
         );
+
+        if(!isset($by_phones_data[$msg->from])){
+          $by_phones_data[$msg->from] = array();
+        }
+
+        if(!isset($by_phones_data[$msg->to])){
+          $by_phones_data[$msg->to] = array();
+        }
 
         if(!isset($by_phones[$msg->from])){
           $by_phones[$msg->from] = 0;
@@ -42,14 +50,24 @@ $twilio = new Client($sid, $token);
 
         if(!isset($by_phones[$msg->to])){
           $by_phones[$msg->to] = 0;
+          $by_phones_data[$msg->to] = array();
         }
 
         $by_phones[$msg->from]++;
         $by_phones[$msg->to]++;
+        $by_phones_data[$msg->to][] = $tmp_message;
+        $by_phones_data[$msg->from][]= $tmp_message;
+
+        $messages_all[] = $tmp_message;
+      }
+
+      foreach ($by_phones_data as $phone => $message) {
+        usort($by_phones_data[$phone], 'sort_by_date');
       }
 
     }else{
       $first_symbol = substr( $phone_to, 0 , 1 );
+      $by_phones_data = false;
 
       if($first_symbol === "0"){
         $phone_to = '+44'. substr( $phone_to, 1 ,strlen( $phone_to ) - 1 );
@@ -95,11 +113,12 @@ $twilio = new Client($sid, $token);
   usort($messages_all, 'sort_by_date');
 
   echo json_encode(array(
+      'error'    => false,
       'POST'     => $_POST,
       'messages' => $messages_all,
       'by_phones' => $by_phones,
       'phone_to ' => $phone_to ,
-      'error'    => false,
+      'by_phones_data' => $by_phones_data,
   ));
 
   } catch (Exception $e) {

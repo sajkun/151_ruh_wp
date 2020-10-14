@@ -306,14 +306,40 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </td>
                 <td><p class="leads-block__label">Date / Time</p></td>
                 <td>
-                  <datepicker v-on:input_value_changed="update_lead($event, 'patient_data')" v-bind:class="'leads-block__input sm'" _name="date_time" _value="<?php echo isset($patient_data['date_time'])?$patient_data['date_time']: ''; ?>"></datepicker>
+                  <datepicker v-on:input_value_changed="update_lead($event, 'patient_data')" v-bind:class="'leads-block__input sm datepicker-style'" _name="date_time" _value="<?php echo isset($patient_data['date_time'])?$patient_data['date_time']: ''; ?>"></datepicker>
                 </td>
               </tr>
             </table>
-
           </div>
 
-           <div class="spacer-h-15"></div>
+            <div class="chekbox-cont">
+              <div class="spacer-h-30"></div>
+              <div class="row text-center no-gutters">
+                <?php
+                $data = array(
+                  'digital' => 'Digital',
+                  'tco' => 'TCO',
+                  'dentist' => 'Dentist',
+                  'attended' => 'Attended',
+                  'fta_cancelled' => 'FTA’d / Cancelled',
+                  'tax' => 'Tx Plan Given',
+                );
+                 ?>
+                 <?php foreach ($data as $key => $label): ?>
+                  <div class="col-4">
+                    <label class="check-imitation">
+                      <input type="checkbox" name="<?php echo $key ?>" v-model="tco_data.<?php echo $key ?>" v-on:change="save_lead_meta('tco_data','tco_data')">
+                      <span class="text"><?php echo $label ?></span>
+                      <span class="view"></span>
+                    </label>
+                  </div>
+                 <?php endforeach ?>
+                </div>
+            </div>
+
+          <div class="hr"></div>
+
+          <div class="spacer-h-15"></div>
               <span class="leads-block__title">Dentist & Treatment <span class="submit-button to-right" v-on:click="add_treatment_dentist()"><svg class="icon svg-icon-plus"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-plus"></use> </svg></span></span>
 
               <div class="spacer-h-15"></div>
@@ -328,6 +354,12 @@ if ( ! defined( 'ABSPATH' ) ) {
                   ></select-imitation-icon>
 
                   <input-decorated v-on:input_value_changed="update_treatment_data($event, key)" :_icon="icons_selects['card']" _name="billed" v-bind:class="'leads-block__input sm styled text-left'" @focus.native="price_to_value('input_billed')" @blur.native="value_to_price('input_billed')" :ref="'select_billed'"></input-decorated>
+
+                  <div class="spacer-h-10"></div>
+
+                  <select-imitation-icon v-bind:class="'fullwidth'"  _select_name="payment_method" v-on:update_list="update_treatment_data($event, key)" :ref="'select_payment_method'"
+                  ></select-imitation-icon>
+
                   <div class="spacer-h-15"></div>
                   <div class="hr"></div>
                   <div class="spacer-h-15"></div>
@@ -359,10 +391,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                   </i>
                 </td>
                 <td>
-                  <p class="leads-block__label no-margin">Balance </p>
+                  <p class="leads-block__label no-margin">Balance remaining</p>
                 </td>
                 <td class="text-right">
-                 <span class="leads-block__total"><span class="currency">£</span> {{balance}}</span>
+                 <span class="leads-block__total red"><span class="currency">£</span> {{balance}}</span>
                 </td>
               </tr>
             </table>

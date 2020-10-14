@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class velesh_init_theme{
 
   /* main style location  */
-  public $main_style = '/assets/css/main.min.css';
+  public $main_style = '/assets/css/main2.min.css';
 
   /*theme style file slug*/
   public $main_style_slug = 'theme-main-style-dev1';
@@ -29,13 +29,13 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script= '/assets/script/main.js';
+  public $main_script= '/assets/script/main2.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
 
   /* svg sprites files slug for local storage */
-  public $svg_sprite_slug = 'svg_sprite_151_3';
+  public $svg_sprite_slug = 'svg_sprite_151_4';
 
   /* merged style file name */
   public $merged_style_name = 'merged-style3.css';
@@ -80,7 +80,7 @@ class velesh_init_theme{
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
-    define('THEME_DEBUG', true);
+    define('THEME_DEBUG', false);
     define('RELOAD_LEAD', false);
   }
 

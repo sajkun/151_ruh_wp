@@ -493,7 +493,9 @@ class theme_content_output{
     $specialists_assigned_tco = get_post_meta($lead->ID, '_lead_specialists_tco', true);
     $treatment_data           = get_post_meta($lead->ID, '_treatment_data', true);
 
-    $treatment_data           = $treatment_data?: array();
+    $treatment_data           = get_post_meta($lead->ID, '_treatment_data', true);
+
+
 
     $users = theme_get_all_users(false, true);
 
@@ -532,6 +534,8 @@ class theme_content_output{
     $clinics    = get_option('clinics_list');
     $treatments = get_option('treatments_list');
     $campaigns  = get_option('campaigns_list');
+    $payment_methods = get_option('payment_methods_list');
+    $payment_methods = $payment_methods?: array();
 
 
     foreach ($users as $user_id => $user) {
@@ -636,6 +640,23 @@ class theme_content_output{
       'can_delete' => in_array('administrator', $user_roles) || in_array('manager', $user_roles) ,
     );
 
+    $tco_data = get_post_meta($lead->ID, '_tco_data', true)?:array(
+      'digital' => false,
+      'tco' => false,
+      'dentist' => false,
+      'attended' => false,
+      'fta_cancelled' => false,
+      'tax' => false,
+    );
+
+    foreach ($tco_data  as $key => $value) {
+      $tco_data[$key] = $tco_data[$key] === 'false' ? false : $tco_data[$key];
+    }
+
+    clog($tco_data);
+
+    wp_localize_script($theme_init->main_script_slug, 'tco_data', $tco_data);
+
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
     $campaigns = $campaigns ? $campaigns: array();
@@ -703,6 +724,7 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'assigned_dentists', $assigned_dentists);
     wp_localize_script($theme_init->main_script_slug, 'assigned_treatments', $assigned_treatments);
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+    wp_localize_script($theme_init->main_script_slug, 'payment_methods', $payment_methods);
     wp_localize_script($theme_init->main_script_slug, 'is_single_lead', 'yes');
     wp_localize_script($theme_init->main_script_slug, 'treatment_data', $treatment_data);
 
@@ -814,9 +836,6 @@ class theme_content_output{
       }
     }
 
-    clog(get_theme_roles());
-
-
     $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
 
     if(get_theme_roles('reception')){
@@ -868,10 +887,12 @@ class theme_content_output{
     $clinics = get_option('clinics_list');
     $treatments = get_option('treatments_list');
     $campaigns = get_option('campaigns_list');
+    $payment_methods = get_option('payment_methods');
 
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
     $campaigns = $campaigns ? $campaigns: array();
+    $payment_methods = $payment_methods ? $payment_methods: array();
 
 
     $assigned_treatments = array();
@@ -883,6 +904,17 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
     wp_localize_script($theme_init->main_script_slug, 'is_manager', $is_manager);
+
+
+    $tco_data = array(
+      'digital' => false,
+      'tco' => false,
+      'dentist' => false,
+      'attended' => false,
+      'fta_cancelled' => false,
+      'tax' => false,
+    );
+    wp_localize_script($theme_init->main_script_slug, 'tco_data', $tco_data);
 
 
     $stages_names = array();
@@ -913,6 +945,7 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, 'treatment_data', array());
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+    wp_localize_script($theme_init->main_script_slug, 'payment_methods', $payment_methods);
 
     wp_localize_script($theme_init->main_script_slug, 'phone_count', [0]);
     wp_localize_script($theme_init->main_script_slug, 'phone_count_tco', [0]);

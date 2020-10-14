@@ -321,6 +321,7 @@ class velesh_theme_posts {
         }else{
           delete_option('campaigns_list');
         }
+
         if(isset($_POST['sources'])){
           update_option('sources_list', $_POST['sources']);
          ?>
@@ -329,6 +330,17 @@ class velesh_theme_posts {
         }else{
           delete_option('sources_list');
         }
+
+        if(isset($_POST['payment_methods'])){
+          update_option('payment_methods_list', $_POST['payment_methods']);
+         ?>
+          <div class="notice notice-success is-dismissible"><p>Payment Methods were saved succesfully</p></div>
+          <?php
+        }else{
+          delete_option('payment_methods_list');
+        }
+
+
         if(isset($_POST['add_dentists_to_sources'])){
           update_option('add_dentists_to_sources', $_POST['add_dentists_to_sources']);
         }
@@ -338,6 +350,7 @@ class velesh_theme_posts {
       $treatments = get_option('treatments_list');
       $campaigns = get_option('campaigns_list');
       $sources = get_option('sources_list');
+      $payment_methods = get_option('payment_methods_list');
       $add_dentists_to_sources = get_option('add_dentists_to_sources');
 
       ?>
@@ -353,7 +366,8 @@ class velesh_theme_posts {
                   <div class="clinics-list">
                     <?php if ($clinics): ?>
 
-                    <?php foreach ($clinics as $key => $cl): ?>
+                    <?php foreach ($clinics as $key => $cl):
+                      if(!$cl) continue; ?>
                       <div class="input-control">
                         <p class="input-title">Clinic #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?>onclick="delete_input(this)">Delete Clinic</a></p>
                         <input type="text" class="fullwidth" name="clinic[<?php echo $key ?>]" value="<?php echo $cl ?>">
@@ -373,7 +387,8 @@ class velesh_theme_posts {
                       $counter = 0;
                       ?>
 
-                    <?php foreach ($treatments as $key => $cl): ?>
+                    <?php foreach ($treatments as $key => $cl):
+                      if(!$cl) continue?>
                       <div class="input-control">
                         <p class="input-title">Treatment #<?php echo $counter;  ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete treatment</a></p>
                         <input type="text" class="fullwidth" name="treatment[<?php echo $counter ?>]" value="<?php echo $cl ?>">
@@ -399,7 +414,8 @@ class velesh_theme_posts {
                        $counter = 0;
                       ?>
 
-                    <?php foreach ($campaigns as $key => $cl): ?>
+                    <?php foreach ($campaigns as $key => $cl):
+                    if(!$cl) continue ?>
                       <div class="input-control">
                         <p class="input-title">Campaign #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Campaign</a></p>
                         <input type="text" class="fullwidth" name="campaign[<?php echo $key ?>]" value="<?php echo $cl ?>">
@@ -417,17 +433,14 @@ class velesh_theme_posts {
               </td>
               <td  colspan="2">
                 <h4>Sources</h4>
-<div>
+                <div>
 
                 <label>
                   <input type="hidden" name="add_dentists_to_sources" value="no">
                   <input type="checkbox" <?php
 
                   echo 'yes' ==  $add_dentists_to_sources?'checked="checked"' : ''; ?> name="add_dentists_to_sources" value="yes">Include dentists to sources from user roles</label>
-
-</div>
-
-
+                </div>
                   <div class="sources-list" <?php echo 'style="column-count:2; column-gap:20px"' ?>>
                     <?php if ($sources):
                       $counter = 0;
@@ -450,7 +463,32 @@ class velesh_theme_posts {
                 <input type="hidden" id="count_sources" value="<?php echo  $sources? count( $sources): 0 ?>">
               </td>
 
-              <td></td>
+              <td>
+                <h4>Payment Methods</h4>
+
+                  <div class="payment_methods-list">
+                    <?php if ($payment_methods):
+                       $counter = 0;
+                      ?>
+
+                    <?php foreach ($payment_methods as $key => $cl):
+                      if(!$cl) continue;
+                      ?>
+                      <div class="input-control">
+                        <p class="input-title">Payment Method #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete method</a></p>
+                        <input type="text" class="fullwidth" name="payment_methods[<?php echo $key ?>]" value="<?php echo $cl ?>">
+                      </div>
+                    <?php
+                      $counter++;
+                      endforeach;
+                     ?>
+                    <?php endif ?>
+                  </div>
+
+                 <a href="javascript:void(0)" class="button" onclick="add_input('payment_methods')">Add method</a>
+
+                <input type="hidden" id="count_payment_methods" value="<?php echo  $payment_methods? count( $payment_methods): 0 ?>">
+              </td>
             </tr>
           </table>
         </div>
