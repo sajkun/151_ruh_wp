@@ -493,7 +493,7 @@ class theme_content_output{
     $specialists_assigned_tco = get_post_meta($lead->ID, '_lead_specialists_tco', true);
     $treatment_data           = get_post_meta($lead->ID, '_treatment_data', true);
 
-    $treatment_data           = get_post_meta($lead->ID, '_treatment_data', true);
+    $treatment_data           = $treatment_data ?: array();
 
 
 
