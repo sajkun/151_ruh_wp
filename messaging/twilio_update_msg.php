@@ -36,27 +36,49 @@ $twilio = new Client($sid, $token);
           'type'             => $msg->from === $phone_from ? 'we' : 'him',
         );
 
+        $msg_phone_from = str_replace('+44', '0', $msg->from);
+        $msg_phone_to   = str_replace('+44', '0', $msg->from);
+
         if(!isset($by_phones_data[$msg->from])){
           $by_phones_data[$msg->from] = array();
+        }
+
+        if(!isset($by_phones_data[$msg_phone_from])){
+          $by_phones_data[$msg_phone_from] = array();
         }
 
         if(!isset($by_phones_data[$msg->to])){
           $by_phones_data[$msg->to] = array();
         }
 
+        if(!isset($by_phones_data[ $msg_phone_to ])){
+          $by_phones_data[ $msg_phone_to ] = array();
+        }
+
         if(!isset($by_phones[$msg->from])){
           $by_phones[$msg->from] = 0;
         }
 
+        if(!isset($by_phones[$msg_phone_from])){
+          $by_phones[$msg_phone_from] = 0;
+        }
+
+        if(!isset($by_phones[ $msg_phone_to])){
+          $by_phones[$ $msg_phone_to] = 0;
+        }
+
         if(!isset($by_phones[$msg->to])){
           $by_phones[$msg->to] = 0;
-          $by_phones_data[$msg->to] = array();
         }
 
         $by_phones[$msg->from]++;
+        $by_phones[$msg_phone_from]++;
         $by_phones[$msg->to]++;
+        $by_phones[ $msg_phone_to]++;
         $by_phones_data[$msg->to][] = $tmp_message;
         $by_phones_data[$msg->from][]= $tmp_message;
+        $by_phones_data[$msg_phone_from][]= $tmp_message;
+        $by_phones_data[ $msg_phone_to ][]= $tmp_message;
 
         $messages_all[] = $tmp_message;
       }

@@ -3478,12 +3478,12 @@ if('undefined' !== typeof(is_lead_list)){
             }
 
 
-            if(is_match){
-              unread_messages =  lead.show_message_alert_him ? unread_messages + 1: unread_messages;
-            }
-
             if(this.show_not_read_only){
               is_match = is_match && lead.show_message_alert_him;
+            }
+
+            if(is_match){
+               unread_messages =  lead.show_message_alert_him ? unread_messages + 1: unread_messages;
             }
 
             if(is_match){
