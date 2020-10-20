@@ -37,7 +37,7 @@ $twilio = new Client($sid, $token);
         );
 
         $msg_phone_from = str_replace('+44', '0', $msg->from);
-        $msg_phone_to   = str_replace('+44', '0', $msg->from);
+        $msg_phone_to   = str_replace('+44', '0', $msg->to);
 
         if(!isset($by_phones_data[$msg->from])){
           $by_phones_data[$msg->from] = array();
@@ -64,7 +64,7 @@ $twilio = new Client($sid, $token);
         }
 
         if(!isset($by_phones[ $msg_phone_to])){
-          $by_phones[$ $msg_phone_to] = 0;
+          $by_phones[$msg_phone_to] = 0;
         }
 
         if(!isset($by_phones[$msg->to])){

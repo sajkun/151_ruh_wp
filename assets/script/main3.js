@@ -4451,13 +4451,15 @@ if('undefined' !== typeof(is_single_lead)){
       this.specialists_data  = specialists_data;
       this.init_select();
       this.treatment_data_selects();
-      this.update_text_messages();
       var vm = this;
 
-      setInterval(function(){
-        console.log('check messages');
+      if(vm.lead_data.lead_id >=0){
         vm.update_text_messages();
-      },30000)
+        setInterval(function(){
+          console.log('check messages');
+          vm.update_text_messages();
+        },30000)
+      }
     },
 
     methods: {

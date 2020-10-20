@@ -29,7 +29,7 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script= '/assets/script/main2.js';
+  public $main_script= '/assets/script/main3.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
