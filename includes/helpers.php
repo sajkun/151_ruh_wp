@@ -724,7 +724,7 @@ if(!function_exists('get_leads_meta')){
       // get all metadata;
 
 
-      $post_meta = $meta_parsed[$post->ID];
+      $post_meta = isset($meta_parsed[$post->ID])? $meta_parsed[$post->ID]: array();
 
       $coordinator_data =   isset($post_meta['_treatment_coordinator'])? ($post_meta['_treatment_coordinator']): false;
 
