@@ -21,6 +21,9 @@ if(!class_exists('theme_ajax_action')){
 
     public function __construct(){
 
+      global $lead_to_delete;
+      $lead_to_delete = -1;
+
       // login action
       add_action('wp_ajax_get_leads_by_dates', array($this, 'get_leads_by_dates_cb'));
       add_action('wp_ajax_nopriv_get_leads_by_dates', array($this, 'get_leads_by_dates_cb'));
@@ -308,6 +311,9 @@ if(!class_exists('theme_ajax_action')){
 
       $post_id = (int)$_POST['lead_id'];
 
+      global $lead_to_delete;
+      $lead_to_delete = $post_id ;
+
       wp_delete_post( $post_id , true );
 
       wp_send_json(array('redirect' => $_POST['url']));
@@ -319,6 +325,12 @@ if(!class_exists('theme_ajax_action')){
     */
     public function update_leads_log_cb(){
       $post_id = (int)$_POST['post_id'];
+
+      global $lead_to_delete;
+
+      if($lead_to_delete == $post_id){
+        return;
+      }
       $post    = get_post($post_id);
       $meta    = get_post_meta($post_id, '_lead_log', true);
 
@@ -390,10 +402,16 @@ if(!class_exists('theme_ajax_action')){
       // if(!$verify){
       //   wp_send_json_error(array('Nonce field check failed'), 418);
       // }
+      $post_id = (int)$_POST['lead_data']['lead_id'];
+
+      global $lead_to_delete;
+
+      if($lead_to_delete == $post_id){
+        return;
+      }
 
       $meta = $_POST['meta'];
 
-      $post_id = (int)$_POST['lead_data']['lead_id'];
 
       if((int)$_POST['confirmed'] === 0 && $post_id < 0){
        global $wpdb;

@@ -738,13 +738,13 @@ class velesh_theme_posts {
         <input type="text" name="patient_data[name]" value="<?php echo isset($meta['name']) ? $meta['name'] : ''; ?>" placeholder="Enter Name" class="leads-block__input lg">
       </div>
       <br>
-      <table class="leads-block__data fullwidth" style="width: 100%">
+      <table class="leads-block__data fullwidth" <?php echo 'style="width: 100%"'; ?>>
         <tbody>
           <tr>
           <td>
             <svg class="icon svg-icon-phone"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-phone"></use> </svg>
           </td>
-          <td width="200" style="width:200px"><p class="leads-block__label">Phone</p></td>
+          <td width="200" <?php echo 'style="width:200px"'; ?>><p class="leads-block__label">Phone</p></td>
           <td>
             <input type="text" name="patient_data[phone]" value="<?php echo isset($meta['phone'])? $meta['phone'] : ''; ?>" placeholder="Add" class="leads-block__input fullwidth">
           </td>
@@ -1013,7 +1013,7 @@ class velesh_theme_posts {
                  <span class="name"><?php echo $m['name'] ?></span>
                  <san class="date"><?php echo $m['date'] ?></span>
                </p>           <p class="document-block__actions">
-                 <a href="<?php echo $m['url'] ?>" download style="text-decoration: none;"><svg class="icon svg-icon-download"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-download"></use> </svg> </a>
+                 <a href="<?php echo $m['url'] ?>" download <?php echo 'style="text-decoration: none;"'; ?>><svg class="icon svg-icon-download"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-download"></use> </svg> </a>
                  <svg class="icon svg-icon-trash" onclick="delete_file(this)"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use> </svg>
                </p>
 
@@ -1257,7 +1257,7 @@ class velesh_theme_posts {
     }
   }
 
-  public function remove_assigned_leads($post_id){
+  public static function remove_assigned_leads($post_id){
     foreach(get_users() as $user){
       $assigned_posts = get_the_author_meta('_leads_assigned', $user->ID);
       if(!$assigned_posts) continue;

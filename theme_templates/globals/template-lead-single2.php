@@ -293,8 +293,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
               </div>
           </div>
-
           <div class="hr"></div>
+          <?php
+          /* first time appointment book
 
            <span class="leads-block__title">First Appointment</span>
 
@@ -311,6 +312,8 @@ if ( ! defined( 'ABSPATH' ) ) {
               </tr>
             </table>
           </div>
+
+          */ ?>
 
             <div class="chekbox-cont">
               <div class="spacer-h-30"></div>

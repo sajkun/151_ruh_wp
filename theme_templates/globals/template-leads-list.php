@@ -66,6 +66,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <select-imitation-icon _select_name="dentists" ref="dentists" v-on:update_list="run_filter_list($event)"></select-imitation-icon>
 
+      <select-imitation-icon _select_name="sort" ref="sort" v-on:update_list="sort_leads($event)"></select-imitation-icon>
+
       <?php /* if ($is_manager === 'yes'): ?>
         <span class="button-filter"  v-on:click="load_csv" >Download CSV</span>
       <?php endif */?>
