@@ -22,7 +22,7 @@ if(!class_exists('theme_ajax_action')){
     public function __construct(){
 
       global $lead_to_delete;
-      $lead_to_delete = -1;
+      $lead_to_delete = -10;
 
       // login action
       add_action('wp_ajax_get_leads_by_dates', array($this, 'get_leads_by_dates_cb'));
@@ -329,8 +329,10 @@ if(!class_exists('theme_ajax_action')){
       global $lead_to_delete;
 
       if($lead_to_delete == $post_id){
-        return;
+        wp_send_json_error(array('message' => 'lead_to_delete'), 418);
+        exit();
       }
+
       $post    = get_post($post_id);
       $meta    = get_post_meta($post_id, '_lead_log', true);
 
@@ -404,10 +406,13 @@ if(!class_exists('theme_ajax_action')){
       // }
       $post_id = (int)$_POST['lead_data']['lead_id'];
 
+
+
       global $lead_to_delete;
 
       if($lead_to_delete == $post_id){
-        return;
+        wp_send_json_error(array('message' => 'lead_to_delete'), 418);
+        exit();
       }
 
       $meta = $_POST['meta'];

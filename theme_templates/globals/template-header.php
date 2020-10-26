@@ -38,16 +38,14 @@ if ( ! defined( 'ABSPATH' ) ) {
           <div class="search-open"  v-if="show_search">
             <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
           </div>
-
           <div class="search__wrapper"  v-if="show_search">
             <form action="#" method="POST" class="search__form">
-
-                <div class="row no-gutters">
-                  <button type="submit">
-                     <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
-                  </button>
-                  <input type="search" v-model="search_value" class="search__field" placeholder="Search Tracker…">
-                </div>
+              <div class="row no-gutters">
+                <button type="submit">
+                   <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
+                </button>
+                <input type="search" v-model="search_value" class="search__field" placeholder="Search Tracker…">
+              </div>
             </form>
           </div>
           <?php if ($show_add): ?>
