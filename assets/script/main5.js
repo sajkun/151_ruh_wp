@@ -1213,6 +1213,7 @@ var parse_leads = {
       data.sourse      = this.leads[id].meta.patient_data.sourse;
       data.text_messages = this.leads[id].meta.text_messages ? this.leads[id].meta.text_messages.length : 0 ;
       data.show_message_alert = false;
+      data.show_message_alert_him = false;
       data.team        = this.leads[id].meta.lead_specialists;
       data.lead_stage  = this.leads[id].lead_stage;
       data.reminder    = this.leads[id].meta.reminder;
@@ -1517,6 +1518,8 @@ var icons_selects = {
   'card': '<svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>',
 
   'currency': '<span class="currency-in-select">£</span>',
+
+  'sortby': '<span class="icon-sortby"> <svg xmlns:dc="http://purl.org/dc/elements/1.1/"xmlns:cc="http://creativecommons.org/ns#"xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"xmlns:svg="http://www.w3.org/2000/svg"xmlns="http://www.w3.org/2000/svg"xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"width="105.73048mm"height="60.448288mm"viewBox="0 0 374.63554 214.18685"id="svg2"version="1.1"inkscape:version="0.91 r13725"sodipodi:docname="desc.svg"> <defs id="defs4" /> <sodipodi:namedview id="base"pagecolor="#ffffff"bordercolor="#666666"borderopacity="1.0"inkscape:pageopacity="0.0"inkscape:pageshadow="2"inkscape:zoom="0.35"inkscape:cx="533.25919"inkscape:cy="533.92856"inkscape:document-units="px"inkscape:current-layer="layer1"showgrid="false"fit-margin-top="0"fit-margin-left="0"fit-margin-right="0"fit-margin-bottom="0"inkscape:window-width="1920"inkscape:window-height="976"inkscape:window-x="-8"inkscape:window-y="1072"inkscape:window-maximized="1" /> <metadata id="metadata7"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1"inkscape:groupmode="layer"id="layer1"transform="translate(672.54491,-854.96105)"> <path style="fill:#838993"d="m -553.75621,1065.0846 c -7.99146,-7.3236 -6.87414,-19.1169 2.34368,-24.7373 3.83487,-2.3383 6.73931,-2.4401 69.62681,-2.4401 63.62166,0 65.75131,0.077 69.76273,2.5227 8.72665,5.3205 9.74037,16.9649 2.13868,24.5666 l -4.15141,4.1514 -67.64336,0 -67.64335,0 -4.43378,-4.0633 z"id="path4155"inkscape:connector-curvature="0" /> <path style="fill:#838993"d="m -599.26031,978.37748 c -4.88353,-2.6376 -7.56658,-8.71232 -7.05942,-15.98332 0.24135,-3.46003 1.21848,-7.06332 2.33486,-8.61003 4.51521,-6.25572 0.74969,-6.06481 119.62458,-6.06481 105.75005,0 111.35628,0.11175 114.63782,2.28409 3.74051,2.47623 7.15104,9.03755 7.15104,13.7575 0,4.43576 -2.86871,11.02393 -5.91003,13.57271 -2.55732,2.14316 -8.54166,2.275 -115.10261,2.53566 -94.99093,0.23238 -112.91182,10e-4 -115.67624,-1.4918 z"id="path4151"inkscape:connector-curvature="0" /> <path style="fill:#838993"d="m -665.69569,883.60895 c -7.01294,-5.51638 -8.83062,-13.77749 -4.56921,-20.76644 5.15136,-8.4485 -8.3984,-7.87319 185.42869,-7.87319 l 175.50221,0 4.24736,2.85325 c 4.99679,3.3567 8.22065,11.0967 6.86752,16.48795 -0.49088,1.95589 -2.77187,5.4355 -5.06884,7.73248 l -4.17633,4.17632 -177.45643,0 -177.45642,0 -3.31855,-2.61037 z"id="path4147"inkscape:connector-curvature="0" /> </g> </svg> </span>',
 };
 var select_mixin = {
   data: function () {
@@ -3352,6 +3355,8 @@ if('undefined' !== typeof(is_lead_list)){
       unread_messages: 0,
 
       leads:{},
+
+      sortby: 'Sort By',
     },
 
     computed:{
@@ -3415,6 +3420,7 @@ if('undefined' !== typeof(is_lead_list)){
       *
       */
       leads_filtered: function(){
+
         var leads_filtered = {};
         var filters = {};
         var unread_messages = 0;
@@ -3497,9 +3503,22 @@ if('undefined' !== typeof(is_lead_list)){
           }
         }
 
-
-        for(var column_id in leads_filtered){
-          leads_filtered[column_id].sort(this.sort_by_sms);
+       switch(this.sortby){
+          case 'Recent Messages':
+            for(var column_id in leads_filtered){
+             leads_filtered[column_id].sort(this.sort_by_sms);
+            }
+            break;
+          case 'Date Added':
+           for(var column_id in leads_filtered){
+             leads_filtered[column_id].sort(this.sort_by_date_added);
+            }
+            break;
+          case 'Recently Updated':
+           for(var column_id in leads_filtered){
+             leads_filtered[column_id].sort(this.sort_by_date);
+            }
+            break;
         }
 
         return leads_filtered;
@@ -3544,6 +3563,11 @@ if('undefined' !== typeof(is_lead_list)){
     },
 
     watch:{
+      sortby:function(data){
+        Cookie.set('sort_lead_list', data);
+        // this.run_update_list();
+      },
+
       overdue_checked: function(show){
       },
 
@@ -3556,6 +3580,7 @@ if('undefined' !== typeof(is_lead_list)){
           vm.init();
 
           Vue.nextTick(function(){
+             strlog('next tick equal_list_heights', 'red');
             equal_list_heights();
             do_sort();
           })
@@ -3587,39 +3612,47 @@ if('undefined' !== typeof(is_lead_list)){
       },
     },
 
+    created: function(){
+      strlog('Leads List Created', 'green');
+    },
+
+    beforeMount: function(){
+      var vm = this;
+      var leads = parse_leads.construct();
+      _leads = leads.get_leads_for_list();
+      vm.update_leads(_leads);
+    },
+
     mounted: function(){
       var vm = this;
       vm.init();
+      // vm.handle_resize();
+      vm.check_text_messages();
 
-      Vue.nextTick(function() {
-        vm.handle_resize();
-      });
-
-
-      Vue.nextTick(function(){
-        vm.check_text_messages();
+      vm.$nextTick(function(){
+        strlog('next tick', 'red');
+        setInterval(function(){vm.check_text_messages()}, 60000);
       })
 
-      setInterval(function(){vm.check_text_messages()}, 60000);
-
       window.addEventListener('resize', vm.handle_resize);
+
+      strlog('mounted', 'purple')
      },
+
+   updated: function(){
+     strlog('updated', 'purple')
+   },
 
     methods:{
       init: function(){
         var vm = this;
         vm.init_filters();
 
-        var leads = parse_leads.construct();
-        _leads = leads.get_leads_for_list();
-
-        vm.update_leads(_leads);
-
         vm.$nextTick(function(){
-          strlog('Leads List Loaded', 'green');
           jQuery('.preload-timer').addClass('hidden');
           jQuery('.leads-container').removeClass('visuallyhidden');
           jQuery('.filter-container').removeClass('visuallyhidden');
+          strlog('Leads List Loaded', 'green');
         })
       },
 
@@ -3659,6 +3692,7 @@ if('undefined' !== typeof(is_lead_list)){
 
       //inits filters
       init_filters: function(){
+
         var vm = this;
 
         var saved_filter = JSON.parse(Cookie.get('lead_list_filter2'));
@@ -3680,7 +3714,31 @@ if('undefined' !== typeof(is_lead_list)){
           all_props[select_name] = props;
         }
 
+        var sortby = Cookie.get('sort_lead_list')?  Cookie.get('sort_lead_list') : 'Sort By';
+
+        var props_sort =  {
+          icon: icons_selects.sortby,
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: ['Sort By','Recent Messages','Date Added', 'Recently Updated'],
+          selected: sortby,
+        };
+
+        this.sortby = sortby;
+
+        for(var  id in props_sort){
+          if('undefined' !== typeof(vm.$refs['sort'])){
+            vm.$refs['sort'].set_value(id, props_sort[id]);
+          }
+        }
+
+        vue_select_components.push(vm.$refs['sort']);
+
         vm.$nextTick(function(){
+           strlog('next tick selects', 'red');
+
           for(var select_name in all_props){
             vue_select_components.push(vm.$refs[select_name]);
             var props = all_props[select_name];
@@ -3691,6 +3749,8 @@ if('undefined' !== typeof(is_lead_list)){
               }
             }
           }
+
+          strlog('selects initalized', 'red');
         });
       },
 
@@ -3755,11 +3815,21 @@ if('undefined' !== typeof(is_lead_list)){
         return (date_lead_a > date_lead_b)? -1 : 1;
       },
 
-      sort_by_sms: function(lead_a,lead_b){
-        if(lead_a.show_message_alert_him && lead_b.show_message_alert_him){
+      sort_by_date_added: function(lead_a,lead_b){
+        var date_lead_a = new Date(lead_a.base_lead.post_date);
+        var date_lead_b = new Date(lead_b.base_lead.post_date);
+
+        if(date_lead_a === date_lead_b){
           return 0;
         }
-        if(lead_a.show_message_alert_him && !lead_b.show_message_alert){
+        return (date_lead_a > date_lead_b)? -1 : 1;
+      },
+
+      sort_by_sms: function(lead_a,lead_b){
+        if((lead_a.show_message_alert_him && lead_b.show_message_alert_him) || (!lead_a.show_message_alert_him && !lead_b.show_message_alert_him)){
+          return 0;
+        }
+        if(lead_a.show_message_alert_him && !lead_b.show_message_alert_him){
           return -1;
         }
         if(!lead_a.show_message_alert_him && lead_b.show_message_alert_him){
@@ -3768,7 +3838,6 @@ if('undefined' !== typeof(is_lead_list)){
       },
 
       update_leads: function(leads){
-        //console.log('Update leads');
         var temp_leads = {};
         this.leads = {};
 
@@ -3779,16 +3848,25 @@ if('undefined' !== typeof(is_lead_list)){
           temp_leads[leads[id].lead_stage].push(leads[id]);
         }
 
-        for(id in temp_leads){
-          temp_leads[id].sort(this.sort_by_date);
-        }
-
-        for(id in temp_leads){
-          temp_leads[id].sort(this.sort_by_sms);
+        switch(this.sortby){
+          case 'Recent Messages':
+            for(id in temp_leads){
+              temp_leads[id].sort(this.sort_by_sms);
+            }
+            break;
+          case 'Date Added':
+            for(id in temp_leads){
+              temp_leads[id].sort(this.sort_by_date_added);
+            }
+            break;
+          case 'Recently Updated':
+            for(id in temp_leads){
+              temp_leads[id].sort(this.sort_by_date);
+            }
+            break;
         }
 
         this.leads = temp_leads;
-
       },
 
       set_data: function(key, value){
@@ -3929,6 +4007,12 @@ if('undefined' !== typeof(is_lead_list)){
         .always(function(e) {
           // console.log(e);
         });
+      },
+
+      sort_leads: function(data){
+        if(data.val){
+          this.sortby = data.val;
+        }
       },
     },
   })
@@ -4084,6 +4168,7 @@ if('undefined' !== typeof(is_single_lead)){
       text_messages: [],
       text_messages_to_show: 2,
       intial_load : true,
+      deleting_lead : false,
     },
 
     computed:{
@@ -4451,13 +4536,15 @@ if('undefined' !== typeof(is_single_lead)){
       this.specialists_data  = specialists_data;
       this.init_select();
       this.treatment_data_selects();
-      this.update_text_messages();
       var vm = this;
 
-      setInterval(function(){
-        console.log('check messages');
+      if(vm.lead_data.lead_id >=0){
         vm.update_text_messages();
-      },30000)
+        setInterval(function(){
+          console.log('check messages');
+          vm.update_text_messages();
+        },30000)
+      }
     },
 
     methods: {
@@ -4750,7 +4837,12 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       save_lead_meta: function(key_meta, key_this){
+        console.log('save_lead_meta');
         var vm = this;
+
+        if (vm.deleting_lead){
+          return;
+        }
 
         if(typeof(key_meta) !== 'string'){
           var meta = {
@@ -4778,7 +4870,6 @@ if('undefined' !== typeof(is_single_lead)){
         };
 
         this.show_confirmation_popup = (this.lead_data.lead_id >=0 )? true : this.show_confirmation_popup ;
-
 
         var no_popup_keys = [
           'tco_data',
@@ -4826,13 +4917,15 @@ if('undefined' !== typeof(is_single_lead)){
           data: posted_data,
 
           complete: function(xhr, textStatus) {
+             console.log(xhr);
              wait_block.hide();
           },
 
           success: function(data, textStatus, xhr) {
+             console.log(data);
 
             if(data.reload){
-              // location.href = data.url;
+              location.href = data.url;
               // wait_block.show();
             }
             vm.$refs.lead_id_input.set_value(data.post_id);
@@ -4978,8 +5071,10 @@ if('undefined' !== typeof(is_single_lead)){
       },
 
       do_delete_or_return: function(url){
+        this.deleting_lead = true;
         wait_block.show();
-        if(parseInt(this.lead_data.lead_id) < 0){
+
+        if(parseInt(this.lead_data.lead_id) === -1){
           wait_block.hide();
           location.href = url;
         }else{
@@ -4997,16 +5092,18 @@ if('undefined' !== typeof(is_single_lead)){
 
           complete: function(xhr, textStatus) {
              wait_block.hide();
+             clog(xhr)
           },
 
           success: function(data, textStatus, xhr) {
-            // console.log(data);
             if('undefined' != typeof(data.redirect)){
-              location.href = data.redirect;
+              window.close();
+              // location.href = data.redirect;
             }
           },
 
           error: function(xhr, textStatus, errorThrown) {
+            clog(xhr);
             if(xhr.status === 418){
               var response_text = JSON.parse(xhr.responseText);
               alert(response_text.data[0]);
@@ -5541,6 +5638,9 @@ if('undefined' !== typeof(is_single_lead)){
 
 
       update_text_messages: function(){
+        if (this.deleting_lead){
+          return;
+        }
         var phone = this.patient_data.phone;
         var vm = this;
 
@@ -5560,9 +5660,14 @@ if('undefined' !== typeof(is_single_lead)){
           if(e.error){
             alert(e.error);
           }else{
-              vm.text_messages = e.messages;
-              vm.save_lead_meta('text_messages', 'text_messages');
-              vm.intial_load = false;
+
+            if (vm.deleting_lead){
+              return;
+            }
+
+            vm.text_messages = e.messages;
+            vm.save_lead_meta('text_messages', 'text_messages');
+            vm.intial_load = false;
 
             if(vm.text_messages.length < e.messages.length){
               if(! vm.intial_load ){

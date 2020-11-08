@@ -301,21 +301,17 @@ if(!class_exists('theme_ajax_action')){
         wp_send_json_error($user->errors, 418);
       }
 
-      wp_send_json(array('user'=>$user, 'redirect' => HOME_URL));
+      wp_send_json(array('user'=> $user, 'redirect' => HOME_URL));
     }
 
     /**
     * deletes a lead
     */
     public function delete_lead_cb(){
-
       $post_id = (int)$_POST['lead_id'];
-
       global $lead_to_delete;
       $lead_to_delete = $post_id ;
-
-      wp_delete_post( $post_id , true );
-
+      wp_delete_post( $post_id );
       wp_send_json(array('redirect' => $_POST['url']));
     }
 
@@ -406,13 +402,10 @@ if(!class_exists('theme_ajax_action')){
       // }
       $post_id = (int)$_POST['lead_data']['lead_id'];
 
-
-
       global $lead_to_delete;
 
       if($lead_to_delete == $post_id){
         wp_send_json_error(array('message' => 'lead_to_delete'), 418);
-        exit();
       }
 
       $meta = $_POST['meta'];
@@ -437,7 +430,7 @@ if(!class_exists('theme_ajax_action')){
 
       $reload = false;
 
-      if($post_id < 0){
+      if( $post_id === -1 ){
         $reload = true;
         $_name = array($meta['patient_data']['name'], $meta['patient_data']['treatment'],$meta['patient_data']['clinic']);
 

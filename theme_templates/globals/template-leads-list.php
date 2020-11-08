@@ -110,7 +110,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               <div class="leads-column__body">
                 <ul class="leads-list" name="lead-list" data-list="<?php echo $st['name'] ?>"
                  >
-                  <li v-for="data in leads_filtered['<?php echo $st['name'] ?>']" v-bind:key="data.post_id">
+                  <li v-for="(data, index) in leads_filtered['<?php echo $st['name'] ?>']" v-bind:key="index">
                     <a target="_blank" :href="data.permalink" class="lead-preview" :data-overdue="data.alarms" :data-post_id="data.post_id" data-list="<?php echo $st['name'] ?>" v-bind:class="[data.isMarked ? 'marked' : '']" v-on:click="data.isMarked = 1"
 
                       <?php if (RELOAD_LEAD): ?>
