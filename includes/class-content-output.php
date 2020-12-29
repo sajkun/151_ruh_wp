@@ -51,7 +51,6 @@ class theme_content_output{
 
     $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
 
-
     $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)$reception_id || $obj->ID === (int)$tco_id  || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead ) || !$is_admin ;
 
     $args = array(
@@ -653,8 +652,6 @@ class theme_content_output{
       $tco_data[$key] = $tco_data[$key] === 'false' ? false : $tco_data[$key];
     }
 
-    clog($tco_data);
-
     wp_localize_script($theme_init->main_script_slug, 'tco_data', $tco_data);
 
     $clinics = $clinics ? $clinics: array();
@@ -1005,5 +1002,222 @@ class theme_content_output{
     }
 
     // print_theme_template_part('debug-window','globals', array());
+  }
+
+
+  public static function print_list_2(){
+
+      global $theme_init;
+
+      $start = microtime(true);
+
+      $today = new DateTime();
+
+      $current_month = $today->format('m');
+      $current_year  = $today->format('Y');
+      $today_formated = $today->format('M d Y');
+
+      $days_30_before_today = new DateTime();
+      $days_30_before_today = $days_30_before_today->modify('-30 days');
+      $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
+
+      if(isset($_COOKIE['list_data_settings'])){
+        $data = $_COOKIE['list_data_settings'];
+        $data = str_replace('\\', '', $data );
+        $data = json_decode($data);
+
+        $today = new DateTime($data->_to);
+        $today_formated = $today->format('M d Y');
+        $days_30_before_today = new DateTime($data->_from);
+        $days_30_before_today_formatted = $days_30_before_today->format('M d Y');
+      }
+
+    // Get leads by dates
+
+      $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
+
+      $leads = get_leads_meta($leads);
+
+
+    // prepare data for filters
+
+      $filter_data = get_filters_by_leads( $leads );
+
+    // get available stages
+
+      $user = get_user_by('id', get_current_user_id());
+
+      $user_name = theme_get_user_name($user);
+
+      $user_id   = get_current_user_id();
+
+      $user_meta = get_userdata($user_id);
+
+      $user_roles = $user_meta->roles;
+
+      $stages    = get_option('leads_stages');
+
+      $theme_roles = get_theme_roles();
+
+      // get stages depending on user role
+      if( in_array($theme_roles['reception'], $user_roles )){
+          $stages =  array_filter($stages, function($el){
+            return  $el['reception'] != 0;
+          });
+
+        wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
+
+        $theme_user_role = 'reception';
+
+      }else if( in_array($theme_roles['tco'], $user_roles )){
+        $stages =  array_filter($stages, function($el){
+            return  $el['tco'] != 0;
+        });
+
+        wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
+        $theme_user_role = 'tco';
+      }else{
+
+        $reception_id = (int)get_option('theme_page_reception');
+        $tco_id = (int)get_option('theme_page_tco');
+
+        if(get_queried_object_id() == $reception_id ) {
+          $stages =  array_filter($stages, function($el){
+            return  $el['reception'] != 0;
+          });
+
+          wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
+          $theme_user_role = 'reception';
+        }else if(get_queried_object_id() == $tco_id ){
+          $stages =  array_filter($stages, function($el){
+              return  $el['tco'] != 0;
+          });
+
+          wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
+          $theme_user_role = 'tco';
+        }else{
+          wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'all' );
+           $theme_user_role = 'all';
+        }
+
+        $sms_data = get_option('message_data')?: false;
+        wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
+      }
+
+      if(!$stages){
+        echo '<div class="spacer-h-40"></div>';
+        echo '<p class="text-center">No stages configured, Leads can not be ordered. Please Configure stages first</p>';
+        return;
+      }
+
+      $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
+
+      $args = array(
+        'user_name'       => $user_name,
+        'user_id'         => get_current_user_id(),
+        'stages'          => $stages,
+        'is_manager'      => $is_manager,
+        'theme_user_role' => $theme_user_role,
+        'daterange'       => array(
+          'from' => $days_30_before_today_formatted,
+          'to'   => $today_formated
+        ),
+      );
+
+    print_theme_template_part('list-app', 'ver2', $args);
+
+    // data for single lead
+    $stages_names = array_map(function($el){
+      return $el['name'];
+    }, $stages );
+
+
+    $clinics    = get_option('clinics_list');
+    $treatments = get_option('treatments_list');
+    $campaigns  = get_option('campaigns_list');
+    $clinics    = $clinics ? $clinics: array();
+    $treatments = $treatments ? $treatments: array();
+    $campaigns  = $campaigns ? $campaigns: array();
+
+    wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
+    wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
+    wp_localize_script($theme_init->main_script_slug, 'is_lead_list_2', 'yes');
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
+    wp_localize_script($theme_init->main_script_slug, 'failed_lead_name', get_converted_stages());
+    wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
+    wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+    wp_localize_script($theme_init->main_script_slug, 'stages', $stages);
+    wp_localize_script($theme_init->main_script_slug, 'stages_names', $stages_names);
+    wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+    wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
+    wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
+
+    $specialists_data           = array();
+    $specialists_data_reception = array();
+    $specialists_data_tco       = array();
+
+    $clinics    = get_option('clinics_list');
+    $treatments = get_option('treatments_list');
+    $campaigns = get_option('campaigns_list');
+
+    $users = theme_get_all_users(false, true);
+
+    foreach ($users as $user_id => $user) {
+      if(!in_array(get_theme_roles('staff'), $user['roles']) && !in_array(get_theme_roles('reception'), $user['roles'] )&& !in_array(get_theme_roles('tco'), $user['roles'] ) ) {continue;}
+
+      $image    = (isset($user['image'])) ? $user['image'] : DUMMY_ADMIN;
+
+      $position =  (isset($user['image'])) ?esc_html( $user['user_position']): false;
+
+      $name         = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
+
+      $specialists_data[$name] = array(
+        'photo'     => $image,
+        'position'  => $position,
+        'user_id'   => $user_id,
+        'name'      => $name,
+        'show'      => 'no',
+        'show_tco'  => 'no'
+      );
+    }
+
+    wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
+
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
+
+
+    $converted_stages  = get_converted_stages();
+    $failed_stage_name = get_failed_stage_name();
+
+    wp_localize_script($theme_init->main_script_slug, 'converted_stages', $converted_stages);
+    wp_localize_script($theme_init->main_script_slug, 'failed_stage_name', $failed_stage_name);
+
+    $available_dentists = array();
+    $available_staff = array();
+    $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
+    $dentists_roles = array(get_theme_roles('dentist'));
+
+    foreach ( $users as $user_id => $user) {
+
+     $name         = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
+
+
+      if(count(array_intersect($staff_roles, $user['roles'])) > 0){
+          $available_staff[] = $name;
+      }
+
+      if(count(array_intersect($dentists_roles, $user['roles'])) > 0){
+          $available_dentists[] = $name;
+      }
+    }
+
+    wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
+    wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
+
+    $user = wp_get_current_user();
+
+    clog('print_lead_list: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
   }
 }

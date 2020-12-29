@@ -224,7 +224,7 @@ class velesh_theme_posts {
         ?>
           <h3>Role's Configuration</h3>
 
-          <form action="<?php echo admin_url('users.php?page=user-role-configuration'); ?>" method="POST">
+          <form action="<?php echo admin_url('users.php?page=role-configuration'); ?>" method="POST">
 
             <table>
               <tr>

@@ -52,6 +52,11 @@ class theme_construct_page{
           add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
         }
 
+        else if(self:: is_page_type( 'leads-list-2-d' )){
+          clog('leads-list-2');
+          add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
+        }
+
         else if(self:: is_page_type( 'lead' )){
           add_action('do_theme_content', array('theme_content_output', 'print_lead_content'));
         }
@@ -61,6 +66,11 @@ class theme_construct_page{
       }else{
         if(self:: is_page_type( 'dashboard' )){
           add_action('do_theme_content', array('theme_content_output', 'print_dashboard'));
+        }
+
+        else if(self:: is_page_type( 'leads-list-2' )){
+          clog('leads-list-2');
+          add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
         }
 
         else if(self:: is_page_type( 'leads-list' )){
@@ -94,6 +104,7 @@ class theme_construct_page{
     $leads_id     = (int)get_option('theme_page_leads');
     $new_lead_id  = (int)get_option('theme_page_create_leads');
     $reception_id = (int)get_option('theme_page_reception');
+    $reception_id_2 = (int)get_option('theme_page_reception_2');
     $tco_id       = (int)get_option('theme_page_tco');
      $dashboard_id  = (int)get_option('theme_page_dashboard');
 
@@ -109,6 +120,9 @@ class theme_construct_page{
         break;
       case 'leads-list':
         return  $obj->ID ===   $leads_id || $obj->ID === $reception_id || $obj->ID === $tco_id ;
+        break;
+      case 'leads-list-2':
+        return  $obj->ID ===   $leads_id || $obj->ID === $reception_id_2;
         break;
       case 'lead':
         return velesh_theme_posts::$lead === $obj->post_type;

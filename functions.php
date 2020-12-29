@@ -80,7 +80,7 @@ class velesh_init_theme{
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
-    define('THEME_DEBUG', false);
+    define('THEME_DEBUG', true);
     define('RELOAD_LEAD', false);
   }
 
@@ -443,145 +443,6 @@ class velesh_init_theme{
   }
 
 
-
-  public function merge_all_styles(){
-
-    if(is_admin()) return;
-
-    do_action('theme_before_merge_styles');
-
-     if(function_exists('is_checkout')){
-        if(is_checkout() || is_cart() ){
-          return;
-        }
-     }
-
-    if(isset($_GET['elementor-preview'])) return;
-
-    global $wp_styles;
-    global $footer_inline_style;
-    $footer_inline_style = '';
-    $merged_file_location = get_stylesheet_directory() . DIRECTORY_SEPARATOR . $this->merged_style_name;
-
-    $wp_styles->all_deps($wp_styles->queue);
-
-    $merged_style    = '';
-    $exclude         = array();
-
-    $print_in_footer = array(
-      'font-awesome',
-      'select2-style',
-      'elementor-icons',
-      'contact-form-7',
-    );
-
-    $to_do = $wp_styles->to_do;
-
-    $must_have = array(
-      'elementor-common',
-      'elementor-frontend',
-      'admin-bar',
-      'dashicons',
-      $this->main_style_slug,
-    );
-
-    foreach ($must_have as $key => $s) {
-      if(!in_array($s, $to_do)){
-        $to_do[] = $s;
-      }
-    }
-
-    if(!file_exists($merged_file_location)):
-        foreach ( $to_do  as $key => $handle) {
-          if(!isset($wp_styles->registered[$handle])) continue;
-
-           $src = strtok($wp_styles->registered[$handle]->src, '?');
-
-          if (strpos($src, 'http') !== false) {
-            $site_url = site_url();
-
-            if (strpos($src, $site_url) !== false)
-              $css_file_path = str_replace($site_url, '', $src);
-            else
-              $css_file_path = $src;
-            $css_file_path = ltrim($css_file_path, '/');
-          } else {
-            $css_file_path = ltrim($src, '/');
-          }
-
-        if(file_exists($css_file_path)):
-            $style          = file_get_contents($css_file_path);
-            $style_location = dirname($css_file_path);
-            $search_reg     = '/url\(\.{0,2}\/[-a-zA-Z0-9@:%_\+.~#?&\/\/=]{2,256}/';
-            $search_path    = '/\.\.\\//';
-
-            preg_match_all($search_reg, $style, $matches);
-
-            if(count($matches[0])> 0){
-              foreach ($matches[0] as $key => $m) {
-                preg_match_all($search_path, $m, $counts);
-                $location_array = explode('/', $style_location);
-                $length         = count( $location_array ) - count($counts[0]);
-                $location_array = array_slice($location_array, 0 ,$length );
-                $new_url        = implode('/', $location_array);
-                $search         = str_replace('url(', '', $m);
-                $url            = str_replace('../', '', $search);
-                $abs_url        = esc_url(site_url(). '/' . $new_url . '/'. $url);
-                $style          = str_replace($search, $abs_url, $style);
-              }
-            }
-
-
-            if(in_array($handle,  $print_in_footer )){
-              $footer_inline_style .=  minify_css($style);
-            }else{
-              $merged_style .= ($handle === $this->main_style_slug)? $style : minify_css($style);
-            }
-          endif;
-        }
-
-
-      $footer_inline_style_new = str_replace('@font-face{', '@font-face{ font-display: swap;', $footer_inline_style);
-
-       $search_reg = '/@font-face\s*{([\s\S]*?)}/';
-       preg_match_all($search_reg, $footer_inline_style, $fontface);
-
-       $search_name = '/font-family\s*([\s\S]*?);/';
-
-       foreach ($fontface[0] as $key => $font) {
-         preg_match_all($search_name, $font, $fontfamily);
-         $fontname = str_replace(':','', $fontfamily[1][0]);
-         $replace   = 'src: local(\''. $fontname.'\'),';
-         $footer_inline_style_new = str_replace('src:', $replace , $footer_inline_style_new );
-       }
-
-
-      $footer_inline_style = ( $footer_inline_style_new )?  $footer_inline_style_new :  $footer_inline_style;
-
-      file_put_contents ($merged_file_location , $merged_style);
-    endif;
-
-    wp_enqueue_style( 'merged_style', get_stylesheet_directory_uri() .'/'. $this->merged_style_name, THEME_VERSION );
-
-    $inline_style = '';
-
-    foreach( $to_do as $handle ) {
-      if(!in_array($handle, $exclude)){
-        if(WP_Styles()->print_inline_style($handle, false)){
-          $inline_style .= minify_css(WP_Styles()->print_inline_style($handle, false));
-        }
-
-        wp_deregister_style($handle);
-      }
-    }
-
-    printf('<style>%s</style>', $inline_style );
-
-
-    global $wp_styles;
-  }
-
-
   public function print_styles_in_footer(){
     global $footer_inline_style;
     printf('<style>%s</style>', $footer_inline_style );
@@ -627,6 +488,7 @@ class velesh_init_theme{
       'dashboard'        => __('Dashboard Page', 'theme-translations'),
       'leads'          => __('Leads Page', 'theme-translations'),
       'reception'          => __('Reception Page', 'theme-translations'),
+      'reception_2'          => __('Reception Page 2', 'theme-translations'),
       'tco'          => __('TCO Page', 'theme-translations'),
       'create_leads'         => __('Blank Lead Page', 'theme-translations'),
     );

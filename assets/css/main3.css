@@ -4131,7 +4131,8 @@ html {
   margin: auto;
 }
 
-.select-imitation, #select-imitation-sourses .select-imitation.expanded, .select-imitation.style-less.expanded, .range-datepicker {
+.select-imitation, #select-imitation-sourses .select-imitation.expanded, .select-imitation.style-less.expanded, .range-datepicker-component,
+.range-datepicker {
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
   border-radius: 5px;
   border: 1px solid #e1e6eb;
@@ -7190,6 +7191,7 @@ html {
   }
 }
 
+.range-datepicker-component,
 .range-datepicker {
   display: inline-block;
   vertical-align: top;
@@ -7201,16 +7203,24 @@ html {
   margin-bottom: 10px;
 }
 
+.range-datepicker-component .svg-icon-calendar,
+.range-datepicker .svg-icon-calendar {
+  vertical-align: -2px;
+}
+
 @media (min-width: 768px) {
+  .range-datepicker-component,
   .range-datepicker {
     height: 38px;
   }
 }
 
+.range-datepicker-component__label,
 .range-datepicker__label {
   color: #3b3f45;
 }
 
+.range-datepicker-component__text,
 .range-datepicker__text {
   color: #838993;
 }
@@ -8744,7 +8754,7 @@ body.admin-bar {
 }
 
 .site-inner {
-  min-height: calc(100vh - 93px);
+  min-height: calc(100vh - 98px);
 }
 
 .admin-bar .site-inner {
@@ -9135,6 +9145,41 @@ body.admin-bar {
   vertical-align: top;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  -webkit-transition: 'background' .1s;
+  transition: 'background' .1s;
+  background: #f5f5f5;
+}
+
+:hover > ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(224, 232, 249, 0.4);
+  -webkit-transition: 'background' .1s;
+  transition: 'background' .1s;
+  border-radius: 3px;
+}
+
+:hover > ::-webkit-scrollbar-thumb {
+  background: #9daad0;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #6778f4;
+}
+
 .debug {
   right: 10px;
   bottom: 10px;
@@ -9283,6 +9328,7 @@ body.admin-bar {
 
 .justify-content-center .alert,
 .justify-content-center .select-imitation,
+.justify-content-center .range-datepicker-component,
 .justify-content-center .range-datepicker {
   margin: 0 5px 10px;
 }

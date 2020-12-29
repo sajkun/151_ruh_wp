@@ -488,10 +488,10 @@ if(!function_exists('get_posts_by_dates')){
   */
 
   function get_posts_by_dates($from = false, $to = false, $post_type = false){
+    $start = microtime(true);
     $theme_roles = get_theme_roles();
     $stages_all  = get_option('leads_stages');
 
-    $start = microtime(true);
     $post_type = (! $post_type )? velesh_theme_posts::$lead :  $post_type ;
 
     $args = array(
@@ -629,26 +629,20 @@ if(!function_exists('get_posts_by_dates')){
     if(!$from && !$to){
        unset($args['date_query']);
     }
+    $posts = array();
 
-    $t     = get_posts($args);
-    $posts = get_posts($args);
+    $dentist_role = get_theme_roles('dentists');
 
-    $dentist_role = get_theme_roles('dentist');
-
-    if(in_array( $dentist_role , $user->roles)){
+    if(in_array( 'administrator' , $user->roles)){
       unset($args['meta_query']);
       $args['author']  = $user->ID;
-      $leads_created   = get_posts($args);
-
-      foreach ($leads_created as $key => $lead) {
-        $t[] = $lead;
-      }
     }
 
-    $posts = $t;
+    $t     = get_posts($args);
+
     clog('get_posts_by_dates: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
 
-    return $posts;
+    return $t;
   }
 }
 
@@ -899,20 +893,26 @@ if(!function_exists('get_leads_meta')){
       if($stages){
         $exists = false;
 
-
         foreach ($stages as $st) {
           $exists = $st['name'] === $stage ? true :  $exists;
         }
 
         $leads[$lead_id]->lead_stage = $filter_data['lead_stage'] =  $lead_stage  = ($exists)? $stage : $stages[0]['name'];
 
-
       }else{
         $leads[$lead_id]->lead_stage = $lead_stage  = '';
         $filter_data['lead_stage'] = '';
       }
 
+      $filter_data2 = array_map(function($el){
+        if(!$el){
+          return array();
+        }
+        return is_array($el)? $el : array($el);
+      },$filter_data);
+
       $leads[$lead_id]->filter_data = $filter_data;
+      $leads[$lead_id]->filter_data2 = $filter_data2;
       // detect if lead is failed or converted
 
       $leads[$lead_id]->is_converted = (in_array($leads[$lead_id]->lead_stage, $converted_stages) )? 'yes': 'no';
@@ -1007,9 +1007,7 @@ if(!function_exists('get_filters_by_leads')){
        foreach ($all_stages as $key => $st) {
           $stages_formatted[$st['name']] = false;
        }
-
     }
-
 
     if(!$leads) return $data;
 
@@ -1055,7 +1053,6 @@ if(!function_exists('get_filters_by_leads')){
       if($add_stages && array_key_exists($lead->lead_stage, $stages_formatted )){
           $stages_formatted[$lead->lead_stage] = true;
       }
-
 
 
       // add lead stage filter for scv data
