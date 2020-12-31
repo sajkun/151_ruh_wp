@@ -940,6 +940,8 @@ if(!function_exists('get_leads_meta')){
       $leads[$lead_id]->sms_count_tco     = (int)$sms_count_tco    ;
 
       $leads[$lead_id]->payment_end_date =  $end_date;
+      $leads[$lead_id]->show_message_alert_him = 0;
+      $leads[$lead_id]->show_message_alert = 0;
     }
 
 
