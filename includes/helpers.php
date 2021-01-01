@@ -568,8 +568,9 @@ if(!function_exists('get_posts_by_dates')){
     }
 
 
-    $reception_id = (int)get_option('theme_page_reception');
-    $tco_id = (int)get_option('theme_page_tco');
+    $reception_id = (int)get_option('theme_page_reception') || (int)get_option('theme_page_reception_2') ;
+
+    $tco_id = (int)get_option('theme_page_tco') || (int)get_option('theme_page_tco_2') ;
 
     if(get_queried_object_id() == $reception_id ) {
       $stages = array();

@@ -490,6 +490,7 @@ class velesh_init_theme{
       'reception'          => __('Reception Page', 'theme-translations'),
       'reception_2'          => __('Reception Page 2', 'theme-translations'),
       'tco'          => __('TCO Page', 'theme-translations'),
+      'tco_2'          => __('TCO Page 2', 'theme-translations'),
       'create_leads'         => __('Blank Lead Page', 'theme-translations'),
     );
 

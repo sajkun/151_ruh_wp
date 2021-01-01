@@ -9051,6 +9051,11 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
 
         // add message data
         var  leads = vm.leads.map(el=>{
+
+          if(!el.meta.patient_data.phone){
+            return el;
+          }
+
           var phone = el.meta.patient_data.phone.replace('+44', '0');
 
           if('undefined' != typeof(vm.by_phones_data[phone])){
