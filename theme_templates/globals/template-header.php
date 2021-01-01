@@ -6,13 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <header class="site-header">
   <div class="container">
-    <div class="row no-gutters">
+    <div class="row no-gutters justify-content-between">
       <div class="col-12 col-md-3 col-lg-2 text-center text-left-md">
         <a href="" class="logo"><img src="<?php echo THEME_URL;?>/assets/images/logo.svg" alt=""><span class="logo__text"> tracker</span></a>
       </div>
       <nav class="col-12 order-last order-md-0 col-md-4 col-lg-4 main-menu">
         <ul class="menu">
-
           <?php if ($is_admin): ?>
           <li class="menu-item <?php echo $dashboard_menu_class?>">
             <a href="<?php echo $dashboard_url?>"> Dashboard </a>
@@ -33,14 +32,14 @@ if ( ! defined( 'ABSPATH' ) ) {
           <?php endif ?>
         </ul>
       </nav>
-      <div class="search" v-bind:class="classes"  id="search-form">
+      <div class="search visuallyhidden" v-bind:class="classes"  id="search-form">
         <div class="row no-gutters justify-content-between justify-content-around-md justify-content-between-lg">
           <div class="search-open"  v-if="show_search">
             <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
           </div>
           <div class="search__wrapper"  v-if="show_search">
-            <form action="#" method="POST" class="search__form">
-              <div class="row no-gutters">
+            <form action="#" method="POST" class="search__form" v-on:submit.prevent="run_search_ajax">
+              <div class="row no-gutters" >
                 <button type="submit">
                    <svg class="icon svg-icon-search"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-search"></use> </svg>
                 </button>

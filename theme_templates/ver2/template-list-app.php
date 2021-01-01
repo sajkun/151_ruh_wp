@@ -6,7 +6,7 @@
     <img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt="">
   </div>
 
-  <div class="filter-container">
+  <div class="filter-container" v-show ="show_list">
   <div class="spacer-h-30"></div>
     <div class="row no-gutters justify-content-start justify-content-center-lg switchers">
 
@@ -69,9 +69,9 @@
     </div><!-- switchers -->
   </div><!-- filter-container -->
 
-  <div class="spacer-h-30"></div>
+  <div class="spacer-h-30"  v-show="show_list"></div>
 
-  <div class="leads-scroll visuallyhiddden">
+  <div class="leads-scroll visuallyhiddden"  v-show="show_list">
     <div class="horizontal-scroll horizontal-scroll-2">
       <div class="row no-gutters" ref="column_container">
         <list-column
@@ -81,10 +81,14 @@
          :_converted="get_convertion(data.name)"
          :_leads = "leads_by_column[data.name]"
          v-on:update_order_status_on_drag = update_order_status_on_drag_cb
+         v-on:open_lead = "open_lead_cb"
         ></list-column>
       </div>
     </div>
   </div>
 
+  <comp-single-lead
+   ref = "single_lead"
+  ></comp-single-lead>
 </div><!-- list-app -->
 

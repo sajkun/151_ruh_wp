@@ -1132,12 +1132,15 @@ class theme_content_output{
     }, $stages );
 
 
-    $clinics    = get_option('clinics_list');
+    $clinics = get_option('clinics_list');
     $treatments = get_option('treatments_list');
-    $campaigns  = get_option('campaigns_list');
-    $clinics    = $clinics ? $clinics: array();
+    $campaigns = get_option('campaigns_list');
+    $payment_methods = get_option('payment_methods');
+
+    $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
-    $campaigns  = $campaigns ? $campaigns: array();
+    $campaigns = $campaigns ? $campaigns: array();
+    $payment_methods = $payment_methods ? $payment_methods: array();
 
     wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
     wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
@@ -1152,15 +1155,12 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'stages_names', $stages_names);
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
+    wp_localize_script($theme_init->main_script_slug, 'payment_methods', $payment_methods);
     wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
 
     $specialists_data           = array();
     $specialists_data_reception = array();
     $specialists_data_tco       = array();
-
-    $clinics    = get_option('clinics_list');
-    $treatments = get_option('treatments_list');
-    $campaigns = get_option('campaigns_list');
 
     $users = theme_get_all_users(false, true);
 
@@ -1181,12 +1181,38 @@ class theme_content_output{
         'show'      => 'no',
         'show_tco'  => 'no'
       );
+
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('reception'), $user['roles'])){
+
+        $specialists_data_reception[$name] = array(
+          'photo'     => $image,
+          'position'  => $position,
+          'user_id'   => $user_id,
+          'name'      => $name,
+          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+        );
+      }
+      if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['roles'])){
+
+        $specialists_data_tco[$name] = array(
+          'photo'     => $image,
+          'position'  => $position,
+          'user_id'   => $user_id,
+          'name'      => $name,
+          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+        );
+      }
     }
 
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
 
-    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
 
+
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data_reception));
+    wp_localize_script($theme_init->main_script_slug, 'specialists_tco', array_keys($specialists_data_tco));
 
     $converted_stages  = get_converted_stages();
     $failed_stage_name = get_failed_stage_name();
@@ -1218,6 +1244,45 @@ class theme_content_output{
 
     $user = wp_get_current_user();
 
+
+    if(in_array(get_theme_roles('dentist'), $user->roles)){
+      $last_name  = get_user_meta($user->ID, 'last_name', true);
+      $first_name = get_user_meta($user->ID, 'first_name', true);
+      $nickname   = get_user_meta($user->ID, 'nickname', true);
+
+      $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
+
+       wp_localize_script($theme_init->main_script_slug, 'is_dentist', 'yes');
+       wp_localize_script($theme_init->main_script_slug, 'dentist_name', $name  );
+    }else{
+       wp_localize_script($theme_init->main_script_slug, 'is_dentist', 'no');
+    }
+
+    $sources = get_option('sources_list');
+
+
+    if (get_option('add_dentists_to_sources') == 'yes') {
+      $sources = array_merge($sources,$available_dentists );
+    }
+
+
+    $sources = array_unique($sources);
+
+    foreach ($sources as $key => $value) {
+      if(!$value){
+        unset($sources[$key]);
+      }
+    }
+    wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
+     );
+
     clog('print_lead_list: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
+  }
+
+  public static function print_single_content_inline(){
+
+    $args = array();
+
+    print_theme_template_part('lead-in-list', 'ver2', $args);
   }
 }

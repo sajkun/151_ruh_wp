@@ -78,6 +78,9 @@ if(!class_exists('theme_ajax_action')){
 
       add_action('wp_ajax_send_sms', array($this,'send_sms_cb'));
       add_action('wp_ajax_nopriv_send_sms', array($this,'send_sms_cb'));
+
+      add_action('wp_ajax_do_ajax_search', array($this,'do_ajax_search_cb'));
+      add_action('wp_ajax_nopriv_do_ajax_search', array($this,'do_ajax_search_cb'));
     }
 
     public static function send_sms_cb(){
@@ -662,6 +665,28 @@ if(!class_exists('theme_ajax_action')){
       }
 
       wp_send_json(array('success' => $update));
+    }
+
+    public static function do_ajax_search_cb(){
+
+      $args = array(
+        'post_type' => velesh_theme_posts::$lead,
+        'posts_per_page' => -1,
+        'limit' => -1,
+        'meta_query' => array(array(
+          'key'         => '_patient_data',
+          'value'       =>  $_POST['search'],
+          'compare_key' => 'LIKE',
+          'compare'     => 'LIKE',
+        )),
+      );
+
+      $leads = get_leads_meta(get_posts($args));
+
+      wp_send_json(array(
+        'post' => $_POST,
+        'leads' => $leads,
+      ));
     }
 
 

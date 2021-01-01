@@ -520,7 +520,7 @@ if(!function_exists('get_posts_by_dates')){
 
       $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
 
-      $args['meta_query'] =array(array(
+      $args['meta_query'] = array(array(
         'key'         => '_treatment_data',
         'value'       =>  $name,
         'compare_key' => 'LIKE',
@@ -722,11 +722,25 @@ if(!function_exists('get_leads_meta')){
 
       $coordinator_data =   isset($post_meta['_treatment_coordinator'])? ($post_meta['_treatment_coordinator']): false;
 
+        $tco_data = isset($post_meta['_tco_data'])? $post_meta['_tco_data'] :array(
+                'digital' => false,
+                'tco' => false,
+                'dentist' => false,
+                'attended' => false,
+                'fta_cancelled' => false,
+                'tax' => false,
+              );
+        foreach ($tco_data  as $key => $value) {
+          $tco_data[$key] = $tco_data[$key] === 'false' || !$value ? 0 : $tco_data[$key];
+          $tco_data[$key] = $tco_data[$key] === 'true' ? 1 : $tco_data[$key];
+        }
+
        $meta = array(
         'lead_notes'            =>  isset($post_meta['_lead_notes'])? ($post_meta['_lead_notes']): false,
+        'tco_data' =>     $tco_data ,
         'lead_notes_tco'        =>  isset($post_meta['_lead_notes_tco'])? ($post_meta['_lead_notes_tco']): false,
         'lead_files'            =>  isset($post_meta['_lead_files'])? ($post_meta['_lead_files']): false,
-        'treatment_data'        =>  isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): false,
+        'treatment_data'        =>  isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): array(),
         'treatment_coordinator' => $coordinator_data,
         'treatment_value'       =>  isset($post_meta['_treatment_value'])? ($post_meta['_treatment_value']): false,
         'patient_data'          =>  isset($post_meta['_patient_data'])? ($post_meta['_patient_data']): false,

@@ -23,7 +23,6 @@ class theme_construct_page{
   */
   public static function init(){
 
-
     if(is_user_logged_in()){
       $user_id   = get_current_user_id();
       $user_meta = get_userdata($user_id);
@@ -71,6 +70,7 @@ class theme_construct_page{
         else if(self:: is_page_type( 'leads-list-2' )){
           clog('leads-list-2');
           add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
+          add_action('do_theme_content', array('theme_content_output', 'print_single_content_inline'), 5);
         }
 
         else if(self:: is_page_type( 'leads-list' )){
