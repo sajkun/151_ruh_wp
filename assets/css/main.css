@@ -9673,6 +9673,12 @@ body.admin-bar {
   transition: all .2s;
 }
 
+.button-create.gray {
+  background-color: #838993 !important;
+  border-color: #838993 !important;
+  cursor: unset;
+}
+
 .button-create:hover {
   border: 1px solid #01ac7b;
   background-color: #01ac7b;

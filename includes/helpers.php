@@ -740,7 +740,6 @@ if(!function_exists('get_leads_meta')){
         'lead_notes'            =>  isset($post_meta['_lead_notes'])? ($post_meta['_lead_notes']): false,
         'tco_data' =>     $tco_data ,
         'lead_notes_tco'        =>  isset($post_meta['_lead_notes_tco'])? ($post_meta['_lead_notes_tco']): false,
-        'lead_files'            =>  isset($post_meta['_lead_files'])? ($post_meta['_lead_files']): false,
         'treatment_data'        =>  isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): array(),
         'treatment_coordinator' => $coordinator_data,
         'treatment_value'       =>  isset($post_meta['_treatment_value'])? ($post_meta['_treatment_value']): false,
@@ -753,7 +752,9 @@ if(!function_exists('get_leads_meta')){
         'specialists_assigned_tco' => isset($post_meta['_lead_specialists_tco'])? ($post_meta['_lead_specialists_tco']): false,
 
         'text_messages' => isset($post_meta['_text_messages'])? ($post_meta['_text_messages']): false,
+        'lead_files' => $post_meta['_lead_files']? $post_meta['_lead_files']: array(),
        );
+
 
       // $lead_specialists      = get_post_meta($post->ID, '_lead_specialists', true);
       $lead_specialists      = isset($post_meta['_lead_specialists'])? ($post_meta['_lead_specialists']): false;
@@ -957,8 +958,9 @@ if(!function_exists('get_leads_meta')){
       $leads[$lead_id]->payment_end_date =  $end_date;
       $leads[$lead_id]->show_message_alert_him = 0;
       $leads[$lead_id]->show_message_alert = 0;
-    }
 
+    }
+// Saima Nasim
 
     clog('get_leads_meta: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
     return $leads;

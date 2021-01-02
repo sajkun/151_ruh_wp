@@ -567,7 +567,7 @@ if(!class_exists('theme_ajax_action')){
       $upload = exec_upload_file('file');
       $upload['post'] = $_POST;
       // $verify =  wp_verify_nonce(  $_POST['file_nonce'], 'upload_file_nonce_id' );
-      $upload['verify'] = $verify;
+      // $upload['verify'] = $verify;
 
       // if(!$verify || $verify > 1 ){
       //   wp_send_json_error(array('Nonce field check failed'), 418);

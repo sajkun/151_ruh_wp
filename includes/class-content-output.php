@@ -884,7 +884,7 @@ class theme_content_output{
     $clinics = get_option('clinics_list');
     $treatments = get_option('treatments_list');
     $campaigns = get_option('campaigns_list');
-    $payment_methods = get_option('payment_methods');
+    $payment_methods = get_option('payment_methods_list');
 
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
@@ -1100,8 +1100,6 @@ class theme_content_output{
            $theme_user_role = 'all';
         }
 
-        $sms_data = get_option('message_data')?: false;
-        wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
       }
 
       if(!$stages){
@@ -1109,6 +1107,10 @@ class theme_content_output{
         echo '<p class="text-center">No stages configured, Leads can not be ordered. Please Configure stages first</p>';
         return;
       }
+
+      $sms_data = get_option('message_data')?: false;
+
+      wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
 
       $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
 
@@ -1135,7 +1137,7 @@ class theme_content_output{
     $clinics = get_option('clinics_list');
     $treatments = get_option('treatments_list');
     $campaigns = get_option('campaigns_list');
-    $payment_methods = get_option('payment_methods');
+    $payment_methods = get_option('payment_methods_list');
 
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
