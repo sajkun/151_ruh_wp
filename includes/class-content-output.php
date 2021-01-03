@@ -36,7 +36,9 @@ class theme_content_output{
     $new_lead_id = (int)get_option('theme_page_create_leads');
 
     $reception_id = (int)get_option('theme_page_reception');
+    $reception_id2 = (int)get_option('theme_page_reception_2');
     $tco_id = (int)get_option('theme_page_tco');
+    $tco_id2 = (int)get_option('theme_page_tco_2');
 
     $user_id   = get_current_user_id();
     $user_meta = get_userdata($user_id);
@@ -51,18 +53,18 @@ class theme_content_output{
 
     $dashboard_menu_class = ($obj->ID === $dashboard_id)? 'active' : '';
 
-    $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)$reception_id || $obj->ID === (int)$tco_id  || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead ) || !$is_admin ;
+    $show_add = ($obj->ID === (int)get_option('theme_page_leads') || $obj->ID === (int)$reception_id || $obj->ID === (int)$reception_id2 || $obj->ID === (int)$tco_id2  || $obj->ID === (int)$tco_id  || $obj->ID === (int)get_option('theme_page_create_leads') ||  $obj->post_type === velesh_theme_posts::$lead ) || !$is_admin ;
 
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
-      'reception_id'         => $reception_id,
-      'tco_id'               => $tco_id,
+      'reception_id'         => $reception_id2,
+      'tco_id'               => $tco_id2,
       'dashboard_menu_class' => $dashboard_menu_class,
       'dashboard_url'        => get_permalink($dashboard_id),
       'lead_url'             => get_permalink($leads_id),
-      'new_lead_url'             => get_permalink($new_lead_id),
-      'reception_url'        => get_permalink($reception_id),
-      'tco_url'              => get_permalink($tco_id),
+      'new_lead_url'         => get_permalink($new_lead_id),
+      'reception_url'        => get_permalink($reception_id2),
+      'tco_url'              => get_permalink($tco_id2),
       'photo_url'            => $photo_url,
       'name'                 => $name,
       'show_add'             => $show_add ,
@@ -241,53 +243,46 @@ class theme_content_output{
 
       $theme_roles = get_theme_roles();
 
-      if( in_array($theme_roles['reception'], $user_roles )){
-        foreach ($stages as $id => $_stage) {
-          if( $_stage['reception'] == 0 ){
-            unset($stages[$id]);
-          }
-        }
+       if( in_array($theme_roles['reception'], $user_roles )){
+          $stages =  array_filter($stages, function($el){
+            return  $el['reception'] != 0;
+          });
 
         wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
+
         $theme_user_role = 'reception';
 
       }else if( in_array($theme_roles['tco'], $user_roles )){
-        foreach ($stages as $id => $_stage) {
-          if( $_stage['tco'] == 0 ){
-            unset($stages[$id]);
-          }
-        }
+        $stages =  array_filter($stages, function($el){
+            return  $el['tco'] != 0;
+        });
+
         wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
         $theme_user_role = 'tco';
       }else{
 
         $reception_id = (int)get_option('theme_page_reception');
-        $tco_id = (int)get_option('theme_page_tco');
+        $tco_id       = (int)get_option('theme_page_tco');
+
 
         if(get_queried_object_id() == $reception_id ) {
-          foreach ($stages as $id => $_stage) {
-            if( $_stage['reception'] == 0 ){
-              unset($stages[$id]);
-            }
-          }
+          $stages =  array_filter($stages, function($el){
+            return  $el['reception'] != 0;
+          });
 
           wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
           $theme_user_role = 'reception';
         }else if(get_queried_object_id() == $tco_id ){
-          foreach ($stages as $id => $_stage) {
-            if( $_stage['tco'] == 0 ){
-              unset($stages[$id]);
-            }
-          }
+          $stages =  array_filter($stages, function($el){
+              return  $el['tco'] != 0;
+          });
+
           wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
           $theme_user_role = 'tco';
         }else{
           wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'all' );
            $theme_user_role = 'all';
         }
-
-        $sms_data = get_option('message_data')?: false;
-        wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
       }
 
       if(!$stages){
@@ -295,6 +290,7 @@ class theme_content_output{
         echo '<p class="text-center">No stages configured, Leads can not be ordered. Please Configure stages first</p>';
         return;
       }
+
 
       $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
 
@@ -861,7 +857,6 @@ class theme_content_output{
     }
 
 
-
     $stages = get_option('leads_stages');
 
     $args = array(
@@ -919,7 +914,6 @@ class theme_content_output{
     foreach ($stages as $key => $st) {
        $stages_names[] = $st['name'];
     }
-
 
     $user = wp_get_current_user();
 
@@ -1064,7 +1058,7 @@ class theme_content_output{
           $stages =  array_filter($stages, function($el){
             return  $el['reception'] != 0;
           });
-
+        wp_localize_script($theme_init->main_script_slug, 'list_type', 'reception');
         wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
 
         $theme_user_role = 'reception';
@@ -1075,11 +1069,12 @@ class theme_content_output{
         });
 
         wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
+        wp_localize_script($theme_init->main_script_slug, 'list_type', 'tco');
         $theme_user_role = 'tco';
       }else{
 
-        $reception_id = (int)get_option('theme_page_reception');
-        $tco_id = (int)get_option('theme_page_tco');
+        $reception_id = (int)get_option('theme_page_reception_2');
+        $tco_id = (int)get_option('theme_page_tco_2');
 
         if(get_queried_object_id() == $reception_id ) {
           $stages =  array_filter($stages, function($el){
@@ -1087,19 +1082,20 @@ class theme_content_output{
           });
 
           wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'reception' );
+          wp_localize_script($theme_init->main_script_slug, 'list_type', 'reception');
           $theme_user_role = 'reception';
         }else if(get_queried_object_id() == $tco_id ){
           $stages =  array_filter($stages, function($el){
               return  $el['tco'] != 0;
           });
-
           wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'tco' );
+          wp_localize_script($theme_init->main_script_slug, 'list_type', 'tco');
           $theme_user_role = 'tco';
         }else{
           wp_localize_script($theme_init->main_script_slug, 'theme_user_role', 'all' );
-           $theme_user_role = 'all';
+          $theme_user_role = 'all';
+          wp_localize_script($theme_init->main_script_slug, 'list_type', 'all');
         }
-
       }
 
       if(!$stages){
@@ -1110,23 +1106,23 @@ class theme_content_output{
 
       $sms_data = get_option('message_data')?: false;
 
-      wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
-
       $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
 
+      $reception_id2 = (int)get_option('theme_page_reception_2');
+      $tco_id2 = (int)get_option('theme_page_tco_2');
+
+
+      $current_id = get_queried_object_id();
+
       $args = array(
-        'user_name'       => $user_name,
-        'user_id'         => get_current_user_id(),
-        'stages'          => $stages,
-        'is_manager'      => $is_manager,
-        'theme_user_role' => $theme_user_role,
-        'daterange'       => array(
-          'from' => $days_30_before_today_formatted,
-          'to'   => $today_formated
-        ),
+       'tco_id2' => $tco_id2,
+       'reception_id2' => $reception_id2,
+       'current_id' => $current_id,
       );
 
-    print_theme_template_part('list-app', 'ver2', $args);
+      print_theme_template_part('list-app', 'ver2', $args);
+
+
 
     // data for single lead
     $stages_names = array_map(function($el){
@@ -1144,21 +1140,6 @@ class theme_content_output{
     $campaigns = $campaigns ? $campaigns: array();
     $payment_methods = $payment_methods ? $payment_methods: array();
 
-    wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
-    wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
-    wp_localize_script($theme_init->main_script_slug, 'is_lead_list_2', 'yes');
-    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
-    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
-    wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
-    wp_localize_script($theme_init->main_script_slug, 'failed_lead_name', get_converted_stages());
-    wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
-    wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
-    wp_localize_script($theme_init->main_script_slug, 'stages', $stages);
-    wp_localize_script($theme_init->main_script_slug, 'stages_names', $stages_names);
-    wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
-    wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
-    wp_localize_script($theme_init->main_script_slug, 'payment_methods', $payment_methods);
-    wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
 
     $specialists_data           = array();
     $specialists_data_reception = array();
@@ -1208,19 +1189,8 @@ class theme_content_output{
       }
     }
 
-    wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
-
-
-
-    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
-    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data_reception));
-    wp_localize_script($theme_init->main_script_slug, 'specialists_tco', array_keys($specialists_data_tco));
-
     $converted_stages  = get_converted_stages();
     $failed_stage_name = get_failed_stage_name();
-
-    wp_localize_script($theme_init->main_script_slug, 'converted_stages', $converted_stages);
-    wp_localize_script($theme_init->main_script_slug, 'failed_stage_name', $failed_stage_name);
 
     $available_dentists = array();
     $available_staff = array();
@@ -1241,11 +1211,7 @@ class theme_content_output{
       }
     }
 
-    wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
-    wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
-
     $user = wp_get_current_user();
-
 
     if(in_array(get_theme_roles('dentist'), $user->roles)){
       $last_name  = get_user_meta($user->ID, 'last_name', true);
@@ -1262,11 +1228,9 @@ class theme_content_output{
 
     $sources = get_option('sources_list');
 
-
     if (get_option('add_dentists_to_sources') == 'yes') {
       $sources = array_merge($sources,$available_dentists );
     }
-
 
     $sources = array_unique($sources);
 
@@ -1275,8 +1239,34 @@ class theme_content_output{
         unset($sources[$key]);
       }
     }
+
+    wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
+    wp_localize_script($theme_init->main_script_slug, 'converted_stages', $converted_stages);
+    wp_localize_script($theme_init->main_script_slug, 'failed_stage_name', $failed_stage_name);
+    wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
+
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
+    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data_reception));
+    wp_localize_script($theme_init->main_script_slug, 'specialists_tco', array_keys($specialists_data_tco));
     wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
      );
+    wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
+    wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
+    wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
+    wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
+    wp_localize_script($theme_init->main_script_slug, 'is_lead_list_2', 'yes');
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data', $leads);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_leads_data_filtered', $leads);
+    wp_localize_script($theme_init->main_script_slug, 'dashboard_filter_data', $filter_data);
+    wp_localize_script($theme_init->main_script_slug, 'failed_lead_name', get_converted_stages());
+    wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
+    wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
+    wp_localize_script($theme_init->main_script_slug, 'stages', $stages);
+    wp_localize_script($theme_init->main_script_slug, 'stages_names', $stages_names);
+    wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
+    wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
+    wp_localize_script($theme_init->main_script_slug, 'payment_methods', $payment_methods);
+    wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
 
     clog('print_lead_list: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
   }
@@ -1286,5 +1276,7 @@ class theme_content_output{
     $args = array();
 
     print_theme_template_part('lead-in-list', 'ver2', $args);
+    print_theme_template_part('lead-new', 'ver2', $args);
+    print_theme_template_part('popup', 'ver2', $args);
   }
 }

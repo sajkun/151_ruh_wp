@@ -513,6 +513,7 @@ if(!function_exists('get_posts_by_dates')){
 
     $dentist_role =  $theme_roles['dentist'];
 
+
     if(in_array( $dentist_role , $user->roles)){
       $last_name  = get_user_meta($user->ID, 'last_name', true);
       $first_name = get_user_meta($user->ID, 'first_name', true);
@@ -567,52 +568,49 @@ if(!function_exists('get_posts_by_dates')){
       ));
     }
 
-
-    $reception_id = (int)get_option('theme_page_reception') || (int)get_option('theme_page_reception_2') ;
-
-    $tco_id = (int)get_option('theme_page_tco') || (int)get_option('theme_page_tco_2') ;
-
-    if(get_queried_object_id() == $reception_id ) {
-      $stages = array();
-      foreach ($stages_all as $id => $stage) {
-        if($stage['reception'] == 1){
-          $stages[]  = $stage['name'];
+    if(!in_array( $dentist_role , $user->roles)){
+      $reception_id = (int)get_option('theme_page_reception') || (int)get_option('theme_page_reception_2') ;
+      $tco_id = (int)get_option('theme_page_tco') || (int)get_option('theme_page_tco_2') ;
+      if(get_queried_object_id() == $reception_id ) {
+        $stages = array();
+        foreach ($stages_all as $id => $stage) {
+          if($stage['reception'] == 1){
+            $stages[]  = $stage['name'];
+          }
         }
-      }
 
-      $args['meta_query'] =array(
-        'relation' => "OR",
-        array(
-        'key'         => '_lead_stage',
-        'value'       =>  $stages,
-        'compare'     => 'IN',
-       ),
-        array(
-        'key'         => '_lead_stage',
-        'compare' => 'NOT EXISTS'
-      ));
-    }else if(get_queried_object_id() == $tco_id ){
-      $stages = array();
-      foreach ($stages_all as $id => $stage) {
-        if($stage['tco'] == 1){
-          $stages[]  = $stage['name'];
+        $args['meta_query'] =array(
+          'relation' => "OR",
+          array(
+          'key'         => '_lead_stage',
+          'value'       =>  $stages,
+          'compare'     => 'IN',
+         ),
+          array(
+          'key'         => '_lead_stage',
+          'compare' => 'NOT EXISTS'
+        ));
+      }else if(get_queried_object_id() == $tco_id ){
+        $stages = array();
+        foreach ($stages_all as $id => $stage) {
+          if($stage['tco'] == 1){
+            $stages[]  = $stage['name'];
+          }
         }
-      }
 
-      $args['meta_query'] =array(
-        'relation' => "OR",
-        array(
-        'key'         => '_lead_stage',
-        'value'       =>  $stages,
-        'compare'     => 'IN',
-       ),
-        array(
-        'key'         => '_lead_stage',
-        'compare' => 'NOT EXISTS'
-      ));
+        $args['meta_query'] =array(
+          'relation' => "OR",
+          array(
+          'key'         => '_lead_stage',
+          'value'       =>  $stages,
+          'compare'     => 'IN',
+         ),
+          array(
+          'key'         => '_lead_stage',
+          'compare' => 'NOT EXISTS'
+        ));
+      }
     }
-
-
 
     if(!$from){
       unset($args['date_query']['after']);

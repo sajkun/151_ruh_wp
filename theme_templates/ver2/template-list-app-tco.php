@@ -74,19 +74,6 @@
   <div class="leads-scroll visuallyhiddden"  v-show="show_list">
     <div class="horizontal-scroll horizontal-scroll-2">
       <div class="row no-gutters" ref="column_container">
-
-        <?php if ($current_id = $reception_id2): ?>
-        <list-column
-         v-for="data, stage_id in visible_stages"
-         :key = "'column_'+stage_id"
-         :_info = "data"
-         :_converted="get_convertion(data.name)"
-         :_leads = "leads_by_column[data.name]"
-         v-on:update_order_status_on_drag = update_order_status_on_drag_cb
-         v-on:open_lead = "open_lead_cb"
-        ></list-column>
-
-        <?php else: ?>
         <list-column-tco
          v-for="data, stage_id in visible_stages"
          :key = "'column_'+stage_id"
@@ -96,7 +83,6 @@
          v-on:update_order_status_on_drag = update_order_status_on_drag_cb
          v-on:open_lead = "open_lead_cb"
         ></list-column-tco>
-        <?php endif ?>
       </div>
     </div>
   </div>

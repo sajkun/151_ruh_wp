@@ -413,7 +413,6 @@ if(!class_exists('theme_ajax_action')){
 
       $meta = $_POST['meta'];
 
-
       if((int)$_POST['confirmed'] === 0 && $post_id < 0){
        global $wpdb;
        $name = $meta['patient_data']['name'];
@@ -526,6 +525,12 @@ if(!class_exists('theme_ajax_action')){
       $meta['url']     = get_permalink($post_id);
       $meta['author']  = get_current_user_id();
 
+      if($post_id > 0){
+        $post = get_post($post_id);
+        $leads = get_leads_meta(array($post));
+        $meta['new_leads'] = $leads;
+      }
+
       $update = array( 'ID' => $post_id  );
       wp_update_post( $update );
 
@@ -566,13 +571,6 @@ if(!class_exists('theme_ajax_action')){
     public function upload_new_document_cb(){
       $upload = exec_upload_file('file');
       $upload['post'] = $_POST;
-      // $verify =  wp_verify_nonce(  $_POST['file_nonce'], 'upload_file_nonce_id' );
-      // $upload['verify'] = $verify;
-
-      // if(!$verify || $verify > 1 ){
-      //   wp_send_json_error(array('Nonce field check failed'), 418);
-      // }
-
      if(isset($upload['error'])){
         wp_send_json_error($upload['error'], 418);
       }else{

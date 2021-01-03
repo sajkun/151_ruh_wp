@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly
 }
-echo '<script type="text/x-template" id="lead-single-tmpl">';
+echo '<script type="text/x-template" id="lead-new-tmpl">';
 ?>
 <div v-show="visible">
   <div class="spacer-h-40"></div>
@@ -39,14 +39,14 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 
       <div class="col-12 col-md-4 text-center text-right-md">
 
-        <a href="" class="button-cancel">Delete</a>
+        <a href="" class="button-cancel">Cancel</a>
 
         <a href="javascript:void(0)" class="button-create"
           v-bind:class="{gray : !requre_save}"
-          v-on:click.prevent = 'exec_save'
+          v-on:click.prevent = 'save_lead_meta()'
         >
             <svg class="icon svg-icon-ok"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-ok"></use> </svg>
-          <span>Save</span>
+          <span>Create Lead</span>
         </a>
       </div><!-- col-12 col-md-4 text-center text-right-md -->
     </div><!-- row -->
@@ -258,10 +258,10 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
             <div class="spacer-h-15"></div>
           </div>
 
-          <form id="message-form-reception" v-on:submit.prevent  v-on:submit="add_note('enquery')" >
+          <form id="message-form-reception-new" v-on:submit.prevent  v-on:submit="add_note('enquery')" >
             <div class="leads-block__form">
 
-            <textarea name="text" placeholder="Enter new note…" ref="note_textarea" v-model="note_text" @keyup.alt.enter="add_note('enquery')" @keyup.ctrl.enter="add_note('enquery')" title="use Enter for line breaks, use Alt+Enter to add note"></textarea>
+            <textarea name="text-new" placeholder="Enter new note…" ref="note_textarea" v-model="note_text" @keyup.alt.enter="add_note('enquery')" @keyup.ctrl.enter="add_note('enquery')" title="use Enter for line breaks, use Alt+Enter to add note"></textarea>
 
             <button type="submit" class="button-submit">
               <svg class="icon svg-icon-send"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-send"></use> </svg>
@@ -469,7 +469,7 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
               <div class="spacer-h-15"></div>
             </div>
 
-            <form id="message-form" v-on:submit.prevent  v-on:submit="add_note('tco')" >
+            <form id="message-form-new" v-on:submit.prevent  v-on:submit="add_note('tco')" >
               <div class="leads-block__form">
 
               <textarea name="text" placeholder="Add new note…" ref="note_textarea_tco" v-model="note_text_tco" @keyup.alt.enter="add_note('tco')" @keyup.ctrl.enter="add_note('tco')" title="use Enter for line breaks, use Alt+Enter to add note"></textarea>
@@ -485,56 +485,6 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
       </div><!-- col-12 col-lg-4 -->
 
       <div class="col-12 col-lg-4">
-
-            <div class="leads-block" v-if="lead_data.meta.patient_data.phone && lead_data.ID >= 0">
-              <div class="leads-block__warning"> <svg width="16" height="15" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 16 15"><defs></defs><g><g><title>Path</title><path d="M8.00003,9c-0.55143,0 -1.00003,-0.53886 -1.00003,-1.2012v-2.5976c0,-0.66234 0.4486,-1.2012 1,-1.2012c0.5514,0 1,0.53886 1,1.2012v2.5976c0,0.66234 -0.44857,1.2012 -0.99997,1.2012z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M8,13c-0.5514,0 -1,-0.44858 -1,-0.99999c0,-0.5514 0.4486,-1.00001 1,-1.00001c0.5514,0 1,0.44861 1,1.00001c0,0.55141 -0.4486,0.99999 -1,0.99999z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M14.61514,15h-13.23032c-0.49961,0 -0.94748,-0.25533 -1.19803,-0.68298c-0.24541,-0.41895 -0.24916,-0.9131 -0.01031,-1.35587l6.61522,-12.26002c0.23688,-0.43902 0.6886,-0.70113 1.20828,-0.70113c0.51972,0 0.9714,0.26211 1.20831,0.70113v0v0l6.6152,12.25999c0.23891,0.44274 0.23512,0.93698 -0.01032,1.3559c-0.25051,0.42765 -0.69835,0.68298 -1.19803,0.68298z" fill="#ffa300" fill-opacity="1"></path></g><g clip-path="url(#clip-9A1E8388-719A-4D57-BE3B-1214B6B73F26)"><title>caution</title><g><title>Path</title><path d="M14.61514,15h-13.23032c-0.49961,0 -0.94748,-0.25533 -1.19803,-0.68298c-0.24541,-0.41895 -0.24916,-0.9131 -0.01031,-1.35587l6.61522,-12.26002c0.23688,-0.43902 0.6886,-0.70113 1.20828,-0.70113c0.51972,0 0.9714,0.26211 1.20831,0.70113v0v0l6.6152,12.25999c0.23891,0.44274 0.23512,0.93698 -0.01032,1.3559c-0.25051,0.42765 -0.69835,0.68298 -1.19803,0.68298z" fill="#ffa300" fill-opacity="1"></path></g><g><title>Path</title><path d="M8,13c-0.5514,0 -1,-0.44858 -1,-0.99999c0,-0.5514 0.4486,-1.00001 1,-1.00001c0.5514,0 1,0.44861 1,1.00001c0,0.55141 -0.4486,0.99999 -1,0.99999z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.00003,9c-0.55143,0 -1.00003,-0.53886 -1.00003,-1.2012v-2.5976c0,-0.66234 0.4486,-1.2012 1,-1.2012c0.5514,0 1,0.53886 1,1.2012v2.5976c0,0.66234 -0.44857,1.2012 -0.99997,1.2012z" fill="#fff3f3" fill-opacity="1"></path></g></g></g></svg> Warning! Any message sent here goes to the patient</div>
-              <h2 class="leads-block__title">Message Centre</h2>
-              <div class="spacer-h-15"></div>
-
-
-              <div class="preloader-messages text-center" v-show="!text_messages">
-                <img src="<?php echo THEME_URL; ?>/assets/images/spinner.gif" alt="">
-              </div>
-
-              <div class="leads-block__row _messages" v-show="text_messages">
-                <span class="message-sent-to">Sent to <span class="marked">{{lead_data.meta.patient_data.phone}}</span> via Ruh Tracker</span>
-
-                      <span class="note-block__show-more" v-on:click="text_messages_to_show = 99" v-if="text_messages_to_show == 2 && text_messages.length > 2"> <i class="icon"></i> Show {{text_messages.length - 2}} more</span>
-
-                      <div v-if="text_messages_to_show == 2 && text_messages.length > 2"><br></div>
-
-                        <div class="message-block" v-bind:class="msg.type" v-for="msg in text_messages_shown" v-bind:key="msg">
-                          <div class="message-block__header clearfix">
-                             <span class="name" v-if="msg.type=='we'">&nbsp; Ruh Dental </span>
-                             <span class="name" v-if="msg.type=='him'">&nbsp; {{patient_data.name}} </span>
-                            <span class="date">  {{msg.date_sent}} </span>
-                          </div>
-
-                          <div class="message-block__body">
-                            {{msg.body}}
-                          </div>
-                          <i class="message-status">{{msg.status}}</i>
-                        </div>
-
-                        <div class="" v-if="text_messages.length == 0">
-                          <br>
-                          <b class="text-center">There are no messages there yet</b>
-                          <br>
-                          <br>
-                        </div>
-                      </div>
-
-
-                <form  method="POST" v-on:submit.prevent="send_text_message" >
-                  <div class="leads-block__form">
-                      <textarea name="text" v-model="message_to_client" placeholder="Start typing new message…"></textarea>
-                      <button type="submit" class="submit-button">
-                        <svg class="icon svg-icon-send"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-send"></use> </svg>
-                      </button>
-                  </div>
-                </form>
-            </div>
-
         <div class="leads-block">
            <h2 class="leads-block__title">Documents</h2>
            <div class="spacer-h-15"></div>
@@ -556,7 +506,7 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
            </div>
 
            <form method="POST" action="#"  enctype="multipart/form-data" v-on:submit.prevent = "load_file">
-             <input type="file" name="file" class="hidden" id="new_file" ref="file_input" v-on:change="do_file_changed">
+             <input type="file" name="file" class="hidden" id="new_file2" ref="file_input" v-on:change="do_file_changed">
              <div class="leads-block__form">
                <label class="add-documents" for="new_file"><span> Add New </span><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></label>
 
@@ -564,7 +514,6 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
              </div>
            </form>
         </div>
-
       </div><!-- col-12 col-lg-4 -->
     </div><!-- row -->
   </div><!-- container -->
@@ -577,5 +526,4 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 </div>
 <?php
 echo '</script>';
-
 ?>

@@ -44,16 +44,18 @@ class theme_construct_page{
         // }
 
         if(self:: is_page_type( 'dashboard' )){
-          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+          add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
+           add_action('do_theme_content', array('theme_content_output', 'print_single_content_inline'), 5);
         }
 
         else if(self:: is_page_type( 'leads-list' )){
           add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
         }
 
-        else if(self:: is_page_type( 'leads-list-2-d' )){
+        else if(self:: is_page_type( 'leads-list-2' )){
           clog('leads-list-2');
           add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
+          add_action('do_theme_content', array('theme_content_output', 'print_single_content_inline'), 5);
         }
 
         else if(self:: is_page_type( 'lead' )){
@@ -106,6 +108,7 @@ class theme_construct_page{
     $reception_id = (int)get_option('theme_page_reception');
     $reception_id_2 = (int)get_option('theme_page_reception_2');
     $tco_id       = (int)get_option('theme_page_tco');
+    $tco_id_2       = (int)get_option('theme_page_tco_2');
      $dashboard_id  = (int)get_option('theme_page_dashboard');
 
     switch ($type){
@@ -122,7 +125,7 @@ class theme_construct_page{
         return  $obj->ID ===   $leads_id || $obj->ID === $reception_id || $obj->ID === $tco_id ;
         break;
       case 'leads-list-2':
-        return  $obj->ID ===   $leads_id || $obj->ID === $reception_id_2;
+        return  $obj->ID ===   $leads_id || $obj->ID === $reception_id_2  || $obj->ID === $tco_id_2;
         break;
       case 'lead':
         return velesh_theme_posts::$lead === $obj->post_type;
