@@ -422,7 +422,14 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                   <p class="leads-block__label no-margin">Money Taken</p>
                 </td>
                 <td class="text-right">
-                  <input-field v-on:input_value_changed="update_lead($event, 'treatment_value')" _name="billed" _value="" v-bind:class="'leads-block__input sm text-right'" @focus.native="price_to_value('input_billed')" @blur.native="value_to_price('input_billed')" ref="input_billed"></input-field>
+                  <input-field
+                  v-on:input_value_changed="update_lead($event, 'treatment_value')"
+                  _name="billed" _value=""
+                  v-bind:class="'leads-block__input sm text-right'"
+                  @focus.native="price_to_value('input_billed')"
+                  @blur.native="value_to_price('input_billed')"
+                  v-model="lead_data.meta.treatment_value.billed"
+                  ref="input_billed"></input-field>
                 </td>
               </tr>
               <tr>
