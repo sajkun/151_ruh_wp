@@ -49,7 +49,7 @@ class theme_construct_page{
         }
 
         else if(self:: is_page_type( 'leads-list' )){
-          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+          add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
         }
 
         else if(self:: is_page_type( 'leads-list-2' )){
@@ -76,7 +76,7 @@ class theme_construct_page{
         }
 
         else if(self:: is_page_type( 'leads-list' )){
-          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+          add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
         }
 
         else if(self:: is_page_type( 'lead' )){
