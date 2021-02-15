@@ -57,14 +57,14 @@ class theme_content_output{
 
     $args = array(
       'leads_menu_class'     => $leads_menu_class,
-      'reception_id'         => $reception_id2,
-      'tco_id'               => $tco_id2,
+      'reception_id'         => $reception_id,
+      'tco_id'               => $tco_id,
       'dashboard_menu_class' => $dashboard_menu_class,
       'dashboard_url'        => get_permalink($dashboard_id),
       'lead_url'             => get_permalink($leads_id),
       'new_lead_url'         => get_permalink($new_lead_id),
-      'reception_url'        => get_permalink($reception_id2),
-      'tco_url'              => get_permalink($tco_id2),
+      'reception_url'        => get_permalink($reception_id),
+      'tco_url'              => get_permalink($tco_id),
       'photo_url'            => $photo_url,
       'name'                 => $name,
       'show_add'             => $show_add ,
@@ -437,8 +437,8 @@ class theme_content_output{
     $lead_notes = array();
     $lead_notes_tco = array();
     $lead_files = array();
-    $_lead_notes = get_post_meta($lead->ID, '_lead_notes', true);
-    $_lead_notes_tco = get_post_meta($lead->ID, '_lead_notes_tco', true);
+    $_lead_notes = get_post_meta($lead->ID, '_lead_notes', true)?: array();
+    $_lead_notes_tco = get_post_meta($lead->ID, '_lead_notes_tco', true)?: array();
     $_lead_files = get_post_meta($lead->ID, '_lead_files', true);
     $lead_logs   = get_post_meta($lead->ID, '_lead_log', true);
 
@@ -454,7 +454,7 @@ class theme_content_output{
       $lead_logs = array();
     }
 
-    if($_lead_notes){
+    if($_lead_notes && is_array($_lead_notes)){
       foreach ($_lead_notes as $key => $n) {
 
         if(!isset($n['show'])){
@@ -465,9 +465,9 @@ class theme_content_output{
       }
     }
 
-    if($_lead_notes_tco){
-      foreach ($_lead_notes_tco as $key => $n) {
 
+    if($_lead_notes_tco && is_array($_lead_notes_tco)){
+      foreach ($_lead_notes_tco as $key => $n) {
         if(!isset($n['show'])){
           $n['show'] = 1;
         }

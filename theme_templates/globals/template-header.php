@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </form>
           </div>
           <?php if ($show_add): ?>
-          <a href="javascript:void(0)<?php // echo $new_lead_url?>"  class="button-add" onclick="open_new_lead()"></a>
+          <a href="<?php  echo $new_lead_url?>" target="_blank"  class="button-add" <?php /*onclick="open_new_lead()" */ ?>></a>
           <?php endif ?>
         </div><!-- row -->
       </div><!-- search -->

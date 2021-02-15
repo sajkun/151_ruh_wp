@@ -750,7 +750,7 @@ if(!function_exists('get_leads_meta')){
         'specialists_assigned_tco' => isset($post_meta['_lead_specialists_tco'])? ($post_meta['_lead_specialists_tco']): false,
 
         'text_messages' => isset($post_meta['_text_messages'])? ($post_meta['_text_messages']): false,
-        'lead_files' => $post_meta['_lead_files']? $post_meta['_lead_files']: array(),
+        'lead_files' => isset($post_meta['_lead_files'])? $post_meta['_lead_files']: array(),
        );
 
 

@@ -86,14 +86,14 @@ if ( ! defined( 'ABSPATH' ) ) {
             <div class="hr"></div>
 
               <div class="row no-gutters">
-                <div class="col-6 valign-center">
+                <div class="col-6 valign-top">
+                  <div class="spacer-h-10"></div>
                   <span class="leads-block__title">
                      <svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>&nbsp;Assigned
                   </span>
                 </div>
                 <div class="col-6 valign-center padding-r-30">
 
-                   <select-imitation v-bind:class="visible_specialists_show_select" _select_name="lead_specialissts" v-on:update_list="update_specialists($event)" v-bind:class="'fullwidth'" ref="lead_specialissts_select"></select-imitation>
 
                     <table class="team-leads" v-if="visible_specialists.length > 0">
                       <tbody><tr v-for="(sp, index) in visible_specialists">
@@ -106,6 +106,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                       </tr>
                     </tbody></table>
 
+                     <select-imitation <?php // v-bind:class="visible_specialists_show_select" ?> _select_name="lead_specialissts" v-on:update_list="update_specialists($event)" v-bind:class="'fullwidth'" ref="lead_specialissts_select"></select-imitation>
                 </div>
               </div>
 
@@ -270,7 +271,8 @@ if ( ! defined( 'ABSPATH' ) ) {
           <div class="hr"></div>
 
           <div class="row no-gutters">
-              <div class="col-6 valign-center">
+              <div class="col-6 valign-top">
+                <div class="spacer-h-10"></div>
                 <span class="leads-block__title">
                    <svg class="icon  svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>
                    Assigned<span class="mark">*</span>
@@ -278,7 +280,6 @@ if ( ! defined( 'ABSPATH' ) ) {
               </div>
               <div class="col-6 valign-center padding-r-30">
 
-                 <select-imitation v-bind:class="visible_specialists_show_select_tco" _select_name="lead_specialissts_tco" v-on:update_list="update_specialists($event, 'tco')" v-bind:class="'fullwidth'" ref="lead_specialissts_select_tco"></select-imitation>
 
                   <table class="team-leads" v-if="visible_specialists_tco.length > 0">
                     <tbody><tr v-for="(sp, index) in visible_specialists_tco">
@@ -291,6 +292,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     </tr>
                   </tbody></table>
 
+                 <select-imitation <?php // v-bind:class="visible_specialists_show_select_tco"  ?>_select_name="lead_specialissts_tco" v-on:update_list="update_specialists($event, 'tco')" v-bind:class="'fullwidth'" ref="lead_specialissts_select_tco"></select-imitation>
               </div>
           </div>
           <div class="hr"></div>

@@ -81,11 +81,34 @@ if(!class_exists('theme_ajax_action')){
 
       add_action('wp_ajax_do_ajax_search', array($this,'do_ajax_search_cb'));
       add_action('wp_ajax_nopriv_do_ajax_search', array($this,'do_ajax_search_cb'));
+
+      add_action('wp_ajax_update_lead_specialist_meta', array($this,'update_lead_specialist_meta_cb'));
+      add_action('wp_ajax_nopriv_update_lead_specialist_meta', array($this,'update_lead_specialist_meta_cb'));
     }
 
     public static function send_sms_cb(){
 
 
+    }
+
+    public static function update_lead_specialist_meta_cb(){
+
+      $post_id = (int)$_POST['lead_data']['lead_id'];
+      $meta = $_POST['meta'];
+
+      if($meta && is_array($meta) || is_object($meta)){
+        foreach ($meta as $meta_key => $data) {
+          $key = '_'.$meta_key;
+
+          if(!update_post_meta($post_id,  $key, $data)){
+            $removed = add_post_meta( $post_id,  $key, $data, true );
+          }
+        }
+      }
+
+      wp_send_json(array(
+        '$_POST' => $_POST,
+      ));
     }
 
     public static function theme_get_users_cb(){
@@ -411,22 +434,33 @@ if(!class_exists('theme_ajax_action')){
         wp_send_json_error(array('message' => 'lead_to_delete'), 418);
       }
 
-      $meta = $_POST['meta'];
+      $meta = isset($_POST['meta'])? $_POST['meta'] : array();
 
-      if((int)$_POST['confirmed'] === 0 && $post_id < 0){
+      if((isset($_POST['confirmed']) && (int)$_POST['confirmed'] === 0) && $post_id < 0 && $meta){
        global $wpdb;
        $name = $meta['patient_data']['name'];
+       $phone = $meta['patient_data']['phone'];
+       $email = $meta['patient_data']['email'];
        $querystr = "
           SELECT $wpdb->postmeta.*
           FROM $wpdb->postmeta
           WHERE $wpdb->postmeta.meta_key = '_patient_data'
           AND $wpdb->postmeta.meta_value LIKE '%$name%'
+          OR $wpdb->postmeta.meta_value LIKE '%$phone%'
+          OR $wpdb->postmeta.meta_value LIKE '%$email%'
        ";
 
         $request = $wpdb->get_results($querystr, OBJECT);
 
         if( $request  && count($request) > 0){
-          wp_send_json_error(array('name was found'), 418);
+
+
+          wp_send_json(
+             array(
+                'reload' => 1,
+                'url'   => get_permalink($request[0]->post_id),
+                'confirm' => "A patient with stored data was found. Would you like to be redirected to his lead?",
+               ));
         }
       }
 
@@ -511,11 +545,13 @@ if(!class_exists('theme_ajax_action')){
         }
       }
 
-      foreach ($meta as $meta_key => $data) {
-        $key = '_'.$meta_key;
+      if($meta && is_array($meta) || is_object($meta)){
+        foreach ($meta as $meta_key => $data) {
+          $key = '_'.$meta_key;
 
-        if(!update_post_meta($post_id,  $key, $data)){
-          $removed = add_post_meta( $post_id,  $key, $data, true );
+          if(!update_post_meta($post_id,  $key, $data)){
+            $removed = add_post_meta( $post_id,  $key, $data, true );
+          }
         }
       }
 

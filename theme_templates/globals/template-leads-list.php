@@ -18,18 +18,34 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="spacer-h-20"></div>
      <div class="row no-gutters justify-content-start justify-content-center-lg switchers" id="leads-filters">
 
-      <div class="alert"  v-bind:class="alarms.class">
+      <div class="alert">
         <svg class="icon svg-icon-bell green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
 
         <span class="alert__count">{{alarms.total}}</span>
-        <span class="alert__tag overdue" v-bind:class="alarms.class_overdue">{{alarms.overdue}} Ovderdue</span>
-
         <div class="checkbox-imitation inline">
           <label>
-             <input type="checkbox" name="show_overdue_only" v-model="overdue_checked">
+             <input type="checkbox" name="show_overdue_only" v-model="not_overdue_checked">
              <span class="checkbox-imitation__view"></span>
           </label>
         </div>
+       <span class="alert__tag normal">
+          Alarms
+       </span>
+      </div>
+
+      <div class="alert">
+        <svg class="icon svg-icon-bell red"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+        <span class="alert__count">{{alarms.overdue}}</span>
+        <div class="checkbox-imitation inline">
+          <label>
+             <input type="checkbox" name="show_overdue_only" v-model="overdue_only_checked">
+             <span class="checkbox-imitation__view"></span>
+          </label>
+        </div>
+        <span class="alert__tag normal">Alarms Ovderdue</span>
+
+
       </div>
 
 
