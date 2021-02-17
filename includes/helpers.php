@@ -511,6 +511,8 @@ if(!function_exists('get_posts_by_dates')){
 
     $user = wp_get_current_user();
 
+    clog($theme_roles);
+
     $dentist_role =  $theme_roles['dentist'];
 
 
@@ -569,8 +571,8 @@ if(!function_exists('get_posts_by_dates')){
     }
 
     if(!in_array( $dentist_role , $user->roles)){
-      $reception_id = (int)get_option('theme_page_reception') || (int)get_option('theme_page_reception_2') ;
-      $tco_id = (int)get_option('theme_page_tco') || (int)get_option('theme_page_tco_2') ;
+      $reception_id = (int)get_option('theme_page_reception');
+      $tco_id = (int)get_option('theme_page_tco') ;
       if(get_queried_object_id() == $reception_id ) {
         $stages = array();
         foreach ($stages_all as $id => $stage) {
@@ -628,13 +630,14 @@ if(!function_exists('get_posts_by_dates')){
     if(!$from && !$to){
        unset($args['date_query']);
     }
+
     $posts = array();
 
     $dentist_role = get_theme_roles('dentists');
 
-    if(in_array( 'administrator' , $user->roles)){
+    if(in_array( 'administrator' , $user->roles) || in_array( 'manager' , $user->roles) ){
       unset($args['meta_query']);
-      $args['author']  = $user->ID;
+      // $args['author']  = $user->ID;
     }
 
     $t     = get_posts($args);

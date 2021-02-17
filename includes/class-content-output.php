@@ -219,6 +219,8 @@ class theme_content_output{
 
       $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
 
+      clog($leads);
+
       $leads = get_leads_meta($leads);
 
 
