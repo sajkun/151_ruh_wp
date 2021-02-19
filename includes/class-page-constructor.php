@@ -44,12 +44,23 @@ class theme_construct_page{
         // }
 
         if(self:: is_page_type( 'dashboard' )){
-          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
-           add_action('do_theme_content', array('theme_content_output', 'print_single_content_inline'), 5);
+             if(THEME_SPA){
+                add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
+                add_action('do_theme_content', array('theme_content_output', 'print_single_content_inline'));
+             }else{
+               add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+             }
         }
 
         else if(self:: is_page_type( 'leads-list' )){
-          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+          clog('THEME_SPA');
+          if(THEME_SPA){
+            add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
+            add_action('do_theme_content', array('theme_content_output', 'print_single_content_inline'));
+          }else{
+
+            add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+          }
         }
 
         else if(self:: is_page_type( 'leads-list-2' )){
@@ -76,7 +87,14 @@ class theme_construct_page{
         }
 
         else if(self:: is_page_type( 'leads-list' )){
-          add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+
+          if(THEME_SPA){
+            add_action('do_theme_content', array('theme_content_output', 'print_list_2'));
+            add_action('do_theme_content', array('theme_content_output', 'print_single_content_inline'));
+          }else{
+
+            add_action('do_theme_content', array('theme_content_output', 'print_leads_list'));
+          }
         }
 
         else if(self:: is_page_type( 'lead' )){

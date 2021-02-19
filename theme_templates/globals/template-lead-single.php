@@ -548,8 +548,9 @@ if ( ! defined( 'ABSPATH' ) ) {
       <a href="javascript:void(0)" v-on:click="{show_confirmation_popup = false}" class="s-popup-cancel">Cancel</a>
 
       <span class="s-popup-comment">
-        Go back to lead
+        <img src="<?php echo THEME_URL ?>/assets/images/svg/alarm.svg" alt=""> Go back to lead
       </span>
     </div>
   </div>
 </div>
+

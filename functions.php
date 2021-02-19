@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class velesh_init_theme{
 
   /* main style location  */
-  public $main_style = '/assets/css/main.min4.css';
+  public $main_style = '/assets/css/main.min6.css';
 
   /*theme style file slug*/
   public $main_style_slug = 'theme-main-style-dev1';
@@ -29,7 +29,9 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script= '/assets/script/main.min4.js';
+  public $main_script = '/assets/script/main.min6.js';
+
+  public $main_script_spa = '/assets/script/main.spa.min6.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
@@ -82,6 +84,7 @@ class velesh_init_theme{
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
     define('THEME_DEBUG', false);
     define('RELOAD_LEAD', false);
+    define('THEME_SPA', true);
   }
 
 
@@ -138,7 +141,12 @@ class velesh_init_theme{
 
     wp_enqueue_script('theme-date-range-picker', THEME_URL.'/assets/libs/datepicker/daterangepicker.js', array('jquery'), THEME_VERSION, true);
 
-    wp_enqueue_script($this->main_script_slug, THEME_URL.$this->main_script, array('jquery'), THEME_VERSION, true);
+    if(THEME_SPA){
+      wp_enqueue_script($this->main_script_slug, THEME_URL.$this->main_script_spa, array('jquery'), THEME_VERSION, true);
+    }else{
+      wp_enqueue_script($this->main_script_slug, THEME_URL.$this->main_script, array('jquery'), THEME_VERSION, true);
+    }
+
 
     if(THEME_DEBUG){
       wp_localize_script($this->main_script_slug, 'theme_debug', 'yes');

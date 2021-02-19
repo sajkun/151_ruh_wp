@@ -820,10 +820,10 @@ if(!function_exists('get_leads_meta')){
 
       $specialists       = array();
 
-      if(!$lead_specialists){
+      if(!$lead_specialists ||  $lead_specialists == 'false'){
         $lead_specialists = array();
       }
-      if(!$lead_specialists_tco){
+      if(!$lead_specialists_tco ||  $lead_specialists_tco == 'false'){
         $lead_specialists_tco = array();
       }
 
@@ -855,8 +855,6 @@ if(!function_exists('get_leads_meta')){
 
       foreach ($lead_specialists_tco as $user_id => $assigned) {
         if('yes' === $assigned){
-
-
            if(!isset($cached_user[ $user_id ])){continue;}
            $user = $cached_user[ $user_id ];
 

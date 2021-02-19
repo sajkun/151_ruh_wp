@@ -108,6 +108,7 @@ if(!class_exists('theme_ajax_action')){
 
       wp_send_json(array(
         '$_POST' => $_POST,
+
       ));
     }
 
@@ -452,15 +453,26 @@ if(!class_exists('theme_ajax_action')){
 
         $request = $wpdb->get_results($querystr, OBJECT);
 
-        if( $request  && count($request) > 0){
 
+        if( $request  && count($request) > 0){
+          $ids = array_map(function($el){return (int)$el->post_id;},$request);
+
+          $leads = get_posts(array(
+            'post__in' => $ids,
+            'post_type' => velesh_theme_posts::$lead,
+          ));
+
+          $leads = get_leads_meta($leads);
 
           wp_send_json(
-             array(
-                'reload' => 1,
-                'url'   => get_permalink($request[0]->post_id),
-                'confirm' => "A patient with stored data was found. Would you like to be redirected to his lead?",
-               ));
+            array(
+              'leads' => $leads,
+              'ids' => $ids,
+              'request' => $request,
+              'exist_leads' => 1,
+              // 'reload' => 1,
+              'url'   => get_permalink($request[0]->post_id),
+             ));
         }
       }
 
@@ -694,6 +706,9 @@ if(!class_exists('theme_ajax_action')){
 
       $update = update_post_meta(  $post_id , '_lead_stage', $_POST['list_id'] );
 
+      $data = array( 'ID' => $post_id  );
+      wp_update_post( $data );
+
       if(!$update){
        $update = add_post_meta(  $post_id , '_lead_stage',  $_POST['list_id'] );
       }
@@ -768,7 +783,7 @@ if(!class_exists('theme_ajax_action')){
           'filter_data_csv'  => $filter_data_csv,
           'from_formated'     => $from_formated,
           'to_formated'       => $to_formated,
-          'team_perfomance'   => $team_perfomance,
+          // 'team_perfomance'   => $team_perfomance,
           'leads_prev'        => false,
           'days_count_prev'   => -1,
           'billed_posts'       => $billed_posts,

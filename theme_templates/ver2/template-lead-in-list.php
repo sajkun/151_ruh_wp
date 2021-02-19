@@ -86,13 +86,6 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
               </div>
               <div class="col-6 valign-center padding-r-30">
 
-                 <select-imitation2
-                  v-show="visible_specialists_show_select"
-                  _select_name="lead_specialissts"
-                  :_options="select_data.specialists"
-                   v-on:update_list="update_specialists($event, 'enquery')"
-                   v-bind:class="'fullwidth'"
-                   ref="lead_specialissts_select"></select-imitation2 >
 
                   <table class="team-leads" v-if="visible_specialists.length > 0">
                     <tbody><tr v-for="(sp, index) in visible_specialists">
@@ -105,6 +98,13 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                     </tr>
                   </tbody></table>
 
+                 <select-imitation2
+                  v-show="visible_specialists_show_select"
+                  _select_name="lead_specialissts"
+                  :_options="select_data.specialists"
+                   v-on:update_list="update_specialists($event, 'enquery')"
+                   v-bind:class="'fullwidth'"
+                   ref="lead_specialissts_select"></select-imitation2 >
               </div>
             </div>
 
@@ -306,14 +306,6 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
               </div>
               <div class="col-6 valign-center padding-r-30">
 
-                 <select-imitation2
-                 v-show="visible_specialists_show_select_tco"
-                 _select_name="lead_specialissts_tco"
-                  v-on:update_list="
-                  update_specialists($event, 'tco')"
-                   v-bind:class="'fullwidth'"
-                   :_options="select_data.specialists_tco"
-                   ref="lead_specialissts_select_tco"></select-imitation2>
 
                   <table class="team-leads" v-if="visible_specialists_tco.length > 0">
                     <tbody><tr v-for="(sp, index) in visible_specialists_tco">
@@ -326,6 +318,14 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                     </tr>
                   </tbody></table>
 
+                 <select-imitation2
+                 v-show="visible_specialists_show_select_tco"
+                 _select_name="lead_specialissts_tco"
+                  v-on:update_list="
+                  update_specialists($event, 'tco')"
+                   v-bind:class="'fullwidth'"
+                   :_options="select_data.specialists_tco"
+                   ref="lead_specialissts_select_tco"></select-imitation2>
               </div>
           </div>
           <div class="hr"></div>

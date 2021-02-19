@@ -1075,8 +1075,8 @@ class theme_content_output{
         $theme_user_role = 'tco';
       }else{
 
-        $reception_id = (int)get_option('theme_page_reception_2');
-        $tco_id = (int)get_option('theme_page_tco_2');
+        $reception_id = (int)get_option('theme_page_reception');
+        $tco_id = (int)get_option('theme_page_tco');
 
         if(get_queried_object_id() == $reception_id ) {
           $stages =  array_filter($stages, function($el){
@@ -1110,8 +1110,8 @@ class theme_content_output{
 
       $is_manager = in_array('administrator', $user_roles) || in_array('manager', $user_roles) ? 'yes' : 'no';
 
-      $reception_id2 = (int)get_option('theme_page_reception_2');
-      $tco_id2 = (int)get_option('theme_page_tco_2');
+      $reception_id2 = (int)get_option('theme_page_reception');
+      $tco_id2 = (int)get_option('theme_page_tco');
 
 
       $current_id = get_queried_object_id();

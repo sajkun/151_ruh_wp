@@ -48,7 +48,12 @@ if ( ! defined( 'ABSPATH' ) ) {
             </form>
           </div>
           <?php if ($show_add): ?>
-          <a href="<?php  echo $new_lead_url?>" target="_blank"  class="button-add" <?php /*onclick="open_new_lead()" */ ?>></a>
+
+            <?php if (THEME_SPA): ?>
+            <a href="javascript:void(0)" class="button-add" onclick="open_new_lead()" ></a>
+            <?php else: ?>
+            <a href="<?php  echo $new_lead_url?>" target="_blank"  class="button-add"></a>
+            <?php endif ?>
           <?php endif ?>
         </div><!-- row -->
       </div><!-- search -->

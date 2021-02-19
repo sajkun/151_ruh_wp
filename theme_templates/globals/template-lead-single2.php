@@ -569,3 +569,48 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
   </div>
 </div>
+
+
+<div class="exist-popup visuallyhidden" id="exist-popup" v-show="show" v-on:click="close">
+  <div class="exist-popup__inner" v-on:click.stop>
+     <div class="exist-popup__header">
+       <img src="<?php echo THEME_URL?>/assets/images/svg/alarm.svg" alt=""> Existing Leads
+     </div>
+     <div class="spacer-h-20"></div>
+
+     <div class="text-center">
+       <img src="<?php echo THEME_URL?>/assets/images/svg/stop.svg" alt="">
+       <h3 class="exist-popup__title"><b>{{number}} Existing Leads for</b> <br> {{name}} <br>{{email}} <br>{{phone}}</h3>
+       <p class="exist-popup__text">It looks like there are already previous leads with the same name. Find the existing leads below or if you still wish to create this as a new lead, click <b>‘Create’</b></p>
+     </div>
+
+     <div class="spacer-h-40"></div>
+
+     <div class="exist-popup-scroll">
+        <a
+         v-for ="lead, key in leads"
+         :key ="'exist_lead_'+key"
+         target="_blank"
+         :href="lead.permalink"
+          class="lead-preview">
+          <div class="clearfix">
+            <div class="row justify-content-start">
+              <div class="col-7"><span title=" Edvige Bordone" class="lead-preview__name"><span :class="{marked: marked(lead.meta.patient_data.name)}">{{lead.meta.patient_data.name}}</span></span> </div>
+              <div class="col-5"><span title="" class="lead-preview__time">{{time_passed(lead.post_date)}}</span></div>
+            </div>
+          </div>
+          <div class="clearfix"> <span class="lead-preview__name">
+            <span :class="{marked: marked(lead.meta.patient_data.email)}">{{lead.meta.patient_data.email}}</span>
+            <span :class="{marked: marked(lead.meta.patient_data.phone)}">{{lead.meta.patient_data.phone}} </span>
+            </span>
+          </div>
+          <div class="clearfix"><span class="lead-preview__sourse">{{lead.meta.patient_data.treatment}}</span></div></a>
+     </div>
+
+     <div class="spacer-h-40"></div>
+     <div class="exist-popup__footer">
+       <a href="#" v-on:click.prevent="cancel" class="button-back"><span>Cancel</span></a>
+       <a href="#" v-on:click.prevent="create" class="button-create"><span>Create Lead</span></a>
+    </div><!-- exist-popup__footer -->
+  </div><!-- exist-popup__inner -->
+</div><!-- exist-popup -->
