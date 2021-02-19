@@ -9744,6 +9744,7 @@ Vue.component('comp-single-lead', {
       show_confirmation_popup: false,
       text_messages: false,
       message_to_client: '',
+      sms_data: sms_data,
     };
   },
 
@@ -11034,9 +11035,8 @@ Vue.component('comp-single-lead', {
     },
 
     send_text_message: function(){
-      var phone = this.patient_data.phone;
+      var phone = this.lead_data.meta.patient_data.phone;
       var vm = this;
-
 
 
       if(!phone || phone.length < 4){
