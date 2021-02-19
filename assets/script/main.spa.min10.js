@@ -9740,7 +9740,8 @@ Vue.component('comp-single-lead', {
       file_changed   : '',
       new_file  : '',
       specialists_data: specialists_data,
-      requre_save: false,
+      requre_save: true,
+      // requre_save: false,
       show_confirmation_popup: false,
       text_messages: false,
       message_to_client: '',
@@ -9789,7 +9790,8 @@ Vue.component('comp-single-lead', {
 
       if(show){
         this.treatment_data_selects();
-        this.requre_save  = false;
+        this.requre_save  = true;
+        // this.requre_save  = false;
       }else{
         this.enquery_notes_count  = 1;
         this.tco_notes_count  = 1;
@@ -9798,7 +9800,8 @@ Vue.component('comp-single-lead', {
         this.files_updated   = '';
         this.file_changed     = '';
         this.specialists_data  = specialists_data;
-        this.requre_save  = false;
+        this.requre_save  = true;
+        // this.requre_save  = false;
         this.show_confirmation_popup  = false;
       }
     },
@@ -10376,7 +10379,8 @@ Vue.component('comp-single-lead', {
 
         complete: function(xhr, textStatus) {
            wait_block.hide();
-           vm.requre_save = false;
+           // vm.requre_save = false;
+           vm.requre_save = true;
         },
 
         success: function(data, textStatus, xhr) {
@@ -11873,6 +11877,7 @@ Vue.component('comp-new-lead', {
                 if(index < 0){
                   vm.$parent.leads.push(lead)
                 }
+
               }
               return;
             }
