@@ -11841,9 +11841,7 @@ Vue.component('comp-new-lead', {
       }
 
       var vm = this;
-
       wait_block.show();
-
       var fmt = new DateFormatter();
       var today = new Date();
 
@@ -11859,36 +11857,36 @@ Vue.component('comp-new-lead', {
 
         success: function(data, textStatus, xhr) {
 
-            if(data.exist_leads){
-              vm.$refs.exist_popup.name  = posted_data.meta.patient_data.name;
-              vm.$refs.exist_popup.phone = posted_data.meta.patient_data.phone;
-              vm.$refs.exist_popup.email = posted_data.meta.patient_data.email;
-              vm.$refs.exist_popup.leads = data.leads;
-              vm.$refs.exist_popup.leads = data.leads;
-              vm.$refs.exist_popup.posted_data = posted_data;
-              vm.$refs.exist_popup.show = true;
+          if(data.exist_leads){
+            vm.$refs.exist_popup.name  = posted_data.meta.patient_data.name;
+            vm.$refs.exist_popup.phone = posted_data.meta.patient_data.phone;
+            vm.$refs.exist_popup.email = posted_data.meta.patient_data.email;
+            vm.$refs.exist_popup.leads = data.leads;
+            vm.$refs.exist_popup.leads = data.leads;
+            vm.$refs.exist_popup.posted_data = posted_data;
+            vm.$refs.exist_popup.show = true;
 
-              for(var lead of data.leads){
-                var lead_id = lead.ID;
-                var index = vm.$parent.leads.findIndex(el =>{
-                  return lead_id == el.ID;
-                })
+            for(var lead of data.leads){
+              var lead_id = lead.ID;
+              var index = vm.$parent.leads.findIndex(el =>{
+                return lead_id == el.ID;
+              })
 
-                if(index < 0){
-                  vm.$parent.leads.push(lead)
-                }
-
+              if(index < 0){
+                vm.$parent.leads.push(lead)
               }
-              return;
-            }
 
-           if(data.post_id > 0){
-             vm.$parent.add_leads(data.new_leads);
-             vm.visible = false;
-             Vue.nextTick(function(){
-               vm.$parent.open_lead_cb({lead_id: data.post_id});
-             });
-           }
+            }
+            return;
+          }
+
+          if(data.post_id > 0){
+            vm.$parent.add_leads(data.new_leads);
+            vm.visible = false;
+            Vue.nextTick(function(){
+              vm.$parent.open_lead_cb({lead_id: data.post_id});
+            });
+          }
         },
 
         error: function(xhr, textStatus, errorThrown) {
