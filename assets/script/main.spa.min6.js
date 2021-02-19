@@ -10518,20 +10518,20 @@ Vue.component('comp-single-lead', {
       this.show_confirmation_popup = false;
     },
 
-    do_delete_or_return: function(url){
+    do_delete_or_return: function(){
       this.deleting_lead = true;
       wait_block.show();
+      var vm = this;
 
       if(parseInt(this.lead_data.lead_id) === -1){
         wait_block.hide();
-        location.href = url;
       }else{
         var data = {
           action  : 'delete_lead',
-          lead_id : parseInt(this.lead_data.lead_id),
-          nonce   : jQuery('[name=lead_data]').val(),
-          url     : url,
+          lead_id : parseInt(this.lead_data.ID),
         };
+
+      console.log(data)
 
       jQuery.ajax({
         url: WP_URLS.wp_ajax_url,
@@ -10545,7 +10545,8 @@ Vue.component('comp-single-lead', {
 
         success: function(data, textStatus, xhr) {
           if('undefined' != typeof(data.redirect)){
-            window.close();
+            vm.visible = false;
+            vm.$parent.show_list = true
             // location.href = data.redirect;
           }
         },

@@ -39,7 +39,7 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 
       <div class="col-12 col-md-4 text-center text-right-md">
 
-        <a href="" class="button-cancel">Delete</a>
+        <a href="javascript:void(0)" v-on:click.prevent="do_delete_or_return" class="button-cancel">Delete</a>
 
         <a href="javascript:void(0)" class="button-create"
           v-bind:class="{gray : !requre_save}"

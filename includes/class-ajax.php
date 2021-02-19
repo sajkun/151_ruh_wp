@@ -338,8 +338,8 @@ if(!class_exists('theme_ajax_action')){
       $post_id = (int)$_POST['lead_id'];
       global $lead_to_delete;
       $lead_to_delete = $post_id ;
-      wp_delete_post( $post_id );
-      wp_send_json(array('redirect' => $_POST['url']));
+      wp_delete_post( $post_id, true );
+      wp_send_json(array('redirect' => 0));
     }
 
 
