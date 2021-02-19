@@ -10520,8 +10520,10 @@ Vue.component('comp-single-lead', {
 
     do_delete_or_return: function(){
       this.deleting_lead = true;
-      wait_block.show();
       var vm = this;
+
+      wait_block.show();
+
 
       if(parseInt(this.lead_data.lead_id) === -1){
         wait_block.hide();
@@ -10530,8 +10532,6 @@ Vue.component('comp-single-lead', {
           action  : 'delete_lead',
           lead_id : parseInt(this.lead_data.ID),
         };
-
-      console.log(data)
 
       jQuery.ajax({
         url: WP_URLS.wp_ajax_url,
@@ -10545,10 +10545,15 @@ Vue.component('comp-single-lead', {
 
         success: function(data, textStatus, xhr) {
           if('undefined' != typeof(data.redirect)){
-            vm.visible = false;
-            vm.$parent.show_list = true
             // location.href = data.redirect;
           }
+
+          var index =  vm.$parent.leads.findIndex(el =>{
+            return el.ID == vm.lead_data.ID;
+          })
+          vm.$parent.leads.splice(index,1);
+          vm.visible = false;
+          vm.$parent.show_list = true
         },
 
         error: function(xhr, textStatus, errorThrown) {
