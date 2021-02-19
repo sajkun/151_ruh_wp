@@ -11863,6 +11863,17 @@ Vue.component('comp-new-lead', {
               vm.$refs.exist_popup.leads = data.leads;
               vm.$refs.exist_popup.posted_data = posted_data;
               vm.$refs.exist_popup.show = true;
+
+              for(var lead of data.leads){
+                var lead_id = lead.ID;
+                var index = vm.$parent.leads.findIndex(el =>{
+                  return lead_id == el.ID;
+                })
+
+                if(index < 0){
+                  vm.$parent.leads.push(lead)
+                }
+              }
               return;
             }
 
