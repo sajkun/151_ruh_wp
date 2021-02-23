@@ -10695,24 +10695,17 @@ Vue.component('comp-single-lead', {
 
     remove_specialist: function(user_id,type){
       if(window.confirm("Confirm unassigning " + name + " from this lead")){
-          var ids = this.visible_specialists.map(el=>{return el.user_id});
-
           switch(type){
-            case 'tco':''
-              break,
+            case 'tco':
+              this.lead_data.meta.specialists_assigned_tco[user_id] = 'no';
+              break;
             default:
+              this.lead_data.meta.specialists_assigned[user_id] = 'no';
               break;
           }
 
-            console.log(user_id);
-          for( var id of ids){
-            console.log(id);
-            this.lead_data.meta.specialists_assigned[id] = 'no';
-            this.lead_data.meta.specialists_assigned_tco[id] = 'no';
-          }
+          this.save_specialists_meta();
 
-          console.log(this.lead_data.meta.specialists_assigned);
-          console.log(this.lead_data.meta.specialists_assigned_tco);
 
         // this.specialists_data[name].show = 'no';
         // this.specialists_data[name].show_tco = 'no';

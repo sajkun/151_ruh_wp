@@ -89,10 +89,10 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 
                   <table class="team-leads" v-if="visible_specialists.length > 0">
                     <tbody><tr v-for="(sp, index) in visible_specialists">
-                      <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.name)"></div></td>
+                      <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.user_id, '')"></div></td>
                       <td colspan="3">
                         <div class="clearfix">
-                          <span class="team-leads__name" v-on:click="remove_specialist(sp.name)">{{sp.name}}</span>
+                          <span class="team-leads__name" v-on:click="remove_specialist(sp.user_id, '')">{{sp.name}}</span>
                         </div>
                       </td>
                     </tr>
@@ -309,10 +309,10 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 
                   <table class="team-leads" v-if="visible_specialists_tco.length > 0">
                     <tbody><tr v-for="(sp, index) in visible_specialists_tco">
-                      <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.name)"></div></td>
+                      <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.user_id,'tco')"></div></td>
                       <td colspan="3">
                         <div class="clearfix">
-                          <span class="team-leads__name" v-on:click="remove_specialist(sp.name)">{{sp.name}}</span>
+                          <span class="team-leads__name" v-on:click="remove_specialist(sp.user_id, 'tco')">{{sp.name}}</span>
                         </div>
                       </td>
                     </tr>
