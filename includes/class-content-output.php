@@ -1051,7 +1051,10 @@ class theme_content_output{
 
       $user_roles = $user_meta->roles;
 
+
       $stages    = get_option('leads_stages');
+
+      $stages_all    = get_option('leads_stages');
 
       $theme_roles = get_theme_roles();
 
@@ -1130,6 +1133,10 @@ class theme_content_output{
     $stages_names = array_map(function($el){
       return $el['name'];
     }, $stages );
+
+    $stages_names_all = array_map(function($el){
+      return $el['name'];
+    }, $stages_all );
 
 
     $clinics = get_option('clinics_list');
@@ -1264,6 +1271,7 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'converted_lead_name', get_converted_stages('string'));
     wp_localize_script($theme_init->main_script_slug, 'treatments', $treatments);
     wp_localize_script($theme_init->main_script_slug, 'stages', $stages);
+    wp_localize_script($theme_init->main_script_slug, 'stages_all', $stages_all);
     wp_localize_script($theme_init->main_script_slug, 'stages_names', $stages_names);
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);

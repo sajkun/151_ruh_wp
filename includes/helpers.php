@@ -121,7 +121,6 @@ if(!function_exists('glog')){
            'color'   => false,
            'type'    => 'end'
         );
-
       }
     }
   }
@@ -511,8 +510,6 @@ if(!function_exists('get_posts_by_dates')){
 
     $user = wp_get_current_user();
 
-    clog($theme_roles);
-
     $dentist_role =  $theme_roles['dentist'];
 
 
@@ -563,11 +560,7 @@ if(!function_exists('get_posts_by_dates')){
         'key'         => '_lead_stage',
         'value'       =>  $stages,
         'compare'     => 'IN',
-       ),
-        array(
-        'key'         => '_lead_stage',
-        'compare' => 'NOT EXISTS'
-      ));
+       ));
     }
 
     if(!in_array( $dentist_role , $user->roles)){
