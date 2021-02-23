@@ -9496,8 +9496,8 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
 
         .always(function(e) {
 
-          console.log('check_msg')
-          console.log(e);
+          clog('check_msg')
+          clog(e);
         });
       },
 
