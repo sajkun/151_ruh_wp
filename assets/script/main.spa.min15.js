@@ -9759,6 +9759,7 @@ Vue.component('comp-single-lead', {
     },
 
     'lead_data.meta.patient_data.email': function(val){
+      console.log(val);
       jQuery('input[name=email]').removeClass('error');
     },
 
