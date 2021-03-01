@@ -9758,13 +9758,15 @@ Vue.component('comp-single-lead', {
       jQuery('input[name=phone]').removeClass('error');
     },
 
-    'lead_data.meta.patient_data.email': function(){
+    'lead_data.meta.patient_data.email': function(val){
       jQuery('input[name=email]').removeClass('error');
     },
 
-    show_confirmation_popup: function(){
-      this.$refs.popup._stage = this.lead_data.lead_stage;
-      this.$refs.popup.show_confirmation_popup = true;
+    show_confirmation_popup: function(val){
+      if(val){
+        this.$refs.popup._stage = this.lead_data.lead_stage;
+        this.$refs.popup.show_confirmation_popup = true;
+      }
     },
 
     text_messages_to_show: function(val){
@@ -10289,7 +10291,6 @@ Vue.component('comp-single-lead', {
     },
 
     save_lead_meta: function(key_meta, key_this){
-      console.log('save_lead_meta');
       var vm = this;
 
       if (vm.deleting_lead){
@@ -10381,6 +10382,7 @@ Vue.component('comp-single-lead', {
            wait_block.hide();
            // vm.requre_save = false;
            vm.requre_save = true;
+           vm.show_confirmation_popup = false;
         },
 
         success: function(data, textStatus, xhr) {
@@ -10601,7 +10603,7 @@ Vue.component('comp-single-lead', {
 
       if(type == 'enquery'){
 
-        if(!this.lead_data.meta.lead_notes){
+        if(!this.lead_data.meta.lead_notes || this.lead_data.meta.lead_notes == 'false'){
           this.$set(this.lead_data.meta, 'lead_notes', []);
         }
 
@@ -10611,7 +10613,7 @@ Vue.component('comp-single-lead', {
         this.save_lead_meta('lead_notes', 'lead_notes');
       }else if (type =='tco'){
 
-        if(!this.lead_data.meta.lead_notes_tco){
+        if(!this.lead_data.meta.lead_notes_tco || this.lead_data.meta.lead_notes_tco == 'false'){
           this.$set(this.lead_data.meta, 'lead_notes_tco', []);
         }
 
@@ -10691,14 +10693,19 @@ Vue.component('comp-single-lead', {
       // this.save_sepcialists_meta();
     },
 
-    remove_specialist: function(name){
+    remove_specialist: function(user_id,type){
       if(window.confirm("Confirm unassigning " + name + " from this lead")){
-          var ids = this.visible_specialists.map(el=>{return el.user_id});
-
-          for( var id of ids){
-            this.lead_data.meta.specialists_assigned[id] = 'no';
-            this.lead_data.meta.specialists_assigned_tco[id] = 'no';
+          switch(type){
+            case 'tco':
+              this.lead_data.meta.specialists_assigned_tco[user_id] = 'no';
+              break;
+            default:
+              this.lead_data.meta.specialists_assigned[user_id] = 'no';
+              break;
           }
+
+          this.save_specialists_meta();
+
 
         // this.specialists_data[name].show = 'no';
         // this.specialists_data[name].show_tco = 'no';
@@ -12625,7 +12632,7 @@ Vue.component('confirmation-popup', {
     return {
       stage: '',
       show_confirmation_popup: false,
-      stages: stages,
+      stages: stages_all,
     };
   },
 
@@ -12634,7 +12641,10 @@ Vue.component('confirmation-popup', {
   watch:{
     show_confirmation_popup: function(show){
       if(show){
-        console.log(this.$refs)
+      }
+
+      if(!show){
+        this.$parent.show_confirmation_popup = false;
       }
     },
 
@@ -12656,6 +12666,7 @@ Vue.component('confirmation-popup', {
 
   methods:{
     update_lead_stage: function(data){
+      this.$parent.show_confirmation_popup = false;
       this.stage = data.val;
     },
 

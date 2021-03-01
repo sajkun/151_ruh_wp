@@ -119,11 +119,11 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
             <div class="leads-block__row">
                 <div class="leads-block__name">
 
-                  <input-field
+                  <input-field2
                    _name="name"
-                  v-model="lead_data.meta.patient_data.name"
+                  :_value="lead_data.meta.patient_data.name"
                   v-on:input_value_changed = "update_lead($event, 'patient_data')"
-                  v-bind:class="'leads-block__input lg'"></input-field>
+                  v-bind:class="'leads-block__input lg'"></input-field2>
 
                   <span class="leads-block__comment">  added... </span>
                 </div>
@@ -134,11 +134,11 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                     </td>
                     <td><p class="leads-block__label">Phone <span class="mark">*</span></p></td>
                     <td>
-                      <input-field
+                      <input-field2
                        _name="phone"
-                       v-model="lead_data.meta.patient_data.phone"
+                       :_value="lead_data.meta.patient_data.phone"
                        v-on:input_value_changed = "update_lead($event, 'patient_data')"
-                       ></input-field>
+                       ></input-field2>
                     </td>
                   </tr>
                   <tr>
@@ -147,12 +147,12 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                     </td>
                     <td><p class="leads-block__label">E-mail <span class="mark">*</span></p></td>
                     <td>
-                      <input-field
+                      <input-field2
                        _name="email"
-                        v-model="lead_data.meta.patient_data.email"
+                        :_value="lead_data.meta.patient_data.email"
                         v-on:input_value_changed = "update_lead($event, 'patient_data')"
                         >
-                       </input-field>
+                       </input-field2>
                     </td>
                   </tr>
                   <tr>
