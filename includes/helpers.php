@@ -626,11 +626,15 @@ if(!function_exists('get_posts_by_dates')){
 
     $posts = array();
 
-    $dentist_role = get_theme_roles('dentists');
+    // $dentist_role = get_theme_roles('dentist');
 
     if(in_array( 'administrator' , $user->roles) || in_array( 'manager' , $user->roles) ){
       unset($args['meta_query']);
-      // $args['author']  = $user->ID;
+    }
+
+    if(in_array( $dentist_role , $user->roles) ){
+      unset($args['meta_query']);
+      $args['author']  = $user->ID;
     }
 
     $t     = get_posts($args);
