@@ -10601,6 +10601,8 @@ Vue.component('comp-single-lead', {
         'show'       : 1,
       };
 
+      console.log(new_note);
+
       if(type == 'enquery'){
 
         if(!this.lead_data.meta.lead_notes || this.lead_data.meta.lead_notes == 'false'){
@@ -11169,7 +11171,7 @@ Vue.component('comp-single-lead', {
 
 })
 
-console.log('test');
+console.log('test2');
 Vue.component('comp-new-lead', {
   data: function(){
     return {

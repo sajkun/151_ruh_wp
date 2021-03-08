@@ -955,6 +955,12 @@ if(!function_exists('get_leads_meta')){
       $leads[$lead_id]->show_message_alert_him = 0;
       $leads[$lead_id]->show_message_alert = 0;
 
+
+      $user = wp_get_current_user();
+
+      $leads[$lead_id]->user_name = get_user_meta( $user->ID , 'first_name', true ) . ' ' . get_user_meta( $user->ID , 'last_name', true )  ;
+      $leads[$lead_id]->user_id = $user->ID ;
+
     }
 // Saima Nasim
 
