@@ -9269,7 +9269,7 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
 
           // filter by search name
 
-          if(!el.meta.patient_data.name){
+          if(!el.meta.patient_data.name && !el.meta.patient_data.email){
             return false;
           }
 
