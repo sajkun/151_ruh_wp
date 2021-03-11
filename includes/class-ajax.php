@@ -491,9 +491,7 @@ if(!class_exists('theme_ajax_action')){
         }
 
         $name_str = implode(' - ', $name);
-
         $date = new DateTime();
-
         $current_user_id = get_current_user_id();
 
         $post_data = array(
@@ -571,7 +569,7 @@ if(!class_exists('theme_ajax_action')){
       $meta['POST']    = $_POST;
       $meta['reload']  = $reload;
       $meta['url']     = get_permalink($post_id);
-      $meta['author']  = get_current_user_id();
+      $meta['author']  = $current_user_id;
 
       if($post_id > 0){
         $post = get_post($post_id);
