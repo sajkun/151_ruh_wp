@@ -1037,6 +1037,7 @@ if(!function_exists('get_filters_by_leads')){
       $clinic    = isset($meta['patient_data']['clinic'])? $meta['patient_data']['clinic'] : '' ;
       $treatment = isset($meta['patient_data']['treatment'])?  $meta['patient_data']['treatment'] : '';
       $source    = $meta['patient_data']['source'];
+
       $campaign  = isset($meta['patient_data']['campaign'])? $meta['patient_data']['campaign'] : '' ;
       $team      = $meta['lead_specialists'];
 
@@ -1111,7 +1112,7 @@ if(!function_exists('get_filters_by_leads')){
 
     clog('get_filters_by_leads: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
 
-    $user = wp_get_current_user();
+    // $user = wp_get_current_user();
 
     // if(in_array('dentist', $user->roles)){
 
