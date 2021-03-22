@@ -29,9 +29,9 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script = '/assets/script/main.min19.js';
+  public $main_script = '/assets/script/main.min20.js';
 
-  public $main_script_spa = '/assets/script/main.spa.min19.js';
+  public $main_script_spa = '/assets/script/main.spa.min20.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';

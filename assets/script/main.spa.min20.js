@@ -9059,6 +9059,7 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
       stages: stages,
       by_phones : [],
       by_phones_data : false,
+      request_completed: false,
       sortby: false,
 
       overdue_checked: false,
@@ -9088,23 +9089,23 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
         Cookie.set('lead_list_filter2', JSON.stringify(this.filters));
       },
 
-      'filters.treatments': function(){
+      'filters.treatments': function(val){
         Cookie.set('lead_list_filter2', JSON.stringify(this.filters));
       },
 
-      'filters.campaigns': function(){
+      'filters.campaigns': function(val){
         Cookie.set('lead_list_filter2', JSON.stringify(this.filters));
       },
 
-      'filters.sources': function(){
+      'filters.sources': function(val){
         Cookie.set('lead_list_filter2', JSON.stringify(this.filters));
       },
 
-      'filters.team': function(){
+      'filters.team': function(val){
         Cookie.set('lead_list_filter2', JSON.stringify(this.filters));
       },
 
-      'filters.dentists': function(){
+      'filters.dentists': function(val){
         Cookie.set('lead_list_filter2', JSON.stringify(this.filters));
       },
     },
@@ -9269,6 +9270,10 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
 
           // filter by search name
 
+          if(!el.meta.patient_data.name && !el.meta.patient_data.email){
+            return false;
+          }
+
           if(el.meta.patient_data.name){
             validated = vm.search_value.length > 2 && el.meta.patient_data.name.toLowerCase().indexOf(vm.search_value) < 0 ? false : validated;
           }
@@ -9297,7 +9302,7 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
 
           // show only filter's matches
           for(var filter_id in vm.filters){
-            if(vm.filters[filter_id].toLowerCase().indexOf('all') >=0){
+            if(vm.filters[filter_id].toLowerCase().indexOf('all ') ==0){
               continue;
             }
 
@@ -9495,6 +9500,7 @@ if(document.getElementById('list-app') && 'undefined' != typeof(is_lead_list_2))
         })
 
         .always(function(e) {
+          vm.request_completed = true;
 
           clog('check_msg')
           clog(e);
@@ -9750,6 +9756,7 @@ Vue.component('comp-single-lead', {
   },
 
   watch: {
+
     'lead_data.meta.patient_data.name': function(){
       jQuery('input[name=name]').removeClass('error');
     },
@@ -10143,6 +10150,17 @@ Vue.component('comp-single-lead', {
       if(typeof(e.val)  !== 'undefined'){
         this.lead_data.meta.treatment_data[key][e.name] = e.val;
 
+        // if(e.name == 'dentist'){
+        //   console.log(this.$parent.filter_data);
+        //   var values  = Object.values(this.$parent.filter_data.dentists);
+
+        //   if(values.indexOf(e.val) < 0){
+        //     values.push(e.val);
+        //     this.$parent.$set(this.$parent.filter_data, 'dentists', values );
+        //   }
+        // }
+
+
         var total = 0;
 
         for(var id in this.lead_data.meta.treatment_data){
@@ -10361,6 +10379,8 @@ Vue.component('comp-single-lead', {
       }
 
       for(var _id in meta){
+        console.log(_id);
+        console.log( meta[_id]);
         if(_id != 'lead_stage'){
           this.save_parent_meta(this.lead_data.ID, meta[_id], _id, true);
         }else{
@@ -10664,27 +10684,52 @@ Vue.component('comp-single-lead', {
 
         var data =  Object.values(specialists_data).filter(el =>{
           return el.name == event.val})[0];
-
+        var do_save = false;
 
         switch(type){
           case 'tco':
             if(!this.lead_data.meta.specialists_assigned_tco){
               this.lead_data.meta.specialists_assigned_tco = {};
             }
-            this.$set( this.lead_data.meta.specialists_assigned_tco, data.user_id, 'yes');
+
+            if(this.lead_data.meta.specialists_assigned_tco[data.user_id] !== 'yes'){
+              this.$set( this.lead_data.meta.specialists_assigned_tco, data.user_id, 'yes');
+              do_save = true;
+            }
+
+            this.$refs.lead_specialissts_select_tco.selected = '';
             break;
 
           default:
             if(!this.lead_data.meta.specialists_assigned){
               this.lead_data.meta.specialists_assigned = {};
             }
-            // this.lead_data.meta.specialists_assigned[data.user_id] = 'yes';
-            this.$set( this.lead_data.meta.specialists_assigned, data.user_id, 'yes');
+             if(this.lead_data.meta.specialists_assigned[data.user_id] !== 'yes'){
+              this.$set( this.lead_data.meta.specialists_assigned, data.user_id, 'yes');
+              do_save = true;
+            }
+
+            this.$refs.lead_specialissts_select.selected = '';
             break;
         };
 
-        // this.requre_save = true;
-        this.save_specialists_meta();
+
+         if(do_save){
+          var values  = Object.values(this.$parent.filter_data.team);
+
+          if(values.indexOf(data.name) < 0){
+            values.push(data.name);
+            this.$parent.$set(this.$parent.filter_data, 'team', values );
+
+            var lead_index = this.$parent.leads.findIndex(e=>{return e.ID == this.lead_data.ID});
+
+            var team_filter_data = Object.values(this.$parent.leads[lead_index].filter_data2.team);
+            team_filter_data.push(data.name);
+            this.$parent.$set(this.$parent.leads[lead_index].filter_data2, 'team', team_filter_data );
+          }
+
+          this.save_specialists_meta();
+         }
       };
     },
 
@@ -10746,13 +10791,8 @@ Vue.component('comp-single-lead', {
       var vm = this;
       wait_block.show();
 
-      for(var _id in meta){
-        if(_id != 'lead_stage'){
-          this.save_parent_meta(this.lead_data.ID, meta[_id], _id, true);
-        }else{
-          this.save_parent_meta(this.lead_data.ID, meta[_id], _id, false);
-        }
-      }
+      this.save_parent_meta(this.lead_data.ID, meta, 'specialists_assigned', true);
+      this.save_parent_meta(this.lead_data.ID, meta_tco, 'specialists_assigned_tco', true);
 
       var fmt = new DateFormatter();
       var today = new Date();
@@ -10875,8 +10915,6 @@ Vue.component('comp-single-lead', {
       var file_pierces = this.$refs.file_input.value.split('\\');
       var file_name = file_pierces[file_pierces.length-1];
       this.new_file = file_name;
-
-      console.log(file_name)
     },
 
     change_phone: function(action){
@@ -11169,7 +11207,7 @@ Vue.component('comp-single-lead', {
 
 })
 
-console.log('test');
+console.log('test2');
 Vue.component('comp-new-lead', {
   data: function(){
     return {
