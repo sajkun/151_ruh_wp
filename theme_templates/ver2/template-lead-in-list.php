@@ -578,32 +578,6 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
            </form>
         </div>
 
-        <div class="leads-block">
-           <h2 class="leads-block__title">Stages' Log</h2>
-           <div class="spacer-h-30"></div>
-
-          <div class="leads-block__row">
-            <ul class="leads-block__activity">
-              <li>
-                <i class="state-none icon-activity"></i>
-                <span class="leads-block__activity-text">
-                  <span class="action">Lead Created</span>
-                  <span class="date">{{convert_date(lead_data.post_date)}}</span>
-                  <span class="length" v-if="date_difference(-1)">{{date_difference(-1)}}</span>
-                </span>
-              </li>
-              <li v-for="log, key in lead_data.meta.lead_stage_log2" :key="'lead_log'+key">
-                <i class="state-none icon-activity"></i>
-                <span class="leads-block__activity-text">
-                  <span class="action">Moved to {{log.stage}} <span v-if="log.by"> by {{log.by}}</span></span>
-                  <span class="date">{{convert_date(log.date)}}</span>
-                  <span class="length" v-if="date_difference(key)">{{date_difference(key)}}</span>
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
         <div class="leads-block no-overflow" v-if="lead_data.is_failed == 'yes'">
           <h2 class="leads-block__title">Failed Lead Information</h2>
           <div class="leads-block__row">
@@ -647,6 +621,34 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
             </div>
           </form>
         </div>
+
+        <div class="leads-block">
+           <h2 class="leads-block__title">Stages' Log</h2>
+           <div class="spacer-h-30"></div>
+
+          <div class="leads-block__row">
+            <ul class="leads-block__activity">
+              <li>
+                <i class="state-none icon-activity"></i>
+                <span class="leads-block__activity-text">
+                  <span class="action">Lead Created</span>
+                  <span class="date">{{convert_date(lead_data.post_date)}}</span>
+                  <span class="length" v-if="date_difference(-1)">{{date_difference(-1)}}</span>
+                </span>
+              </li>
+              <li v-for="log, key in lead_data.meta.lead_stage_log2" :key="'lead_log'+key">
+                <i class="state-none icon-activity"></i>
+                <span class="leads-block__activity-text">
+                  <span class="action">Moved to {{log.stage}} <span v-if="log.by"> by {{log.by}}</span></span>
+                  <span class="date">{{convert_date(log.date)}}</span>
+                  <span class="length" v-if="date_difference(key)">{{date_difference(key)}}</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+
 
       </div><!-- col-12 col-lg-4 -->
     </div><!-- row -->
