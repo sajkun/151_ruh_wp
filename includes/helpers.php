@@ -748,9 +748,11 @@ if(!function_exists('get_leads_meta')){
         'end_date'              =>  isset($post_meta['_end_date'])? ($post_meta['_end_date']): false,
         'specialists_assigned'     => isset($post_meta['_lead_specialists'])? ($post_meta['_lead_specialists']): false,
         'specialists_assigned_tco' => isset($post_meta['_lead_specialists_tco'])? ($post_meta['_lead_specialists_tco']): false,
-
+        'disable_sms'           => isset($post_meta['_disable_sms'])? ($post_meta['_disable_sms']): 0,
         'text_messages' => isset($post_meta['_text_messages'])? ($post_meta['_text_messages']): false,
         'lead_files' => isset($post_meta['_lead_files'])? $post_meta['_lead_files']: array(),
+        'failed_reason'  => isset($post_meta['_failed_reason'])? $post_meta['_failed_reason']: array('reason'=> '', 'text' => '', 'author'=>'', 'date'=> ''),
+        'lead_stage_log' => isset($post_meta['_lead_stage_log'])? $post_meta['_lead_stage_log']: array(),
        );
 
 

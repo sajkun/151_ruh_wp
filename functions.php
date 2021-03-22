@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class velesh_init_theme{
 
   /* main style location  */
-  public $main_style = '/assets/css/main.min6.css';
+  public $main_style = '/assets/css/main.min7.css';
 
   /*theme style file slug*/
   public $main_style_slug = 'theme-main-style-dev1';
@@ -29,9 +29,9 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script = '/assets/script/main.min21.js';
+  public $main_script = '/assets/script/main.min22.js';
 
-  public $main_script_spa = '/assets/script/main.spa.min21.js';
+  public $main_script_spa = '/assets/script/main.spa.min22.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
@@ -82,7 +82,7 @@ class velesh_init_theme{
     define('PROGRESS', THEME_URL.'/assets/images/admin/progress.gif');
     define('DUMMY', THEME_URL.'/assets/images/admin/blank.png');
     define('DUMMY_S', THEME_URL.'/assets/images/admin/blank_s.png');
-    define('THEME_DEBUG', false);
+    define('THEME_DEBUG', true);
     define('RELOAD_LEAD', false);
     define('THEME_SPA', true);
   }

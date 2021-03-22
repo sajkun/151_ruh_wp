@@ -1249,6 +1249,15 @@ class theme_content_output{
       }
     }
 
+    $failed_reasons = array(
+      'Failed to contact us',
+      'Gone elsewhere',
+      'Too expensive',
+      'Shopping around',
+      'Not interested',
+      'Other',
+    );
+
     wp_localize_script($theme_init->main_script_slug, 'sms_data',  $sms_data);
     wp_localize_script($theme_init->main_script_slug, 'converted_stages', $converted_stages);
     wp_localize_script($theme_init->main_script_slug, 'failed_stage_name', $failed_stage_name);
@@ -1277,6 +1286,8 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
     wp_localize_script($theme_init->main_script_slug, 'payment_methods', $payment_methods);
     wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
+    wp_localize_script($theme_init->main_script_slug, ' failed_reasons', $failed_reasons);
+
 
     clog('print_lead_list: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
   }

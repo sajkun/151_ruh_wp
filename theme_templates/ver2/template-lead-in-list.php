@@ -495,7 +495,13 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 
             <div class="leads-block" v-if="lead_data.meta.patient_data.phone && lead_data.ID >= 0">
               <div class="leads-block__warning"> <svg width="16" height="15" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 16 15"><defs></defs><g><g><title>Path</title><path d="M8.00003,9c-0.55143,0 -1.00003,-0.53886 -1.00003,-1.2012v-2.5976c0,-0.66234 0.4486,-1.2012 1,-1.2012c0.5514,0 1,0.53886 1,1.2012v2.5976c0,0.66234 -0.44857,1.2012 -0.99997,1.2012z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M8,13c-0.5514,0 -1,-0.44858 -1,-0.99999c0,-0.5514 0.4486,-1.00001 1,-1.00001c0.5514,0 1,0.44861 1,1.00001c0,0.55141 -0.4486,0.99999 -1,0.99999z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M14.61514,15h-13.23032c-0.49961,0 -0.94748,-0.25533 -1.19803,-0.68298c-0.24541,-0.41895 -0.24916,-0.9131 -0.01031,-1.35587l6.61522,-12.26002c0.23688,-0.43902 0.6886,-0.70113 1.20828,-0.70113c0.51972,0 0.9714,0.26211 1.20831,0.70113v0v0l6.6152,12.25999c0.23891,0.44274 0.23512,0.93698 -0.01032,1.3559c-0.25051,0.42765 -0.69835,0.68298 -1.19803,0.68298z" fill="#ffa300" fill-opacity="1"></path></g><g clip-path="url(#clip-9A1E8388-719A-4D57-BE3B-1214B6B73F26)"><title>caution</title><g><title>Path</title><path d="M14.61514,15h-13.23032c-0.49961,0 -0.94748,-0.25533 -1.19803,-0.68298c-0.24541,-0.41895 -0.24916,-0.9131 -0.01031,-1.35587l6.61522,-12.26002c0.23688,-0.43902 0.6886,-0.70113 1.20828,-0.70113c0.51972,0 0.9714,0.26211 1.20831,0.70113v0v0l6.6152,12.25999c0.23891,0.44274 0.23512,0.93698 -0.01032,1.3559c-0.25051,0.42765 -0.69835,0.68298 -1.19803,0.68298z" fill="#ffa300" fill-opacity="1"></path></g><g><title>Path</title><path d="M8,13c-0.5514,0 -1,-0.44858 -1,-0.99999c0,-0.5514 0.4486,-1.00001 1,-1.00001c0.5514,0 1,0.44861 1,1.00001c0,0.55141 -0.4486,0.99999 -1,0.99999z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.00003,9c-0.55143,0 -1.00003,-0.53886 -1.00003,-1.2012v-2.5976c0,-0.66234 0.4486,-1.2012 1,-1.2012c0.5514,0 1,0.53886 1,1.2012v2.5976c0,0.66234 -0.44857,1.2012 -0.99997,1.2012z" fill="#fff3f3" fill-opacity="1"></path></g></g></g></svg> Warning! Any message sent here goes to the patient</div>
-              <h2 class="leads-block__title">Message Centre</h2>
+              <h2 class="leads-block__title">Message Centre
+               <div class="switcher" :class="{'active': !disable_sms}" v-on:click="toggle_sms_show"><div class="inner"></div></div>
+
+              <svg v-if="!!disable_sms" <?php echo "style='float: right; margin: 3px 5px 0 0'"; ?>  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#999" fill-opacity="1"></path></g></g></svg>
+
+              <svg v-if="!disable_sms" <?php echo "style='float: right; margin: 3px 5px 0 0'"; ?>  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#eb0147" fill-opacity="1"></path></g></g></svg>
+             </h2>
               <div class="spacer-h-15"></div>
 
 
@@ -506,30 +512,30 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
               <div class="leads-block__row _messages" v-show="text_messages">
                 <span class="message-sent-to">Sent to <span class="marked">{{lead_data.meta.patient_data.phone}}</span> via Ruh Tracker</span>
 
-                      <span class="note-block__show-more" v-on:click="text_messages_to_show = 99" v-if="text_messages_to_show == 2 && text_messages.length > 2"> <i class="icon"></i> Show {{text_messages.length - 2}} more</span>
+                <span class="note-block__show-more" v-on:click="text_messages_to_show = 99" v-if="text_messages_to_show == 2 && text_messages.length > 2"> <i class="icon"></i> Show {{text_messages.length - 2}} more</span>
 
-                      <div v-if="text_messages_to_show == 2 && text_messages.length > 2"><br></div>
+                <div v-if="text_messages_to_show == 2 && text_messages.length > 2"><br></div>
 
-                        <div class="message-block" v-bind:class="msg.type" v-for="msg in text_messages_shown" v-bind:key="msg">
-                          <div class="message-block__header clearfix">
-                             <span class="name" v-if="msg.type=='we'">&nbsp; Ruh Dental </span>
-                             <span class="name" v-if="msg.type=='him'">&nbsp; {{patient_data.name}} </span>
-                            <span class="date">  {{msg.date_sent}} </span>
-                          </div>
+                  <div class="message-block" v-bind:class="msg.type" v-for="msg in text_messages_shown" v-bind:key="msg">
+                    <div class="message-block__header clearfix">
+                       <span class="name" v-if="msg.type=='we'">&nbsp; Ruh Dental </span>
+                       <span class="name" v-if="msg.type=='him'">&nbsp; {{patient_data.name}} </span>
+                      <span class="date">  {{msg.date_sent}} </span>
+                    </div>
 
-                          <div class="message-block__body">
-                            {{msg.body}}
-                          </div>
-                          <i class="message-status">{{msg.status}}</i>
-                        </div>
+                    <div class="message-block__body">
+                      {{msg.body}}
+                    </div>
+                    <i class="message-status">{{msg.status}}</i>
+                  </div>
 
-                        <div class="" v-if="text_messages.length == 0">
-                          <br>
-                          <b class="text-center">There are no messages there yet</b>
-                          <br>
-                          <br>
-                        </div>
-                      </div>
+                  <div class="" v-if="text_messages.length == 0">
+                    <br>
+                    <b class="text-center">There are no messages there yet</b>
+                    <br>
+                    <br>
+                  </div>
+              </div>
 
 
                 <form  method="POST" v-on:submit.prevent="send_text_message" >
@@ -570,6 +576,76 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                <button type="submit" class="leads-block__form-submit" v-show="file_is_prepared">Upload</button>
              </div>
            </form>
+        </div>
+
+        <div class="leads-block">
+           <h2 class="leads-block__title">Stages' Log</h2>
+           <div class="spacer-h-30"></div>
+
+          <div class="leads-block__row">
+            <ul class="leads-block__activity">
+              <li>
+                <i class="state-none icon-activity"></i>
+                <span class="leads-block__activity-text">
+                  <span class="action">Lead Created</span>
+                  <span class="date">{{convert_date(lead_data.post_date)}}</span>
+                  <span class="length" v-if="date_difference(-1)">{{date_difference(-1)}}</span>
+                </span>
+              </li>
+              <li v-for="log, key in lead_data.meta.lead_stage_log" :key="'lead_log'+key">
+                <i class="state-none icon-activity"></i>
+                <span class="leads-block__activity-text">
+                  <span class="action">Moved to {{log.stage}}</span>
+                  <span class="date">{{convert_date(log.date)}}</span>
+                  <span class="length" v-if="date_difference(key)">{{date_difference(key)}}</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="leads-block no-overflow" v-if="lead_data.is_failed == 'yes'">
+          <h2 class="leads-block__title">Failed Lead Information</h2>
+          <div class="leads-block__row">
+            <table class="leads-block__data no-margin">
+              <tr>
+                <td colspan="2">
+                  <p class="leads-block__label no-margin">Select Reason</p>
+                </td>
+                <td>
+                   <select-imitation2
+                  _select_name="failed_reasons"
+                  :_options="failed_reasons"
+                   v-on:update_list="update_failed_reasons"
+                   v-bind:class="'fullwidth'"
+                   :_selected="lead_data.meta.failed_reason.reason"
+                   ref="failed_reasons_select"></select-imitation2 >
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="leads-block__row" v-if="lead_data.meta.failed_reason.text" >
+            <div class="note-block">
+              <div class="note-block__header clearfix">
+               <span class="name">{{lead_data.meta.failed_reason.author}}</span>
+               <span class="date">{{lead_data.meta.failed_reason.date}}</span>
+               <i class="remove-note-icon" v-on:click="clear_failed_reason"> <svg class="icon svg-icon-trash"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-trash"></use></svg></i>
+              </div>
+              <div class="note-block__body">
+                <span class="inner"> {{lead_data.meta.failed_reason.text}} </span>
+              </div>
+            </div>
+          </div>
+
+          <form  method="POST" v-on:submit.prevent="submit_failed_note" >
+            <div class="leads-block__form">
+                <textarea name="text" v-model="failed_reason_text" placeholder="Add additional note"></textarea>
+                <button type="submit" class="submit-button">
+                  <svg class="icon svg-icon-send"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-send"></use> </svg>
+                </button>
+            </div>
+          </form>
         </div>
 
       </div><!-- col-12 col-lg-4 -->

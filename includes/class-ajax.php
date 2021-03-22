@@ -703,6 +703,15 @@ if(!class_exists('theme_ajax_action')){
       }
 
       $update = update_post_meta(  $post_id , '_lead_stage', $_POST['list_id'] );
+      $lead_log = get_post_meta($post_id, '_lead_stage_log', true);
+      $lead_log = $lead_log ?: array();
+      $time = new DateTime();
+      $lead_log[] =  array(
+        'stage' =>  $_POST['list_id'],
+        'date'  => $time->format('Y-m-d H:i:s'),
+      );
+
+      $update = update_post_meta(  $post_id , '_lead_stage_log', $lead_log );
 
       $data = array( 'ID' => $post_id  );
       wp_update_post( $data );
