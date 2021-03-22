@@ -703,7 +703,7 @@ if(!class_exists('theme_ajax_action')){
       }
 
       $update = update_post_meta(  $post_id , '_lead_stage', $_POST['list_id'] );
-      $lead_log = get_post_meta($post_id, '_lead_stage_log', true);
+      $lead_log = get_post_meta($post_id, '_lead_stage_log2', true);
       $lead_log = $lead_log ?: array();
       $time = new DateTime();
       $lead_log[] =  array(
@@ -711,7 +711,7 @@ if(!class_exists('theme_ajax_action')){
         'date'  => $time->format('Y-m-d H:i:s'),
       );
 
-      $update = update_post_meta(  $post_id , '_lead_stage_log', $lead_log );
+      $update = update_post_meta(  $post_id , '_lead_stage_log2', $lead_log );
 
       $data = array( 'ID' => $post_id  );
       wp_update_post( $data );
