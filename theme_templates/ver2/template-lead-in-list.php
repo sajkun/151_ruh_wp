@@ -592,7 +592,7 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                   <span class="length" v-if="date_difference(-1)">{{date_difference(-1)}}</span>
                 </span>
               </li>
-              <li v-for="log, key in lead_data.meta.lead_stage_log" :key="'lead_log'+key">
+              <li v-for="log, key in lead_data.meta.lead_stage_log2" :key="'lead_log'+key">
                 <i class="state-none icon-activity"></i>
                 <span class="leads-block__activity-text">
                   <span class="action">Moved to {{log.stage}} <span v-if="log.by"> by {{log.by}}</span></span>
