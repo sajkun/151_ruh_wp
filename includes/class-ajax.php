@@ -89,6 +89,7 @@ if(!class_exists('theme_ajax_action')){
     }
 
     public static function store_online_journey_cb(){
+      header('Access-Control-Allow-Origin: *');
       wp_send_json('success' );
     }
 
