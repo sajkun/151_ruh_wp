@@ -76,6 +76,8 @@ if(!class_exists('theme_ajax_action')){
 
       add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
 
+      add_action('wp_ajax_nopriv_store_online_journey', array($this, 'store_online_journey_cb'));
+
       add_action('wp_ajax_send_sms', array($this,'send_sms_cb'));
       add_action('wp_ajax_nopriv_send_sms', array($this,'send_sms_cb'));
 
@@ -86,10 +88,12 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_update_lead_specialist_meta', array($this,'update_lead_specialist_meta_cb'));
     }
 
-    public static function send_sms_cb(){
-
-
+    public static function store_online_journey_cb(){
+      wp_send_json('success' );
     }
+
+
+    public static function send_sms_cb(){}
 
     public static function update_lead_specialist_meta_cb(){
 
