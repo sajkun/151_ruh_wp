@@ -88,9 +88,70 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_update_lead_specialist_meta', array($this,'update_lead_specialist_meta_cb'));
     }
 
+
+
     public static function store_online_journey_cb(){
       header('Access-Control-Allow-Origin: *');
-      wp_send_json('success' );
+      $meta = $_POST;
+
+      $_name = array($meta['first_name'],$meta['last_name'], 'online-journey');
+
+      $name = array();
+
+      foreach ($_name as $key => $n) {
+        if(trim($n)){
+          array_push($name, $n);
+        }
+      }
+
+      $name_str = implode(' - ', $name);
+
+      $date = new DateTime();
+
+      $post_data = array(
+        'post_title'    =>  $name_str,
+        'post_content'  => '',
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'     => velesh_theme_posts::$lead,
+        'post_date'     => $date->format('Y-m-d H:i:s'),
+      );
+
+      if( $name_str ){
+        $post_id = wp_insert_post( $post_data );
+        // $meta['date_time'] = $date->format('d M Y'). ' at '. $date->format('H:i');
+      }else{
+        wp_send_json_error(array('no data passed'), 418);
+      }
+
+
+      $meta = array(
+          'name' => $meta['first_name']. ' '.$meta['last_name'],
+          'phone' => $meta['phone'],
+          'email' => $meta['email'],
+      );
+
+      $updated = update_post_meta($post_id,  '_patient_data', $meta);
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_patient_data', $meta, true );
+      }
+
+      unset($meta['first_name']);
+      unset($meta['last_name']);
+      unset($meta['phone']);
+      unset($meta['email']);
+
+      $updated = update_post_meta($post_id,  '_online_journey', $meta);
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_online_journey', $meta, true );
+      }
+
+      wp_send_json(array(
+        'post' => $_POST,
+        'post_id' => $post_id,
+      ));
     }
 
 
