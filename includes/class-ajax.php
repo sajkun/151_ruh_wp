@@ -125,16 +125,16 @@ if(!class_exists('theme_ajax_action')){
       }
 
 
-      $meta = array(
+      $patient_data = array(
           'name' => $meta['first_name']. ' '.$meta['last_name'],
           'phone' => $meta['phone'],
           'email' => $meta['email'],
       );
 
-      $updated = update_post_meta($post_id,  '_patient_data', $meta);
+      $updated = update_post_meta($post_id,  '_patient_data', $patient_data);
 
       if(!$updated ){
-        $updated = add_post_meta( $post_id,  '_patient_data', $meta, true );
+        $updated = add_post_meta( $post_id,  '_patient_data', $patient_data, true );
       }
 
       unset($meta['first_name']);

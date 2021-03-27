@@ -4122,7 +4122,7 @@ html {
   stroke: inherit;
 }
 
-.checkbox-imitation__view:after, .check-imitation .view:after, .icon-holder .icon, .sourse__icon .icon, .button-add:before, .button-add:after {
+.checkbox-imitation__view:after, .check-imitation .view:after, .icon-holder .icon, .sourse__icon .icon, .button-add:before, .button-add:after, .upload-image-item .svg-icon-upload {
   position: absolute;
   left: 0;
   right: 0;
@@ -9704,6 +9704,40 @@ body.admin-bar {
   overflow: hidden;
 }
 
+.leads-block__header {
+  margin: -20px 0 0;
+  padding: 15px 15px 17px 20px;
+  color: #f5eae0;
+  line-height: 29px;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.leads-block__header img {
+  display: inline-block;
+  line-height: 29px;
+  vertical-align: top;
+}
+
+.leads-block__header span {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.leads-block__header .logo-icon {
+  font-size: 18px;
+  color: #fff;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 29px;
+  vertical-align: top;
+}
+
+.leads-block__header.dark {
+  background-color: #1a1c1a;
+}
+
 .leads-block.no-overflow {
   overflow: unset;
 }
@@ -9791,7 +9825,7 @@ body.admin-bar {
 .leads-block__title {
   display: block;
   margin: 0 0 0;
-  font-size: 16px;
+  font-size: 14px;
   color: #2b2f37;
   font-weight: 700;
   font-family: "HelveticaFont_", sans-serif;
@@ -9891,6 +9925,16 @@ body.admin-bar {
   vertical-align: middle;
   background-size: cover;
   background-repeat: no-repeat;
+}
+
+.leads-block__text {
+  box-sizing: border-box;
+  color: #545352;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 13px;
+  line-height: 19.17px;
+  margin: 0;
+  white-space: pre-line;
 }
 
 .leads-block__title, .leads-block__row {
@@ -10391,6 +10435,41 @@ body.admin-bar {
 
 .leads-block__activity .icon-activity.state-none {
   background-color: #cfd9ea;
+}
+
+.online-journey__goal {
+  padding: 20px 20px 20px 66px;
+  position: relative;
+  border-bottom: 1px solid #eff0f3;
+}
+
+.online-journey__goal-icon {
+  display: block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  text-align: center;
+  margin: auto;
+}
+
+.online-journey__goal-title {
+  margin: 0 0 3px;
+  color: #181c1a;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.online-journey__goal-text {
+  color: #545352;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 13px;
+  margin: 0;
+  line-height: 19.17px;
 }
 
 .add-documents {
@@ -11230,6 +11309,124 @@ input.error {
 ._messages {
   max-height: 400px;
   overflow: auto;
+}
+
+.upload-image-item {
+  position: relative;
+  width: 100%;
+  max-width: 92px;
+  min-width: 92px;
+  flex-basis: 92px;
+  height: 92px;
+  border-radius: 6px;
+  background-color: #f6efe9;
+  margin: 0 0 20px;
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+}
+
+.upload-image-item input {
+  display: none;
+}
+
+.upload-image-item__title {
+  color: #181c1a;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  display: block;
+  margin: 0 0 5px;
+}
+
+.upload-image-item__status {
+  color: #555352;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 18.52px;
+  text-align: left;
+}
+
+.upload-image-item__status i {
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+  width: 8px;
+  height: 8px;
+  background-color: #bbb;
+}
+
+.upload-image-item__status.not-loaded i {
+  background-color: #e95769;
+}
+
+.upload-image-item__status.loaded i {
+  background-color: #6fc551;
+}
+
+.upload-image-item .svg-icon-upload {
+  font-size: 17px;
+  width: 0.9412em;
+  height: 1em;
+}
+
+.upload-image-item img {
+  -o-object-fit: cover;
+     object-fit: cover;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 14;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.upload-image-item .braket-tl,
+.upload-image-item .braket-tr,
+.upload-image-item .braket-bl,
+.upload-image-item .braket-br {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  display: block;
+  border: 2px solid #8f8a87;
+  z-index: 10;
+}
+
+.upload-image-item .braket-tl {
+  top: 5px;
+  left: 5px;
+  border-radius: 5px 0 0 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.upload-image-item .braket-tr {
+  top: 5px;
+  right: 5px;
+  border-radius: 0 5px 0 0;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+.upload-image-item .braket-bl {
+  left: 5px;
+  bottom: 5px;
+  border-top: 0;
+  border-right: 0;
+  border-radius: 0 0 0 5px;
+}
+
+.upload-image-item .braket-br {
+  border-radius: 0 0 5px 0;
+  right: 5px;
+  bottom: 5px;
+  border-top: 0;
+  border-left: 0;
 }
 
 .exist-popup {

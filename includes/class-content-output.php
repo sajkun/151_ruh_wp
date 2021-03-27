@@ -1289,12 +1289,20 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, ' failed_reasons', $failed_reasons);
 
 
+
+
     clog('print_lead_list: '.round(microtime(true) - $start, 4).' сек.' , 'blue');
   }
 
   public static function print_single_content_inline(){
-
+    global $theme_init;
     $args = array();
+
+    $online_journey_settings = array(
+      'token' => '8MDAcIPwqEIAAAAAAAAAAdC8BPUG2yXmJNjrDtqpiHkmluCKoG-pAAqykGvuRucG',
+    );
+
+    wp_localize_script($theme_init->main_script_slug, ' online_journey_settings', $online_journey_settings);
 
     print_theme_template_part('lead-in-list', 'ver2', $args);
     print_theme_template_part('lead-new', 'ver2', $args);

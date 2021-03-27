@@ -63,177 +63,176 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
              /************************************/
              /************************************/?>
         <div class="leads-block">
-            <h2 class="leads-block__title"><i class="icon-blue"></i> Reception Team
-
-              <span class="icons">
-                <span class="phones">
-                  <i class="phone-ok icon" v-for="n in phones_count" v-on:click="change_phone('remove')"></i><i class="phone-na icon"  v-for="n in phones_left" v-on:click="change_phone('add')"></i>
-                </span>
-
-                <span class="messages">
-                  <i class="message-ok icon" v-for="n in messages_count"  v-on:click="change_message('remove')"></i><i class="message-na icon"  v-for="n in messages_left"  v-on:click="change_message('add')"></i>
-                </span>
+          <h2 class="leads-block__title"><i class="icon-blue"></i> Reception Team
+            <span class="icons">
+              <span class="phones">
+                <i class="phone-ok icon" v-for="n in phones_count" v-on:click="change_phone('remove')"></i><i class="phone-na icon"  v-for="n in phones_left" v-on:click="change_phone('add')"></i>
               </span>
-            </h2>
 
-            <div class="hr"></div>
-
-            <div class="row no-gutters">
-              <div class="col-6 valign-center">
-                <span class="leads-block__title">
-                   <svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>&nbsp;Assigned
-                </span>
-              </div>
-              <div class="col-6 valign-center padding-r-30">
-
-
-                  <table class="team-leads" v-if="visible_specialists.length > 0">
-                    <tbody><tr v-for="(sp, index) in visible_specialists">
-                      <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.user_id, '')"></div></td>
-                      <td colspan="3">
-                        <div class="clearfix">
-                          <span class="team-leads__name" v-on:click="remove_specialist(sp.user_id, '')">{{sp.name}}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody></table>
-
-                 <select-imitation2
-                  v-show="visible_specialists_show_select"
-                  _select_name="lead_specialissts"
-                  :_options="select_data.specialists"
-                   v-on:update_list="update_specialists($event, 'enquery')"
-                   v-bind:class="'fullwidth'"
-                   ref="lead_specialissts_select"></select-imitation2 >
-              </div>
-            </div>
-
-            <div class="hr"></div>
-
-            <span class="leads-block__title">
-              Patient Information
+              <span class="messages">
+                <i class="message-ok icon" v-for="n in messages_count"  v-on:click="change_message('remove')"></i><i class="message-na icon"  v-for="n in messages_left"  v-on:click="change_message('add')"></i>
+              </span>
             </span>
+          </h2>
 
-            <div class="spacer-h-10"></div>
+          <div class="hr"></div>
 
-            <div class="leads-block__row">
-                <div class="leads-block__name">
+          <div class="row no-gutters">
+            <div class="col-6 valign-center">
+              <span class="leads-block__title">
+                 <svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>&nbsp;Assigned
+              </span>
+            </div>
+            <div class="col-6 valign-center padding-r-30">
 
-                  <input-field2
-                   _name="name"
-                  :_value="lead_data.meta.patient_data.name"
-                  v-on:input_value_changed = "update_lead($event, 'patient_data')"
-                  v-bind:class="'leads-block__input lg'"></input-field2>
 
-                  <span class="leads-block__comment">  added... </span>
-                </div>
-                <table class="leads-block__data">
-                  <tr>
-                    <td>
-                      <svg class="icon svg-icon-phone"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-phone"></use> </svg>
-                    </td>
-                    <td><p class="leads-block__label">Phone <span class="mark">*</span></p></td>
-                    <td>
-                      <input-field2
-                       _name="phone"
-                       :_value="lead_data.meta.patient_data.phone"
-                       v-on:input_value_changed = "update_lead($event, 'patient_data')"
-                       ></input-field2>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <svg class="icon svg-icon-email"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-email"></use> </svg>
-                    </td>
-                    <td><p class="leads-block__label">E-mail <span class="mark">*</span></p></td>
-                    <td>
-                      <input-field2
-                       _name="email"
-                        :_value="lead_data.meta.patient_data.email"
-                        v-on:input_value_changed = "update_lead($event, 'patient_data')"
-                        >
-                       </input-field2>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>
-                    </td>
-                    <td><p class="leads-block__label">Source <span class="mark">*</span></p></td>
-                    <td>
-                      <div id="select-imitation-sourses">
-                        <select-imitation2
-                          _select_name="source"
-                          v-on:update_list="update_lead($event, 'patient_data')"
-                          ref="source_select"
-                         :_options ="select_data.sources"
-                         :_selected ="lead_data.meta.patient_data.source"
-                          ></select-imitation2>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
-                    </td>
-                    <td><p class="leads-block__label">Enquiry</p></td>
-                    <td>
-
+                <table class="team-leads" v-if="visible_specialists.length > 0">
+                  <tbody><tr v-for="(sp, index) in visible_specialists">
+                    <td><div class="team-leads__photo"><img v-bind:src="sp.photo" v-bind:alt="sp.name" v-on:click="remove_specialist(sp.user_id, '')"></div></td>
+                    <td colspan="3">
                       <div class="clearfix">
-                        <select-imitation2
-                        v-bind:class="'style-less'"
-                        _name="treatment"
-                        _select_name="treatment" v-on:update_list="update_lead($event, 'patient_data')"
-                        ref="treatments_select"
-                        :_options ="select_data.treatments"
-                        :_selected = "lead_data.meta.patient_data.treatment"
-                      ></select-imitation2>
+                        <span class="team-leads__name" v-on:click="remove_specialist(sp.user_id, '')">{{sp.name}}</span>
                       </div>
                     </td>
                   </tr>
-                  <tr>
-                    <td>
-                      <svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>
-                    </td>
-                    <td><p class="leads-block__label">Clinic</p></td>
-                    <td>
+                </tbody></table>
 
+               <select-imitation2
+                v-show="visible_specialists_show_select"
+                _select_name="lead_specialissts"
+                :_options="select_data.specialists"
+                 v-on:update_list="update_specialists($event, 'enquery')"
+                 v-bind:class="'fullwidth'"
+                 ref="lead_specialissts_select"></select-imitation2 >
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <span class="leads-block__title">
+            Patient Information
+          </span>
+
+          <div class="spacer-h-10"></div>
+
+          <div class="leads-block__row">
+              <div class="leads-block__name">
+
+                <input-field2
+                 _name="name"
+                :_value="lead_data.meta.patient_data.name"
+                v-on:input_value_changed = "update_lead($event, 'patient_data')"
+                v-bind:class="'leads-block__input lg'"></input-field2>
+
+                <span class="leads-block__comment">  added... </span>
+              </div>
+              <table class="leads-block__data">
+                <tr>
+                  <td>
+                    <svg class="icon svg-icon-phone"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-phone"></use> </svg>
+                  </td>
+                  <td><p class="leads-block__label">Phone <span class="mark">*</span></p></td>
+                  <td>
+                    <input-field2
+                     _name="phone"
+                     :_value="lead_data.meta.patient_data.phone"
+                     v-on:input_value_changed = "update_lead($event, 'patient_data')"
+                     ></input-field2>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <svg class="icon svg-icon-email"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-email"></use> </svg>
+                  </td>
+                  <td><p class="leads-block__label">E-mail <span class="mark">*</span></p></td>
+                  <td>
+                    <input-field2
+                     _name="email"
+                      :_value="lead_data.meta.patient_data.email"
+                      v-on:input_value_changed = "update_lead($event, 'patient_data')"
+                      >
+                     </input-field2>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>
+                  </td>
+                  <td><p class="leads-block__label">Source <span class="mark">*</span></p></td>
+                  <td>
+                    <div id="select-imitation-sourses">
                       <select-imitation2
-                       v-bind:class="'style-less'"
-                        _name="clinic"
-                        _select_name="clinic"
+                        _select_name="source"
                         v-on:update_list="update_lead($event, 'patient_data')"
-                        ref="clinic_select"
-                        :_options = "select_data.clinics"
-                        :_selected="lead_data.meta.patient_data.clinic">
-                        </select-imitation2>
+                        ref="source_select"
+                       :_options ="select_data.sources"
+                       :_selected ="lead_data.meta.patient_data.source"
+                        ></select-imitation2>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
+                  </td>
+                  <td><p class="leads-block__label">Enquiry</p></td>
+                  <td>
 
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>
-                    </td>
-                    <td><p class="leads-block__label">Campaign</p></td>
-                    <td>
+                    <div class="clearfix">
                       <select-imitation2
                       v-bind:class="'style-less'"
-                      _select_name="campaign"
+                      _name="treatment"
+                      _select_name="treatment" v-on:update_list="update_lead($event, 'patient_data')"
+                      ref="treatments_select"
+                      :_options ="select_data.treatments"
+                      :_selected = "lead_data.meta.patient_data.treatment"
+                    ></select-imitation2>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>
+                  </td>
+                  <td><p class="leads-block__label">Clinic</p></td>
+                  <td>
+
+                    <select-imitation2
+                     v-bind:class="'style-less'"
+                      _name="clinic"
+                      _select_name="clinic"
                       v-on:update_list="update_lead($event, 'patient_data')"
-                      ref="campaign_select"
-                      :_options = "select_data.campaigns"
-                      :_selected="lead_data.meta.patient_data.campaign"
-                        ></select-imitation2>
-                    </td>
-                  </tr>
-                </table>
-            </div><!-- leads-block__row -->
+                      ref="clinic_select"
+                      :_options = "select_data.clinics"
+                      :_selected="lead_data.meta.patient_data.clinic">
+                      </select-imitation2>
+
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>
+                  </td>
+                  <td><p class="leads-block__label">Campaign</p></td>
+                  <td>
+                    <select-imitation2
+                    v-bind:class="'style-less'"
+                    _select_name="campaign"
+                    v-on:update_list="update_lead($event, 'patient_data')"
+                    ref="campaign_select"
+                    :_options = "select_data.campaigns"
+                    :_selected="lead_data.meta.patient_data.campaign"
+                      ></select-imitation2>
+                  </td>
+                </tr>
+              </table>
+          </div><!-- leads-block__row -->
 
           <div class="spacer-h-30"></div>
 
           <h2 class="leads-block__title">Enquiry Notes</h2>
 
-           <div class="spacer-h-20"></div>
+          <div class="spacer-h-20"></div>
 
           <div class="leads-block__row">
             <div v-for="note,key in enquery_notes_c" class="note-block">
@@ -269,6 +268,109 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 
             </div>
           </form>
+        </div><!-- leads-block -->
+
+
+        <div class="leads-block online-journey" v-if="lead_data.meta.online_journey">
+          <div class="leads-block__header dark">
+            <img src="<?php echo THEME_URL?>/assets/images/svg/ruh.svg" alt="">
+            <i class="logo-icon">
+              +
+            </i>
+            <span>Online Visit</span>
+          </div>
+
+          <div class="leads-block__row online-journey__goal" v-if="lead_data.meta.online_journey.look_to_archive">
+            <i class="online-journey__goal-icon">
+              <span v-html="journey_data[lead_data.meta.online_journey.look_to_archive].icon"></span>
+            </i>
+
+            <h4 class="online-journey__goal-title">{{lead_data.meta.online_journey.look_to_archive}}</h4>
+            <p class="online-journey__goal-text">{{journey_data[lead_data.meta.online_journey.look_to_archive].text}}</p>
+          </div>
+
+          <div class="leads-block__row">
+            <div class="spacer-h-10"></div>
+            <div class="row justify-content-between no-gutters">
+              <load-item
+                :_path='lead_data.meta.online_journey.photo_1'
+                v-on:change_image_uploaded = 'change_image_uploaded_cb($event, "photo_1")'
+              ></load-item>
+              <load-item
+                :_path='lead_data.meta.online_journey.photo_2'
+                v-on:change_image_uploaded = 'change_image_uploaded_cb($event, "photo_2")'
+              ></load-item>
+              <load-item
+               v-on:change_image_uploaded = 'change_image_uploaded_cb($event, "photo_3")'
+               :_path='lead_data.meta.online_journey.photo_3'
+              ></load-item>
+            </div><!-- row justify-content-between -->
+            <div class="spacer-h-10"></div>
+          </div><!-- leads-block__row -->
+
+          <h2 class="leads-block__title">Additional Information </h2>
+          <div class="spacer-h-20"></div>
+          <div class="leads-block__row">
+            <table class="leads-block__data">
+              <tr>
+                <td><p class="leads-block__text"> Does your current smile
+                  affect your confidence? </p></td>
+                <td>
+                  <select-imitation2
+                    _name="confidence"
+                    _select_name="confidence"
+                    v-on:update_list="update_lead($event, 'online_journey')"
+
+                    :_options = "select_data.confidence"
+                    :_selected="lead_data.meta.online_journey.confidence">
+                    </select-imitation2>
+                </td>
+              </tr>
+              <tr>
+                <td><p class="leads-block__text"> Do you visit the dentist
+                  for regular check-ups? </p></td>
+                <td>
+                  <select-imitation2
+                    _name="checkup"
+                    _select_name="checkup"
+                    v-on:update_list="update_lead($event, 'online_journey')"
+                    :_options = "select_data.checkup"
+                    :_selected="lead_data.meta.online_journey.checkup">
+                    </select-imitation2>
+                </td>
+              </tr>
+              <tr>
+                <td><p class="leads-block__text"> Have you ever
+                  had orthodontic treatment? </p></td>
+                <td>
+                  <select-imitation2
+                    _name="how_ever"
+                    _select_name="how_ever"
+                    v-on:update_list="update_lead($event, 'online_journey')"
+                    :_options = "select_data.how_ever"
+                    :_selected="lead_data.meta.online_journey.how_ever">
+                    </select-imitation2>
+                </td>
+              </tr>
+              <tr>
+                <td><p class="leads-block__text"> Have you ever had
+                 dental cosmetic treatment? </p></td>
+                <td>
+                  <select-imitation2
+                    _name="had_cosmetic"
+                    _select_name="had_cosmetic"
+                    v-on:update_list="update_lead($event, 'online_journey')"
+                    :_options = "select_data.had_cosmetic"
+                    :_selected="lead_data.meta.online_journey.had_cosmetic">
+                    </select-imitation2>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+
+
+
         </div>
 
 

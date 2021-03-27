@@ -753,7 +753,7 @@ if(!function_exists('get_leads_meta')){
         'lead_files' => isset($post_meta['_lead_files'])? $post_meta['_lead_files']: array(),
         'failed_reason'  => isset($post_meta['_failed_reason'])? $post_meta['_failed_reason']: array('reason'=> '', 'text' => '', 'author'=>'', 'date'=> ''),
         'lead_stage_log2' => isset($post_meta['_lead_stage_log2'])? $post_meta['_lead_stage_log2']: array(),
-        'online_journey' => isset($post_meta['_online_journey'])? $post_meta['_online_journey']: array(),
+        'online_journey' => isset($post_meta['_online_journey'])? $post_meta['_online_journey']: false,
        );
 
 

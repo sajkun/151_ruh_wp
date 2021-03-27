@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class velesh_init_theme{
 
   /* main style location  */
-  public $main_style = '/assets/css/main.min7.css';
+  public $main_style = '/assets/css/main.min8.css';
 
   /*theme style file slug*/
   public $main_style_slug = 'theme-main-style-dev1';
@@ -29,15 +29,15 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script = '/assets/script/main.min27.js';
+  public $main_script = '/assets/script/main.min28.js';
 
-  public $main_script_spa = '/assets/script/main.spa.min27.js';
+  public $main_script_spa = '/assets/script/main.spa.min28.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
 
   /* svg sprites files slug for local storage */
-  public $svg_sprite_slug = 'svg_sprite_151_4';
+  public $svg_sprite_slug = 'svg_sprite_151_6';
 
   /* merged style file name */
   public $merged_style_name = 'merged-style3.css';
