@@ -345,6 +345,7 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                 <td>
                   <select-imitation2
                     _name="how_ever"
+                    :class="'top'"
                     _select_name="how_ever"
                     v-on:update_list="update_lead($event, 'online_journey')"
                     :_options = "select_data.how_ever"
@@ -359,6 +360,7 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
                   <select-imitation2
                     _name="had_cosmetic"
                     _select_name="had_cosmetic"
+                    :class="'top'"
                     v-on:update_list="update_lead($event, 'online_journey')"
                     :_options = "select_data.had_cosmetic"
                     :_selected="lead_data.meta.online_journey.had_cosmetic">
