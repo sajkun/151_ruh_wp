@@ -742,7 +742,7 @@ if(!function_exists('get_leads_meta')){
         'treatment_coordinator' => $coordinator_data,
         'treatment_value'       =>  isset($post_meta['_treatment_value'])? ($post_meta['_treatment_value']): false,
         'patient_data'          =>  isset($post_meta['_patient_data'])? ($post_meta['_patient_data']): false,
-        'reminder'              =>  isset($post_meta['_reminder'])? ($post_meta['_reminder']): false,
+        'reminder'              =>  isset($post_meta['_reminder']) && strtolower($post_meta['_reminder']) !='false'? ($post_meta['_reminder']): false,
         'lead_stage'            =>  isset($post_meta['_lead_stage'])? ($post_meta['_lead_stage']): false,
         'start_date'            =>  isset($post_meta['_start_date'])? ($post_meta['_start_date']): false,
         'end_date'              =>  isset($post_meta['_end_date'])? ($post_meta['_end_date']): false,
@@ -755,9 +755,6 @@ if(!function_exists('get_leads_meta')){
         'lead_stage_log2' => isset($post_meta['_lead_stage_log2'])? $post_meta['_lead_stage_log2']: array(),
         'online_journey' => isset($post_meta['_online_journey'])? $post_meta['_online_journey']: false,
        );
-
-
-
 
       // $lead_specialists      = get_post_meta($post->ID, '_lead_specialists', true);
       $lead_specialists      = isset($post_meta['_lead_specialists'])? ($post_meta['_lead_specialists']): false;
