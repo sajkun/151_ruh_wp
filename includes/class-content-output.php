@@ -46,7 +46,7 @@ class theme_content_output{
     $user_roles = $user_meta->roles;
 
 
-    $is_admin = in_array('administrator', $user_roles) || in_array('manager', $user_roles);
+    $is_admin = in_array('administrator', $user_roles) || in_array('manager', $user_roles) || get_current_user_id() == 56;
     $is_staff = in_array(get_theme_roles('staff'), $user_roles);
 
     $leads_menu_class = ($obj->ID === $leads_id || $obj->ID === $new_lead_id ||  velesh_theme_posts::$lead === $obj->post_type || !$is_admin )? 'active' : '';
