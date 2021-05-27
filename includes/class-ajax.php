@@ -72,6 +72,7 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_theme_get_users', array($this, 'theme_get_users_cb'));
       add_action('wp_ajax_nopriv_theme_get_users', array($this, 'theme_get_users_cb'));
 
+      add_action('wp_ajax_run_login', array($this, 'run_login_cb'));
       add_action('wp_ajax_nopriv_run_login', array($this, 'run_login_cb'));
 
       add_action('wp_ajax_nopriv_add_a_lead_by_post', array($this, 'add_a_lead_by_post_cb'));
@@ -86,9 +87,37 @@ if(!class_exists('theme_ajax_action')){
 
       add_action('wp_ajax_update_lead_specialist_meta', array($this,'update_lead_specialist_meta_cb'));
       add_action('wp_ajax_nopriv_update_lead_specialist_meta', array($this,'update_lead_specialist_meta_cb'));
+
+      add_action('wp_ajax_deactivate_lead', array($this,'deactivate_lead_cb'));
+      add_action('wp_ajax_nopriv_deactivate_lead', array($this,'deactivate_lead_cb'));
+
+      add_action('wp_ajax_test_cb', array($this,'test_cb'));
+      add_action('wp_ajax_nopriv_test_cb', array($this,'test_cb'));
     }
 
 
+    public static function test_cb(){
+      wp_send_json(array(
+        'post' => $_POST,
+      ));
+    }
+
+    public static function deactivate_lead_cb(){
+
+      $post_id = (int)$_POST['lead_id'];
+      $value   = $_POST['value'];
+
+      $updated = update_post_meta($post_id,  '_deactivated_lead',  $value );
+
+      if(!$updated ){
+        $updated = add_post_meta( $post_id,  '_deactivated_lead', $value, true );
+      }
+
+      wp_send_json(array(
+        'post' => $_POST,
+        'updated' => $updated,
+      ));
+    }
 
     public static function store_online_journey_cb(){
       header('Access-Control-Allow-Origin: *');
@@ -823,7 +852,7 @@ if(!class_exists('theme_ajax_action')){
         $from_formated = $from->format('M d Y');
         $to_formated   = $to->format('M d Y');
 
-        $leads = get_posts_by_dates($from_formated , $to_formated );
+        $leads = get_posts_by_dates($from_formated , $to_formated, false );
 
         $leads          = get_leads_meta($leads);
 
@@ -885,7 +914,7 @@ if(!class_exists('theme_ajax_action')){
           $from_formated_prev = $date_prev_period_start->format('M d Y');
           $to_formatted_prev  = $date_prev_period_end->format('M d Y');
 
-          $leads_prev = get_posts_by_dates($from_formated_prev , $to_formatted_prev );
+          $leads_prev = get_posts_by_dates($from_formated_prev , $to_formatted_prev, false );
           $leads_prev = get_leads_meta($leads_prev);
 
           $data['from_formated_prev'] = $from_formated_prev;

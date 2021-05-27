@@ -341,6 +341,16 @@ class velesh_theme_posts {
         }
 
 
+        if(isset($_POST['tag_cloud'])){
+          update_option('tag_cloud_list', $_POST['tag_cloud']);
+         ?>
+          <div class="notice notice-success is-dismissible"><p>Tag Cloud was saved succesfully</p></div>
+          <?php
+        }else{
+          delete_option('tag_cloud_list');
+        }
+
+
         if(isset($_POST['add_dentists_to_sources'])){
           update_option('add_dentists_to_sources', $_POST['add_dentists_to_sources']);
         }
@@ -351,149 +361,178 @@ class velesh_theme_posts {
       $campaigns = get_option('campaigns_list');
       $sources = get_option('sources_list');
       $payment_methods = get_option('payment_methods_list');
+      $tag_cloud = get_option('tag_cloud_list');
       $add_dentists_to_sources = get_option('add_dentists_to_sources');
 
       ?>
-        <h3>Set clinics, and treatments names</h3>
+      <br><br>
        <form action="<?php echo admin_url('edit.php?post_type=lead_item&page=clinics-treatment-configurations') ?>" method="POST">
 
-        <div class="">
-          <table class="fullwidth justify-table">
-            <tr>
-              <td>
-                <h4>Clinics</h4>
+        <input type="radio" name="tag-selector" id="clinics" class="switcher" checked="checked">
+        <input type="radio" name="tag-selector" id="treatment" class="switcher">
+        <input type="radio" name="tag-selector" id="campaign" class="switcher">
+        <input type="radio" name="tag-selector" id="sources" class="switcher">
+        <input type="radio" name="tag-selector" id="payment" class="switcher">
+        <input type="radio" name="tag-selector" id="tag" class="switcher">
 
-                  <div class="clinics-list">
-                    <?php if ($clinics): ?>
+        <div class="tabs-selectors">
+          <ul>
+            <li><label for="clinics">Clinics</label></li>
+            <li><label for="treatment">Treatment</label></li>
+            <li><label for="campaign">Campaigns</label></li>
+            <li><label for="sources">Sources</label></li>
+            <li><label for="payment">Payment Methods</label></li>
+            <li><label for="tag">Tag Cloud</label></li>
+          </ul>
+        </div>
 
-                    <?php foreach ($clinics as $key => $cl):
-                      if(!$cl) continue; ?>
-                      <div class="input-control">
-                        <p class="input-title">Clinic #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?>onclick="delete_input(this)">Delete Clinic</a></p>
-                        <input type="text" class="fullwidth" name="clinic[<?php echo $key ?>]" value="<?php echo $cl ?>">
-                      </div>
-                    <?php endforeach ?>
-                    <?php endif ?>
-                  </div>
+        <div class="page-container clinics">
 
-              <a href="javascript:void(0)" class="button" onclick="add_input('clinic')">Add clinic</a>
+            <div class="clinics-list">
+              <?php if ($clinics): ?>
 
-                <input type="hidden" id="count_clinics" value="<?php echo  $clinics? count( $clinics): 0 ?>">
-              </td>
-              <td colspan="3">
-                <h4>Treatment</h4>
-                <div class="treatments-list" <?php echo 'style="column-count:3; column-gap:20px"' ?>>
-                    <?php if ($treatments):
-                      $counter = 0;
-                      ?>
-
-                    <?php foreach ($treatments as $key => $cl):
-                      if(!$cl) continue?>
-                      <div class="input-control">
-                        <p class="input-title">Treatment #<?php echo $counter;  ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete treatment</a></p>
-                        <input type="text" class="fullwidth" name="treatment[<?php echo $counter ?>]" value="<?php echo $cl ?>">
-                      </div>
-                    <?php
-                      $counter++;
-                      endforeach;
-                     ?>
-                    <?php endif ?>
+              <?php foreach ($clinics as $key => $cl):
+                if(!$cl) continue; ?>
+                <div class="input-control">
+                  <p class="input-title">Clinic #<?php echo $key ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?>onclick="delete_input(this)">Delete Clinic</a></p>
+                  <input type="text" class="fullwidth" name="clinic[<?php echo $key ?>]" value="<?php echo $cl ?>">
                 </div>
-                <input type="hidden" id="count_treatment" value="<?php echo count($treatments); ?>">
-                <a href="javascript:void(0)" class="button" onclick="add_input('treatment')">Add treatment</a>
-              </td>
+              <?php endforeach ?>
+              <?php endif ?>
+            </div>
 
-            </tr>
+           <a href="javascript:void(0)" class="button" onclick="add_input('clinic')">Add clinic</a>
 
-            <tr>
-              <td  colspan="1">
-                <h4>Campaigns</h4>
+           <input type="hidden" id="count_clinics" value="<?php echo  $clinics? count( $clinics): 0 ?>">
+        </div>
 
-                  <div class="campaigns-list">
-                    <?php if ($campaigns):
-                       $counter = 0;
-                      ?>
+        <div class="page-container treatment">
+          <div class="treatments-list" <?php echo 'style="column-count:3; column-gap:20px"' ?>>
+              <?php if ($treatments):
+                $counter = 0;
+                ?>
 
-                    <?php foreach ($campaigns as $key => $cl):
-                    if(!$cl) continue ?>
-                      <div class="input-control">
-                        <p class="input-title">Campaign #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Campaign</a></p>
-                        <input type="text" class="fullwidth" name="campaign[<?php echo $key ?>]" value="<?php echo $cl ?>">
-                      </div>
-                    <?php
-                      $counter++;
-                      endforeach;
-                     ?>
-                    <?php endif ?>
-                  </div>
-
-                 <a href="javascript:void(0)" class="button" onclick="add_input('campaign')">Add campaign</a>
-
-                <input type="hidden" id="count_campaign" value="<?php echo  $campaigns? count( $campaigns): 0 ?>">
-              </td>
-              <td  colspan="2">
-                <h4>Sources</h4>
-                <div>
-
-                <label>
-                  <input type="hidden" name="add_dentists_to_sources" value="no">
-                  <input type="checkbox" <?php
-
-                  echo 'yes' ==  $add_dentists_to_sources?'checked="checked"' : ''; ?> name="add_dentists_to_sources" value="yes">Include dentists to sources from user roles</label>
+              <?php foreach ($treatments as $key => $cl):
+                if(!$cl) continue?>
+                <div class="input-control">
+                  <p class="input-title">Treatment #<?php echo $counter;  ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete treatment</a></p>
+                  <input type="text" class="fullwidth" name="treatment[<?php echo $counter ?>]" value="<?php echo $cl ?>">
                 </div>
-                  <div class="sources-list" <?php echo 'style="column-count:2; column-gap:20px"' ?>>
-                    <?php if ($sources):
-                      $counter = 0;
-                      ?>
+              <?php
+                $counter++;
+                endforeach;
+               ?>
+              <?php endif ?>
+          </div>
+          <input type="hidden" id="count_treatment" value="<?php echo count($treatments); ?>">
+          <a href="javascript:void(0)" class="button" onclick="add_input('treatment')">Add treatment</a>
+        </div>
 
-                    <?php foreach ($sources as $key => $cl): ?>
-                      <div class="input-control">
-                        <p class="input-title">Source #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Source</a></p>
-                        <input type="text" class="fullwidth" name="sources[<?php echo $key ?>]" value="<?php echo $cl ?>">
-                      </div>
-                  <?php
-                      $counter++;
-                      endforeach;
-                     ?>
-                    <?php endif ?>
-                  </div>
+        <div class="page-container campaign">
+          <div class="campaigns-list">
+            <?php if ($campaigns):
+               $counter = 0;
+              ?>
 
-                 <a href="javascript:void(0)" class="button" onclick="add_input('sources')">Add Source</a>
+            <?php foreach ($campaigns as $key => $cl):
+            if(!$cl) continue ?>
+              <div class="input-control">
+                <p class="input-title">Campaign #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Campaign</a></p>
+                <input type="text" class="fullwidth" name="campaign[<?php echo $key ?>]" value="<?php echo $cl ?>">
+              </div>
+            <?php
+              $counter++;
+              endforeach;
+             ?>
+            <?php endif ?>
+          </div>
 
-                <input type="hidden" id="count_sources" value="<?php echo  $sources? count( $sources): 0 ?>">
-              </td>
+         <a href="javascript:void(0)" class="button" onclick="add_input('campaign')">Add campaign</a>
 
-              <td>
-                <h4>Payment Methods</h4>
+        <input type="hidden" id="count_campaign" value="<?php echo  $campaigns? count( $campaigns): 0 ?>">
+        </div>
 
-                  <div class="payment_methods-list">
-                    <?php if ($payment_methods):
-                       $counter = 0;
-                      ?>
+        <div class="page-container sources">
+          <div>
 
-                    <?php foreach ($payment_methods as $key => $cl):
-                      if(!$cl) continue;
-                      ?>
-                      <div class="input-control">
-                        <p class="input-title">Payment Method #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete method</a></p>
-                        <input type="text" class="fullwidth" name="payment_methods[<?php echo $key ?>]" value="<?php echo $cl ?>">
-                      </div>
-                    <?php
-                      $counter++;
-                      endforeach;
-                     ?>
-                    <?php endif ?>
-                  </div>
+          <label>
+            <input type="hidden" name="add_dentists_to_sources" value="no">
+            <input type="checkbox" <?php
 
-                 <a href="javascript:void(0)" class="button" onclick="add_input('payment_methods')">Add method</a>
+            echo 'yes' ==  $add_dentists_to_sources?'checked="checked"' : ''; ?> name="add_dentists_to_sources" value="yes">Include dentists to sources from user roles</label>
+          </div>
+          <br>
+            <div class="sources-list" <?php echo 'style="column-count:2; column-gap:20px"' ?>>
+              <?php if ($sources):
+                $counter = 0;
+                ?>
 
-                <input type="hidden" id="count_payment_methods" value="<?php echo  $payment_methods? count( $payment_methods): 0 ?>">
-              </td>
-            </tr>
-          </table>
+              <?php foreach ($sources as $key => $cl): ?>
+                <div class="input-control">
+                  <p class="input-title">Source #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete Source</a></p>
+                  <input type="text" class="fullwidth" name="sources[<?php echo $key ?>]" value="<?php echo $cl ?>">
+                </div>
+            <?php
+                $counter++;
+                endforeach;
+               ?>
+              <?php endif ?>
+            </div>
+
+           <a href="javascript:void(0)" class="button" onclick="add_input('sources')">Add Source</a>
+
+          <input type="hidden" id="count_sources" value="<?php echo  $sources? count( $sources): 0 ?>">
+        </div>
+
+        <div class="page-container payment">
+          <div class="payment_methods-list">
+            <?php if ($payment_methods):
+               $counter = 0;
+              ?>
+
+            <?php foreach ($payment_methods as $key => $cl):
+              if(!$cl) continue;
+              ?>
+              <div class="input-control">
+                <p class="input-title">Payment Method #<?php echo $counter ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete method</a></p>
+                <input type="text" class="fullwidth" name="payment_methods[<?php echo $key ?>]" value="<?php echo $cl ?>">
+              </div>
+            <?php
+              $counter++;
+              endforeach;
+             ?>
+            <?php endif ?>
+          </div>
+
+           <a href="javascript:void(0)" class="button" onclick="add_input('payment_methods')">Add method</a>
+
+          <input type="hidden" id="count_payment_methods" value="<?php echo  $payment_methods? count( $payment_methods): 0 ?>">
+        </div>
+
+        <div class="page-container tag">
+          <div class="tag-list" <?php echo 'style="column-count:3; column-gap:20px"' ?>>
+              <?php if ($tag_cloud):
+                $counter = 0;
+                ?>
+
+              <?php foreach ($tag_cloud as $key => $cl):
+                if(!$cl) continue?>
+                <div class="input-control">
+                  <p class="input-title">Tag #<?php echo $counter;  ?> <a href="javascript:void(0)" <?php echo 'style="float:right"' ?> onclick="delete_input(this)">Delete tag</a></p>
+                  <input type="text" class="fullwidth" name="tag_cloud[<?php echo $counter ?>]" value="<?php echo $cl ?>">
+                </div>
+              <?php
+                $counter++;
+                endforeach;
+               ?>
+              <?php endif ?>
+          </div>
+          <input type="hidden" id="count_tag_cloud" value="<?php echo count($tag_cloud); ?>">
+          <a href="javascript:void(0)" class="button" onclick="add_input('tag_cloud')">Add tag</a>
         </div>
 
         <br><br>
+
         <button class="button button-primary" type="submit">Save</button>
         <input type="hidden" name="do_save" value="yes">
       </form>

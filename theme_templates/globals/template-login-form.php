@@ -16,6 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     <label for="password">Password</label>
     <input type="password" id="password" name="user_password">
     <button class="button-submit button-assign">Log In</button>
-    <?php wp_nonce_field( 'login_nonce_check', 'wp-nonce-login', false); ?>
+    <?php wp_nonce_field( 'login_nonce_check', 'wp-nonce-login', true); ?>
   </form>
 </div>

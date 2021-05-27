@@ -1030,7 +1030,7 @@ class theme_content_output{
 
     // Get leads by dates
 
-      $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated );
+      $leads = get_posts_by_dates( $days_30_before_today_formatted , $today_formated, false );
 
       $leads = get_leads_meta($leads);
 
@@ -1143,11 +1143,13 @@ class theme_content_output{
     $treatments = get_option('treatments_list');
     $campaigns = get_option('campaigns_list');
     $payment_methods = get_option('payment_methods_list');
+    $tag_cloud = get_option('tag_cloud_list');
 
     $clinics = $clinics ? $clinics: array();
     $treatments = $treatments ? $treatments: array();
     $campaigns = $campaigns ? $campaigns: array();
     $payment_methods = $payment_methods ? $payment_methods: array();
+    $tag_cloud = $tag_cloud ? $tag_cloud: array();
 
 
     $specialists_data           = array();
@@ -1285,6 +1287,7 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'clinics', $clinics);
     wp_localize_script($theme_init->main_script_slug, 'campaigns', $campaigns);
     wp_localize_script($theme_init->main_script_slug, 'payment_methods', $payment_methods);
+    wp_localize_script($theme_init->main_script_slug, 'tags_cloud', $tag_cloud);
     wp_localize_script($theme_init->main_script_slug, ' is_manager', $is_manager);
     wp_localize_script($theme_init->main_script_slug, ' failed_reasons', $failed_reasons);
 

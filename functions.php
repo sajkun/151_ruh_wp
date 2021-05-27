@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class velesh_init_theme{
 
   /* main style location  */
-  public $main_style = '/assets/css/main.min9.css';
+  public $main_style = '/assets/css/main.min10.css';
 
   /*theme style file slug*/
   public $main_style_slug = 'theme-main-style-dev1';
@@ -29,15 +29,15 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script = '/assets/script/main.min29.js';
+  public $main_script = '/assets/script/main.min30.js';
 
-  public $main_script_spa = '/assets/script/main.spa.min29.js';
+  public $main_script_spa = '/assets/script/main.spa.min30.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
 
   /* svg sprites files slug for local storage */
-  public $svg_sprite_slug = 'svg_sprite_151_6';
+  public $svg_sprite_slug = 'svg_sprite_151_13';
 
   /* merged style file name */
   public $merged_style_name = 'merged-style3.css';
@@ -183,7 +183,7 @@ class velesh_init_theme{
 
     wp_enqueue_style( $this->main_style_slug, THEME_URL.$this->main_style, THEME_VERSION );
 
-    wp_enqueue_style( 'theme-admin-style', THEME_URL.'/assets/css/admin.css', THEME_VERSION );
+    wp_enqueue_style( 'theme-admin-style', THEME_URL.'/assets/css/admin2.css', THEME_VERSION );
 
     wp_enqueue_style( 'theme-jquery-ui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', THEME_VERSION );
 
@@ -194,7 +194,7 @@ class velesh_init_theme{
 
     add_svg_sprite($this->svg_sprite_slug, THEME_URL.'/assets/svg_sprite/symbol_sprite.html');
 
-    wp_enqueue_script('theme-script', THEME_URL.'/assets/script/admin.js', array('jquery'), THEME_VERSION, true);
+    wp_enqueue_script('theme-script', THEME_URL.'/assets/script/admin2.js', array('jquery'), THEME_VERSION, true);
 
 
     $settings_pages = array();
@@ -337,7 +337,7 @@ class velesh_init_theme{
    */
   public function print_inline_data_body(){
     print_inline_style(THEME_URL.'/assets/fonts/fonts.css', 'theme_fonts_151_2');
-    add_svg_sprite($this->svg_sprite_slug, THEME_URL.'/assets/svg_sprite/symbol_sprite.html');
+    add_svg_sprite($this->svg_sprite_slug, THEME_URL.'/assets/svg_sprite/symbol_sprite3.html');
   }
 
 

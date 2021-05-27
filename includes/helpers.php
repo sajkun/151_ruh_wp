@@ -486,17 +486,20 @@ if(!function_exists('get_posts_by_dates')){
   * @return array
   */
 
-  function get_posts_by_dates($from = false, $to = false, $post_type = false){
+  function get_posts_by_dates($from = false, $to = false, $include_deactivated = true){
     $start = microtime(true);
     $theme_roles = get_theme_roles();
     $stages_all  = get_option('leads_stages');
 
-    $post_type = (! $post_type )? velesh_theme_posts::$lead :  $post_type ;
+    $post_type = velesh_theme_posts::$lead;
 
     $args = array(
       'post_type' => $post_type,
       'posts_per_page' => -1,
       'limit' => -1,
+      'meta_query'=> array(
+        'relation' => "AND",
+      ),
       'date_query' => array(
         array(
           'column' => 'post_date_gmt',
@@ -505,13 +508,10 @@ if(!function_exists('get_posts_by_dates')){
           'inclusive' => true,
         ),
       ),
-
     );
 
     $user = wp_get_current_user();
-
     $dentist_role =  $theme_roles['dentist'];
-
 
     if(in_array( $dentist_role , $user->roles)){
       $last_name  = get_user_meta($user->ID, 'last_name', true);
@@ -520,7 +520,7 @@ if(!function_exists('get_posts_by_dates')){
 
       $name        = $last_name  || $first_name ? trim ( $first_name  . ' ' . $last_name ) :    $nickname;
 
-      $args['meta_query'] = array(array(
+      $args['meta_query'][] = array(array(
         'key'         => '_treatment_data',
         'value'       =>  $name,
         'compare_key' => 'LIKE',
@@ -534,7 +534,7 @@ if(!function_exists('get_posts_by_dates')){
         }
       }
 
-      $args['meta_query'] =array(
+      $args['meta_query'][] =array(
         'relation' => "OR",
         array(
         'key'         => '_lead_stage',
@@ -574,7 +574,7 @@ if(!function_exists('get_posts_by_dates')){
           }
         }
 
-        $args['meta_query'] =array(
+        $args['meta_query'][] =array(
           'relation' => "OR",
           array(
           'key'         => '_lead_stage',
@@ -593,7 +593,7 @@ if(!function_exists('get_posts_by_dates')){
           }
         }
 
-        $args['meta_query'] =array(
+        $args['meta_query'][] =array(
           'relation' => "OR",
           array(
           'key'         => '_lead_stage',
@@ -624,10 +624,6 @@ if(!function_exists('get_posts_by_dates')){
        unset($args['date_query']);
     }
 
-    $posts = array();
-
-    // $dentist_role = get_theme_roles('dentist');
-
     if(in_array( 'administrator' , $user->roles) || in_array( 'manager' , $user->roles) ){
       unset($args['meta_query']);
     }
@@ -635,6 +631,23 @@ if(!function_exists('get_posts_by_dates')){
     if(in_array( $dentist_role , $user->roles) ){
       unset($args['meta_query']);
       $args['author']  = $user->ID;
+    }
+
+
+    if(!$include_deactivated){
+      $args['meta_query']['relation']  = 'AND';
+      $args['meta_query'][] = array(
+       'relation' => "OR",
+        array(
+          'key'         => '_deactivated_lead',
+          'compare' => 'NOT EXISTS'
+        ),
+        array(
+          'key'         => '_deactivated_lead',
+          'value'       =>  'yes',
+          'compare'     => '!=',
+        ),
+      );
     }
 
     $t     = get_posts($args);
@@ -734,8 +747,12 @@ if(!function_exists('get_leads_meta')){
           $tco_data[$key] = $tco_data[$key] === 'true' ? 1 : $tco_data[$key];
         }
 
+        // $patient_data =
+
        $meta = array(
         'lead_notes'            =>  isset($post_meta['_lead_notes'])? ($post_meta['_lead_notes']): false,
+        'tags_cloud'             =>  isset($post_meta['_tags_cloud'])? ($post_meta['_tags_cloud']): array(),
+        'deactivated_lead'            =>  isset($post_meta['_deactivated_lead'])? ($post_meta['_deactivated_lead']): 'no',
         'tco_data' =>     $tco_data ,
         'lead_notes_tco'        =>  isset($post_meta['_lead_notes_tco'])? ($post_meta['_lead_notes_tco']): false,
         'treatment_data'        =>  isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): array(),
@@ -756,6 +773,16 @@ if(!function_exists('get_leads_meta')){
         'online_journey' => isset($post_meta['_online_journey'])? $post_meta['_online_journey']: false,
        );
 
+       // clog($meta['patient_data']);
+
+       $meta['patient_data']['treatment'] = is_array( $meta['patient_data']['treatment'])?  $meta['patient_data']['treatment'] : array($meta['patient_data']['treatment']);
+
+       foreach ($meta['patient_data']['treatment'] as $key => $t) {
+         if(!trim($t)){
+           unset($meta['patient_data']['treatment'][$key]);
+         }
+       }
+
       // $lead_specialists      = get_post_meta($post->ID, '_lead_specialists', true);
       $lead_specialists      = isset($post_meta['_lead_specialists'])? ($post_meta['_lead_specialists']): false;
 
@@ -763,7 +790,7 @@ if(!function_exists('get_leads_meta')){
       $lead_specialists_tco  = isset($post_meta['_lead_specialists_tco'])? ($post_meta['_lead_specialists_tco']): false;
 
       // $treatment_data = get_post_meta($post->ID, '_treatment_data', true);
-      $treatment_data        = isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): false;
+      $treatment_data        = isset($post_meta['_treatment_data'])? ($post_meta['_treatment_data']): array();
 
       // $time_converted        = get_post_meta($post->ID, '_time_converted', true);
       $time_converted        = isset($post_meta['_time_converted'])? ($post_meta['_time_converted']): false;
@@ -788,8 +815,6 @@ if(!function_exists('get_leads_meta')){
       $stage                 = isset($post_meta['_lead_stage'])? ($post_meta['_lead_stage']): false;
 
 
-
-
       if(!$meta['patient_data']){
         $meta['patient_data'] = array();
       }
@@ -799,15 +824,19 @@ if(!function_exists('get_leads_meta')){
       }
 
       //prepare data for filtering
+
+      $_treatments = isset($meta['patient_data']['treatment'])? $meta['patient_data']['treatment'] : array();
+      $_treatments = is_array($_treatments)? $_treatments : array($_treatments);
+
       $filter_data = array(
         'clinics'       => (isset($meta['patient_data']['clinic']))? $meta['patient_data']['clinic'] : '',
-        'treatments'    => (isset($meta['patient_data']['treatment']))? array($meta['patient_data']['treatment']) : array(),
+        'treatments'    =>  $_treatments,
         'campaigns'     => (isset($meta['patient_data']['campaign']))? $meta['patient_data']['campaign'] : '',
         'sources'       => (isset($meta['patient_data']['source']))? $meta['patient_data']['source'] : '',
+        'tags'          => (isset($meta['tags_cloud']))? $meta['tags_cloud'] : array(),
         'team'          => array(),
         'dentists'      => array(),
       );
-
 
       if($treatment_data){
         foreach ($treatment_data as $key => $val) {
@@ -1021,7 +1050,14 @@ if(!function_exists('get_filters_by_leads')){
       'sources'    => array('All Sources'),
       'team'       => array('All Team'),
       'dentists'   => array('All Dentists'),
+      'tags'       => array('All Tags'),
     );
+
+    $tag_cloud = get_option('tag_cloud_list');
+    $tag_cloud = $tag_cloud ? $tag_cloud: array();
+
+    $data['tags'] = array_merge( $data['tags'], $tag_cloud);
+
 
     if($add_stages){
        $stages_formatted = array('All Stages' => true);
@@ -1037,7 +1073,7 @@ if(!function_exists('get_filters_by_leads')){
     foreach ($leads as $key => $lead) {
       $meta      = $lead->meta;
       $clinic    = isset($meta['patient_data']['clinic'])? $meta['patient_data']['clinic'] : '' ;
-      $treatment = isset($meta['patient_data']['treatment'])?  $meta['patient_data']['treatment'] : '';
+      $treatments = isset($meta['patient_data']['treatment'])?  $meta['patient_data']['treatment'] : array();
       $source    = $meta['patient_data']['source'];
 
       $campaign  = isset($meta['patient_data']['campaign'])? $meta['patient_data']['campaign'] : '' ;
@@ -1047,8 +1083,10 @@ if(!function_exists('get_filters_by_leads')){
         array_push($data['clinics'], $clinic);
       }
 
-      if(!in_array( $treatment , $data['treatments']) && !empty(trim( $treatment))){
-        array_push($data['treatments'], $treatment);
+      foreach ($treatments as $treatment) {
+        if(!in_array( $treatment , $data['treatments']) && !empty(trim( $treatment))){
+          array_push($data['treatments'], $treatment);
+        }
       }
 
       if($meta['treatment_data']){

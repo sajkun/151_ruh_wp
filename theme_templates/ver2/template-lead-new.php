@@ -39,7 +39,7 @@ echo '<script type="text/x-template" id="lead-new-tmpl">';
 
       <div class="col-12 col-md-4 text-center text-right-md">
 
-        <a href="" class="button-cancel">Cancel</a>
+        <a href="" v-on:click.prevent="go_back_to_list" class="button-cancel">Cancel</a>
 
         <a href="javascript:void(0)" class="button-create"
           v-bind:class="{gray : !requre_save}"
@@ -125,7 +125,6 @@ echo '<script type="text/x-template" id="lead-new-tmpl">';
                   v-on:input_value_changed = "update_lead($event, 'patient_data')"
                   v-bind:class="'leads-block__input lg'"></input-field>
 
-                  <span class="leads-block__comment">  added... </span>
                 </div>
                 <table class="leads-block__data">
                   <tr>
@@ -159,7 +158,7 @@ echo '<script type="text/x-template" id="lead-new-tmpl">';
                     <td>
                       <svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>
                     </td>
-                    <td><p class="leads-block__label">Source <span class="mark">*</span></p></td>
+                    <td><p class="leads-block__label">Source </p></td>
                     <td>
                       <div id="select-imitation-sourses">
                         <select-imitation2
@@ -173,21 +172,30 @@ echo '<script type="text/x-template" id="lead-new-tmpl">';
                     </td>
                   </tr>
                   <tr>
-                    <td>
+                    <td  <?php echo' style="vertical-align:top"';?>>
+                      <div class="spacer-h-15"></div>
                       <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
                     </td>
-                    <td><p class="leads-block__label">Enquiry</p></td>
+                    <td <?php echo' style="vertical-align:top"';?>>
+                      <div  <?php echo' style="height:5px"';?>></div>
+                      <p class="leads-block__label">Enquiry  <span class="mark">*</span></p></td>
                     <td>
 
-                      <div class="clearfix">
-                        <select-imitation2
-                        v-bind:class="'style-less'"
-                        _name="treatment"
-                        _select_name="treatment" v-on:update_list="update_lead($event, 'patient_data')"
-                        ref="treatments_select"
-                        :_options ="select_data.treatments"
-                        :_selected = "lead_data.meta.patient_data.treatment"
-                      ></select-imitation2>
+                      <div class="cont">
+                        <div class="clearfix" v-for="treatment, key in lead_data.meta.patient_data.treatment">
+                          <select-imitation2
+                          v-bind:class="'style-less'"
+                          id="treatment_list_holder"
+                          :_select_name="'treatment'" v-on:update_list="update_lead($event, 'patient_data', key)"
+                          ref="treatments_select"
+                          :_options ="select_data.treatments"
+                          :_selected = "treatment"
+                        ></select-imitation2>
+                        </div>
+
+                        <div class="add-enquery" v-on:click="add_enquery()">
+                          <svg class="icon svg-icon-plus"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-plus"></use> </svg>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -197,7 +205,6 @@ echo '<script type="text/x-template" id="lead-new-tmpl">';
                     </td>
                     <td><p class="leads-block__label">Clinic</p></td>
                     <td>
-
                       <select-imitation2
                        v-bind:class="'style-less'"
                         _name="clinic"
@@ -207,7 +214,6 @@ echo '<script type="text/x-template" id="lead-new-tmpl">';
                         :_options = "select_data.clinics"
                         :_selected="lead_data.meta.patient_data.clinic">
                         </select-imitation2>
-
                     </td>
                   </tr>
                   <tr>

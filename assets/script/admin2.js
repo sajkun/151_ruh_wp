@@ -292,6 +292,9 @@ function add_input(slug){
     case 'payment_methods':
       var count = parseInt(jQuery('#count_payment_methods').val()) || 0;
       break;
+    case 'tag_cloud':
+      var count = parseInt(jQuery('#count_tag_cloud').val()) || 0;
+      break;
   }
   var template = ' <div class="input-control"><p class="input-title">{slug} #{count} <a href="javascript:void(0)" onclick="delete_input(this)">Delete {slug}</a></p><input type="text" value="" class="fullwidth" name="{slug}[{count}]" /> <br /></div>'
 
@@ -325,6 +328,10 @@ function add_input(slug){
     case 'payment_methods':
       jQuery('.payment_methods-list').append(html);
       jQuery('#count_payment_methods').val(count);
+      break;
+    case 'tag_cloud':
+      jQuery('.tag-list').append(html);
+      jQuery('#count_tag_cloud').val(count);
       break;
   }
 

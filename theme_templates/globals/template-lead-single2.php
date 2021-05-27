@@ -54,6 +54,23 @@ if ( ! defined( 'ABSPATH' ) ) {
             <svg class="icon svg-icon-ok"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-ok"></use> </svg>
           <span><?php echo $text_save_btn; ?></span>
         </a>
+
+        <div class="dots-container">
+          <svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg>
+
+          <div class="dots-dropdown">
+            <ul>
+              <li>
+                <svg class="icon svg-icon-turnoff"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-turnoff"></use> </svg>
+                Deactivate
+              </li>
+              <li>
+                <svg class="icon svg-icon-delete"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-delete"></use> </svg>
+                Delete
+              </li>
+            </ul>
+          </div>
+        </div>
       </div><!-- col-12 col-md-4 text-center text-right-md -->
     </div><!-- row -->
   </div><!-- container -->

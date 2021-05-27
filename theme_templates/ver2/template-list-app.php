@@ -50,18 +50,34 @@
 
       <span>&nbsp;</span>
 
+      <select-imitation-icon-2
+       _select_name="sort"
+        :_icon        = "icons_selects['sortby']"
+       ref="sort_list"
+       :_selected="sortby"
+       :_options = "sort_options"
+       v-on:update_list="sort_leads($event)"
+
+       ></select-imitation-icon-2>
+      <span>&nbsp;</span>
+
+      <select-filters-list
+       v-on:update_list = 'update_filters_selected'
+      ></select-filters-list>
+      <span>&nbsp;</span>
+
       <daterangepicker
         v-on:daterange_changed = update_leads_by_dates
       ></daterangepicker>
 
       <span>&nbsp;</span>
 
-      <div  v-for  = "filter_options, filter_name in filter_data">
+      <div  v-for  = "filter_name in filters_selected">
         <select-imitation-icon-2
           :key          = '"filter_"+filter_name'
           :_select_name = "filter_name"
           :_selected    = "get_filter_value(filter_name)"
-          :_options     = "filter_options"
+          :_options     = "get_filter_options(filter_name)"
           :_icon        = "icons_selects[filter_name]"
           :ref          =   "filter_name"
           v-on:update_list="run_filter_list($event)"
@@ -69,17 +85,8 @@
         </select-imitation-icon-2>
         <span>&nbsp;</span>
       </div>
-      <select-imitation-icon-2
-         _select_name="sort"
-          :_icon        = "icons_selects['sortby']"
-         ref="sort_list"
-         :_selected="'Sort By'"
-         :_options = "sort_options"
-         v-on:update_list="sort_leads($event)"
 
-         ></select-imitation-icon-2>
-      <span>&nbsp;</span>
-      <span class="button-filter" v-on:click = "clear_filters()">Clear Filter</span>
+      <span class="button-filter" v-if="filters_selected.length > 0" v-on:click = "clear_filters()">Clear Filter</span>
 
     </div><!-- switchers -->
   </div><!-- filter-container -->
@@ -123,6 +130,13 @@
   <comp-new-lead
    ref = "new_lead"
   ></comp-new-lead>
+
+
+  <comp-alert-alarm
+   ref="alert_alarm"
+   v-on:update_reminder='update_reminder_cb'
+   v-on:resert_reminder='resert_reminder_cb'
+  ></comp-alert-alarm>
 
 
 </div><!-- list-app -->
