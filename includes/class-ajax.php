@@ -574,8 +574,9 @@ if(!class_exists('theme_ajax_action')){
       $reload = false;
 
       if( $post_id === -1 ){
+        $date = new DateTime();
         $reload = true;
-        $_name = array($meta['patient_data']['name'], $meta['patient_data']['treatment'],$meta['patient_data']['clinic']);
+        $_name = array($meta['patient_data']['name'], $meta['patient_data']['clinic'], $date->format('Y-m-d H:i:s'));
 
         $name = array();
 
@@ -586,7 +587,6 @@ if(!class_exists('theme_ajax_action')){
         }
 
         $name_str = implode(' - ', $name);
-        $date = new DateTime();
         $current_user_id = get_current_user_id();
 
         $post_data = array(
