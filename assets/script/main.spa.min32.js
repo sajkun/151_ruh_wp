@@ -10607,6 +10607,10 @@ Vue.component('comp-single-lead', {
         };
       },
 
+      show_clear_reminder:function(){
+        return this.lead_data.meta.reminder && (failed_stage_name.indexOf(this.lead_data.lead_stage) >= 0 || converted_stages.indexOf(this.lead_data.lead_stage) >= 0);
+      },
+
       tco_notes_c : function(){
         var notes = this.lead_data.meta.lead_notes_tco;
         var notes_c = [];
@@ -10856,13 +10860,16 @@ Vue.component('comp-single-lead', {
         this.save_lead_meta('lead_stage_log2', 'lead_stage_log2');
       }
 
-      if(!this.lead_data.meta.reminder){
-        this.$refs.alert_alarm.show = true;
-        this.$refs.alert_alarm.ID = this.lead_data.ID;
-      }
 
       Vue.nextTick(function(){
         vm.lead_data.lead_stage = data.stage;
+
+        if(!vm.lead_data.meta.reminder && (failed_stage_name.indexOf(data.stage) < 0 && converted_stages.indexOf(data.stage) < 0)){
+          vm.$refs.alert_alarm.show = true;
+          vm.$refs.alert_alarm.ID = vm.lead_data.ID;
+          return;
+        }
+
         vm.save_lead_meta(false);
       })
     },

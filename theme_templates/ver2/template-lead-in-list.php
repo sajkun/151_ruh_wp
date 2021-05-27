@@ -29,7 +29,7 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
              </datepicker2>
 
             <span href="javascript:void(0)"
-              v-show="lead_data.meta.reminder"
+              v-show="show_clear_reminder"
               v-on:click="clear_reminder()"
               class="clear-reminder">clear</span>
           </a>
