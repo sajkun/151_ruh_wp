@@ -7935,10 +7935,6 @@ Vue.component('select-filters-list', {
     }
   },
 
-  beforeMount:function(){
-    console.log(this.options);
-  },
-
   watch:{
 
   },
@@ -8108,7 +8104,6 @@ Vue.component('datepicker2', {
   props:['_value', '_name'],
 
   beforeMount: function(){
-    console.log('datepicker2')
     this.name = this._name ? this._name : 'datetimepicker';
     this.value = this._value ? this._value : '';
   },
@@ -12070,8 +12065,6 @@ Vue.component('comp-single-lead', {
   template: '#lead-single-tmpl',
 
 })
-
-console.log('test3');
 Vue.component('comp-new-lead', {
   data: function(){
     return {
