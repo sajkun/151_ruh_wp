@@ -741,6 +741,40 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
            </form>
         </div>
 
+        <!-- ***************************************** -->
+        <!-- ***************************************** -->
+        <!-- *********** emails block  *************** -->
+        <!-- ***************************************** -->
+        <!-- ***************************************** -->
+
+        <div class="leads-block">
+           <h2 class="leads-block__title">E-mail Log</h2>
+           <div class="spacer-h-15"></div>
+           <div class="leads-block__row">
+
+             <div class="document-block" v-for="log, key in email_log">
+               <svg class="icon svg-icon-email"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-email"></use> </svg>
+
+               <p class="document-block__text">
+                 <span class="name">{{log.template_name}} Template</span>
+                 <span class="date"> Sent by {{log.specialists_name}} · {{log.date_formatted}}</span>
+               </p>
+               <p class="document-block__actions">
+                  <svg class="eye-svg"
+                   v-on:click="show_sent_email(log)"
+                   width="15" height="11" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 11"><defs></defs><desc>Generated with Avocode.</desc><g><g><title>Shape</title><path d="M7.48439,8.53062c-1.87639,0 -3.39927,-1.52512 -3.39927,-3.40427c0,-1.87914 1.52288,-3.40423 3.39927,-3.40423c1.87638,0 3.39926,1.52512 3.39926,3.40427c0,1.87914 -1.52288,3.40423 -3.39926,3.40423zM7.48937,0.02c-3.40426,0 -6.31149,2.11743 -7.48937,5.10638c1.17788,2.98893 4.08511,5.10639 7.48937,5.10639c3.40765,0 6.31149,-2.11746 7.48937,-5.10639c-1.17788,-2.98895 -4.08172,-5.10638 -7.48937,-5.10638z" fill="#5c6a92" fill-opacity="1"></path></g><g><title>Path</title><path d="M7.49254,3.09c-1.12681,0 -2.04254,0.91572 -2.04254,2.04254c0,1.12681 0.91572,2.04255 2.04254,2.04255c1.12681,0 2.04255,-0.91573 2.04255,-2.04255c0,-1.12681 -0.91576,-2.04254 -2.04255,-2.04254z" fill="#5c6a92" fill-opacity="1"></path></g><g><title>visibility</title><g><title>Path</title><path d="M7.49254,3.09c-1.12681,0 -2.04254,0.91572 -2.04254,2.04254c0,1.12681 0.91572,2.04255 2.04254,2.04255c1.12681,0 2.04255,-0.91573 2.04255,-2.04255c0,-1.12681 -0.91576,-2.04254 -2.04255,-2.04254z" fill="#5c6a92" fill-opacity="1"></path></g><g><title>Shape</title><path d="M7.48439,8.53062c-1.87639,0 -3.39927,-1.52512 -3.39927,-3.40427c0,-1.87914 1.52288,-3.40423 3.39927,-3.40423c1.87638,0 3.39926,1.52512 3.39926,3.40427c0,1.87914 -1.52288,3.40423 -3.39926,3.40423zM7.48937,0.02c-3.40426,0 -6.31149,2.11743 -7.48937,5.10638c1.17788,2.98893 4.08511,5.10639 7.48937,5.10639c3.40765,0 6.31149,-2.11746 7.48937,-5.10639c-1.17788,-2.98895 -4.08172,-5.10638 -7.48937,-5.10638z" fill="#5c6a92" fill-opacity="1"></path></g></g></g></svg>
+
+               </p>
+             </div>
+           </div>
+
+           <div v-if="!email_log">No emails sent yet</div>
+
+           <div class="leads-block__form">
+             <label class="add-documents" v-on:click="show_email_popup_template"><span> Add New </span><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></label>
+          </div>
+        </div>
+
         <div class="leads-block no-overflow" v-if="lead_data.is_failed == 'yes'">
           <h2 class="leads-block__title">Failed Lead Information</h2>
           <div class="leads-block__row">
@@ -827,6 +861,14 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
    ref="alert_alarm"
    v-on:update_reminder='update_reminder_cb'
   ></comp-alert-alarm>
+
+  <email-popup-template
+  ref="email_popup_template"
+  ></email-popup-template>
+
+  <sent-email-view
+  ref="sent_email_view"
+  ></sent-email-view>
 </div>
 <?php
 echo '</script>';

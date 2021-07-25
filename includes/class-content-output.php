@@ -1041,11 +1041,11 @@ class theme_content_output{
 
     // get available stages
 
-      $user = get_user_by('id', get_current_user_id());
+      $user_id   = get_current_user_id();
+
+      $user = $current_user = get_user_by('id',  $user_id );
 
       $user_name = theme_get_user_name($user);
-
-      $user_id   = get_current_user_id();
 
       $user_meta = get_userdata($user_id);
 
@@ -1158,7 +1158,7 @@ class theme_content_output{
 
     $users = theme_get_all_users(false, true);
 
-    foreach ($users as $user_id => $user) {
+    foreach ($users as $_user_id => $user) {
       if(!in_array(get_theme_roles('staff'), $user['roles']) && !in_array(get_theme_roles('reception'), $user['roles'] )&& !in_array(get_theme_roles('tco'), $user['roles'] ) ) {continue;}
 
       $image    = (isset($user['image'])) ? $user['image'] : DUMMY_ADMIN;
@@ -1170,7 +1170,7 @@ class theme_content_output{
       $specialists_data[$name] = array(
         'photo'     => $image,
         'position'  => $position,
-        'user_id'   => $user_id,
+        'user_id'   => $_user_id,
         'name'      => $name,
         'show'      => 'no',
         'show_tco'  => 'no'
@@ -1181,10 +1181,10 @@ class theme_content_output{
         $specialists_data_reception[$name] = array(
           'photo'     => $image,
           'position'  => $position,
-          'user_id'   => $user_id,
+          'user_id'   => $_user_id,
           'name'      => $name,
-          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
-          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+          'show'      => isset($specialists_assigned[$_user_id]) && 'yes' === $specialists_assigned[$_user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$_user_id]) && 'yes' === $specialists_assigned_tco[$_user_id]? 'yes' : 'no'
         );
       }
       if(in_array(get_theme_roles('staff'), $user['roles']) || in_array(get_theme_roles('tco'), $user['roles'])){
@@ -1192,10 +1192,10 @@ class theme_content_output{
         $specialists_data_tco[$name] = array(
           'photo'     => $image,
           'position'  => $position,
-          'user_id'   => $user_id,
+          'user_id'   => $_user_id,
           'name'      => $name,
-          'show'      => isset($specialists_assigned[$user_id]) && 'yes' === $specialists_assigned[$user_id]? 'yes' : 'no',
-          'show_tco'  => isset($specialists_assigned_tco[$user_id]) && 'yes' === $specialists_assigned_tco[$user_id]? 'yes' : 'no'
+          'show'      => isset($specialists_assigned[$_user_id]) && 'yes' === $specialists_assigned[$_user_id]? 'yes' : 'no',
+          'show_tco'  => isset($specialists_assigned_tco[$_user_id]) && 'yes' === $specialists_assigned_tco[$_user_id]? 'yes' : 'no'
         );
       }
     }
@@ -1208,7 +1208,7 @@ class theme_content_output{
     $staff_roles = array(get_theme_roles('staff'), 'manager', 'administrator');
     $dentists_roles = array(get_theme_roles('dentist'));
 
-    foreach ( $users as $user_id => $user) {
+    foreach ( $users as $_user_id => $user) {
 
      $name         = isset($user['last_name']) || isset($user['first_name'] )? trim ( $user['first_name'] . ' ' . $user['last_name']) :   $user['nickname'];
 
@@ -1265,13 +1265,14 @@ class theme_content_output{
     wp_localize_script($theme_init->main_script_slug, 'failed_stage_name', $failed_stage_name);
     wp_localize_script($theme_init->main_script_slug, 'specialists_data', $specialists_data);
 
-    wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
+    // wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data));
     wp_localize_script($theme_init->main_script_slug, 'specialists', array_keys($specialists_data_reception));
     wp_localize_script($theme_init->main_script_slug, 'specialists_tco', array_keys($specialists_data_tco));
     wp_localize_script($theme_init->main_script_slug, 'theme_leads_sources',  $sources
      );
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
     wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
+    wp_localize_script($theme_init->main_script_slug, 'theme_user_email', (string)$user->data->user_email  );
     wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
     wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
     wp_localize_script($theme_init->main_script_slug, 'is_lead_list_2', 'yes');
@@ -1307,6 +1308,8 @@ class theme_content_output{
 
     wp_localize_script($theme_init->main_script_slug, ' online_journey_settings', $online_journey_settings);
 
+    print_theme_template_part('email-popup', 'ver2');
+    print_theme_template_part('email-view', 'ver2');
     print_theme_template_part('lead-in-list', 'ver2', $args);
     print_theme_template_part('lead-new', 'ver2', $args);
     print_theme_template_part('popup', 'ver2', $args);

@@ -7020,6 +7020,10 @@ html {
   vertical-align: top;
 }
 
+.select-imitation.small-width {
+  max-width: 76px !important;
+}
+
 .select-imitation__plus {
   display: inline-block !important;
   margin-left: 5px;
@@ -10724,6 +10728,8 @@ body.admin-bar {
   font-family: "HelveticaFont_", sans-serif;
   font-size: 14px;
   font-weight: 500;
+  -webkit-transition: all .1s;
+  transition: all .1s;
 }
 
 .add-documents .icon {
@@ -10733,6 +10739,14 @@ body.admin-bar {
   display: inline-block;
   vertical-align: 2px;
   margin-left: 5px;
+}
+
+.add-documents:hover {
+  background: #eee;
+}
+
+.add-documents:active {
+  background: #fefefe;
 }
 
 .patient-name {
@@ -10994,6 +11008,13 @@ body.admin-bar {
 }
 
 .document-block .svg-icon-doc {
+  fill: #838993;
+  align-self: flex-start;
+  margin-right: 11px;
+  font-size: 12px;
+}
+
+.document-block .svg-icon-email {
   fill: #838993;
   align-self: flex-start;
   margin-right: 11px;
@@ -11866,4 +11887,720 @@ input.error {
 
 .exist-popup .lead-preview {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.email-popup-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(193, 196, 198, 0.73);
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-pack: center;
+          justify-content: center;
+}
+
+.email-popup {
+  margin: auto;
+  max-width: 600px;
+  flex-basis: 600px;
+  max-height: 100vh;
+  overflow: hidden;
+  box-shadow: 0 2px 37px 5px rgba(0, 0, 0, 0.07);
+  border-radius: 7px;
+  border: 1px solid #a9b9e7;
+  background-color: #ffffff;
+  align-self: center;
+}
+
+.email-popup__header {
+  padding: 30px 30px 20px;
+  border-bottom: 1px solid #e0e8f9;
+}
+
+.email-popup__header .svg-icon-email {
+  font-size: 14px;
+  margin-right: 10px;
+  fill: #838993;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.email-popup__header-title {
+  display: inline-block;
+  vertical-align: middle;
+  color: #003046;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.email-popup__row {
+  padding: 5px 30px;
+}
+
+.email-popup__row .select-imitation {
+  height: 46px;
+}
+
+.email-popup__row .select-imitation.error {
+  outline: 0;
+  border-color: #f00 !important;
+  box-shadow: 0 0 4px #f00 !important;
+}
+
+.email-popup__row .select-imitation__view {
+  line-height: 44px;
+}
+
+.email-popup__row label {
+  display: block;
+  margin: 0 0 5px;
+  color: #032a3e;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 25px;
+}
+
+.email-popup__row input {
+  width: 100%;
+  height: 46px;
+  line-height: 44px;
+  box-shadow: 0 3px 5px rgba(232, 235, 240, 0.27);
+  border-radius: 5px;
+  border: 1px solid #e0e8f9;
+  background-color: #ffffff;
+  padding: 0 12px;
+  -webkit-transition: all .1s;
+  transition: all .1s;
+  outline: 0;
+  color: #003046;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.email-popup__row input:focus {
+  box-shadow: 0 0 4px #5769ff;
+  border: 1px solid #5769ff;
+}
+
+.email-popup__row input[readonly] {
+  color: #92a0a6;
+  border: 1px solid #e0e8f9;
+  box-shadow: 0 3px 5px rgba(232, 235, 240, 0.27);
+  background-color: #ffffff;
+}
+
+.email-popup__row input.error {
+  border-color: #f00;
+  box-shadow: 0 0 4px #f00;
+}
+
+.email-popup__footer {
+  padding: 25px 30px;
+  text-align: right;
+  border-top: 1px solid #e0e8f9;
+}
+
+.email-popup__cancel {
+  display: inline-block;
+  height: 46px;
+  line-height: 44px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  border-radius: 5px;
+  border: 1px solid #e1e6eb;
+  background-color: #ffffff;
+  -webkit-transition: all .1s;
+  transition: all .1s;
+  color: #7a839f;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0 19px;
+  margin-right: 13px;
+  cursor: pointer;
+}
+
+.email-popup__cancel:hover {
+  background: #e1e6eb;
+}
+
+.email-popup__cancel:active {
+  background: #fefefe;
+}
+
+.email-popup__submit {
+  height: 46px;
+  line-height: 46px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  background-color: #2e5bff;
+  color: #fff;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0 19px;
+  -webkit-transition: all .1s;
+  transition: all .1s;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.email-popup__submit:hover {
+  background: #0036fa;
+}
+
+.email-popup__submit:active {
+  background: #6183ff;
+}
+
+.email-preview-block {
+  overflow: auto;
+  max-height: 300px;
+}
+
+.relative {
+  position: relative;
+}
+
+.text-center-element {
+  text-align: center;
+}
+
+.text-center-element * {
+  text-align: left;
+}
+
+.eye-svg {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.letter-body {
+  display: block;
+  max-width: 600px;
+  background: #fff;
+  margin: 0 auto;
+  padding: 25px;
+}
+
+.letter-welcome-screen {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.letter-welcome-screen .logo-image {
+  margin: 0 0 30px;
+  width: 132px;
+  height: 21px;
+}
+
+.letter-welcome-screen .title-white {
+  color: #fff;
+  font-size: 33px;
+  font-family: "Libre Baskerville", serif;
+  margin: 0 0 10px;
+  display: block;
+}
+
+.letter-welcome-screen__col {
+  background: #000;
+  padding: 34px 20px 0 40px;
+  height: 242px;
+}
+
+.email-preview-block .letter-welcome-screen__col {
+  height: 276px;
+}
+
+.letter-welcome-screen td {
+  vertical-align: top;
+}
+
+.letter-welcome-screen .full-image {
+  display: block;
+}
+
+.letter-welcome-screen .package {
+  position: absolute;
+  z-index: 10;
+  bottom: -40px;
+  right: 30px;
+}
+
+.letter-welcome-screen .comment-white {
+  color: #ffffff;
+  font-family: "Helvetica Neue", sans-serif;
+  display: block;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 22px;
+  text-align: left;
+}
+
+.text-block {
+  padding: 0 45px;
+  color: #1a1c1a;
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  text-align: left;
+}
+
+.text-block .select-imitation {
+  vertical-align: middle;
+}
+
+.text-block td {
+  padding: 0 0 20px;
+}
+
+.text-block > *,
+.text-block > p {
+  color: #1a1c1a;
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  text-align: left;
+}
+
+.placeholder {
+  display: inline-block;
+  padding: 0 10px;
+  height: 29px;
+  line-height: 29px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  border: 1px solid #e1e6eb;
+  background-color: #ffffff;
+  color: #908d8d;
+  font-family: "Helvetica Neue", sans-sewrif;
+  font-size: 13px;
+}
+
+.dropdown {
+  display: inline-block;
+  width: 76px;
+  height: 29px;
+  margin: -5px 0;
+  line-height: 29px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  border: 1px solid #e1e6eb;
+  background-color: #ffffff;
+  padding: 0 10px;
+}
+
+.black-block-option {
+  background-color: #1a1c1a;
+}
+
+.black-block-option .ruh-img {
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.black-block-option .title {
+  display: block;
+  margin: 0;
+  color: #fff;
+  text-align: center;
+  color: #ffffff;
+  font-family: "Poppins Type",'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -0.07px;
+  line-height: 42px;
+  text-align: center;
+}
+
+.black-block-option .text {
+  color: #b2a7a5;
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 20px;
+  text-align: center;
+}
+
+.shift-list-1 {
+  display: block;
+  margin: 20px 0 0 120px;
+  padding: 0;
+}
+
+.shift-list-1 li {
+  margin: 0 0 15px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: "Helvetica Neue", sans-serif;
+  color: #c6bba2;
+}
+
+.shift-list-1 li span {
+  color: #e2e0da;
+}
+
+.spacer-h-15 {
+  height: 15px;
+}
+
+.spacer-h-30 {
+  height: 30px;
+}
+
+.grey-block-option {
+  padding: 30px 15px 20px;
+  background-color: #6c675a;
+}
+
+.grey-block-option .title {
+  display: block;
+  margin: 0;
+  color: #fff;
+  text-align: center;
+  color: #ffffff;
+  font-family: "PoppinsFont", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -0.07px;
+  line-height: 42px;
+  text-align: center;
+}
+
+.grey-block-option .text {
+  color: #f0e9e8;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 20px;
+  text-align: center;
+}
+
+.shift-list-2 {
+  display: block;
+  margin: 20px 0 0 95px;
+  padding: 0;
+}
+
+.shift-list-2 li {
+  margin: 0 0 15px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: "HelveticaFont_", sans-serif;
+  color: #c6bba2;
+}
+
+.shift-list-2 li span {
+  color: #e2e0da;
+}
+
+.links-block {
+  background-color: #ded5bf;
+  padding: 20px 44px;
+}
+
+.links-block .icon-image {
+  display: inline-block;
+  vertical-align: middle;
+  margin: -15px 10px -15px 0;
+  width: 28px;
+  height: 28px;
+}
+
+.links-block table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.links-block table td {
+  vertical-align: middle;
+}
+
+.links-block table .middle {
+  padding: 0 25px;
+  text-align: center;
+  border-left: 2px solid #4b4840;
+  border-right: 2px solid #4b4840;
+}
+
+.links-block table .last {
+  text-align: right;
+}
+
+.links-block a {
+  color: #4b4840;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.black-block {
+  padding: 20px 44px;
+  background-color: #1a1c1a;
+  border-bottom: 1px solid #2b2d2b;
+}
+
+.black-block .label {
+  color: #ffffff;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline;
+}
+
+.black-block.clinics {
+  width: 100%;
+}
+
+.black-block.clinics .to-right {
+  text-align: right;
+}
+
+.black-block.clinics a {
+  text-decoration: none;
+  color: #ffffff;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.phone-link {
+  float: right;
+  text-decoration: none;
+  color: #ffffff;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.phone-link img {
+  vertical-align: middle;
+  display: inline;
+  width: 11px;
+  height: 15px;
+}
+
+.copyrights {
+  color: #757372;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 20px;
+  text-align: left;
+}
+
+.hr-line {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #f8f8f8;
+}
+
+.title-underline {
+  color: #1a1c1a;
+  font-family: "PoppinsFont", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.44px;
+  text-transform: uppercase;
+  line-height: 24px;
+  border-bottom: 3px solid #c29265;
+  padding: 5px 0;
+}
+
+.treatment-table {
+  color: #1a1c1a;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 13px;
+  line-height: 15px;
+}
+
+.treatment-table td {
+  padding: 0 !important;
+}
+
+.treatment-table .treatment-name {
+  color: #052116;
+  font-family: "PoppinsFont", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 27px;
+  margin: 0;
+}
+
+.treatment-table .label-holder {
+  vertical-align: middle;
+  color: #000000;
+  font-family: "Libre Baskerville", serif;
+  font-size: 14px;
+  line-height: 46px;
+  font-weight: 400;
+  text-align: right;
+}
+
+.treatment-table .price-holder {
+  vertical-align: bottom;
+  color: #c29265;
+  font-family: "Libre Baskerville", serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 46px;
+  text-align: left;
+}
+
+.most-popular-option {
+  background-color: #ded5bf;
+  text-align: center;
+}
+
+.most-popular-option td {
+  padding: 0 30px;
+}
+
+.most-popular-option__tag {
+  height: 19px;
+  line-height: 19px;
+  text-transform: uppercase;
+  border-radius: 9px;
+  background-color: #b2a687;
+  color: #ffffff;
+  font-family: "PoppinsFont", sans-serif;
+  font-weight: 700;
+  font-size: 8px;
+  padding: 0 10px;
+  letter-spacing: 0.29px;
+  display: inline-block;
+}
+
+.most-popular-option__title {
+  margin: 0;
+  color: #000000;
+  font-family: "PoppinsFont", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -0.07px;
+  line-height: 42px;
+  text-align: center;
+}
+
+.most-popular-option__text {
+  color: #504b40;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.most-popular-option__label {
+  vertical-align: top;
+  color: #000000;
+  font-family: "Libre Baskerville", serif;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 66px;
+  text-align: left;
+}
+
+.most-popular-option__price {
+  vertical-align: top;
+  color: #c29265;
+  font-family: "Libre Baskerville", serif;
+  font-size: 30px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: -0.11px;
+  line-height: 66px;
+  text-align: left;
+}
+
+.whitenning-option {
+  text-align: center;
+  background-color: #ebceae;
+}
+
+.whitenning-option td {
+  padding: 0 30px;
+}
+
+.whitenning-option__tag {
+  display: inline-block;
+  height: 19px;
+  line-height: 19px;
+  text-transform: uppercase;
+  border-radius: 9px;
+  background-color: #fff;
+  color: #c29265;
+  font-family: "PoppinsFont", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.29px;
+  padding: 0 10px;
+  font-size: 8px;
+}
+
+.whitenning-option__title {
+  margin: 0;
+  color: #000000;
+  font-family: "PoppinsFont", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -0.07px;
+  line-height: 42px;
+  text-align: center;
+}
+
+.whitenning-option__text {
+  color: #504b40;
+  font-family: "HelveticaFont_", sans-serif;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.whitenning-option__label {
+  vertical-align: top;
+  color: #000000;
+  font-family: "Libre Baskerville", serif;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 66px;
+  text-align: left;
+}
+
+.whitenning-option__price {
+  vertical-align: top;
+  color: #c29265;
+  font-family: "Libre Baskerville", serif;
+  font-size: 30px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: -0.11px;
+  line-height: 66px;
+  text-align: left;
 }

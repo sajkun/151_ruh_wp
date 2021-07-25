@@ -91,10 +91,73 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_deactivate_lead', array($this,'deactivate_lead_cb'));
       add_action('wp_ajax_nopriv_deactivate_lead', array($this,'deactivate_lead_cb'));
 
+      add_action('wp_ajax_send_email', array($this,'send_email_cb'));
+      add_action('wp_ajax_nopriv_send_email', array($this,'send_email_cb'));
+
       add_action('wp_ajax_test_cb', array($this,'test_cb'));
       add_action('wp_ajax_nopriv_test_cb', array($this,'test_cb'));
     }
 
+
+    public static function send_email_cb(){
+      $lead_id = (int)$_POST['lead_id'];
+
+      $email_log = get_post_meta($lead_id, '_email_log', true);
+
+      if(!$email_log){
+        $email_log = array();
+      }
+
+      $date = new DateTime();
+
+      $email_log[] = array(
+        'specialists_name' => $_POST['specialists_name'],
+        'template_name'    => $_POST['template_name'],
+        'posted_data'      => $_POST,
+        'date'             => $date->format('Y-m-d H:i:sP'),
+      );
+
+      // $email_log = [];
+
+      if(!update_post_meta( $lead_id, '_email_log', $email_log)){
+        add_post_meta( $lead_id, '_email_log', $email_log);
+      }
+
+      $email_log = get_post_meta($lead_id, '_email_log', true);
+
+      $to = $_POST['to'];
+      $from = $_POST['from'];
+      $subject = $_POST['subject'];
+
+      $headers  = 'MIME-Version: 1.0' . "\r\n";
+      $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+      // Create email headers
+      $headers .= 'From: '.$from."\r\n".
+          'Reply-To: '.$from."\r\n" .
+          'X-Mailer: PHP/' . phpversion();
+
+      $args = $_POST;
+
+      unset($args['template_name']);
+      unset($args['action']);
+
+      ob_start();
+      echo print_theme_template_part($args['template'], 'emails', $args);
+      $message = ob_get_contents();
+      ob_get_clean();
+      wp_send_json(array(
+        'post' => $_POST,
+        'email_log' => $email_log,
+        'message' => $message,
+        'response' => 'Your mail has been sent successfully.',
+      ));
+
+      if(mail($to, $subject, $message, $headers)){
+      } else{
+        wp_send_json_error();
+      }
+    }
 
     public static function test_cb(){
       wp_send_json(array(
