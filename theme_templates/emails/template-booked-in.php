@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <td style="box-sizing: inherit; vertical-align: top;">
           <div style="background: #000; box-sizing: inherit; height: 242px; padding: 34px 20px 0 40px;">
             <img src="<?php echo THEME_URL; ?>/assets/images/letter/logo.png" alt width="132" height="21" style="border-style: none; box-sizing: inherit; height: 21px; margin: 0 0 30px; width: 132px;">
-            <p style="box-sizing: inherit; color: #fff; display: block; font-family: 'Libre Baskerville',serif; font-size: 33px; margin: 0 0 10px;">Let’s get you <br style="box-sizing: inherit;"> booked in</p>
+            <p style="box-sizing: inherit; color: #fff; display: block; font-family: 'Libre Baskerville',serif; font-size: 33px; margin: 0 0 10px; line-height: 33px">Let’s get you <br style="box-sizing: inherit;"> booked in</p>
             <span style="box-sizing: inherit; color: #fff; display: block; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; font-style: normal; font-weight: 500; letter-spacing: normal; line-height: 22px; margin: 0; text-align: left;"> We can’t wait to see you in our clinic and get your smile journey started. </span>
           </div>
         </td>
