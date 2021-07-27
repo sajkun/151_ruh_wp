@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           </div>
         </td>
         <td style="box-sizing: inherit; vertical-align: top;">
-          <img src="<?php echo THEME_URL; ?>/assets/images/letter/h1.jpg" alt width="273" height="313" style="border-style: none; box-sizing: inherit; display: block;">
+          <img src="<?php echo THEME_URL; ?>/assets/images/letter/h1.jpg" alt width="273" height="313" style="border-style: none; box-sizing: inherit; display: block;     max-width: 100%; height: 100%; object-fit: cover;">
         </td>
       </tr>
     </table>
