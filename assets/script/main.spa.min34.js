@@ -109,199 +109,6 @@ var Cookie =
 !function(t){"use strict";"function"==typeof define&&define.amd?define(t):"undefined"!=typeof module&&void 0!==module.exports?module.exports=t():window.Sortable=t()}(function(){"use strict";if("undefined"==typeof window||!window.document)return function(){throw new Error("Sortable.js requires a window with a document")};var U,V,f,u,q,G,h,X,Y,A,K,n,Z,Q,l,s,c,p,k,J,$,tt,et,ot,g,nt,I=[],B=!1,v=!1,it=!1,d=[],rt=!1,at=!1,m=[],i=/\s+/g,lt="Sortable"+(new Date).getTime(),b=window,st=b.document,w=b.parseInt,ct=b.setTimeout,e=b.jQuery||b.Zepto,o=b.Polymer,r={capture:!1,passive:!1},dt=!!navigator.userAgent.match(/(?:Trident.*rv[ :]?11\.|msie|iemobile)/i),_=!!navigator.userAgent.match(/Edge/i),y=!!navigator.userAgent.match(/firefox/i),D=!(!navigator.userAgent.match(/safari/i)||navigator.userAgent.match(/chrome/i)||navigator.userAgent.match(/android/i)),S=!!navigator.userAgent.match(/iP(ad|od|hone)/i),T=_||dt?"cssFloat":"float",a="draggable"in st.createElement("div"),C=function(){if(dt)return!1;var t=st.createElement("x");return t.style.cssText="pointer-events:auto","auto"===t.style.pointerEvents}(),ht=!1,E=!1,ut=Math.abs,x=Math.min,N=Math.max,M=[],P=function(t,e){var o=Dt(t),n=w(o.width)-w(o.paddingLeft)-w(o.paddingRight)-w(o.borderLeftWidth)-w(o.borderRightWidth),i=Mt(t,0,e),r=Mt(t,1,e),a=i&&Dt(i),l=r&&Dt(r),s=a&&w(a.marginLeft)+w(a.marginRight)+Lt(i).width,c=l&&w(l.marginLeft)+w(l.marginRight)+Lt(r).width;if("flex"===o.display)return"column"===o.flexDirection||"column-reverse"===o.flexDirection?"vertical":"horizontal";if("grid"===o.display)return o.gridTemplateColumns.split(" ").length<=1?"vertical":"horizontal";if(i&&"none"!==a.float){var d="left"===a.float?"left":"right";return!r||"both"!==l.clear&&l.clear!==d?"horizontal":"vertical"}return i&&("block"===a.display||"flex"===a.display||"table"===a.display||"grid"===a.display||n<=s&&"none"===o[T]||r&&"none"===o[T]&&n<s+c)?"vertical":"horizontal"},O=function(t,e){if(!t||!t.getBoundingClientRect)return H();var o=t,n=!1;do{if(o.clientWidth<o.scrollWidth||o.clientHeight<o.scrollHeight){var i=Dt(o);if(o.clientWidth<o.scrollWidth&&("auto"==i.overflowX||"scroll"==i.overflowX)||o.clientHeight<o.scrollHeight&&("auto"==i.overflowY||"scroll"==i.overflowY)){if(!o||!o.getBoundingClientRect||o===st.body)return H();if(n||e)return o;n=!0}}}while(o=o.parentNode);return H()},H=function(){return dt?st.documentElement:st.scrollingElement},ft=function(t,e,o){t.scrollLeft+=e,t.scrollTop+=o},R=It(function(o,t,e,n){if(t.scroll){var i=e?e[lt]:window,r=t.scrollSensitivity,a=t.scrollSpeed,l=o.clientX,s=o.clientY,c=H(),d=!1;Y!==e&&(L(),X=t.scroll,A=t.scrollFn,!0===X&&(X=O(e,!0),Y=X));var h=0,u=X;do{var f,p,g,v,m,b,w,_,y,D=u,S=Lt(D),T=S.top,C=S.bottom,E=S.left,x=S.right,N=S.width,M=S.height;if(f=D.scrollWidth,p=D.scrollHeight,g=Dt(D),_=D.scrollLeft,y=D.scrollTop,w=D===c?(b=N<f&&("auto"===g.overflowX||"scroll"===g.overflowX||"visible"===g.overflowX),M<p&&("auto"===g.overflowY||"scroll"===g.overflowY||"visible"===g.overflowY)):(b=N<f&&("auto"===g.overflowX||"scroll"===g.overflowX),M<p&&("auto"===g.overflowY||"scroll"===g.overflowY)),v=b&&(ut(x-l)<=r&&_+N<f)-(ut(E-l)<=r&&!!_),m=w&&(ut(C-s)<=r&&y+M<p)-(ut(T-s)<=r&&!!y),!I[h])for(var P=0;P<=h;P++)I[P]||(I[P]={});I[h].vx==v&&I[h].vy==m&&I[h].el===D||(I[h].el=D,I[h].vx=v,I[h].vy=m,clearInterval(I[h].pid),!D||0==v&&0==m||(d=!0,I[h].pid=setInterval(function(){n&&0===this.layer&&(mt.active._emulateDragOver(!0),mt.active._onTouchMove(k,!0));var t=I[this.layer].vy?I[this.layer].vy*a:0,e=I[this.layer].vx?I[this.layer].vx*a:0;"function"==typeof A&&"continue"!==A.call(i,e,t,o,k,I[this.layer].el)||ft(I[this.layer].el,e,t)}.bind({layer:h}),24))),h++}while(t.bubbleScroll&&u!==c&&(u=O(u,!1)));B=d}},30),L=function(){I.forEach(function(t){clearInterval(t.pid)}),I=[]},W=function(t){function s(a,l){return function(t,e,o,n){var i=t.options.group.name&&e.options.group.name&&t.options.group.name===e.options.group.name;if(null==a&&(l||i))return!0;if(null==a||!1===a)return!1;if(l&&"clone"===a)return a;if("function"==typeof a)return s(a(t,e,o,n),l)(t,e,o,n);var r=(l?t:e).options.group.name;return!0===a||"string"==typeof a&&a===r||a.join&&-1<a.indexOf(r)}}var e={},o=t.group;o&&"object"==typeof o||(o={name:o}),e.name=o.name,e.checkPull=s(o.pull,!0),e.checkPut=s(o.put),e.revertClone=o.revertClone,t.group=e},F=function(t){U&&U.parentNode&&U.parentNode[lt]&&U.parentNode[lt]._computeIsAligned(t)},pt=function(t,e){for(var o=e;!o[lt];)o=o.parentNode;return t===o},gt=function(t,e,o){for(var n=t.parentNode;n&&!n[lt];)n=n.parentNode;n&&n[lt][o](Bt(e,{artificialBubble:!0}))},z=function(){!C&&f&&Dt(f,"display","none")},j=function(){!C&&f&&Dt(f,"display","")};st.addEventListener("click",function(t){if(it)return t.preventDefault(),t.stopPropagation&&t.stopPropagation(),t.stopImmediatePropagation&&t.stopImmediatePropagation(),it=!1},!0);var vt,t=function(t){if(t=t.touches?t.touches[0]:t,U){var e=function(t,e){for(var o=0;o<d.length;o++)if(!Pt(d[o])){var n=Lt(d[o]),i=d[o][lt].options.emptyInsertThreshold,r=t>=n.left-i&&t<=n.right+i,a=e>=n.top-i&&e<=n.bottom+i;if(r&&a)return d[o]}}(t.clientX,t.clientY);e&&e[lt]._onDragOver({clientX:t.clientX,clientY:t.clientY,target:e,rootEl:e})}};function mt(t,e){if(!t||!t.nodeType||1!==t.nodeType)throw"Sortable: `el` must be HTMLElement, not "+{}.toString.call(t);this.el=t,this.options=e=Bt({},e),t[lt]=this;var o={group:null,sort:!0,disabled:!1,store:null,handle:null,scroll:!0,scrollSensitivity:30,scrollSpeed:10,bubbleScroll:!0,draggable:/[uo]l/i.test(t.nodeName)?">li":">*",swapThreshold:1,invertSwap:!1,invertedSwapThreshold:null,removeCloneOnHide:!0,direction:function(){return P(t,this.options)},ghostClass:"sortable-ghost",chosenClass:"sortable-chosen",dragClass:"sortable-drag",ignore:"a, img",filter:null,preventOnFilter:!0,animation:0,easing:null,setData:function(t,e){t.setData("Text",e.textContent)},dropBubble:!1,dragoverBubble:!1,dataIdAttr:"data-id",delay:0,touchStartThreshold:w(window.devicePixelRatio,10)||1,forceFallback:!1,fallbackClass:"sortable-fallback",fallbackOnBody:!1,fallbackTolerance:0,fallbackOffset:{x:0,y:0},supportPointer:!1!==mt.supportPointer&&("PointerEvent"in window||window.navigator&&"msPointerEnabled"in window.navigator),emptyInsertThreshold:5};for(var n in o)!(n in e)&&(e[n]=o[n]);for(var i in W(e),this)"_"===i.charAt(0)&&"function"==typeof this[i]&&(this[i]=this[i].bind(this));this.nativeDraggable=!e.forceFallback&&a,this.nativeDraggable&&(this.options.touchStartThreshold=1),e.supportPointer?wt(t,"pointerdown",this._onTapStart):(wt(t,"mousedown",this._onTapStart),wt(t,"touchstart",this._onTapStart)),this.nativeDraggable&&(wt(t,"dragover",this),wt(t,"dragenter",this)),d.push(this.el),e.store&&e.store.get&&this.sort(e.store.get(this)||[])}function bt(t,e,o,n){if(t){o=o||st;do{if(null!=e&&(">"===e[0]&&t.parentNode===o&&kt(t,e.substring(1))||kt(t,e))||n&&t===o)return t;if(t===o)break}while(t=(i=t).host&&i!==st&&i.host.nodeType?i.host:i.parentNode)}var i;return null}function wt(t,e,o){t.addEventListener(e,o,r)}function _t(t,e,o){t.removeEventListener(e,o,r)}function yt(t,e,o){if(t&&e)if(t.classList)t.classList[o?"add":"remove"](e);else{var n=(" "+t.className+" ").replace(i," ").replace(" "+e+" "," ");t.className=(n+(o?" "+e:"")).replace(i," ")}}function Dt(t,e,o){var n=t&&t.style;if(n){if(void 0===o)return st.defaultView&&st.defaultView.getComputedStyle?o=st.defaultView.getComputedStyle(t,""):t.currentStyle&&(o=t.currentStyle),void 0===e?o:o[e];e in n||-1!==e.indexOf("webkit")||(e="-webkit-"+e),n[e]=o+("string"==typeof o?"":"px")}}function St(t){var e="";do{var o=Dt(t,"transform");o&&"none"!==o&&(e=o+" "+e)}while(t=t.parentNode);return window.DOMMatrix?new DOMMatrix(e):window.WebKitCSSMatrix?new WebKitCSSMatrix(e):window.CSSMatrix?new CSSMatrix(e):void 0}function Tt(t,e,o){if(t){var n=t.getElementsByTagName(e),i=0,r=n.length;if(o)for(;i<r;i++)o(n[i],i);return n}return[]}function Ct(t,e,o,n,i,r,a,l,s){var c,d=(t=t||e[lt]).options,h="on"+o.charAt(0).toUpperCase()+o.substr(1);!window.CustomEvent||dt||_?(c=st.createEvent("Event")).initEvent(o,!0,!0):c=new CustomEvent(o,{bubbles:!0,cancelable:!0}),c.to=i||e,c.from=r||e,c.item=n||e,c.clone=u,c.oldIndex=a,c.newIndex=l,c.originalEvent=s,c.pullMode=Q?Q.lastPutMode:void 0,e&&e.dispatchEvent(c),d[h]&&d[h].call(t,c)}function Et(t,e,o,n,i,r,a,l){var s,c,d=t[lt],h=d.options.onMove;return!window.CustomEvent||dt||_?(s=st.createEvent("Event")).initEvent("move",!0,!0):s=new CustomEvent("move",{bubbles:!0,cancelable:!0}),s.to=e,s.from=t,s.dragged=o,s.draggedRect=n,s.related=i||e,s.relatedRect=r||Lt(e),s.willInsertAfter=l,s.originalEvent=a,t.dispatchEvent(s),h&&(c=h.call(d,s,a)),c}function xt(t){t.draggable=!1}function Nt(){ht=!1}function Mt(t,e,o){for(var n=0,i=0,r=t.children;i<r.length;){if("none"!==r[i].style.display&&r[i]!==f&&r[i]!==U&&bt(r[i],o.draggable,t,!1)){if(n===e)return r[i];n++}i++}return null}function Pt(t){for(var e=t.lastElementChild;e&&(e===f||"none"===e.style.display);)e=e.previousElementSibling;return e||null}function Xt(t){return At(U)<At(t)?1:-1}function Yt(t){for(var e=t.tagName+t.className+t.src+t.href+t.textContent,o=e.length,n=0;o--;)n+=e.charCodeAt(o);return n.toString(36)}function At(t,e){var o=0;if(!t||!t.parentNode)return-1;for(;t&&(t=t.previousElementSibling);)"TEMPLATE"!==t.nodeName.toUpperCase()&&t!==u&&o++;return o}function kt(t,e){if(t)try{if(t.matches)return t.matches(e);if(t.msMatchesSelector)return t.msMatchesSelector(e);if(t.webkitMatchesSelector)return t.webkitMatchesSelector(e)}catch(t){return!1}return!1}function It(o,n){return function(){if(!vt){var t=arguments,e=this;vt=ct(function(){1===t.length?o.call(e,t[0]):o.apply(e,t),vt=void 0},n)}}}function Bt(t,e){if(t&&e)for(var o in e)e.hasOwnProperty(o)&&(t[o]=e[o]);return t}function Ot(t){return o&&o.dom?o.dom(t).cloneNode(!0):e?e(t).clone(!0)[0]:t.cloneNode(!0)}function Ht(t){return ct(t,0)}function Rt(t){return clearTimeout(t)}function Lt(t,e,o,n){if(t.getBoundingClientRect||t===b){var i,r,a,l,s,c,d;if(d=t!==b&&t!==H()?(r=(i=t.getBoundingClientRect()).top,a=i.left,l=i.bottom,s=i.right,c=i.height,i.width):(a=r=0,l=window.innerHeight,s=window.innerWidth,c=window.innerHeight,window.innerWidth),n&&t!==b&&(o=o||t.parentNode,!dt))do{if(o&&o.getBoundingClientRect&&"none"!==Dt(o,"transform")){var h=o.getBoundingClientRect();r-=h.top+w(Dt(o,"border-top-width")),a-=h.left+w(Dt(o,"border-left-width")),l=r+i.height,s=a+i.width;break}}while(o=o.parentNode);if(e&&t!==b){var u=St(o||t),f=u&&u.a,p=u&&u.d;u&&(l=(r/=p)+(c/=p),s=(a/=f)+(d/=f))}return{top:r,left:a,bottom:l,right:s,width:d,height:c}}}function Wt(t,e){for(var o=O(t,!0),n=Lt(t)[e];o;){var i=Lt(o)[e];if(!("top"===e||"left"===e?i<=n:n<=i))return o;if(o===H())break;o=O(o,!1)}return!1}function Ft(t){var e=0,o=0,n=H();if(t)do{var i=St(t),r=i.a,a=i.d;e+=t.scrollLeft*r,o+=t.scrollTop*a}while(t!==n&&(t=t.parentNode));return[e,o]}return wt(st,"dragover",t),wt(st,"mousemove",t),wt(st,"touchmove",t),mt.prototype={constructor:mt,_computeIsAligned:function(t){var e;if(f&&!C?(z(),e=st.elementFromPoint(t.clientX,t.clientY),j()):e=t.target,e=bt(e,this.options.draggable,this.el,!1),!E&&U&&U.parentNode===this.el){for(var o,n,i,r,a,l,s,c,d=this.el.children,h=0;h<d.length;h++)bt(d[h],this.options.draggable,this.el,!1)&&d[h]!==e&&(d[h].sortableMouseAligned=(o=t.clientX,n=t.clientY,i=d[h],r=this._getDirection(t,null),this.options,void 0,a=Lt(i),l="vertical"===r?a.left:a.top,s="vertical"===r?a.right:a.bottom,l<(c="vertical"===r?o:n)&&c<s));bt(e,this.options.draggable,this.el,!0)||($=null),E=!0,ct(function(){E=!1},30)}},_getDirection:function(t,e){return"function"==typeof this.options.direction?this.options.direction.call(this,t,e,U):this.options.direction},_onTapStart:function(t){if(t.cancelable){var e,o=this,n=this.el,i=this.options,r=i.preventOnFilter,a=t.type,l=t.touches&&t.touches[0],s=(l||t).target,c=t.target.shadowRoot&&(t.path&&t.path[0]||t.composedPath&&t.composedPath()[0])||s,d=i.filter;if(function(t){M.length=0;var e=t.getElementsByTagName("input"),o=e.length;for(;o--;){var n=e[o];n.checked&&M.push(n)}}(n),(!dt||t.artificialBubble||pt(n,s))&&!U&&!(/mousedown|pointerdown/.test(a)&&0!==t.button||i.disabled||c.isContentEditable))if(s=bt(s,i.draggable,n,!1)){if(h!==s){if(e=At(s,i.draggable),"function"==typeof d){if(d.call(this,t,s,this))return Ct(o,c,"filter",s,n,n,e),void(r&&t.cancelable&&t.preventDefault())}else if(d&&(d=d.split(",").some(function(t){if(t=bt(c,t.trim(),n,!1))return Ct(o,t,"filter",s,n,n,e),!0})))return void(r&&t.cancelable&&t.preventDefault());i.handle&&!bt(c,i.handle,n,!1)||this._prepareDragStart(t,l,s,e)}}else dt&&gt(n,t,"_onTapStart")}},_handleAutoScroll:function(e,o){if(U&&this.options.scroll){var n=e.clientX,i=e.clientY,t=st.elementFromPoint(n,i),r=this;if(o||_||dt||D){R(e,r.options,t,o);var a=O(t,!0);!B||l&&n===s&&i===c||(l&&clearInterval(l),l=setInterval(function(){if(U){var t=O(st.elementFromPoint(n,i),!0);t!==a&&(a=t,L(),R(e,r.options,a,o))}},10),s=n,c=i)}else{if(!r.options.bubbleScroll||O(t,!0)===H())return void L();R(e,r.options,O(t,!1),!1)}}},_prepareDragStart:function(t,e,o,n){var i,r=this,a=r.el,l=r.options,s=a.ownerDocument;o&&!U&&o.parentNode===a&&(q=a,V=(U=o).parentNode,G=U.nextSibling,h=o,Z=l.group,K=n,p={target:U,clientX:(e||t).clientX,clientY:(e||t).clientY},this._lastX=(e||t).clientX,this._lastY=(e||t).clientY,U.style["will-change"]="all",U.style.transition="",U.style.transform="",i=function(){r._disableDelayedDragEvents(),!y&&r.nativeDraggable&&(U.draggable=!0),r._triggerDragStart(t,e),Ct(r,q,"choose",U,q,q,K),yt(U,l.chosenClass,!0)},l.ignore.split(",").forEach(function(t){Tt(U,t.trim(),xt)}),l.supportPointer?wt(s,"pointerup",r._onDrop):(wt(s,"mouseup",r._onDrop),wt(s,"touchend",r._onDrop),wt(s,"touchcancel",r._onDrop)),y&&this.nativeDraggable&&(this.options.touchStartThreshold=4,U.draggable=!0),!l.delay||this.nativeDraggable&&(_||dt)?i():(wt(s,"mouseup",r._disableDelayedDrag),wt(s,"touchend",r._disableDelayedDrag),wt(s,"touchcancel",r._disableDelayedDrag),wt(s,"mousemove",r._delayedDragTouchMoveHandler),wt(s,"touchmove",r._delayedDragTouchMoveHandler),l.supportPointer&&wt(s,"pointermove",r._delayedDragTouchMoveHandler),r._dragStartTimer=ct(i,l.delay)))},_delayedDragTouchMoveHandler:function(t){var e=t.touches?t.touches[0]:t;N(ut(e.clientX-this._lastX),ut(e.clientY-this._lastY))>=Math.floor(this.options.touchStartThreshold/(this.nativeDraggable&&window.devicePixelRatio||1))&&this._disableDelayedDrag()},_disableDelayedDrag:function(){U&&xt(U),clearTimeout(this._dragStartTimer),this._disableDelayedDragEvents()},_disableDelayedDragEvents:function(){var t=this.el.ownerDocument;_t(t,"mouseup",this._disableDelayedDrag),_t(t,"touchend",this._disableDelayedDrag),_t(t,"touchcancel",this._disableDelayedDrag),_t(t,"mousemove",this._delayedDragTouchMoveHandler),_t(t,"touchmove",this._delayedDragTouchMoveHandler),_t(t,"pointermove",this._delayedDragTouchMoveHandler)},_triggerDragStart:function(t,e){e=e||("touch"==t.pointerType?t:null),!this.nativeDraggable||e?this.options.supportPointer?wt(st,"pointermove",this._onTouchMove):wt(st,e?"touchmove":"mousemove",this._onTouchMove):(wt(U,"dragend",this),wt(q,"dragstart",this._onDragStart));try{st.selection?Ht(function(){st.selection.empty()}):window.getSelection().removeAllRanges()}catch(t){}},_dragStarted:function(t,e){if(v=!1,q&&U){this.nativeDraggable&&(wt(st,"dragover",this._handleAutoScroll),wt(st,"dragover",F));var o=this.options;!t&&yt(U,o.dragClass,!1),yt(U,o.ghostClass,!0),Dt(U,"transform",""),mt.active=this,t&&this._appendGhost(),Ct(this,q,"start",U,q,q,K,void 0,e)}else this._nulling()},_emulateDragOver:function(t){if(k){if(this._lastX===k.clientX&&this._lastY===k.clientY&&!t)return;this._lastX=k.clientX,this._lastY=k.clientY,z();for(var e=st.elementFromPoint(k.clientX,k.clientY),o=e;e&&e.shadowRoot;)o=e=e.shadowRoot.elementFromPoint(k.clientX,k.clientY);if(o)do{if(o[lt])if(o[lt]._onDragOver({clientX:k.clientX,clientY:k.clientY,target:e,rootEl:o})&&!this.options.dragoverBubble)break;e=o}while(o=o.parentNode);U.parentNode[lt]._computeIsAligned(k),j()}},_onTouchMove:function(t,e){if(p){var o=this.options,n=o.fallbackTolerance,i=o.fallbackOffset,r=t.touches?t.touches[0]:t,a=f&&St(f),l=f&&a&&a.a,s=f&&a&&a.d,c=S&&g&&Ft(g),d=(r.clientX-p.clientX+i.x)/(l||1)+(c?c[0]-m[0]:0)/(l||1),h=(r.clientY-p.clientY+i.y)/(s||1)+(c?c[1]-m[1]:0)/(s||1),u=t.touches?"translate3d("+d+"px,"+h+"px,0)":"translate("+d+"px,"+h+"px)";if(!mt.active&&!v){if(n&&x(ut(r.clientX-this._lastX),ut(r.clientY-this._lastY))<n)return;this._onDragStart(t,!0)}!e&&this._handleAutoScroll(r,!0),J=!0,k=r,Dt(f,"webkitTransform",u),Dt(f,"mozTransform",u),Dt(f,"msTransform",u),Dt(f,"transform",u),t.cancelable&&t.preventDefault()}},_appendGhost:function(){if(!f){var t=this.options.fallbackOnBody?st.body:q,e=Lt(U,!0,t,!S),o=(Dt(U),this.options);if(S){for(g=t;"static"===Dt(g,"position")&&"none"===Dt(g,"transform")&&g!==st;)g=g.parentNode;if(g!==st){var n=Lt(g,!0);e.top-=n.top,e.left-=n.left}g!==st.body&&g!==st.documentElement?(g===st&&(g=H()),e.top+=g.scrollTop,e.left+=g.scrollLeft):g=H(),m=Ft(g)}yt(f=U.cloneNode(!0),o.ghostClass,!1),yt(f,o.fallbackClass,!0),yt(f,o.dragClass,!0),Dt(f,"box-sizing","border-box"),Dt(f,"margin",0),Dt(f,"top",e.top),Dt(f,"left",e.left),Dt(f,"width",e.width),Dt(f,"height",e.height),Dt(f,"opacity","0.8"),Dt(f,"position",S?"absolute":"fixed"),Dt(f,"zIndex","100000"),Dt(f,"pointerEvents","none"),t.appendChild(f)}},_onDragStart:function(t,e){var o=this,n=t.dataTransfer,i=o.options;(u=Ot(U)).draggable=!1,u.style["will-change"]="",this._hideClone(),yt(u,o.options.chosenClass,!1),o._cloneId=Ht(function(){o.options.removeCloneOnHide||q.insertBefore(u,U),Ct(o,q,"clone",U)}),!e&&yt(U,i.dragClass,!0),e?(it=!0,o._loopId=setInterval(o._emulateDragOver,50)):(_t(st,"mouseup",o._onDrop),_t(st,"touchend",o._onDrop),_t(st,"touchcancel",o._onDrop),n&&(n.effectAllowed="move",i.setData&&i.setData.call(o,n,U)),wt(st,"drop",o),Dt(U,"transform","translateZ(0)")),v=!0,o._dragStartId=Ht(o._dragStarted.bind(o,e,t)),wt(st,"selectstart",o),D&&Dt(st.body,"user-select","none")},_onDragOver:function(e){var o,n,t,i=this.el,r=e.target,a=this.options,l=a.group,s=mt.active,c=Z===l,d=a.sort,h=this;if(!ht&&(!dt||e.rootEl||e.artificialBubble||pt(i,r))){if(void 0!==e.preventDefault&&e.cancelable&&e.preventDefault(),J=!0,r=bt(r,a.draggable,i,!0),bt(e.target,null,U,!0)||r.animated)return z(!1);if(r!==U&&(it=!1),s&&!a.disabled&&(c?d||(t=!q.contains(U)):Q===this||(this.lastPutMode=Z.checkPull(this,s,U,e))&&l.checkPut(this,s,U,e))){var u=this._getDirection(e,r);if(o=Lt(U),t)return this._hideClone(),V=q,G?q.insertBefore(U,G):q.appendChild(U),z(!0);var f=Pt(i);if(f&&(I=e,B=u,O=Lt(Pt(i)),H="vertical"===B?I.clientY:I.clientX,R="vertical"===B?I.clientX:I.clientY,L="vertical"===B?O.bottom:O.right,W="vertical"===B?O.left:O.top,F="vertical"===B?O.right:O.bottom,!("vertical"===B?F+10<R||R<=F&&L<H&&W<=R:L<H&&W<R||H<=L&&F+10<R)||f.animated)){if(r&&r!==U&&r.parentNode===i){var p,g=0,v=r.sortableMouseAligned,m=U.parentNode!==i,b="vertical"===u?"top":"left",w=Wt(r,"top")||Wt(U,"top"),_=w?w.scrollTop:void 0;if($!==r&&(et=null,p=Lt(r)[b],rt=!1),C=r,E=u,x=(T=U)===U&&nt||Lt(T),N=C===U&&nt||Lt(C),M="vertical"===E?x.left:x.top,P="vertical"===E?x.right:x.bottom,X="vertical"===E?x.width:x.height,Y="vertical"===E?N.left:N.top,A="vertical"===E?N.right:N.bottom,k="vertical"===E?N.width:N.height,et=(M===Y||P===A||M+X/2===Y+k/2)&&v||m||w||a.invertSwap||"insert"===et||"swap"===et?("swap"!==et&&(at=a.invertSwap||m),g=function(t,e,o,n,i,r,a){var l=Lt(e),s="vertical"===o?t.clientY:t.clientX,c="vertical"===o?l.height:l.width,d="vertical"===o?l.top:l.left,h="vertical"===o?l.bottom:l.right,u=Lt(U),f=!1;if(!r)if(a&&ot<c*n)if(!rt&&(1===tt?d+c*i/2<s:s<h-c*i/2)&&(rt=!0),rt)f=!0;else{"vertical"===o?u.top:u.left,"vertical"===o?u.bottom:u.right;if(1===tt?s<d+ot:h-ot<s)return-1*tt}else if(d+c*(1-n)/2<s&&s<h-c*(1-n)/2)return Xt(e);if((f=f||r)&&(s<d+c*i/2||h-c*i/2<s))return d+c/2<s?1:-1;return 0}(e,r,u,a.swapThreshold,null==a.invertedSwapThreshold?a.swapThreshold:a.invertedSwapThreshold,at,$===r),"swap"):(g=Xt(r),"insert"),0===g)return z(!1);nt=null,tt=g,n=Lt($=r);var y=r.nextElementSibling,D=!1,S=Et(q,i,U,o,r,n,e,D=1===g);if(!1!==S)return 1!==S&&-1!==S||(D=1===S),ht=!0,ct(Nt,30),c?s._hideClone():s._showClone(this),D&&!y?i.appendChild(U):r.parentNode.insertBefore(U,D?y:r),w&&ft(w,0,_-w.scrollTop),V=U.parentNode,void 0===p||at||(ot=ut(p-Lt(r)[b])),j(),z(!0)}}else if(f&&i===e.target&&(r=f),r&&(n=Lt(r)),c?s._hideClone():s._showClone(this),!1!==Et(q,i,U,o,r,n,e,!!r))return i.appendChild(U),V=i,nt=null,j(),z(!0);if(i.contains(U))return z(!1)}var T,C,E,x,N,M,P,X,Y,A,k,I,B,O,H,R,L,W,F;return dt&&!e.rootEl&&gt(i,e,"_onDragOver"),!1}function z(t){return t&&(c?s._hideClone():s._showClone(h),s&&(yt(U,Q?Q.options.ghostClass:s.options.ghostClass,!1),yt(U,a.ghostClass,!0)),Q!==h&&h!==mt.active?Q=h:h===mt.active&&(Q=null),o&&h._animate(o,U),r&&n&&h._animate(n,r)),(r===U&&!U.animated||r===i&&!r.animated)&&($=null),a.dragoverBubble||e.rootEl||r===st||(h._handleAutoScroll(e),U.parentNode[lt]._computeIsAligned(e)),!a.dragoverBubble&&e.stopPropagation&&e.stopPropagation(),!0}function j(){Ct(h,q,"change",r,i,q,K,At(U,a.draggable),e)}},_animate:function(t,e){var o=this.options.animation;if(o){var n=Lt(e);if(e===U&&(nt=n),1===t.nodeType&&(t=Lt(t)),t.left+t.width/2!==n.left+n.width/2||t.top+t.height/2!==n.top+n.height/2){var i=St(this.el),r=i&&i.a,a=i&&i.d;Dt(e,"transition","none"),Dt(e,"transform","translate3d("+(t.left-n.left)/(r||1)+"px,"+(t.top-n.top)/(a||1)+"px,0)"),e.offsetWidth,Dt(e,"transition","transform "+o+"ms"+(this.options.easing?" "+this.options.easing:"")),Dt(e,"transform","translate3d(0,0,0)")}"number"==typeof e.animated&&clearTimeout(e.animated),e.animated=ct(function(){Dt(e,"transition",""),Dt(e,"transform",""),e.animated=!1},o)}},_offUpEvents:function(){var t=this.el.ownerDocument;_t(st,"touchmove",this._onTouchMove),_t(st,"pointermove",this._onTouchMove),_t(t,"mouseup",this._onDrop),_t(t,"touchend",this._onDrop),_t(t,"pointerup",this._onDrop),_t(t,"touchcancel",this._onDrop),_t(st,"selectstart",this)},_onDrop:function(t){var e=this.el,o=this.options;rt=at=B=v=!1,clearInterval(this._loopId),clearInterval(l),L(),clearTimeout(vt),vt=void 0,clearTimeout(this._dragStartTimer),Rt(this._cloneId),Rt(this._dragStartId),_t(st,"mousemove",this._onTouchMove),this.nativeDraggable&&(_t(st,"drop",this),_t(e,"dragstart",this._onDragStart),_t(st,"dragover",this._handleAutoScroll),_t(st,"dragover",F)),D&&Dt(st.body,"user-select",""),this._offUpEvents(),t&&(J&&(t.cancelable&&t.preventDefault(),!o.dropBubble&&t.stopPropagation()),f&&f.parentNode&&f.parentNode.removeChild(f),(q===V||Q&&"clone"!==Q.lastPutMode)&&u&&u.parentNode&&u.parentNode.removeChild(u),U&&(this.nativeDraggable&&_t(U,"dragend",this),xt(U),U.style["will-change"]="",yt(U,Q?Q.options.ghostClass:this.options.ghostClass,!1),yt(U,this.options.chosenClass,!1),Ct(this,q,"unchoose",U,V,q,K,null,t),q!==V?(0<=(n=At(U,o.draggable))&&(Ct(null,V,"add",U,V,q,K,n,t),Ct(this,q,"remove",U,V,q,K,n,t),Ct(null,V,"sort",U,V,q,K,n,t),Ct(this,q,"sort",U,V,q,K,n,t)),Q&&Q.save()):U.nextSibling!==G&&0<=(n=At(U,o.draggable))&&(Ct(this,q,"update",U,V,q,K,n,t),Ct(this,q,"sort",U,V,q,K,n,t)),mt.active&&(null!=n&&-1!==n||(n=K),Ct(this,q,"end",U,V,q,K,n,t),this.save()))),this._nulling()},_nulling:function(){q=U=V=f=G=u=h=X=Y=I.length=l=s=c=p=k=J=n=K=$=tt=nt=Q=Z=mt.active=null,M.forEach(function(t){t.checked=!0}),M.length=0},handleEvent:function(t){switch(t.type){case"drop":case"dragend":this._onDrop(t);break;case"dragenter":case"dragover":U&&(this._onDragOver(t),function(t){t.dataTransfer&&(t.dataTransfer.dropEffect="move");t.cancelable&&t.preventDefault()}(t));break;case"selectstart":t.preventDefault()}},toArray:function(){for(var t,e=[],o=this.el.children,n=0,i=o.length,r=this.options;n<i;n++)bt(t=o[n],r.draggable,this.el,!1)&&e.push(t.getAttribute(r.dataIdAttr)||Yt(t));return e},sort:function(t){var n={},i=this.el;this.toArray().forEach(function(t,e){var o=i.children[e];bt(o,this.options.draggable,i,!1)&&(n[t]=o)},this),t.forEach(function(t){n[t]&&(i.removeChild(n[t]),i.appendChild(n[t]))})},save:function(){var t=this.options.store;t&&t.set&&t.set(this)},closest:function(t,e){return bt(t,e||this.options.draggable,this.el,!1)},option:function(t,e){var o=this.options;if(void 0===e)return o[t];o[t]=e,"group"===t&&W(o)},destroy:function(){var t=this.el;t[lt]=null,_t(t,"mousedown",this._onTapStart),_t(t,"touchstart",this._onTapStart),_t(t,"pointerdown",this._onTapStart),this.nativeDraggable&&(_t(t,"dragover",this),_t(t,"dragenter",this)),Array.prototype.forEach.call(t.querySelectorAll("[draggable]"),function(t){t.removeAttribute("draggable")}),this._onDrop(),d.splice(d.indexOf(this.el),1),this.el=t=null},_hideClone:function(){u.cloneHidden||(Dt(u,"display","none"),u.cloneHidden=!0,u.parentNode&&this.options.removeCloneOnHide&&u.parentNode.removeChild(u))},_showClone:function(t){"clone"===t.lastPutMode?u.cloneHidden&&(q.contains(U)&&!this.options.group.revertClone?q.insertBefore(u,U):G?q.insertBefore(u,G):q.appendChild(u),this.options.group.revertClone&&this._animate(U,u),Dt(u,"display",""),u.cloneHidden=!1):this._hideClone()}},wt(st,"touchmove",function(t){(mt.active||v)&&t.cancelable&&t.preventDefault()}),mt.utils={on:wt,off:_t,css:Dt,find:Tt,is:function(t,e){return!!bt(t,e,t,!1)},extend:Bt,throttle:It,closest:bt,toggleClass:yt,clone:Ot,index:At,nextTick:Ht,cancelNextTick:Rt,detectDirection:P,getChild:Mt},mt.create=function(t,e){return new mt(t,e)},mt.version="1.8.4",mt});
 (function(t,n){"object"===typeof exports&&"object"===typeof module?module.exports=n(require("sortablejs")):"function"===typeof define&&define.amd?define(["sortablejs"],n):"object"===typeof exports?exports["vuedraggable"]=n(require("sortablejs")):t["vuedraggable"]=n(t["Sortable"])})("undefined"!==typeof self?self:this,function(t){return function(t){var n={};function e(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return t[r].call(o.exports,o,o.exports,e),o.l=!0,o.exports}return e.m=t,e.c=n,e.d=function(t,n,r){e.o(t,n)||Object.defineProperty(t,n,{enumerable:!0,get:r})},e.r=function(t){"undefined"!==typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},e.t=function(t,n){if(1&n&&(t=e(t)),8&n)return t;if(4&n&&"object"===typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(e.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&n&&"string"!=typeof t)for(var o in t)e.d(r,o,function(n){return t[n]}.bind(null,o));return r},e.n=function(t){var n=t&&t.__esModule?function(){return t["default"]}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,n){return Object.prototype.hasOwnProperty.call(t,n)},e.p="",e(e.s="fb15")}({"02f4":function(t,n,e){var r=e("4588"),o=e("be13");t.exports=function(t){return function(n,e){var i,u,c=String(o(n)),a=r(e),f=c.length;return a<0||a>=f?t?"":void 0:(i=c.charCodeAt(a),i<55296||i>56319||a+1===f||(u=c.charCodeAt(a+1))<56320||u>57343?t?c.charAt(a):i:t?c.slice(a,a+2):u-56320+(i-55296<<10)+65536)}}},"0390":function(t,n,e){"use strict";var r=e("02f4")(!0);t.exports=function(t,n,e){return n+(e?r(t,n).length:1)}},"07e3":function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},"0bfb":function(t,n,e){"use strict";var r=e("cb7c");t.exports=function(){var t=r(this),n="";return t.global&&(n+="g"),t.ignoreCase&&(n+="i"),t.multiline&&(n+="m"),t.unicode&&(n+="u"),t.sticky&&(n+="y"),n}},"0fc9":function(t,n,e){var r=e("3a38"),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},1654:function(t,n,e){"use strict";var r=e("71c1")(!0);e("30f1")(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},1691:function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},"1af6":function(t,n,e){var r=e("63b6");r(r.S,"Array",{isArray:e("9003")})},"1bc3":function(t,n,e){var r=e("f772");t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},"1ec9":function(t,n,e){var r=e("f772"),o=e("e53d").document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},"20fd":function(t,n,e){"use strict";var r=e("d9f6"),o=e("aebd");t.exports=function(t,n,e){n in t?r.f(t,n,o(0,e)):t[n]=e}},"214f":function(t,n,e){"use strict";e("b0c5");var r=e("2aba"),o=e("32e9"),i=e("79e5"),u=e("be13"),c=e("2b4c"),a=e("520a"),f=c("species"),s=!i(function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")}),l=function(){var t=/(?:)/,n=t.exec;t.exec=function(){return n.apply(this,arguments)};var e="ab".split(t);return 2===e.length&&"a"===e[0]&&"b"===e[1]}();t.exports=function(t,n,e){var p=c(t),d=!i(function(){var n={};return n[p]=function(){return 7},7!=""[t](n)}),v=d?!i(function(){var n=!1,e=/a/;return e.exec=function(){return n=!0,null},"split"===t&&(e.constructor={},e.constructor[f]=function(){return e}),e[p](""),!n}):void 0;if(!d||!v||"replace"===t&&!s||"split"===t&&!l){var h=/./[p],b=e(u,p,""[t],function(t,n,e,r,o){return n.exec===a?d&&!o?{done:!0,value:h.call(n,e,r)}:{done:!0,value:t.call(e,n,r)}:{done:!1}}),g=b[0],y=b[1];r(String.prototype,t,g),o(RegExp.prototype,p,2==n?function(t,n){return y.call(t,this,n)}:function(t){return y.call(t,this)})}}},"230e":function(t,n,e){var r=e("d3f4"),o=e("7726").document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},"23c6":function(t,n,e){var r=e("2d95"),o=e("2b4c")("toStringTag"),i="Arguments"==r(function(){return arguments}()),u=function(t,n){try{return t[n]}catch(e){}};t.exports=function(t){var n,e,c;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(e=u(n=Object(t),o))?e:i?r(n):"Object"==(c=r(n))&&"function"==typeof n.callee?"Arguments":c}},"241e":function(t,n,e){var r=e("25eb");t.exports=function(t){return Object(r(t))}},"25eb":function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},"294c":function(t,n){t.exports=function(t){try{return!!t()}catch(n){return!0}}},"2aba":function(t,n,e){var r=e("7726"),o=e("32e9"),i=e("69a8"),u=e("ca5a")("src"),c=e("fa5b"),a="toString",f=(""+c).split(a);e("8378").inspectSource=function(t){return c.call(t)},(t.exports=function(t,n,e,c){var a="function"==typeof e;a&&(i(e,"name")||o(e,"name",n)),t[n]!==e&&(a&&(i(e,u)||o(e,u,t[n]?""+t[n]:f.join(String(n)))),t===r?t[n]=e:c?t[n]?t[n]=e:o(t,n,e):(delete t[n],o(t,n,e)))})(Function.prototype,a,function(){return"function"==typeof this&&this[u]||c.call(this)})},"2b4c":function(t,n,e){var r=e("5537")("wks"),o=e("ca5a"),i=e("7726").Symbol,u="function"==typeof i,c=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};c.store=r},"2d00":function(t,n){t.exports=!1},"2d95":function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},"2fdb":function(t,n,e){"use strict";var r=e("5ca1"),o=e("d2c8"),i="includes";r(r.P+r.F*e("5147")(i),"String",{includes:function(t){return!!~o(this,t,i).indexOf(t,arguments.length>1?arguments[1]:void 0)}})},"30f1":function(t,n,e){"use strict";var r=e("b8e3"),o=e("63b6"),i=e("9138"),u=e("35e8"),c=e("481b"),a=e("8f60"),f=e("45f2"),s=e("53e2"),l=e("5168")("iterator"),p=!([].keys&&"next"in[].keys()),d="@@iterator",v="keys",h="values",b=function(){return this};t.exports=function(t,n,e,g,y,x,m){a(e,n,g);var w,O,S,j=function(t){if(!p&&t in C)return C[t];switch(t){case v:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},_=n+" Iterator",M=y==h,T=!1,C=t.prototype,E=C[l]||C[d]||y&&C[y],A=E||j(y),P=y?M?j("entries"):A:void 0,I="Array"==n&&C.entries||E;if(I&&(S=s(I.call(new t)),S!==Object.prototype&&S.next&&(f(S,_,!0),r||"function"==typeof S[l]||u(S,l,b))),M&&E&&E.name!==h&&(T=!0,A=function(){return E.call(this)}),r&&!m||!p&&!T&&C[l]||u(C,l,A),c[n]=A,c[_]=b,y)if(w={values:M?A:j(h),keys:x?A:j(v),entries:P},m)for(O in w)O in C||i(C,O,w[O]);else o(o.P+o.F*(p||T),n,w);return w}},"32a6":function(t,n,e){var r=e("241e"),o=e("c3a1");e("ce7e")("keys",function(){return function(t){return o(r(t))}})},"32e9":function(t,n,e){var r=e("86cc"),o=e("4630");t.exports=e("9e1e")?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},"32fc":function(t,n,e){var r=e("e53d").document;t.exports=r&&r.documentElement},"335c":function(t,n,e){var r=e("6b4c");t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},"355d":function(t,n){n.f={}.propertyIsEnumerable},"35e8":function(t,n,e){var r=e("d9f6"),o=e("aebd");t.exports=e("8e60")?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},"36c3":function(t,n,e){var r=e("335c"),o=e("25eb");t.exports=function(t){return r(o(t))}},3702:function(t,n,e){var r=e("481b"),o=e("5168")("iterator"),i=Array.prototype;t.exports=function(t){return void 0!==t&&(r.Array===t||i[o]===t)}},"3a38":function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},"40c3":function(t,n,e){var r=e("6b4c"),o=e("5168")("toStringTag"),i="Arguments"==r(function(){return arguments}()),u=function(t,n){try{return t[n]}catch(e){}};t.exports=function(t){var n,e,c;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(e=u(n=Object(t),o))?e:i?r(n):"Object"==(c=r(n))&&"function"==typeof n.callee?"Arguments":c}},4588:function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},"45f2":function(t,n,e){var r=e("d9f6").f,o=e("07e3"),i=e("5168")("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},4630:function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},"469f":function(t,n,e){e("6c1c"),e("1654"),t.exports=e("7d7b")},"481b":function(t,n){t.exports={}},"4aa6":function(t,n,e){t.exports=e("dc62")},"4bf8":function(t,n,e){var r=e("be13");t.exports=function(t){return Object(r(t))}},"4ee1":function(t,n,e){var r=e("5168")("iterator"),o=!1;try{var i=[7][r]();i["return"]=function(){o=!0},Array.from(i,function(){throw 2})}catch(u){}t.exports=function(t,n){if(!n&&!o)return!1;var e=!1;try{var i=[7],c=i[r]();c.next=function(){return{done:e=!0}},i[r]=function(){return c},t(i)}catch(u){}return e}},"50ed":function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},5147:function(t,n,e){var r=e("2b4c")("match");t.exports=function(t){var n=/./;try{"/./"[t](n)}catch(e){try{return n[r]=!1,!"/./"[t](n)}catch(o){}}return!0}},5168:function(t,n,e){var r=e("dbdb")("wks"),o=e("62a0"),i=e("e53d").Symbol,u="function"==typeof i,c=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};c.store=r},5176:function(t,n,e){t.exports=e("51b6")},"51b6":function(t,n,e){e("a3c3"),t.exports=e("584a").Object.assign},"520a":function(t,n,e){"use strict";var r=e("0bfb"),o=RegExp.prototype.exec,i=String.prototype.replace,u=o,c="lastIndex",a=function(){var t=/a/,n=/b*/g;return o.call(t,"a"),o.call(n,"a"),0!==t[c]||0!==n[c]}(),f=void 0!==/()??/.exec("")[1],s=a||f;s&&(u=function(t){var n,e,u,s,l=this;return f&&(e=new RegExp("^"+l.source+"$(?!\\s)",r.call(l))),a&&(n=l[c]),u=o.call(l,t),a&&u&&(l[c]=l.global?u.index+u[0].length:n),f&&u&&u.length>1&&i.call(u[0],e,function(){for(s=1;s<arguments.length-2;s++)void 0===arguments[s]&&(u[s]=void 0)}),u}),t.exports=u},"53e2":function(t,n,e){var r=e("07e3"),o=e("241e"),i=e("5559")("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},"549b":function(t,n,e){"use strict";var r=e("d864"),o=e("63b6"),i=e("241e"),u=e("b0dc"),c=e("3702"),a=e("b447"),f=e("20fd"),s=e("7cd6");o(o.S+o.F*!e("4ee1")(function(t){Array.from(t)}),"Array",{from:function(t){var n,e,o,l,p=i(t),d="function"==typeof this?this:Array,v=arguments.length,h=v>1?arguments[1]:void 0,b=void 0!==h,g=0,y=s(p);if(b&&(h=r(h,v>2?arguments[2]:void 0,2)),void 0==y||d==Array&&c(y))for(n=a(p.length),e=new d(n);n>g;g++)f(e,g,b?h(p[g],g):p[g]);else for(l=y.call(p),e=new d;!(o=l.next()).done;g++)f(e,g,b?u(l,h,[o.value,g],!0):o.value);return e.length=g,e}})},"54a1":function(t,n,e){e("6c1c"),e("1654"),t.exports=e("95d5")},5537:function(t,n,e){var r=e("8378"),o=e("7726"),i="__core-js_shared__",u=o[i]||(o[i]={});(t.exports=function(t,n){return u[t]||(u[t]=void 0!==n?n:{})})("versions",[]).push({version:r.version,mode:e("2d00")?"pure":"global",copyright:"© 2019 Denis Pushkarev (zloirock.ru)"})},5559:function(t,n,e){var r=e("dbdb")("keys"),o=e("62a0");t.exports=function(t){return r[t]||(r[t]=o(t))}},"584a":function(t,n){var e=t.exports={version:"2.6.5"};"number"==typeof __e&&(__e=e)},"5b4e":function(t,n,e){var r=e("36c3"),o=e("b447"),i=e("0fc9");t.exports=function(t){return function(n,e,u){var c,a=r(n),f=o(a.length),s=i(u,f);if(t&&e!=e){while(f>s)if(c=a[s++],c!=c)return!0}else for(;f>s;s++)if((t||s in a)&&a[s]===e)return t||s||0;return!t&&-1}}},"5ca1":function(t,n,e){var r=e("7726"),o=e("8378"),i=e("32e9"),u=e("2aba"),c=e("9b43"),a="prototype",f=function(t,n,e){var s,l,p,d,v=t&f.F,h=t&f.G,b=t&f.S,g=t&f.P,y=t&f.B,x=h?r:b?r[n]||(r[n]={}):(r[n]||{})[a],m=h?o:o[n]||(o[n]={}),w=m[a]||(m[a]={});for(s in h&&(e=n),e)l=!v&&x&&void 0!==x[s],p=(l?x:e)[s],d=y&&l?c(p,r):g&&"function"==typeof p?c(Function.call,p):p,x&&u(x,s,p,t&f.U),m[s]!=p&&i(m,s,d),g&&w[s]!=p&&(w[s]=p)};r.core=o,f.F=1,f.G=2,f.S=4,f.P=8,f.B=16,f.W=32,f.U=64,f.R=128,t.exports=f},"5d73":function(t,n,e){t.exports=e("469f")},"5f1b":function(t,n,e){"use strict";var r=e("23c6"),o=RegExp.prototype.exec;t.exports=function(t,n){var e=t.exec;if("function"===typeof e){var i=e.call(t,n);if("object"!==typeof i)throw new TypeError("RegExp exec method returned something other than an Object or null");return i}if("RegExp"!==r(t))throw new TypeError("RegExp#exec called on incompatible receiver");return o.call(t,n)}},"626a":function(t,n,e){var r=e("2d95");t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},"62a0":function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},"63b6":function(t,n,e){var r=e("e53d"),o=e("584a"),i=e("d864"),u=e("35e8"),c=e("07e3"),a="prototype",f=function(t,n,e){var s,l,p,d=t&f.F,v=t&f.G,h=t&f.S,b=t&f.P,g=t&f.B,y=t&f.W,x=v?o:o[n]||(o[n]={}),m=x[a],w=v?r:h?r[n]:(r[n]||{})[a];for(s in v&&(e=n),e)l=!d&&w&&void 0!==w[s],l&&c(x,s)||(p=l?w[s]:e[s],x[s]=v&&"function"!=typeof w[s]?e[s]:g&&l?i(p,r):y&&w[s]==p?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[a]=t[a],n}(p):b&&"function"==typeof p?i(Function.call,p):p,b&&((x.virtual||(x.virtual={}))[s]=p,t&f.R&&m&&!m[s]&&u(m,s,p)))};f.F=1,f.G=2,f.S=4,f.P=8,f.B=16,f.W=32,f.U=64,f.R=128,t.exports=f},6762:function(t,n,e){"use strict";var r=e("5ca1"),o=e("c366")(!0);r(r.P,"Array",{includes:function(t){return o(this,t,arguments.length>1?arguments[1]:void 0)}}),e("9c6c")("includes")},6821:function(t,n,e){var r=e("626a"),o=e("be13");t.exports=function(t){return r(o(t))}},"69a8":function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},"6a99":function(t,n,e){var r=e("d3f4");t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},"6b4c":function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},"6c1c":function(t,n,e){e("c367");for(var r=e("e53d"),o=e("35e8"),i=e("481b"),u=e("5168")("toStringTag"),c="CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,MediaList,MimeTypeArray,NamedNodeMap,NodeList,PaintRequestList,Plugin,PluginArray,SVGLengthList,SVGNumberList,SVGPathSegList,SVGPointList,SVGStringList,SVGTransformList,SourceBufferList,StyleSheetList,TextTrackCueList,TextTrackList,TouchList".split(","),a=0;a<c.length;a++){var f=c[a],s=r[f],l=s&&s.prototype;l&&!l[u]&&o(l,u,f),i[f]=i.Array}},"71c1":function(t,n,e){var r=e("3a38"),o=e("25eb");t.exports=function(t){return function(n,e){var i,u,c=String(o(n)),a=r(e),f=c.length;return a<0||a>=f?t?"":void 0:(i=c.charCodeAt(a),i<55296||i>56319||a+1===f||(u=c.charCodeAt(a+1))<56320||u>57343?t?c.charAt(a):i:t?c.slice(a,a+2):u-56320+(i-55296<<10)+65536)}}},7726:function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},"774e":function(t,n,e){t.exports=e("d2d5")},"77f1":function(t,n,e){var r=e("4588"),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},"794b":function(t,n,e){t.exports=!e("8e60")&&!e("294c")(function(){return 7!=Object.defineProperty(e("1ec9")("div"),"a",{get:function(){return 7}}).a})},"79aa":function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},"79e5":function(t,n){t.exports=function(t){try{return!!t()}catch(n){return!0}}},"7cd6":function(t,n,e){var r=e("40c3"),o=e("5168")("iterator"),i=e("481b");t.exports=e("584a").getIteratorMethod=function(t){if(void 0!=t)return t[o]||t["@@iterator"]||i[r(t)]}},"7d7b":function(t,n,e){var r=e("e4ae"),o=e("7cd6");t.exports=e("584a").getIterator=function(t){var n=o(t);if("function"!=typeof n)throw TypeError(t+" is not iterable!");return r(n.call(t))}},"7e90":function(t,n,e){var r=e("d9f6"),o=e("e4ae"),i=e("c3a1");t.exports=e("8e60")?Object.defineProperties:function(t,n){o(t);var e,u=i(n),c=u.length,a=0;while(c>a)r.f(t,e=u[a++],n[e]);return t}},8378:function(t,n){var e=t.exports={version:"2.6.5"};"number"==typeof __e&&(__e=e)},8436:function(t,n){t.exports=function(){}},"86cc":function(t,n,e){var r=e("cb7c"),o=e("c69a"),i=e("6a99"),u=Object.defineProperty;n.f=e("9e1e")?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(c){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},"8aae":function(t,n,e){e("32a6"),t.exports=e("584a").Object.keys},"8e60":function(t,n,e){t.exports=!e("294c")(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},"8f60":function(t,n,e){"use strict";var r=e("a159"),o=e("aebd"),i=e("45f2"),u={};e("35e8")(u,e("5168")("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},9003:function(t,n,e){var r=e("6b4c");t.exports=Array.isArray||function(t){return"Array"==r(t)}},9138:function(t,n,e){t.exports=e("35e8")},9306:function(t,n,e){"use strict";var r=e("c3a1"),o=e("9aa9"),i=e("355d"),u=e("241e"),c=e("335c"),a=Object.assign;t.exports=!a||e("294c")(function(){var t={},n={},e=Symbol(),r="abcdefghijklmnopqrst";return t[e]=7,r.split("").forEach(function(t){n[t]=t}),7!=a({},t)[e]||Object.keys(a({},n)).join("")!=r})?function(t,n){var e=u(t),a=arguments.length,f=1,s=o.f,l=i.f;while(a>f){var p,d=c(arguments[f++]),v=s?r(d).concat(s(d)):r(d),h=v.length,b=0;while(h>b)l.call(d,p=v[b++])&&(e[p]=d[p])}return e}:a},9427:function(t,n,e){var r=e("63b6");r(r.S,"Object",{create:e("a159")})},"95d5":function(t,n,e){var r=e("40c3"),o=e("5168")("iterator"),i=e("481b");t.exports=e("584a").isIterable=function(t){var n=Object(t);return void 0!==n[o]||"@@iterator"in n||i.hasOwnProperty(r(n))}},"9aa9":function(t,n){n.f=Object.getOwnPropertySymbols},"9b43":function(t,n,e){var r=e("d8e8");t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},"9c6c":function(t,n,e){var r=e("2b4c")("unscopables"),o=Array.prototype;void 0==o[r]&&e("32e9")(o,r,{}),t.exports=function(t){o[r][t]=!0}},"9def":function(t,n,e){var r=e("4588"),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},"9e1e":function(t,n,e){t.exports=!e("79e5")(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},a159:function(t,n,e){var r=e("e4ae"),o=e("7e90"),i=e("1691"),u=e("5559")("IE_PROTO"),c=function(){},a="prototype",f=function(){var t,n=e("1ec9")("iframe"),r=i.length,o="<",u=">";n.style.display="none",e("32fc").appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),f=t.F;while(r--)delete f[a][i[r]];return f()};t.exports=Object.create||function(t,n){var e;return null!==t?(c[a]=r(t),e=new c,c[a]=null,e[u]=t):e=f(),void 0===n?e:o(e,n)}},a352:function(n,e){n.exports=t},a3c3:function(t,n,e){var r=e("63b6");r(r.S+r.F,"Object",{assign:e("9306")})},a481:function(t,n,e){"use strict";var r=e("cb7c"),o=e("4bf8"),i=e("9def"),u=e("4588"),c=e("0390"),a=e("5f1b"),f=Math.max,s=Math.min,l=Math.floor,p=/\$([$&`']|\d\d?|<[^>]*>)/g,d=/\$([$&`']|\d\d?)/g,v=function(t){return void 0===t?t:String(t)};e("214f")("replace",2,function(t,n,e,h){return[function(r,o){var i=t(this),u=void 0==r?void 0:r[n];return void 0!==u?u.call(r,i,o):e.call(String(i),r,o)},function(t,n){var o=h(e,t,this,n);if(o.done)return o.value;var l=r(t),p=String(this),d="function"===typeof n;d||(n=String(n));var g=l.global;if(g){var y=l.unicode;l.lastIndex=0}var x=[];while(1){var m=a(l,p);if(null===m)break;if(x.push(m),!g)break;var w=String(m[0]);""===w&&(l.lastIndex=c(p,i(l.lastIndex),y))}for(var O="",S=0,j=0;j<x.length;j++){m=x[j];for(var _=String(m[0]),M=f(s(u(m.index),p.length),0),T=[],C=1;C<m.length;C++)T.push(v(m[C]));var E=m.groups;if(d){var A=[_].concat(T,M,p);void 0!==E&&A.push(E);var P=String(n.apply(void 0,A))}else P=b(_,p,M,T,E,n);M>=S&&(O+=p.slice(S,M)+P,S=M+_.length)}return O+p.slice(S)}];function b(t,n,r,i,u,c){var a=r+t.length,f=i.length,s=d;return void 0!==u&&(u=o(u),s=p),e.call(c,s,function(e,o){var c;switch(o.charAt(0)){case"$":return"$";case"&":return t;case"`":return n.slice(0,r);case"'":return n.slice(a);case"<":c=u[o.slice(1,-1)];break;default:var s=+o;if(0===s)return e;if(s>f){var p=l(s/10);return 0===p?e:p<=f?void 0===i[p-1]?o.charAt(1):i[p-1]+o.charAt(1):e}c=i[s-1]}return void 0===c?"":c})}})},a4bb:function(t,n,e){t.exports=e("8aae")},a745:function(t,n,e){t.exports=e("f410")},aae3:function(t,n,e){var r=e("d3f4"),o=e("2d95"),i=e("2b4c")("match");t.exports=function(t){var n;return r(t)&&(void 0!==(n=t[i])?!!n:"RegExp"==o(t))}},aebd:function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},b0c5:function(t,n,e){"use strict";var r=e("520a");e("5ca1")({target:"RegExp",proto:!0,forced:r!==/./.exec},{exec:r})},b0dc:function(t,n,e){var r=e("e4ae");t.exports=function(t,n,e,o){try{return o?n(r(e)[0],e[1]):n(e)}catch(u){var i=t["return"];throw void 0!==i&&r(i.call(t)),u}}},b447:function(t,n,e){var r=e("3a38"),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},b8e3:function(t,n){t.exports=!0},be13:function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},c366:function(t,n,e){var r=e("6821"),o=e("9def"),i=e("77f1");t.exports=function(t){return function(n,e,u){var c,a=r(n),f=o(a.length),s=i(u,f);if(t&&e!=e){while(f>s)if(c=a[s++],c!=c)return!0}else for(;f>s;s++)if((t||s in a)&&a[s]===e)return t||s||0;return!t&&-1}}},c367:function(t,n,e){"use strict";var r=e("8436"),o=e("50ed"),i=e("481b"),u=e("36c3");t.exports=e("30f1")(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):o(0,"keys"==n?e:"values"==n?t[e]:[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},c3a1:function(t,n,e){var r=e("e6f3"),o=e("1691");t.exports=Object.keys||function(t){return r(t,o)}},c649:function(t,n,e){"use strict";(function(t){e.d(n,"c",function(){return l}),e.d(n,"a",function(){return f}),e.d(n,"b",function(){return u}),e.d(n,"d",function(){return s});e("a481");var r=e("4aa6"),o=e.n(r);function i(){return"undefined"!==typeof window?window.console:t.console}var u=i();function c(t){var n=o()(null);return function(e){var r=n[e];return r||(n[e]=t(e))}}var a=/-(\w)/g,f=c(function(t){return t.replace(a,function(t,n){return n?n.toUpperCase():""})});function s(t){null!==t.parentElement&&t.parentElement.removeChild(t)}function l(t,n,e){var r=0===e?t.children[0]:t.children[e-1].nextSibling;t.insertBefore(n,r)}}).call(this,e("c8ba"))},c69a:function(t,n,e){t.exports=!e("9e1e")&&!e("79e5")(function(){return 7!=Object.defineProperty(e("230e")("div"),"a",{get:function(){return 7}}).a})},c8ba:function(t,n){var e;e=function(){return this}();try{e=e||new Function("return this")()}catch(r){"object"===typeof window&&(e=window)}t.exports=e},c8bb:function(t,n,e){t.exports=e("54a1")},ca5a:function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},cb7c:function(t,n,e){var r=e("d3f4");t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},ce7e:function(t,n,e){var r=e("63b6"),o=e("584a"),i=e("294c");t.exports=function(t,n){var e=(o.Object||{})[t]||Object[t],u={};u[t]=n(e),r(r.S+r.F*i(function(){e(1)}),"Object",u)}},d2c8:function(t,n,e){var r=e("aae3"),o=e("be13");t.exports=function(t,n,e){if(r(n))throw TypeError("String#"+e+" doesn't accept regex!");return String(o(t))}},d2d5:function(t,n,e){e("1654"),e("549b"),t.exports=e("584a").Array.from},d3f4:function(t,n){t.exports=function(t){return"object"===typeof t?null!==t:"function"===typeof t}},d864:function(t,n,e){var r=e("79aa");t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},d8e8:function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},d9f6:function(t,n,e){var r=e("e4ae"),o=e("794b"),i=e("1bc3"),u=Object.defineProperty;n.f=e("8e60")?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(c){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},dbdb:function(t,n,e){var r=e("584a"),o=e("e53d"),i="__core-js_shared__",u=o[i]||(o[i]={});(t.exports=function(t,n){return u[t]||(u[t]=void 0!==n?n:{})})("versions",[]).push({version:r.version,mode:e("b8e3")?"pure":"global",copyright:"© 2019 Denis Pushkarev (zloirock.ru)"})},dc62:function(t,n,e){e("9427");var r=e("584a").Object;t.exports=function(t,n){return r.create(t,n)}},e4ae:function(t,n,e){var r=e("f772");t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},e53d:function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},e6f3:function(t,n,e){var r=e("07e3"),o=e("36c3"),i=e("5b4e")(!1),u=e("5559")("IE_PROTO");t.exports=function(t,n){var e,c=o(t),a=0,f=[];for(e in c)e!=u&&r(c,e)&&f.push(e);while(n.length>a)r(c,e=n[a++])&&(~i(f,e)||f.push(e));return f}},f410:function(t,n,e){e("1af6"),t.exports=e("584a").Array.isArray},f559:function(t,n,e){"use strict";var r=e("5ca1"),o=e("9def"),i=e("d2c8"),u="startsWith",c=""[u];r(r.P+r.F*e("5147")(u),"String",{startsWith:function(t){var n=i(this,t,u),e=o(Math.min(arguments.length>1?arguments[1]:void 0,n.length)),r=String(t);return c?c.call(n,r,e):n.slice(e,e+r.length)===r}})},f772:function(t,n){t.exports=function(t){return"object"===typeof t?null!==t:"function"===typeof t}},fa5b:function(t,n,e){t.exports=e("5537")("native-function-to-string",Function.toString)},fb15:function(t,n,e){"use strict";var r;(e.r(n),"undefined"!==typeof window)&&((r=window.document.currentScript)&&(r=r.src.match(/(.+\/)[^\/]+\.js(\?.*)?$/))&&(e.p=r[1]));var o=e("5176"),i=e.n(o),u=(e("f559"),e("a4bb")),c=e.n(u),a=(e("6762"),e("2fdb"),e("a745")),f=e.n(a);function s(t){if(f()(t))return t}var l=e("5d73"),p=e.n(l);function d(t,n){var e=[],r=!0,o=!1,i=void 0;try{for(var u,c=p()(t);!(r=(u=c.next()).done);r=!0)if(e.push(u.value),n&&e.length===n)break}catch(a){o=!0,i=a}finally{try{r||null==c["return"]||c["return"]()}finally{if(o)throw i}}return e}function v(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}function h(t,n){return s(t)||d(t,n)||v()}function b(t){if(f()(t)){for(var n=0,e=new Array(t.length);n<t.length;n++)e[n]=t[n];return e}}var g=e("774e"),y=e.n(g),x=e("c8bb"),m=e.n(x);function w(t){if(m()(Object(t))||"[object Arguments]"===Object.prototype.toString.call(t))return y()(t)}function O(){throw new TypeError("Invalid attempt to spread non-iterable instance")}function S(t){return b(t)||w(t)||O()}var j=e("a352"),_=e.n(j),M=e("c649");function T(t,n,e){return void 0===e?t:(t=t||{},t[n]=e,t)}function C(t,n){return t.map(function(t){return t.elm}).indexOf(n)}function E(t,n,e,r){if(!t)return[];var o=t.map(function(t){return t.elm}),i=n.length-r,u=S(n).map(function(t,n){return n>=i?o.length:o.indexOf(t)});return e?u.filter(function(t){return-1!==t}):u}function A(t,n){var e=this;this.$nextTick(function(){return e.$emit(t.toLowerCase(),n)})}function P(t){var n=this;return function(e){null!==n.realList&&n["onDrag"+t](e),A.call(n,t,e)}}function I(t){if(!t||1!==t.length)return!1;var n=h(t,1),e=n[0].componentOptions;return!!e&&["transition-group","TransitionGroup"].includes(e.tag)}function L(t,n){var e=n.header,r=n.footer,o=0,i=0;return e&&(o=e.length,t=t?[].concat(S(e),S(t)):S(e)),r&&(i=r.length,t=t?[].concat(S(t),S(r)):S(r)),{children:t,headerOffset:o,footerOffset:i}}function F(t,n){var e=null,r=function(t,n){e=T(e,t,n)},o=c()(t).filter(function(t){return"id"===t||t.startsWith("data-")}).reduce(function(n,e){return n[e]=t[e],n},{});if(r("attrs",o),!n)return e;var u=n.on,a=n.props,f=n.attrs;return r("on",u),r("props",a),i()(e.attrs,f),e}var $=["Start","Add","Remove","Update","End"],k=["Choose","Sort","Filter","Clone"],D=["Move"].concat($,k).map(function(t){return"on"+t}),R=null,V={options:Object,list:{type:Array,required:!1,default:null},value:{type:Array,required:!1,default:null},noTransitionOnDrag:{type:Boolean,default:!1},clone:{type:Function,default:function(t){return t}},element:{type:String,default:"div"},tag:{type:String,default:null},move:{type:Function,default:null},componentData:{type:Object,required:!1,default:null}},N={name:"draggable",inheritAttrs:!1,props:V,data:function(){return{transitionMode:!1,noneFunctionalComponentMode:!1,init:!1}},render:function(t){var n=this.$slots.default;this.transitionMode=I(n);var e=L(n,this.$slots),r=e.children,o=e.headerOffset,i=e.footerOffset;this.headerOffset=o,this.footerOffset=i;var u=F(this.$attrs,this.componentData);return t(this.getTag(),u,r)},created:function(){null!==this.list&&null!==this.value&&M["b"].error("Value and list props are mutually exclusive! Please set one or another."),"div"!==this.element&&M["b"].warn("Element props is deprecated please use tag props instead. See https://github.com/SortableJS/Vue.Draggable/blob/master/documentation/migrate.md#element-props"),void 0!==this.options&&M["b"].warn("Options props is deprecated, add sortable options directly as vue.draggable item, or use v-bind. See https://github.com/SortableJS/Vue.Draggable/blob/master/documentation/migrate.md#options-props")},mounted:function(){var t=this;if(this.noneFunctionalComponentMode=this.getTag().toLowerCase()!==this.$el.nodeName.toLowerCase(),this.noneFunctionalComponentMode&&this.transitionMode)throw new Error("Transition-group inside component is not supported. Please alter tag value or remove transition-group. Current tag value: ".concat(this.getTag()));var n={};$.forEach(function(e){n["on"+e]=P.call(t,e)}),k.forEach(function(e){n["on"+e]=A.bind(t,e)});var e=c()(this.$attrs).reduce(function(n,e){return n[Object(M["a"])(e)]=t.$attrs[e],n},{}),r=i()({},this.options,e,n,{onMove:function(n,e){return t.onDragMove(n,e)}});!("draggable"in r)&&(r.draggable=">*"),this._sortable=new _.a(this.rootContainer,r),this.computeIndexes()},beforeDestroy:function(){void 0!==this._sortable&&this._sortable.destroy()},computed:{rootContainer:function(){return this.transitionMode?this.$el.children[0]:this.$el},realList:function(){return this.list?this.list:this.value}},watch:{options:{handler:function(t){this.updateOptions(t)},deep:!0},$attrs:{handler:function(t){this.updateOptions(t)},deep:!0},realList:function(){this.computeIndexes()}},methods:{getTag:function(){return this.tag||this.element},updateOptions:function(t){for(var n in t){var e=Object(M["a"])(n);-1===D.indexOf(e)&&this._sortable.option(e,t[n])}},getChildrenNodes:function(){if(this.init||(this.noneFunctionalComponentMode=this.noneFunctionalComponentMode&&1===this.$children.length,this.init=!0),this.noneFunctionalComponentMode)return this.$children[0].$slots.default;var t=this.$slots.default;return this.transitionMode?t[0].child.$slots.default:t},computeIndexes:function(){var t=this;this.$nextTick(function(){t.visibleIndexes=E(t.getChildrenNodes(),t.rootContainer.children,t.transitionMode,t.footerOffset)})},getUnderlyingVm:function(t){var n=C(this.getChildrenNodes()||[],t);if(-1===n)return null;var e=this.realList[n];return{index:n,element:e}},getUnderlyingPotencialDraggableComponent:function(t){var n=t.__vue__;return n&&n.$options&&"transition-group"===n.$options._componentTag?n.$parent:n},emitChanges:function(t){var n=this;this.$nextTick(function(){n.$emit("change",t)})},alterList:function(t){if(this.list)t(this.list);else{var n=S(this.value);t(n),this.$emit("input",n)}},spliceList:function(){var t=arguments,n=function(n){return n.splice.apply(n,S(t))};this.alterList(n)},updatePosition:function(t,n){var e=function(e){return e.splice(n,0,e.splice(t,1)[0])};this.alterList(e)},getRelatedContextFromMoveEvent:function(t){var n=t.to,e=t.related,r=this.getUnderlyingPotencialDraggableComponent(n);if(!r)return{component:r};var o=r.realList,u={list:o,component:r};if(n!==e&&o&&r.getUnderlyingVm){var c=r.getUnderlyingVm(e);if(c)return i()(c,u)}return u},getVmIndex:function(t){var n=this.visibleIndexes,e=n.length;return t>e-1?e:n[t]},getComponent:function(){return this.$slots.default[0].componentInstance},resetTransitionData:function(t){if(this.noTransitionOnDrag&&this.transitionMode){var n=this.getChildrenNodes();n[t].data=null;var e=this.getComponent();e.children=[],e.kept=void 0}},onDragStart:function(t){this.context=this.getUnderlyingVm(t.item),t.item._underlying_vm_=this.clone(this.context.element),R=t.item},onDragAdd:function(t){var n=t.item._underlying_vm_;if(void 0!==n){Object(M["d"])(t.item);var e=this.getVmIndex(t.newIndex);this.spliceList(e,0,n),this.computeIndexes();var r={element:n,newIndex:e};this.emitChanges({added:r})}},onDragRemove:function(t){if(Object(M["c"])(this.rootContainer,t.item,t.oldIndex),"clone"!==t.pullMode){var n=this.context.index;this.spliceList(n,1);var e={element:this.context.element,oldIndex:n};this.resetTransitionData(n),this.emitChanges({removed:e})}else Object(M["d"])(t.clone)},onDragUpdate:function(t){Object(M["d"])(t.item),Object(M["c"])(t.from,t.item,t.oldIndex);var n=this.context.index,e=this.getVmIndex(t.newIndex);this.updatePosition(n,e);var r={element:this.context.element,oldIndex:n,newIndex:e};this.emitChanges({moved:r})},updateProperty:function(t,n){t.hasOwnProperty(n)&&(t[n]+=this.headerOffset)},computeFutureIndex:function(t,n){if(!t.element)return 0;var e=S(n.to.children).filter(function(t){return"none"!==t.style["display"]}),r=e.indexOf(n.related),o=t.component.getVmIndex(r),i=-1!==e.indexOf(R);return i||!n.willInsertAfter?o:o+1},onDragMove:function(t,n){var e=this.move;if(!e||!this.realList)return!0;var r=this.getRelatedContextFromMoveEvent(t),o=this.context,u=this.computeFutureIndex(r,t);i()(o,{futureIndex:u});var c=i()({},t,{relatedContext:r,draggedContext:o});return e(c,n)},onDragEnd:function(){this.computeIndexes(),R=null}}};"undefined"!==typeof window&&"Vue"in window&&window.Vue.component("draggable",N);var U=N;n["default"]=U}})["default"]});
 //# sourceMappingURL=vuedraggable.umd.min.js.map
-function formatMoney(number, decPlaces, decSep, thouSep) {
-  decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
-  decSep = typeof decSep === "undefined" ? "." : decSep;
-  thouSep = typeof thouSep === "undefined" ? "," : thouSep;
-  var sign = number < 0 ? "-" : "";
-  var i = String(parseInt(number = Math.abs(Number(number) || 0).toFixed(decPlaces)));
-  var j = (j = i.length) > 3 ? j % 3 : 0;
-
-  var reverted_i = reverseString(i);
-  var numbers = reverted_i.match(/.{1,3}/g);
-
-  numbers.reverse();
-
-  for(id in numbers){
-    numbers[id] =  reverseString(numbers[id]);
-  }
-
-  return sign +
-    numbers.join(thouSep)+
-    (decPlaces ? decSep + Math.abs(number - i).toFixed(decPlaces).slice(2) : "");
-}
-
-function reverseString(str) {
-    var splitString = str.split("");
-    var reverseArray = splitString.reverse();
-    var joinArray = reverseArray.join(""); // "olleh"
-
-    return joinArray; // "olleh"
-}
-
-function goBack() {
-  window.history.back();
-}
-
-
-function get_sum_from_price(sum){
-  if(typeof(sum) === 'undefined'){
-    return 0;
-  }
-
-  if(isNaN(sum) && 'string' !== typeof(sum)){
-    return 0;
-  }
-
-  if(!sum){
-    return 0;
-  }
-
-
-  if(sum === 0){
-    return 0;
-  }
-
-
-  if((sum) === 'undefined'){
-    return 0;
-  }
-
-  if(typeof(sum) === 'string'){
-    var exp = new RegExp("\\D", "gi");
-    var pierces = sum.split('.');
-    var summ = pierces[0].replace(exp, '');
-
-    return parseFloat(summ);
-  }
-
-  if(typeof(sum) === 'number'){
-    return sum;
-  }
-
-  return 0;
-}
-
-
-
-function clog(content, label, debug){
-  if('undefined' === typeof(theme_debug)){
-    return;
-  }
-
-  if('undefined' !== typeof(debug_vue) && 'undefined' !== typeof(debug) &&  debug){
-    if('undefined' !== typeof(label) && 0 !== label){
-      debug_vue.log(content,label);
-    }
-    else{
-      debug_vue.log(content);
-    }
-  }
-
-  if('undefined' !== typeof(label) && 0 !== label){
-    console.group(label);
-  }
-
-  console.log(content);
-
-  if('undefined' !== typeof(label) || 0 === label){
-    console.groupEnd();
-  }
-}
-
-function strlog(content, color , label){
-  if('undefined' === typeof(theme_debug)){
-    return;
-  }
-
-  var template = '';
-
-  switch(color){
-    case 'red':
-      template = '\x1b[31m %s ';
-      break;
-    case 'green':
-      template = '\x1b[32m %s ';
-      break;
-    case 'blue':
-      template = '\x1b[34m %s ';
-      break;
-    default:
-      template = '\x1b[34m %s ';
-      break;
-  }
-
-
-
-  if('undefined' != typeof(label)){
-    template = '\x1b[0m%s' + template + '\x1b[0m';
-    console.log(template, label, content);
-    // console.log('\x1b[0m%s\x1b[31m %s \x1b[0m' , time_str, err.message );
-  }else{
-    console.log(template, content);
-  }
-
-}
-
-
-function strip(val){
-  return JSON.parse(JSON.stringify(val));
-}
-
-function open_new_lead(){
-  list_app.show_list = false;
-  list_app.$refs.single_lead.visible= false;
-  list_app.$refs.new_lead.visible= true;
-
-}
-
-
-
-
-var DateDiff = {
-
-    inMinutes: function(d1, d2) {
-        var t2 = d2.getTime();
-        var t1 = d1.getTime();
-
-        return parseInt((t2-t1)/(60*1000));
-    },
-
-
-    inHours: function(d1, d2) {
-        var t2 = d2.getTime();
-        var t1 = d1.getTime();
-
-        return parseInt((t2-t1)/(3600*1000));
-    },
-
-    inDays: function(d1, d2) {
-        var t2 = d2.getTime();
-        var t1 = d1.getTime();
-
-        return parseInt((t2-t1)/(24*3600*1000));
-    },
-
-    inWeeks: function(d1, d2) {
-        var t2 = d2.getTime();
-        var t1 = d1.getTime();
-
-        return parseInt((t2-t1)/(24*3600*1000*7));
-    },
-
-    inMonths: function(d1, d2) {
-        var d1Y = d1.getFullYear();
-        var d2Y = d2.getFullYear();
-        var d1M = d1.getMonth();
-        var d2M = d2.getMonth();
-
-        return (d2M+12*d2Y)-(d1M+12*d1Y);
-    },
-
-    inYears: function(d1, d2) {
-        return d2.getFullYear()-d1.getFullYear();
-    }
-}
 jQuery('.search-open').click(function(){
   jQuery('.search__wrapper').toggleClass('shown');
 });
@@ -370,6 +177,38 @@ jQuery('.button-add').click(function(e) {
 jQuery(document).ready(function(){
     jQuery('.reminder input').datetimepicker({
       format:'M d Y H:i',
+      allowTimes:[
+          '08:00',
+          '08:30',
+          '09:00',
+          '09:30',
+          '10:00',
+          '10:30',
+          '11:00',
+          '11:30',
+          '12:00',
+          '12:30',
+          '13:00',
+          '13:30',
+          '14:00',
+          '14:30',
+          '15:00',
+          '15:30',
+          '16:00',
+          '16:30',
+          '17:00',
+          '17:30',
+          '18:00',
+          '18:30',
+          '19:00',
+          '19:30',
+          '20:00',
+          '20:30',
+          '21:00',
+          '21:30',
+          '22:00',
+          '22:30',
+      ]
     });
 
     jQuery('.datepicker').datetimepicker({
@@ -937,301 +776,6 @@ if('undefined' !== typeof(is_dashboard)){
     var chart_income = new Chart(chart, options_chart);
   })
 }
-
-// sortrable actions
-  jQuery( function() {
-
-
-    // makes height of all lists on leads' page one and the same
-    jQuery(document).ready(function(){
-      equal_list_heights();
-      do_sort();
-    })
-
-  });
-
-function do_sort(){
-    // init of sortable
-    jQuery("#leads-list").find("ul.leads-list" ).sortable({
-      connectWith: "ul",
-
-      create:function(event, ui){},
-
-      receive: function( event, ui ){
-      },
-
-      over: function( event, ui ){
-      },
-
-      stop : function( event, ui ){
-        jQuery(document).trigger('update_leads_list');
-
-        var leads_order_list = [];
-
-        var items = jQuery(event.target).find('a');
-
-        var orders = [];
-
-        items.each(function(ind, el){
-          var post_id = parseInt(el.dataset.post_id);
-          orders.push({post_id: post_id, order: ind});
-
-          for(id in dashboard_leads_data){
-            if(post_id == dashboard_leads_data[id].ID){
-              dashboard_leads_data[id].order = ind;
-            }
-          }
-        });
-
-        vue_leads_list.run_update_list();
-
-        if(orders.length > 1){
-          jQuery("#leads-list").trigger('update_items_order', {order: orders});
-        }
-      },
-    });
-
-    jQuery("#leads-list").find( ".leads-list" ).on( "sortover", function( event, ui ) {
-      jQuery(this).css({'background': '#eee'});
-    } );
-
-    jQuery("#leads-list").find( ".leads-list" ).on( "sortout", function( event, ui ) {
-      jQuery(this).css({'background': 'none'});
-    } );
-
-    jQuery("#leads-list").find( ".leads-list" ).on( "sortreceive", function( event, ui ) {
-
-
-      var order = -1;
-      var post_id = ui.item.find('a').data('post_id');
-      var list_id =  ui.item.closest('ul').data('list');
-      var list_id_prev = ui.item.children('a').data('list');
-      var orders = [];
-
-      var items = jQuery(event.target).find('a');
-
-
-      items.each(function(ind, el){
-        var post_id = parseInt(el.dataset.post_id);
-        orders.push({post_id: post_id, order: ind});
-        for(id in dashboard_leads_data){
-          if(post_id == dashboard_leads_data[id].ID){
-            dashboard_leads_data[id].order = ind;
-          }
-        }
-      });
-
-
-      if(orders.length > 1){
-        jQuery(document.body).trigger('update_items_order', {order: orders});
-      }
-
-
-      clog('Moved from: ' + list_id_prev + ' to: ' + list_id);
-      clog('Sorted id: ' + post_id);
-
-
-      var index = dashboard_leads_data.findIndex(e=>{
-        return e.ID == post_id;
-      });
-
-      // console.log(index);
-
-
-      // // for(var id in dashboard_leads_data){
-      //   // if(dashboard_leads_data[index].ID == post_id){
-      //     dashboard_leads_data[index].lead_stage        = list_id;
-      //     dashboard_leads_data[index].meta.lead_stage   = list_id;
-      //      dashboard_leads_data[index].is_failed =  failed_stage_name.indexOf(list_id) >= 0? 'yes' : 'no';
-
-      //      clog('failed: ' + dashboard_leads_data[index].is_failed);
-      //      dashboard_leads_data[index].is_converted =  converted_stages.indexOf(list_id) >=0 ? 'yes' : 'no';
-
-           // dashboard_leads_data[index].post_modified = moment().format();
-           // vue_leads_list.init();
-
-      //      console.log(dashboard_leads_data[index])
-      //   // }
-      // // }
-
-      // // search item in global items array and update value for list
-      // for(var ind in dashboard_leads_data){
-      //   if(post_id == dashboard_leads_data[ind].ID){
-
-      //     list_id_prev = dashboard_leads_data[ind].lead_stage;
-      //     dashboard_leads_data[ind].lead_stage      = list_id;
-      //     dashboard_leads_data[ind].meta.lead_stage = list_id;
-      //     order = dashboard_leads_data[ind].order
-
-      //     clog(dashboard_leads_data[ind].ID + '. patient: ' + dashboard_leads_data[ind].meta.patient_data.name + ' new col: '+ dashboard_leads_data[ind].lead_stage);
-      //   }
-      // }
-
-      // // update changes in Vue object
-      vue_leads_list.run_update_list();
-      // clog(vue_leads_list.leads[list_id]);
-
-      // change visual part of lists
-      equal_list_heights();
-      jQuery(this).css({'background': 'none'});
-
-
-      // fire trigger to save changes in backend
-      jQuery(document.body).trigger('save_dragged_item', {post_id: post_id, list_id: list_id})
-
-
-      // var user_name = jQuery('#user_name').val();
-      // var user_id = jQuery('#user_id').val();
-
-      // jQuery("#leads-list").trigger('update_lead_log', {
-      //   post_id: post_id,
-      //   list_id_prev: list_id_prev,
-      //   list_id_new: list_id,
-      //   user_name: user_name ,
-      //   user_id:   user_id ,
-      //   event: 'stage_changed'
-      // });
-    });
-}
-
-
-/**
-* function that makes height of all lists on leads' page one and the same;
-*/
-function equal_list_heights(){
-  var height = 0;
-
-  jQuery('#leads-list .leads-list').css({'min-height': 0 + 'px'});
-
-  jQuery('#leads-list .leads-list').each(function(ind, el){
-    height = Math.max(height, jQuery(el).height());
-  });
-
-
-  jQuery('#leads-list .leads-list').css({'min-height': height + 50 + 'px'});
-}
-
-
-jQuery(document.body).on('update_items_order', function(e, data){
-  //console.groupCollapsed('update_items_order');
-
-  var data_post = {
-    action : 'update_leads_order',
-    order: data.order,
-  };
-
-  //console.log(data_post);
-
-  jQuery.ajax({
-    url: WP_URLS.wp_ajax_url,
-    type: 'POST',
-    dataType: 'json',
-    data: data_post,
-    complete: function(xhr, textStatus) {
-      //called when complete
-    },
-
-    success: function(data, textStatus, xhr) {
-      //console.log(data);
-      //console.groupEnd('---');
-    },
-
-    error: function(xhr, textStatus, errorThrown) {
-      //console.log('error');
-      //console.log(errorThrown);
-      //console.groupEnd();
-     }
-  });
-
-})
-
-jQuery(document.body).on('save_dragged_item', function(e, data){
-  console.groupCollapsed('save_dragged_item');
-
-  var data_post = {
-    action : 'update_leads_list',
-  };
-
-  for(id in data){
-    data_post[id] = data[id];
-  };
-
-  console.log('data_post:');
-  console.log(data_post);
-
-  jQuery.ajax({
-    url: WP_URLS.wp_ajax_url,
-    type: 'POST',
-    dataType: 'json',
-    data: data_post,
-    complete: function(xhr, textStatus) {
-      //called when complete
-    },
-
-    success: function(data, textStatus, xhr) {
-      console.log(data);
-      console.groupEnd('---');
-    },
-
-    error: function(xhr, textStatus, errorThrown) {
-      //console.log('error');
-      //console.log(errorThrown);
-      //console.groupEnd('---');
-     }
-  });
-})
-
-jQuery("#leads-list").on('update_lead_log', function(e, data){
-  //console.groupCollapsed('update lead log');
-
-  //console.log(data);
-
-  var data_post = {
-    action : 'update_leads_log',
-  };
-
-  for(id in data){
-    data_post[id] = data[id];
-  };
-
-
-  var date = new Date();
-  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May','Jun', 'Jul', 'Aug', "Sep", 'Oct', "Nov", "Dec"];
-
-  var date_formatted = months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' at ' + date.getHours() + ':' + date.getMinutes();
-
-  data_post.date_formatted = date_formatted;
-
-  var minutes =  (date.getMinutes() < 10)?  '0' + date.getMinutes():  date.getMinutes();
-
-  data_post.date = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' +date.getDate()+ ' ' + date.getHours() + ':' + minutes;
-
-
-  jQuery.ajax({
-    url: WP_URLS.wp_ajax_url,
-    type: 'POST',
-    dataType: 'json',
-    data: data_post,
-    complete: function(xhr, textStatus) {
-      //called when complete
-    },
-
-    success: function(data, textStatus, xhr) {
-      //console.log(data);
-
-      if('object' === typeof(single_lead)){
-        single_lead.logs = data.logs;
-      }
-      //console.groupEnd('---');
-    },
-
-    error: function(xhr, textStatus, errorThrown) {
-      //console.log('error');
-      //console.log(errorThrown);
-      //console.groupEnd('---');
-     }
-  });
-})
 jQuery(document).on('update_app', function(){
 
 })
@@ -7803,5 +7347,7152 @@ if(jQuery('#debug').length){
       },
     }
   });
+}
+var list_app,
+    wait_block2
+;
+
+var vue_select_components = [];
+
+/***********************
+
+***********************/
+
+var months_short = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+var icons_selects = {
+  'clinics': '<svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>',
+
+  'treatments': '<svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>',
+
+  'campaigns': '<svg class="icon svg-icon-campaign"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-campaign"></use> </svg>',
+
+  'sources': '<svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>',
+
+  'calendar': '<svg class="icon svg-icon-calendar"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-calendar"></use> </svg>',
+
+  'team': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
+
+  'tags': '<svg class="icon svg-icon-tags"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tags"></use> </svg>',
+
+  'dentists': '<svg class="icon svg-icon-team"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-team"></use> </svg>',
+
+  'human': '<svg class="icon svg-icon-human"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-human"></use> </svg>',
+
+  'card': '<svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>',
+
+  'currency': '<span class="currency-in-select">£</span>',
+
+  'sortby': '<span class="icon-sortby"> <svg xmlns:dc="http://purl.org/dc/elements/1.1/"xmlns:cc="http://creativecommons.org/ns#"xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"xmlns:svg="http://www.w3.org/2000/svg"xmlns="http://www.w3.org/2000/svg"xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"width="105.73048mm"height="60.448288mm"viewBox="0 0 374.63554 214.18685"id="svg2"version="1.1"inkscape:version="0.91 r13725"sodipodi:docname="desc.svg"> <defs id="defs4" /> <sodipodi:namedview id="base"pagecolor="#ffffff"bordercolor="#666666"borderopacity="1.0"inkscape:pageopacity="0.0"inkscape:pageshadow="2"inkscape:zoom="0.35"inkscape:cx="533.25919"inkscape:cy="533.92856"inkscape:document-units="px"inkscape:current-layer="layer1"showgrid="false"fit-margin-top="0"fit-margin-left="0"fit-margin-right="0"fit-margin-bottom="0"inkscape:window-width="1920"inkscape:window-height="976"inkscape:window-x="-8"inkscape:window-y="1072"inkscape:window-maximized="1" /> <metadata id="metadata7"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1"inkscape:groupmode="layer"id="layer1"transform="translate(672.54491,-854.96105)"> <path style="fill:#838993"d="m -553.75621,1065.0846 c -7.99146,-7.3236 -6.87414,-19.1169 2.34368,-24.7373 3.83487,-2.3383 6.73931,-2.4401 69.62681,-2.4401 63.62166,0 65.75131,0.077 69.76273,2.5227 8.72665,5.3205 9.74037,16.9649 2.13868,24.5666 l -4.15141,4.1514 -67.64336,0 -67.64335,0 -4.43378,-4.0633 z"id="path4155"inkscape:connector-curvature="0" /> <path style="fill:#838993"d="m -599.26031,978.37748 c -4.88353,-2.6376 -7.56658,-8.71232 -7.05942,-15.98332 0.24135,-3.46003 1.21848,-7.06332 2.33486,-8.61003 4.51521,-6.25572 0.74969,-6.06481 119.62458,-6.06481 105.75005,0 111.35628,0.11175 114.63782,2.28409 3.74051,2.47623 7.15104,9.03755 7.15104,13.7575 0,4.43576 -2.86871,11.02393 -5.91003,13.57271 -2.55732,2.14316 -8.54166,2.275 -115.10261,2.53566 -94.99093,0.23238 -112.91182,10e-4 -115.67624,-1.4918 z"id="path4151"inkscape:connector-curvature="0" /> <path style="fill:#838993"d="m -665.69569,883.60895 c -7.01294,-5.51638 -8.83062,-13.77749 -4.56921,-20.76644 5.15136,-8.4485 -8.3984,-7.87319 185.42869,-7.87319 l 175.50221,0 4.24736,2.85325 c 4.99679,3.3567 8.22065,11.0967 6.86752,16.48795 -0.49088,1.95589 -2.77187,5.4355 -5.06884,7.73248 l -4.17633,4.17632 -177.45643,0 -177.45642,0 -3.31855,-2.61037 z"id="path4147"inkscape:connector-curvature="0" /> </g> </svg> </span>',
+};
+var select_mixin2 = {
+  data: function () {
+    return {
+      select_name : this._select_name,
+      options: '',
+      selected:this._selected,
+      isExpanded: this._isExpanded,
+      isSelected: this._isSelected ? this._isSelected: [],
+      isHiddenSelect: true,
+      isHiddenImitation: false,
+    }
+  },
+
+  props:{
+    _select_name : String,
+    _options: Array,
+    _selected: String,
+    _isExpanded: String,
+    _isSelected: Array,
+    _isHiddenSelect: Boolean,
+    _isHiddenImitation: Boolean,
+  },
+
+  beforeMount:function(){
+    this.options = this._options;
+
+    if(this._options){
+      var options = strip(this._options);
+      switch(typeof(options)){
+        case 'object':
+          options = Object.values(options);
+          this.options = options.filter(function(el){
+            return !!el && el != '--Select--' ;
+          });
+          break
+        case 'array':
+          this.options = options.filter(function(el){
+            return !!el && el != '--Select--';
+          });
+          break;
+        default:
+          this.options = options;
+          break;
+      }
+    }
+  },
+
+  mounted: function(){
+  },
+
+  change: function(){
+    this.$el.classList.remove('error');
+    this.options = this._options;
+  },
+
+  watch:{
+    selected: function(){
+      this.$el.classList.remove('error');
+    },
+
+    _selected: function(val){
+      this.selected = val;
+    },
+
+    _options: function(val){
+      this.options = val;
+    },
+  },
+
+  mounted:function(){
+    this.change_width();
+  },
+
+  directives: {
+    'click-outside': {
+      bind (el,binding, vnode) {
+        const outsideClickEventHandler = event => {
+          if(!el.contains(event.target) && el !== event.target){
+            binding.value(event);
+          }
+        }
+
+        el.__outsideClickEventHandler__ = outsideClickEventHandler;
+        document.addEventListener("click", outsideClickEventHandler);
+      },
+
+      unbind(el) {
+        document.removeEventListener("click", el.__outsideClickEventHandler__);
+      },
+    }
+  },
+
+  methods: {
+    change: function(){
+      this.$emit('update_list', {val: this.selected, name: this.select_name});
+    },
+
+    // toggles state of expanded list initation
+    expand_select: function(){
+      this.isExpanded = 'expanded';
+    },
+
+    // toggles select in expanded dropdown
+    update_selected_option: function(){
+      for(var id in this.options){
+        this.isSelected[this.options[id]] = false;
+      }
+
+      this.isSelected[this.selected] = true;
+    },
+
+    // changes data on option click
+    imitate_select_option: function(value){
+      this.selected = value;
+      this.isExpanded = '';
+      this.update_selected_option();
+      this.change();
+    },
+
+     // closes select
+    discard_select:function(){
+      this.isExpanded = '';
+    },
+
+     // updates options of a select
+    update_options: function(options){
+      this.options = options;
+      this.selected = options[0];
+      this.isExpanded = '';
+      this.update_selected_option();
+    },
+
+    // sets value for a select
+    set_value: function(key, value){
+      this[key] = value;
+      this.$emit('update_list', { val :this.selected, name: this.select_name});
+
+      if(key === 'options'){
+        this.change_width();
+      }
+    },
+
+    change_width:function(){
+      var vm = this;
+      var select = vm.$el.getElementsByClassName( 'select-imitation__dropdown' )[0].getElementsByClassName( 'select-imitation__list' )[0];
+
+      vm.$el.setAttribute("style", "width: auto");
+
+      Vue.nextTick(function() {
+        var width = 0;
+        var options = select.getElementsByClassName('element');
+
+        for( var option of options){
+          width = Math.max(width, option.offsetWidth);
+        }
+
+        width += 90;
+        width = Math.max(width, select.offsetWidth);
+
+        var _width = (window.outerWidth < 768)? window.outerWidth - 30 : width;
+        vm.$el.setAttribute("style", "width:" + (_width) + 'px');
+      });
+    },
+
+    resert_width: function(){
+      var vm = this;
+      vm.$el.setAttribute("style", "width: auto");
+    },
+
+    // gets value of a select
+    get_value: function(){
+      return this.selected;
+    },
+
+    // gets name of a select
+    get_name: function(){
+      return this.select_name;
+    },
+
+
+  },
+}
+var animation_mixin = {
+  methods:{
+   animation_beforeEnter: function (el) {
+      el.style.opacity = 0
+    },
+
+    animation_enter: function (el, done) {
+      const width = getComputedStyle(el).width;
+
+      el.style.width = width;
+      el.style.position = 'absolute';
+      el.style.visibility = 'hidden';
+      el.style.height = 'auto';
+
+      const height = getComputedStyle(el).height;
+
+      el.style.width = null;
+      el.style.position = null;
+      el.style.visibility = null;
+      el.style.height = 0;
+
+      getComputedStyle(el).height;
+
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 1, height: height },
+          { complete: done }
+        )
+      }, delay)
+    },
+
+    animation_leave: function (el, done) {
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 0, height: 0 },
+          { complete: done }
+        )
+      }, delay)
+    },
+
+    animation_enterAfter: function(el){
+      el.style.height = 'auto';
+
+      if(typeof(this.update_scroll)!=='undefined'){
+        this.update_scroll();
+      }
+    },
+
+    animation_leaveAfter: function(el){
+      if(typeof(this.update_scroll)!=='undefined'){
+        this.update_scroll();
+      }
+    }
+  }
+}
+var get_set_props = {
+  methods: {
+    /**
+    * update prop
+    *
+    * @param id - string, name of parameter from data object of this component
+    * @param value  - mixed, value to store
+    *
+    * @return void;
+    */
+    update_prop: function(id, value){
+      this[id] = value;
+    },
+    /**
+    * update prop
+    *
+    * @param id - string, name of parameter from data object of this component
+    * @param value  - mixed, value to store
+    *
+    * @return void;
+    */
+    set_prop: function(id, value){
+      this[id] = value;
+    },
+
+    /**
+    * get prop value
+    *
+    * @param id - string, name of parameter from data object of this component
+    *
+    * @return mixed - value of propery or 'not found';
+    */
+    get_prop: function(id){
+      return typeof(this[id]) != 'undefined'? this[id] : 'not found';
+    },
+  },
+}
+Vue.component('select-imitation2', {
+
+  mixins: [select_mixin2],
+
+  beforeMount:function(){
+    this.options = this._options;
+  },
+
+  watch:{
+    _options: function(val){
+      this.options = val;
+    },
+  },
+
+  template: '<div class="select-imitation" v-click-outside="discard_select"  v-bind:class="{ expanded: isExpanded}" > <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="data in options" v-bind:value="data">{{data}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li v-for="data in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)"> <span  class="element">{{data}}</span> </li> </ul> </div> </div>',
+})
+Vue.component('select-imitation-obj', {
+
+  props:{
+    _options: Object,
+  },
+
+  computed:{
+    is_selected: function(){
+      if('undefined' != typeof(this.options[this.selected]) ){
+        return this.options[this.selected].name;
+      }else{
+        return '';
+      }
+    },
+  },
+
+  methods:{
+    change: function(){
+      this.$emit('update_list', {val: this.options[this.selected], name: this.select_name});
+    },
+
+
+    update_selected_option: function(){
+      for(var id in this.options){
+        this.isSelected[id] = false;
+      }
+
+      this.isSelected[this.selected] = true;
+    },
+  },
+
+  mixins: [select_mixin],
+
+  template: '<div class="select-imitation" v-click-outside="discard_select"  v-bind:class="{ expanded: isExpanded}" > <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="(data, key) in options" v-bind:value="key">{{data.name}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{is_selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li v-for="(data, key) in options" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(key)"> <span  class="element">{{data.name}}</span> </li> </ul> </div> </div>',
+})
+Vue.component('select-imitation-icon-2', {
+  mixins: [select_mixin2],
+
+  data: function () {
+    return {
+      icon : this._icon,
+    }
+  },
+
+  beforeMount:function(){
+    this.options = this._options;
+    this.icon = this._icon;
+  },
+
+  watch:{
+    _icon: function(val){
+      this.icon = val;
+    },
+  },
+
+  props:{
+    _icon: String,
+  },
+
+  template: '<div class="select-imitation has-icon select-imitation_shift-bottom"  v-click-outside="discard_select" v-bind:class="{ expanded: isExpanded}" > <span v-html="icon"></span> <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="data in options" v-bind:value="data">{{data}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li class="select-imitation__item" v-for="data in options" v-if="data" v-bind:class="{selected: isSelected[data]}"  v-on:click="imitate_select_option(data)"> <span class="element">{{data}}</span> </li> </ul> </div> </div>',
+})
+Vue.component('order-status-select', {
+  mixins: [select_mixin],
+
+  data: function () {
+    return {
+      color : '#eee',
+    }
+  },
+
+  props: {
+    _options: Object,
+    '_current_status' : String
+  },
+
+  watch: {
+    _current_status: function(val){
+      this.selected = order_statuses[val].title;
+      this.color    = order_statuses[val].color;
+    }
+  },
+
+  beforeMount: function(){
+    this.selected = ('undefined' != typeof(this._current_status) && this._current_status)?order_statuses[this._current_status].title : '';
+    this.color = ('undefined' != typeof(this._current_status) && this._current_status)?order_statuses[this._current_status].color : '';
+  },
+
+  mounted: function(){
+    this.change_width();
+  },
+
+  methods:{
+    imitate_select: function(title, color){
+      this.selected = title;
+      this.color    = color;
+      this.isExpanded = '';
+      this.update_selected_option();
+      this.change();
+    }
+  },
+
+  template: '<div class="select-imitation has-icon"  v-click-outside="discard_select" v-bind:class="{ expanded: isExpanded}" > <span class="marker-select" v-bind:style="{backgroundColor: color}"></span> <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}"> <option v-for="(data, key) in options" v-bind:value="key">{{data.title}}</option> </select> <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">{{selected}}</span> <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span> <div class="select-imitation__dropdown"> <ul class="select-imitation__list"> <li class="select-imitation__item with-marker" v-for="(data, key) in options" v-bind:class="{selected: isSelected[data.title]}"  v-on:click="imitate_select(data.title, data.color)"> <span class="marker" v-bind:style="{backgroundColor: data.color}"></span> <span class="element">{{data.title}}</span> </li> </ul> </div> </div>',
+})
+Vue.component('user-select', {
+  data: function () {
+    return {
+      names: '',
+      current_user: '',
+      gravatar: '',
+      user_names: [],
+      editing: false,
+      all_creators: all_creators,
+      all_users: all_users,
+    }
+  },
+
+  props:['_current_user', '_select_name'],
+
+  beforeMount: function(){
+
+    var vm = this;
+    vm.current_user = vm._current_user;
+    vm.gravatar = this.get_gravatar();
+
+    switch(this._select_name){
+      case 'creator':
+        for( var user of this.all_creators){
+          this.user_names.push(user.name);
+        }
+        break;
+      default:
+        for( var user of this.all_users){
+          this.user_names.push(user.name);
+        }
+        break;
+    }
+  },
+
+  change:function(){
+    var vm = this;
+    vm.current_user = vm._current_user;
+    vm.gravatar = this.get_gravatar();
+  },
+
+  watch: {
+    current_user: function(val){
+      this.$emit('user_select_change',{name: this._select_name,val: val});
+    }
+  },
+
+  computed: {
+    is_editing: function(){
+      return this.editing || !this.current_user;
+    }
+  },
+
+  directives: {
+    'click-outside': {
+      bind (el,binding, vnode) {
+        const outsideClickEventHandler = event => {
+          if(!el.contains(event.target) && el !== event.target){
+            binding.value(event);
+          }
+        }
+
+        el.__outsideClickEventHandler__ = outsideClickEventHandler;
+        document.addEventListener("click", outsideClickEventHandler);
+      },
+
+      unbind(el) {
+        document.removeEventListener("click", el.__outsideClickEventHandler__);
+      },
+    }
+  },
+
+  methods:{
+    get_gravatar: function(){
+      var vm = this
+
+      if( vm._current_user){
+
+        switch(this._select_name){
+          case 'creator':
+          var user_data = vm.all_creators.filter(
+            obj => {
+              return obj.name === vm.current_user ;
+            }
+          );
+
+          return typeof(user_data[0]) != 'undefined'? user_data[0].gravatar : '';
+
+          default:
+            var user_data = vm.all_users.filter(
+              obj => {
+                return obj.name === vm.current_user ;
+              }
+            );
+            return typeof(user_data[0]) != 'undefined'? user_data[0].gravatar : '';
+            break;
+        }
+      }
+
+      return false;
+    },
+
+    collapse: function(){
+      this.editing = false;
+    },
+
+    expand: function(){
+      this.editing = true;
+    },
+
+    update_user_data: function(data){
+      this.current_user = data.val;
+      this.gravatar = this.get_gravatar();
+      this.editing = false;
+    },
+  },
+
+  template: `<div class="edit-team text-left" v-click-outside="collapse">
+     <table class="team-leads"  v-on:click.stop="expand" v-if="!is_editing"><tbody><tr><td><div class="team-leads__photo"><img v-bind:src="gravatar"  v-if="gravatar" :alt="current_user"></div></td> <td colspan="3"><div class="clearfix"><span class="team-leads__name">{{current_user}}</span></div></td></tr></tbody></table>
+
+    <select-imitation
+      v-if="is_editing"
+      v-bind:class="'fullwidth'"
+      _select_name="user_select"
+      v-bind:_options="user_names"
+      v-bind:_selected="current_user"
+      v-on:update_list = "update_user_data"
+      ref="select"
+      ></select-imitation>
+  </div>`,
+});
+Vue.component("select-filters-list", {
+  mixins: [select_mixin2],
+
+  data: function () {
+    return {
+      options2: {
+        // 'date' : {
+        //   title: 'Date',
+        //   icon: icons_selects['calendar'],
+        // },
+        clinics: {
+          title: "Clinics",
+          icon: icons_selects["clinics"],
+        },
+
+        treatments: {
+          title: "Treatments",
+          icon: icons_selects["treatments"],
+        },
+
+        campaigns: {
+          title: "Campaigns",
+          icon: icons_selects["campaigns"],
+        },
+
+        sources: {
+          title: "Sources",
+          icon: icons_selects["sources"],
+        },
+
+        team: {
+          title: "Team",
+          icon: icons_selects["team"],
+        },
+
+        dentists: {
+          title: "Dentists",
+          icon: icons_selects["dentists"],
+        },
+
+        tags: {
+          title: "Tags",
+          icon: icons_selects["tags"],
+        },
+      },
+    };
+  },
+
+  watch: {},
+
+  mounted: function () {
+    console.log("test");
+  },
+
+  methods: {
+    change: function () {
+      this.$emit("update_list", { val: this.selected, name: "select_list" });
+    },
+  },
+
+  template: `
+    <div class="select-imitation select-imitation_shift-bottom select-imitation_plus"
+       v-click-outside="discard_select"
+       v-bind:class="{ expanded: isExpanded}"
+     >
+      <select v-model="selected" v-on:change="change" v-bind:class="{ hidden: isHiddenSelect}">
+         <option v-for="data in options" v-bind:value="data">{{data}}</option>
+      </select>
+      <span class="select-imitation__view " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}">Add Filter</span>
+
+      <span class="select-imitation__plus " v-on:click="expand_select"  v-bind:class="{ hidden: isHiddenImitation}"> <svg class="icon svg-icon-plus"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-plus"></use> </svg></span>
+
+      <span class="select-imitation__arrow" onclick="imitate_select_expand(this)"></span>
+      <div class="select-imitation__dropdown">
+        <ul class="select-imitation__list">
+          <li class="select-imitation__item" v-for="data, key in options2" v-if="data.title" v-bind:class="{selected: isSelected[data.title]}"  v-on:click="imitate_select_option(key)">
+             <span class="select-imitation__row-icon" v-html="data.icon"></span>
+             <span class="select-imitation__row-text element">{{data.title}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>`,
+});
+/**
+* component to select date range
+*/
+Vue.component('daterangepicker', {
+  data: function () {
+    return {
+      name:  '',
+      label : '',
+      from : '',
+      to   : '',
+    }
+  },
+
+  props: [
+    '_name',
+    '_label',
+    '_from',
+    '_to',
+  ],
+
+  beforeMount: function(){
+    // get saved data
+    var list_data_settings =Cookie.get('list_data_settings') ? JSON.parse(Cookie.get('list_data_settings')) : false;
+
+    // prepare dates if no cookies stored
+    var now = new Date();
+    var fmt = new DateFormatter();
+
+    this.label = list_data_settings? list_data_settings.label : 'This Month';
+
+    this.from = list_data_settings ? list_data_settings.from : fmt.formatDate(now, 'M 01 Y');
+
+    this.to = list_data_settings ? list_data_settings.to : fmt.formatDate(now, 'M d Y');
+
+  },
+
+  mounted: function(){
+    var vm = this;
+    var ranges_all     = vm.get_date_ranges();
+    var ranges_current = [];
+    var list_data_settings = Cookie.get('list_data_settings') ? JSON.parse(Cookie.get('list_data_settings')) : false;
+
+    ranges_current = vm.label != 'Custom Range' ? ranges_all[vm.label] : [list_data_settings._from,list_data_settings._to];
+
+    jQuery(vm.$el).daterangepicker({
+      startDate: ranges_current[0],
+      endDate  : ranges_current[1],
+      ranges   : ranges_all,
+      autoApply: true,
+      alwaysShowCalendars : true,
+    }, function(start, end, label) {
+
+      var text = start.format('MMM DD YYYY') + ' → ' + end.format('MMM DD YYYY');
+
+      vm.label = label;
+
+      jQuery('.range-datepicker__text').text(text);
+
+      var data = {
+         label: label,
+         from: start.format('MMM DD YYYY') ,
+         to:   end.format('MMM DD YYYY'),
+         _from: start.format('MM/DD/YYYY'),
+         _to: end.format('MM/DD/YYYY'),
+       };
+       vm.$emit('daterange_changed', data);
+    });
+  },
+
+
+  methods:{
+    get_date_ranges: function(){
+      var now     = new Date();
+      var last_7  = new Date();
+      var last_30 = new Date();
+      var last_90 = new Date();
+      var fmt  = new DateFormatter();
+
+      last_7.setDate(last_7.getDate() - 7);
+      last_30.setDate(last_30.getDate() - 30);
+      last_90.setDate(last_7.getDate() - 90);
+
+      return {
+        "Today": [
+          fmt.formatDate(now, 'm/d/Y 00:00:00'),
+          fmt.formatDate(now, 'm/d/Y 23:59:59')
+        ],
+        'This Month': [
+          fmt.formatDate(now, 'm/01/Y 00:00:00'),
+          fmt.formatDate(now, 'm/d/Y 23:59:59')
+        ],
+
+        'Past 7 Days': [
+          fmt.formatDate(last_7, 'm/d/Y 00:00:00'),
+          fmt.formatDate(now, 'm/d/Y 23:59:59')
+        ],
+
+        'Past 30 Days':[
+          fmt.formatDate(last_30, 'm/d/Y 00:00:00'),
+           fmt.formatDate(now, 'm/d/Y 23:59:59')
+        ],
+
+        'Past 90 Days': [
+          fmt.formatDate(last_90, 'm/d/Y 00:00:00'),
+          fmt.formatDate(now, 'm/d/Y 23:59:59')
+        ],
+        'All time':[
+          '01/01/1999',
+           fmt.formatDate(now, 'm/d/Y 23:59:59'),
+        ],
+      };
+    },
+
+  },
+
+  template: `
+    <div class="range-datepicker-component">
+       <svg class="icon svg-icon-calendar"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-calendar"></use></svg>
+         <span class="range-datepicker__label">{{label}}</span>
+         <span class="range-datepicker__text">{{from}} → {{to}}</span> <span class="range-datepicker__arrow"></span>
+    </div>
+  `,
+})
+Vue.component('datepicker2', {
+  data: function () {
+    return {
+      name:  '',
+      value : '',
+    }
+  },
+
+  props:['_value', '_name'],
+
+  beforeMount: function(){
+    this.name = this._name ? this._name : 'datetimepicker';
+    this.value = this._value ? this._value : '';
+  },
+
+  watch: {
+    _value: function(val){
+      if(val && val != 'false'){
+
+        this.value = val;
+      }else{
+        this.value= '';
+      }
+    },
+  },
+
+  mounted: function(){
+    this.$emit('input_value_changed', {name: this.name, val: this.value});
+    var vm = this;
+
+    jQuery(vm.$el).datetimepicker({
+      format:'M d Y H:i',
+
+      onClose:function(dp,$input){
+        vm.value = $input.val();
+        vm.$emit('input_value_changed', {name: vm.name, val: vm.value});
+      }
+    });
+  },
+
+  methods:{
+    input: function(){
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    }
+  },
+
+  template : '<input type="text" v-on:input="input" autocomplete="off" v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" >',
+});
+Vue.component('datepicker-styled', {
+  data: function () {
+    return {
+      name:  '',
+      value : '',
+    }
+  },
+
+  props:['_value', '_name'],
+
+
+  beforeMount: function(){
+    this.name = this._name ? this._name : 'datetimepicker';
+
+    if(this._value){
+      var date = new Date(this._value);
+      var fmt  = new DateFormatter();
+      this.value = fmt.formatDate(date, 'd F Y');
+
+
+    }
+  },
+
+  watch:{
+    _value: function(){
+      var date = new Date(this._value);
+      var fmt  = new DateFormatter();
+      this.value = fmt.formatDate(date, 'd F Y');
+    },
+  },
+
+
+  mounted: function(){
+    this.$emit('input_value_changed', {name: this.name, val: this.value});
+    var vm = this;
+
+    jQuery(vm.$el).datetimepicker({
+      format:'d F Y',
+      timepicker:false,
+      value: this.value,
+
+      onClose:function(dp,$input){
+        var fmt  = new DateFormatter();
+        vm.value = $input.val();
+        vm.$emit('input_value_changed', {name: vm.name, val: fmt.formatDate(dp, 'Y-m-d H:i:s')});
+      }
+    });
+  },
+
+  methods:{
+    input: function(){
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    }
+  },
+
+  template : `
+    <div class="datepicker-wrapper range-datepicker">
+      <svg class="icon svg-icon-calendar"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-calendar"></use> </svg>
+      <input type="text"
+          autocomplete="off"
+          placeholder="Add"
+          v-on:input="input"
+          v-on:change="input"
+          v-on:blur="input"
+          v-bind:name="name"
+          v-model="value"
+        >
+    </div>`,
+});
+
+datepicker_field = Vue.component('reminder', {
+  data: function () {
+    return {
+      name:  '',
+      value : '',
+      value_formatted : '',
+      overdue: '',
+    }
+  },
+
+  props:['_value', '_name', '_value_formatted', '_overdue'],
+
+
+  beforeMount: function(){
+    this.name = this._name ? this._name : 'datetimepicker';
+    this.value = this._value;
+    this.overdue = is_boolean(this._overdue);
+    this.value_formatted = this._value_formatted && this._value_formatted != 'No Due Date' ? this._value_formatted : '';
+  },
+
+  change: function(){},
+
+  watch:{
+    value_formatted:function(){
+      this.$emit('input_value_changed', {value: this.value, value_formatted: this.value_formatted, overdue: this.overdue});
+    },
+  },
+
+  mounted: function(){
+    // this.$emit('input_value_changed', {name: this.name, val: this.value});
+    var vm = this;
+
+    jQuery(vm.$el).find('input').datetimepicker({
+      format:'d M Y',
+       timepicker:false,
+
+      onClose:function(dp,$input){
+        var now  = new Date();
+        vm.overdue = now > dp? 1 : 0;
+
+        var day      = dp.getDay();
+        var month    = dp.getMonth();
+        var hours    = dp.getHours();
+        var minutes  = dp.getMinutes();
+
+        day = day < 10? '0' + day: day;
+        month = month + 1 < 10 ? '0' + month + 1: month + 1;
+        hours = hours < 10? '0' + hours: hours;
+        minutes = minutes < 10? '0' + minutes: minutes;
+        vm.value_formatted = $input.val();
+        vm.value = dp.getFullYear() + '-'+ month + '-' + day;
+      }
+    });
+  },
+
+  methods:{
+    input: function(){
+      // this.$emit('input_value_changed', {name: this.name, val: this.value});
+    },
+
+    clear: function(){
+      this.value = '';
+      this.value_formatted = '';
+      this.overdue = false;
+    }
+  },
+
+  template : '<div class="reminder"> <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg> <span class="label">Set Reminder</span> <input type="text" class="value" v-on:input="input" autocomplete="off" v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value_formatted" placeholder="Add" > <span href="javascript:void(0)" class="clear-reminder" v-if="value" v-on:click="clear">clear</span> </div>',
+});
+Vue.component('input-field2', {
+  data: function () {
+    return {
+      type: (this._type)? this._type : 'text',
+      name:  this._name,
+      value : this._value,
+      readonly : this._readonly,
+      placeholder : (this._placeholder)? this._placeholder : 'Add',
+    }
+  },
+
+  props:['_value', '_name', '_readonly', '_placeholder', '_type'],
+
+  watch:{
+    _value: function(val){
+      this.value = val;
+    },
+
+    value: function(){
+      this.$el.classList.remove('error');
+    },
+  },
+
+  mounted: function(){
+    this.$emit('input_value_changed', {name: this.name, val: this.value});
+  },
+
+  methods:{
+    input: function(){
+      if(typeof(this.value) == 'undefined') {
+        this.value = jQuery(this.$el).val();
+      }
+
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    },
+
+    set_value:function(val){
+      this.value = val;
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    }
+  },
+
+  template : '<input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="leads-block__input":readonly="readonly == 1" autocomplete="off">',
+
+});
+
+
+input_field_decorated = Vue.component('input-decorated', {
+  data: function () {
+    return {
+      type: (this._type)? this._type : 'text',
+      name:  this._name,
+      value : this._value,
+      icon : this._icon,
+      readonly : this._readonly,
+      placeholder : (this._placeholder)? this._placeholder : 'Add',
+    }
+  },
+
+  props:['_value', '_name', '_readonly', '_placeholder', '_type', '_icon'],
+
+  mounted: function(){
+    this.$emit('input_value_changed', {name: this.name, val: this.value});
+  },
+
+  methods:{
+    input: function(){
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    },
+
+    set_value:function(val){
+      this.value = val;
+      this.$emit('input_value_changed', {name: this.name, val: this.value});
+    }
+  },
+
+  template : '<div class="wrapper-input"><span v-html="icon"></span><input v-bind:type="type" v-on:input="input"  v-on:change="input" v-on:blur="input" v-bind:name="name" v-model="value" placeholder="Add" class="":readonly="readonly == 1" autocomplete="off"></div>',
+
+});
+Vue.component('load-item', {
+
+  data: function(){
+    return {
+      src: '',
+      path: '',
+    };
+  },
+
+  props: ['_path'],
+
+  mounted: function(){
+    var vm = this;
+    vm.init_drop_area();
+    this.path = this._path;
+  },
+
+  watch:{
+    _path: function(val){
+      this.path = val;
+    },
+
+    path: function(val){
+      if(val){
+        var vm = this;
+
+        setTimeout(function(){
+          vm.show_image_loaded(val);
+        }, 100)
+      }
+    }
+  },
+
+  methods:{
+      init_drop_area: function(){
+        var dropArea = this.$refs.drop_area;
+
+        if(this.is_old_order){
+          return;
+        }
+
+        if(this.is_downloaded){
+          return;
+        }
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+          dropArea.addEventListener(eventName, this.prevent_defaults, false)
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropArea.addEventListener(eventName, this.highlight, false)
+        })
+
+        ;['dragleave', 'drop'].forEach(eventName => {
+          dropArea.addEventListener(eventName, this.unhighlight, false)
+        })
+
+        dropArea.addEventListener('drop', this.handledrop, false);
+      },
+
+
+      prevent_defaults: function(e) {
+        e.preventDefault()
+        e.stopPropagation()
+      },
+
+      /**
+      * adds highlight style for drag area
+      */
+      highlight: function(e) {
+        this.$refs.drop_area.classList.add('highlight')
+      },
+
+      unhighlight: function(e) {
+        this.$refs.drop_area.classList.remove('highlight')
+      },
+
+      /**
+      * shows preview of a passed file
+      *
+      * @param file - file
+      *
+      * @return void;
+      */
+      preview_file: function(file) {
+        let reader = new FileReader()
+        reader.readAsDataURL(file)
+        var vm = this;
+        reader.onloadend = function() {
+          let img = document.createElement('img')
+          vm.src = reader.result
+        }
+      },
+
+      /**
+      * handles drop image in drag-n-drop area
+      *
+      * @param e - event
+      */
+      handledrop: function(e){
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        var items = dt.items;
+
+        for(var file of files){
+          if(file.type != 'image/jpeg' && file.type != "image/png"){
+            continue;
+          }
+
+          this.preview_file(file);
+          this.$emit('change_image_uploaded', {file: file});
+        }
+      },
+
+      exec_file_change: function(e){
+         this.$emit('change_image_uploaded', {file: e.target.files[0]});
+         this.preview_file(e.target.files[0]);
+      },
+
+      show_image_loaded: function(path){
+        var vm = this;
+        var data = JSON.stringify({
+          "path": path
+        });
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.addEventListener("readystatechange", function () {
+          if (this.readyState === 4) {
+            var data = JSON.parse(this.responseText)
+            vm.src = data.link
+          }
+        });
+
+
+        xhr.open("POST", "https://api.dropboxapi.com/2/files/get_temporary_link", false);
+        xhr.setRequestHeader("authorization", "Bearer "+ online_journey_settings.token);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.send(data);
+
+        // var response = JSON.parse(xhr.responseText);
+        // var img = "<img src='"+response.link+"'>"
+        // this.$emit('show_image',{img: img});
+      },
+
+    },
+
+
+  template: `
+    <label class="upload-image-item" ref="drop_area">
+      <span class="braket-tl"></span>
+      <span class="braket-tr"></span>
+      <span class="braket-bl"></span>
+      <span class="braket-br"></span>
+      <svg class="icon svg-icon-upload"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-upload"></use></svg>
+      <input type="file" v-on:change="exec_file_change($event)">
+      <img  :src="src" v-if="src">
+    </label><!-- upload-image-item -->
+  `,
+
+})
+Vue.component('input-text-search-product', {
+  data: function () {
+    return {
+      title: '',
+      name: '',
+      options: available_products,
+      img_url: '',
+      searching: false,
+      found: false,
+      show_dropdown: false,
+      variations :     {
+      },
+      free_product_id: false,
+    }
+  },
+
+
+
+  mixins: [get_set_props],
+
+  props: ['_img_url', '_placeholder', '_name'],
+
+  watch: {
+    title: function(val){
+      var vm = this;
+      vm.searching = true;
+      vm.show_dropdown = val.length > 0? true : false;
+
+      if('undefined' == typeof(timeout)){
+        var timeout;
+      }
+
+      if(!timeout){
+        timeout = setTimeout(function(){
+          vm.searching = false;
+        },100)
+      }else{
+        clearTimeout(timeout);
+      }
+    },
+
+    show_dropdown: function(val){
+    },
+
+    _img_url: function(val){
+      this.img_url = this._img_url;
+    },
+
+    _name: function(name){
+      this.name = name;
+    },
+
+    found: function(is_found){
+      if(is_found){
+        this.$emit('product_found', {'variations' : this.variations, free_product_id: this.free_product_id, recipe: this.title});
+      }else{
+        this.$emit('product_found', {'variations' : false, free_product_id: false});
+      }
+    }
+  },
+
+  computed: {
+    found_options: function(){
+      var options = [];
+      var search = this.title.toLowerCase();
+
+      if( this.options ){
+        for(var opt in this.options){
+          var tried_value = this.options[opt].name.toLowerCase();
+
+          // check if input text is a part of possible values
+          if(tried_value.indexOf(search) >= 0 && search){
+            var temp = this.options[opt];
+            temp.slug = opt;
+            options.push(temp);
+          }
+
+          // search name is equal to imput value
+          if (search === tried_value){
+            var vm = this;
+            var id = opt;
+            Vue.nextTick(function(){
+              vm.title = vm.options[id].name;
+              vm.variations = vm.options[id].variations;
+              vm.free_product_id = vm.options[id].free_product_id;
+              vm.show_dropdown = false;
+              vm.found = id;
+              return [vm.options[id]];
+            })
+          }
+        }
+      }
+      return options;
+    },
+  },
+
+  beforeMount: function(){
+    this.img_url = this._img_url;
+    this.name =   this._name;
+  },
+
+  mounted: function(){
+  },
+
+  methods: {
+    set_title: function(id){
+      this.title = this.options[id].name;
+      this.variations = this.options[id].variations;
+      this.free_product_id = this.options[id].free_product_id;
+      this.found = id;
+      var vm = this;
+      Vue.nextTick(function(){
+        vm.show_dropdown = false;
+      })
+    },
+
+    resert_values: function(){
+      this.title = '';
+      this.searching = false;
+      this.found = false;
+      this.show_dropdown = false;
+      this.variations  = {};
+      this.free_product_id = false;
+    },
+
+    restore_data: function(){
+    },
+  },
+
+  template: `
+    <div class="input-holder">
+      <input type="text" id="product-name" class="popup-inner__field" v-model="title" autocomplete="off"
+        v-bind:placeholder = "_placeholder"
+      >
+       <img :src="img_url" v-if="searching">
+
+       <div class="input-holder__dropdown" v-if="found_options.length > 0 && show_dropdown">
+          <ul class="input-holder__list">
+            <li v-for="(prod, id) in found_options" v-on:click="set_title(prod.slug)">{{prod.name}}</li>
+          </ul>
+       </div>
+
+       <div class="input-holder__dropdown" v-if="found_options.length == 0 && show_dropdown">
+          <p> No products found </p>
+       </div>
+    </div>
+  `,
+});
+Vue.component('list-column', {
+
+  data: function(){
+    return {
+      info:  '',
+      leads: [],
+      trigger_scroll : false,
+      counter: 20,
+      moved_item_id: -1,
+      target_stage: '',
+      converted: '',
+    };
+  },
+
+  props: [
+    '_info',
+    '_converted',
+    '_leads',
+  ],
+
+  watch:{
+
+    '_info': function(val){
+      this.info = val;
+    },
+
+    '_leads': function(val){
+      this.leads = val;
+    },
+    '_converted': function(val){
+      this.converted = val;
+    },
+
+    trigger_scroll: function(trigger){
+      if(trigger){
+        this.counter += 50;
+      }
+    },
+  },
+
+  computed: {
+    count: function(){
+      return this._leads.length;
+    },
+
+    // converted: function(){
+    //   return 0;
+    // },
+
+    leads_show: function(){
+      var leads = this.leads.slice(0, this.counter);
+      for(var id in leads){
+        leads[id].lead_stage = this.info.name;
+      }
+      return leads;
+    },
+  },
+
+  beforeMount: function(){
+    this.info = this._info;
+    this.leads = this._leads;
+    this.converted = this._converted;
+  },
+
+
+
+  mounted: function(){
+    var header = this.$el.getElementsByClassName('leads-column__tag')[0];
+    header.style.backgroundColor = this.info.bg_color;
+    header.style.color           = this.info.text_color;
+  },
+
+  methods: {
+
+    checkMove: function(item){
+      this.moved_item_id = item.draggedContext.element.ID;
+    },
+
+    end_drag: function(evt,data){
+      this.$emit('update_order_status_on_drag', {item_id: this.moved_item_id, lead_stage: this.target_stage});
+      this.moved_item_id = -1;
+      this.target_stage = '';
+    },
+
+    end_sort: function(evt,data){
+      this.$emit('update_order_status_on_drag', {item_id: this.moved_item_id, lead_stage: this.target_stage});
+      this.moved_item_id = -1;
+      this.target_stage = '';
+    },
+
+    open_lead_cb:function(data){
+      this.$emit('open_lead', data);
+    },
+
+
+    load_csv: function(){
+
+      this.$emit('load_csv_emit', {"column": this.info.name});
+    },
+
+    /**
+    * replaces default scroll of column.
+    * scrolls column by 1 elemnt hieght
+    */
+    scroll_items: function(){
+      event.preventDefault()
+
+      if( !this.trigger_scroll ){
+        this.$refs.scroll.scrollTop  = (event.deltaY > 0)? this.$refs.scroll.scrollTop + 66 : this.$refs.scroll.scrollTop - 66;
+      }
+    },
+
+
+    /**
+    * emits scroll if end of scroll content reached
+    */
+    scroll_items_emit:function(slug){
+      this.trigger_scroll = this.$refs.scroll.offsetHeight + this.$refs.scroll.scrollTop >= this.$refs.scroll.scrollHeight - this.$refs.scroll.scrollHeight  * 0.05;
+
+      var vm = this;
+
+      Vue.nextTick(function(){
+        vm.trigger_scroll = false;
+      })
+    },
+
+  },
+
+  template: `
+  <div class="leads-column leads-column-2">
+    <div class="leads-column__head">
+      <button type="button" class="leads-column__tag" v-on:click="load_csv">
+        {{info.name}}
+      </button>
+      <span class="leads-column__count">{{count}}</span>
+      <span class="leads-column__convertion" v-if="info.name != 'New' "><svg class="icon svg-icon-convertions"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-convertions"></use></svg>
+         {{converted}}
+       </span>
+    </div>
+    <div class="leads-column__body"
+        ref="scroll"
+        @wheel="scroll_items(info.name)"
+        @scroll="scroll_items_emit(info.name)"
+    >
+      <div name="lead-list" class="leads-list" >
+        <draggable
+          v-bind:class="'scroll'"
+          ref="scroll-inner"
+          :move="checkMove"
+          :list="leads"
+          group="info.name"
+          @end="end_sort"
+        >
+          <item-reception
+            v-for="lead, key in leads_show"
+            v-on:open_lead = 'open_lead_cb'
+            :_info = "lead"
+            :key = "'item_'+key"
+          ></item-reception>
+        </draggable>
+      </div>
+     </div>
+   </div>
+  `,
+});
+Vue.component('item-reception', {
+  data: function(){
+    return {
+      info: {},
+    };
+  },
+
+  props: ['_info'],
+
+  watch:{
+    _info: function(val){
+      this.info = val
+    },
+  },
+
+  beforeMount: function(){
+    this.info = this._info;
+    // console.log(strip(this.info));
+  },
+
+  computed: {
+
+    name: function(){
+      return  this.info.meta.patient_data.name;
+    },
+
+    time_passed: function(){
+      var now = new Date();
+      var date_received = new Date(this.info.post_date);
+
+      return date_difference.construct(date_received, now)  + ' ago';
+    },
+
+    source_text: function(){
+      if(this.info.meta.patient_data.treatment[0]){
+        return this.info.meta.patient_data.treatment[0];
+      } else if(this.info.meta.patient_data.campaign){
+        return this.info.meta.patient_data.campaign;
+      } else if(this.info.meta.patient_data.source){
+        return this.info.meta.patient_data.source;
+      }
+    },
+
+    overdue: function(){
+      var now = new Date();
+      var reminder_date = new Date(this.info.meta.reminder);
+      return   (this.info.meta.reminder !== '' && now > reminder_date)? 'yes' : 'no';
+    },
+  },
+
+  methods: {
+    open_lead:function(data){
+      this.$emit('open_lead', {lead_id: data});
+    },
+  },
+
+  template: `
+    <div class="lead-preview" v-on:click = 'open_lead(info.ID)'>
+     <div class="clearfix">
+      <div class="row justify-content-start">
+        <div class="col-7">
+         <span class="lead-preview__name" v-bind:title="name">{{name}}</span>
+         <span class="lead-preview__icons">
+          <svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="12" height="12" viewBox="0 0 12 12"><g><g><g><path fill="#2196f3" d="M6 0C2.691 0 0 2.691 0 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6z"/></g><g><path fill="#fafafa" d="M8.85 4.803l-3.319 3.06a.532.532 0 0 1-.36.137.532.532 0 0 1-.362-.138l-1.66-1.53a.444.444 0 0 1 0-.665.541.541 0 0 1 .723 0L5.17 6.864l2.958-2.726a.541.541 0 0 1 .722 0c.2.184.2.481 0 .665z"/></g></g></g></svg>
+         </span>
+        </div>
+
+        <div class="col-5">
+         <span class="lead-preview__time" v-bind:title="time_passed">{{time_passed}}</span>
+        </div>
+      </div>
+     </div>
+       <div class="clearfix">
+         <span class="lead-preview__sourse">{{source_text}}</span>
+          <span class="list-counters">
+
+            <svg class="icon svg-icon-bell" v-if="info.meta.reminder != '' && overdue == 'yes'" v-bind:title="info.meta.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+            <svg class="icon svg-icon-bell green" v-if="info.meta.reminder != '' && overdue == 'no'" v-bind:title="info.meta.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+            <i class="icon-message-phone phone-na" v-if="info.phone_count == 0"></i>
+            <i class="icon-message-phone phone-ok" v-else="info.phone_count > 0"><span class="counter">{{info.phone_count}}</span></i>
+            <i class="icon-message-phone message-na" v-if="info.message_count == 0"></i>
+            <i class="icon-message-phone message-ok" v-else="info.message_count > 0"><span class="counter">{{info.message_count}}</span></i>
+
+            <i class="icon-message-phone" v-if="info.show_message_alert && !info.meta.disable_sms">
+                <svg  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#3354f6" fill-opacity="1"></path></g></g></svg>
+             </i>
+             <i class="icon-message-phone" v-if="info.show_message_alert_him && !info.meta.disable_sms">
+               <svg  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#eb0147" fill-opacity="1"></path></g></g>
+             </i>
+
+             <i class="icon-message-phone" v-if="(info.show_message_alert_him || info.show_message_alert) && info.meta.disable_sms">
+               <svg  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#ccc" fill-opacity="1"></path></g></g>
+             </i>
+          </span>
+       </div>
+    </div>
+  `
+})
+Vue.component('list-column-tco', {
+
+  data: function(){
+    return {
+      info:  '',
+      leads: [],
+      trigger_scroll : false,
+      counter: 20,
+      moved_item_id: -1,
+      target_stage: '',
+      converted: '',
+    };
+  },
+
+  props: [
+    '_info',
+    '_converted',
+    '_leads',
+  ],
+
+  watch:{
+
+    '_info': function(val){
+      this.info = val;
+    },
+
+    '_leads': function(val){
+      this.leads = val;
+    },
+    '_converted': function(val){
+      this.converted = val;
+    },
+
+    trigger_scroll: function(trigger){
+      if(trigger){
+        this.counter += 50;
+      }
+    },
+  },
+
+  computed: {
+    count: function(){
+      return this._leads.length;
+    },
+
+    // converted: function(){
+    //   return 0;
+    // },
+
+    leads_show: function(){
+      var leads = this.leads.slice(0, this.counter);
+      for(var id in leads){
+        leads[id].lead_stage = this.info.name;
+      }
+      return leads;
+    },
+  },
+
+  beforeMount: function(){
+    this.info = this._info;
+    this.leads = this._leads;
+    this.converted = this._converted;
+  },
+
+
+
+  mounted: function(){
+    var header = this.$el.getElementsByClassName('leads-column__tag')[0];
+    header.style.backgroundColor = this.info.bg_color;
+    header.style.color           = this.info.text_color;
+  },
+
+  methods: {
+
+    checkMove: function(item){
+      this.moved_item_id = item.draggedContext.element.ID;
+    },
+
+    end_drag: function(evt,data){
+      this.$emit('update_order_status_on_drag', {item_id: this.moved_item_id, lead_stage: this.target_stage});
+      this.moved_item_id = -1;
+      this.target_stage = '';
+    },
+
+    end_sort: function(evt,data){
+      this.$emit('update_order_status_on_drag', {item_id: this.moved_item_id, lead_stage: this.target_stage});
+      this.moved_item_id = -1;
+      this.target_stage = '';
+    },
+
+    load_csv: function(){
+      this.$emit('open_lead', {"column": this.info.name});
+    },
+
+    open_lead_cb:function(data){
+      this.$emit('load_csv_emit', data);
+    },
+
+    /**
+    * replaces default scroll of column.
+    * scrolls column by 1 elemnt hieght
+    */
+    scroll_items: function(){
+      event.preventDefault()
+
+      if( !this.trigger_scroll ){
+        this.$refs.scroll.scrollTop  = (event.deltaY > 0)? this.$refs.scroll.scrollTop + 66 : this.$refs.scroll.scrollTop - 66;
+      }
+    },
+
+
+    /**
+    * emits scroll if end of scroll content reached
+    */
+    scroll_items_emit:function(slug){
+      this.trigger_scroll = this.$refs.scroll.offsetHeight + this.$refs.scroll.scrollTop >= this.$refs.scroll.scrollHeight - this.$refs.scroll.scrollHeight  * 0.05;
+
+      var vm = this;
+
+      Vue.nextTick(function(){
+        vm.trigger_scroll = false;
+      })
+    },
+  },
+
+  template: `
+  <div class="leads-column leads-column-2">
+    <div class="leads-column__head">
+      <button type="button" class="leads-column__tag" v-on:click="load_csv">
+        {{info.name}}
+      </button>
+      <span class="leads-column__count">{{count}}</span>
+      <span class="leads-column__convertion" v-if="info.name != 'New' "><svg class="icon svg-icon-convertions"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-convertions"></use></svg>
+         {{converted}}
+       </span>
+    </div>
+    <div class="leads-column__body"
+        ref="scroll"
+        @wheel="scroll_items(info.name)"
+        @scroll="scroll_items_emit(info.name)"
+    >
+      <div name="lead-list" class="leads-list" >
+        <draggable
+          v-bind:class="'scroll'"
+          ref="scroll-inner"
+          :move="checkMove"
+          :list="leads"
+          group="info.name"
+          @end="end_sort"
+        >
+          <item-tco
+            v-for="lead, key in leads_show"
+            v-on:open_lead = 'open_lead_cb'
+            :_info = "lead"
+            :key = "'item_'+key"
+          ></item-tco>
+        </draggable>
+      </div>
+     </div>
+   </div>
+  `,
+});
+Vue.component('item-tco', {
+  data: function(){
+    return {
+      info: {},
+    };
+  },
+
+  props: ['_info'],
+
+  watch:{
+    _info: function(val){
+      this.info = val
+    },
+  },
+
+  beforeMount: function(){
+    this.info = this._info;
+    // console.log(strip(this.info));
+  },
+
+  computed: {
+
+    name: function(){
+      return  this.info.meta.patient_data.name;
+    },
+
+    time_passed: function(){
+      var now = new Date();
+      var date_received = new Date(this.info.post_date);
+
+      return date_difference.construct(date_received, now)  + ' ago';
+    },
+
+    source_text: function(){
+      if(this.info.meta.patient_data.treatment[0]){
+        return this.info.meta.patient_data.treatment[0];
+      } else if(this.info.meta.patient_data.campaign){
+        return this.info.meta.patient_data.campaign;
+      } else if(this.info.meta.patient_data.source){
+        return this.info.meta.patient_data.source;
+      }
+    },
+
+    overdue: function(){
+      var now = new Date();
+      var reminder_date = new Date(this.info.meta.reminder);
+      return   (this.info.meta.reminder !== '' && now > reminder_date)? 'yes' : 'no';
+    },
+  },
+
+  methods: {
+    open_lead:function(data){
+      this.$emit('open_lead', {lead_id: data});
+    },
+  },
+
+  template: `
+    <div class="lead-preview" v-on:click = 'open_lead(info.ID)'>
+     <div class="clearfix">
+      <div class="row justify-content-start">
+        <div class="col-7">
+         <span class="lead-preview__name" v-bind:title="name">{{name}}</span>
+         <span class="lead-preview__icons">
+          <svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="12" height="12" viewBox="0 0 12 12"><g><g><g><path fill="#2196f3" d="M6 0C2.691 0 0 2.691 0 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6z"/></g><g><path fill="#fafafa" d="M8.85 4.803l-3.319 3.06a.532.532 0 0 1-.36.137.532.532 0 0 1-.362-.138l-1.66-1.53a.444.444 0 0 1 0-.665.541.541 0 0 1 .723 0L5.17 6.864l2.958-2.726a.541.541 0 0 1 .722 0c.2.184.2.481 0 .665z"/></g></g></g></svg>
+         </span>
+        </div>
+
+        <div class="col-5">
+         <span class="lead-preview__time" v-bind:title="time_passed">{{time_passed}}</span>
+        </div>
+      </div>
+     </div>
+       <div class="clearfix">
+         <span class="lead-preview__sourse">{{source_text}}</span>
+          <span class="list-counters">
+
+            <svg class="icon svg-icon-bell" v-if="info.meta.reminder != '' && overdue == 'yes'" v-bind:title="info.meta.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+            <svg class="icon svg-icon-bell green" v-if="info.meta.reminder != '' && overdue == 'no'" v-bind:title="info.meta.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+
+            <i class="icon-message-phone phone-na" v-if="info.phone_count_tco == 0"></i>
+            <i class="icon-message-phone phone-ok" v-else="info.phone_count_tco > 0"></i>
+            <i class="icon-message-phone message-na" v-if="info.message_count_tco == 0"></i>
+            <i class="icon-message-phone message-ok" v-else="info.message_count_tco > 0"></i>
+
+            <i class="icon-message-phone" v-if="info.show_message_alert && !info.meta.disable_sms">
+                <svg  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#3354f6" fill-opacity="1"></path></g></g></svg>
+             </i>
+             <i class="icon-message-phone" v-if="info.show_message_alert_him && !info.meta.disable_sms">
+               <svg  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#eb0147" fill-opacity="1"></path></g></g>
+             </i>
+
+             <i class="icon-message-phone" v-if="(info.show_message_alert_him || info.show_message_alert) && info.meta.disable_sms">
+               <svg  width="15" height="13" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 15 13"><defs></defs><g><g><title>Shape</title><path d="M4.5,4.30185c0,-0.27868 0.22386,-0.50461 0.5,-0.50461h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461zM5,6.56509h5c0.27614,0 0.5,0.22592 0.5,0.50461c0,0.27868 -0.22386,0.50461 -0.5,0.50461h-5c-0.27614,0 -0.5,-0.22592 -0.5,-0.50461c0,-0.27868 0.22386,-0.50461 0.5,-0.50461zM5.11,0.26c-2.82103,0.00276 -5.10724,2.28897 -5.11,5.11v0.78c0.00276,2.82103 2.28897,5.10724 5.11,5.11h1.89l0.955,1.5c0.1372,0.22145 0.37949,0.35585 0.64,0.355c0.26225,-0.00225 0.50454,-0.14044 0.64,-0.365l0.92,-1.5c2.68416,-0.05427 4.83469,-2.24031 4.845,-4.925v-0.955c-0.00276,-2.82103 -2.28897,-5.10724 -5.11,-5.11z" fill="#ccc" fill-opacity="1"></path></g></g>
+             </i>
+          </span>
+       </div>
+    </div>
+  `
+})
+Vue.component('comp-alert-alarm', {
+
+  data: function(){
+    return{
+      reminder: '',
+      show: false,
+      ID: -1,
+      index: -1,
+    }
+  },
+
+  computed:{
+    img_url:function(){
+      return WP_URLS.theme_url + '/assets/images/svg/stop.svg';
+    }
+  },
+
+  methods: {
+    update_lead: function(event, name){
+      this.reminder = event.val;
+    },
+
+    clear_reminder: function(){
+      this.reminder = '';
+
+      this.$refs.reminder.value = '';
+    },
+
+    close:function(){
+
+      this.$emit('resert_reminder', { index: this.index, ID: this.ID});
+
+      var vm = this;
+
+      vm.show = false;
+      vm.reminder = '';
+      vm.ID = -1;
+      vm.index = -1;
+      vm.$refs.reminder.value = '';
+
+      // this.$parent.$set(this.$parent.leads[this.index], 'lead_stage', 'New');
+
+      // var data_post = {
+      //   action : 'update_leads_list',
+      //   post_id: this.ID,
+      //   list_id: '',
+      // };
+
+      // jQuery.ajax({
+      //   url: WP_URLS.wp_ajax_url,
+      //   type: 'POST',
+      //   dataType: 'json',
+      //   data: data_post,
+
+      //   complete: function(xhr, textStatus) {
+      //     vm.show = false;
+      //     vm.reminder = '';
+      //     vm.ID = -1;
+      //     vm.index = -1;
+      //   },
+
+      //   success: function(data, textStatus, xhr) {
+      //     console.log(data);
+      //     //console.groupEnd('---');
+      //   },
+
+      //   error: function(xhr, textStatus, errorThrown) {
+      //     //console.log('error');
+      //     //console.log(errorThrown);
+      //     //console.groupEnd();
+      //    }
+      // });
+    },
+
+    save_reminder: function(){
+      if(!this.reminder){
+        return;
+      }
+       var vm = this;
+
+      this.$emit('update_reminder', {'reminder': this.reminder, index: this.index});
+
+      var meta = {
+        reminder              : this.reminder,
+      };
+
+      var posted_data = {
+        confirmed: 0,
+        meta: {
+          reminder              : this.reminder,
+        },
+        action                : 'update_lead_meta',
+        lead_data             : { lead_id: this.ID },
+      };
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: posted_data,
+
+        complete: function(xhr, textStatus) {
+          vm.show = false;
+          vm.reminder = '';
+          vm.ID = -1;
+          vm.index = -1;
+          vm.$refs.reminder.value = '';
+        },
+
+        success: function(data, textStatus, xhr) {
+           console.log(data);
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+        },
+      });
+
+
+
+    },
+  },
+
+
+  template: `
+    <div class="s-popup-wrapper" :class='{"shown": show}'>
+      <div class="s-popup-large">
+        <div class="s-popup-large__header">
+          <svg width="16" height="15" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:avocode="https://avocode.com/" viewBox="0 0 16 15"><defs></defs><g><g><title>Path</title><path d="M8.00003,9c-0.55143,0 -1.00003,-0.53886 -1.00003,-1.2012v-2.5976c0,-0.66234 0.4486,-1.2012 1,-1.2012c0.5514,0 1,0.53886 1,1.2012v2.5976c0,0.66234 -0.44857,1.2012 -0.99997,1.2012z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M8,13c-0.5514,0 -1,-0.44858 -1,-0.99999c0,-0.5514 0.4486,-1.00001 1,-1.00001c0.5514,0 1,0.44861 1,1.00001c0,0.55141 -0.4486,0.99999 -1,0.99999z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M14.61514,15h-13.23032c-0.49961,0 -0.94748,-0.25533 -1.19803,-0.68298c-0.24541,-0.41895 -0.24916,-0.9131 -0.01031,-1.35587l6.61522,-12.26002c0.23688,-0.43902 0.6886,-0.70113 1.20828,-0.70113c0.51972,0 0.9714,0.26211 1.20831,0.70113v0v0l6.6152,12.25999c0.23891,0.44274 0.23512,0.93698 -0.01032,1.3559c-0.25051,0.42765 -0.69835,0.68298 -1.19803,0.68298z" fill="#ffa300" fill-opacity="1"></path></g><g clip-path="url(#clip-9A1E8388-719A-4D57-BE3B-1214B6B73F26)"><title>caution</title><g><title>Path</title><path d="M14.61514,15h-13.23032c-0.49961,0 -0.94748,-0.25533 -1.19803,-0.68298c-0.24541,-0.41895 -0.24916,-0.9131 -0.01031,-1.35587l6.61522,-12.26002c0.23688,-0.43902 0.6886,-0.70113 1.20828,-0.70113c0.51972,0 0.9714,0.26211 1.20831,0.70113v0v0l6.6152,12.25999c0.23891,0.44274 0.23512,0.93698 -0.01032,1.3559c-0.25051,0.42765 -0.69835,0.68298 -1.19803,0.68298z" fill="#ffa300" fill-opacity="1"></path></g><g><title>Path</title><path d="M8,13c-0.5514,0 -1,-0.44858 -1,-0.99999c0,-0.5514 0.4486,-1.00001 1,-1.00001c0.5514,0 1,0.44861 1,1.00001c0,0.55141 -0.4486,0.99999 -1,0.99999z" fill="#fff3f3" fill-opacity="1"></path></g><g><title>Path</title><path d="M8.00003,9c-0.55143,0 -1.00003,-0.53886 -1.00003,-1.2012v-2.5976c0,-0.66234 0.4486,-1.2012 1,-1.2012c0.5514,0 1,0.53886 1,1.2012v2.5976c0,0.66234 -0.44857,1.2012 -0.99997,1.2012z" fill="#fff3f3" fill-opacity="1"></path></g></g></g></svg>
+
+            Set Alarm
+        </div>
+
+        <div class="spacer-h-30"></div>
+
+        <div class="text-center">
+          <img :src="img_url">
+
+          <div class="spacer-h-20"></div>
+
+          <p class="s-popup-title">
+          You haven’t set an <br> alarm for this lead.
+          </p>
+
+          <p class="s-popup-text">
+           Alarms are mandatory when handling a lead. Please add an alarm so <br> you can stay on top of this enquiry.
+          </p>
+
+          <a href="#" class="reminder">
+            <svg class="icon svg-icon-bell"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>
+            <span class="label">Set Reminder</span>
+
+            <datepicker2
+              ref="reminder"
+              v-on:input_value_changed="update_lead($event, 'reminder')"
+              v-bind:class="'value'"
+              v-bind:placeholder="'Mon d Y hh:mm'"
+              _name="reminder"
+               >
+             </datepicker2>
+
+            <span href="javascript:void(0)"
+              v-if = "reminder"
+              v-on:click="clear_reminder()"
+              class="clear-reminder">clear</span>
+          </a>
+        </div>
+
+        <div class="spacer-h-20"></div>
+
+        <div class="s-popup-large__footer text-right">
+           <a class="s-button-cancel" v-on:click="close">
+             Cancel
+           </a>
+           <a class="s-button-save" :class="{'active' : reminder}"
+            v-on:click="save_reminder"
+           >
+             Move Lead
+           </a>
+        </div>
+      </div>
+    </div>
+  `
+})
+Vue.component('exist-popup-spa', {
+
+  data: function(){
+    return {
+      show: false,
+      name: '',
+      email: '',
+      phone: '',
+      posted_data: {},
+      leads: [],
+    };
+  },
+
+  props: [
+  ],
+
+  watch:{
+  },
+
+  mounted: function(){
+    this.show = false;
+    this.$el.classList.remove('visuallyhidden');
+  },
+
+  computed:{
+    number: function(){
+      return this.leads.length;
+    }
+  },
+
+
+  methods:{
+      cancel: function(){
+        this.show = false;
+      },
+
+      create: function(){
+        this.show = false;
+
+        this.$emit('save_lead',{posted_data: this.posted_data});
+      },
+
+      time_passed:function(date){
+
+        var now = new Date();
+        var date_received = new Date(date);
+
+        return date_difference.construct(date_received, now)  + ' ago';
+      },
+
+      open_lead: function(lead_id){
+        this.show = false;
+        this.$emit('open_lead', {lead_id: lead_id});
+      },
+
+      marked: function(v){
+        return v == this.name ||v == this.phone ||v == this.email;
+      }
+  },
+
+  template: '#exist-popup-spa',
+});
+
+console.log();
+Vue.component('email-popup-template', {
+
+
+  data: function(){
+    return {
+      email_from: theme_user_email,
+      email_to: '',
+      template: '',
+      show: false,
+      patient_name: '',
+      specialists_name: '',
+      lead_id: -1,
+      errors:{
+        template: 0,
+        email_from: 0,
+        'Booked In': {
+          price: 0,
+          clinic: 0,
+        },
+      },
+
+      template_data:{
+        'Booked In':{
+          to: '',
+          subject: 'Your Ruhdental Book In',
+          from: theme_user_email,
+          template: 'booked-in',
+          template_name: 'Booked In',
+          price: 'price',
+          patient_name: '',
+          clinic: 'clinic',
+          specialists_name: '',
+          lead_id: '',
+        },
+
+        'Smile Trial': {
+          to: '',
+          template_name: 'Smile Trial',
+          subject: 'Your Smile Trial Offer',
+          from: theme_user_email,
+          template: 'smile-trial',
+          patient_name: '',
+          specialists_name: '',
+          lead_id: '',
+        },
+
+        'Teeth Whitening': {
+          to: '',
+          template_name: 'Teeth Whitening',
+          subject: 'Your Teeth Whitening Offer',
+          from: theme_user_email,
+          template: 'teeth-whitening',
+          patient_name: '',
+          specialists_name: '',
+          lead_id: '',
+        },
+      },
+    };
+  },
+
+  watch:{
+    email_to:function(val){
+      if(val){
+        for(var template_name of this.select_data.templates){
+          this.template_data[template_name].to = val;
+        }
+        this.errors.email_to = 0;
+      }
+    },
+
+    lead_id:function(val){
+      for(var template_name of this.select_data.templates){
+        this.template_data[template_name].lead_id = val;
+      }
+    },
+
+    patient_name: function(val){
+      for(var template_name of this.select_data.templates){
+        this.template_data[template_name].patient_name = val;
+      }
+    },
+
+    specialists_name: function(val){
+      for(var template_name of this.select_data.templates){
+        this.template_data[template_name].specialists_name = val;
+      }
+    },
+
+    show: function(val){
+      if(!val){
+        this.template = '';
+        this.lead_id = -1;
+      };
+    },
+
+    template: function(val){
+      if(val){
+        this.errors.template = 0;
+      }
+    },
+  },
+
+
+  computed: {
+    select_data: function(){
+      return {
+        templates : [
+         'Booked In',
+         'Smile Trial',
+         'Teeth Whitening'
+         ],
+
+        prices: [
+          '£50',
+          '£100',
+          '£150',
+          '£200',
+          '£250',
+          '£300',
+        ],
+
+        clinics: [
+          'London Fleet Street',
+          'London Notting Hill',
+          'Manchester',
+        ],
+      };
+    },
+
+    theme_user_data: function(){
+      return {
+        id: theme_user_id,
+        name: theme_user_name,
+      };
+    },
+
+  },
+
+  methods:{
+
+    submit: function(){
+      var vm = this;
+      vm.errors.template = !vm.template;
+      vm.errors.email_from = !vm.email_from;
+
+      if(!vm.template || !vm.email_from){
+        return;
+      }
+
+      var valid = vm.validate_email();
+
+      if(!valid){
+        return;
+      }
+
+      var data = vm.template_data[vm.template];
+
+      wait_block.show();
+
+      data.action = 'send_email';
+
+      console.log(data);
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+      })
+
+      .done(function(e) {
+        alert(e.response);
+
+        vm.$parent.lead_data.meta.email_log = e.email_log;
+        vm.show = false;
+        console.log("success");
+      })
+
+      .fail(function(e) {
+        console.log("error");
+      })
+
+      .always(function(e) {
+        wait_block.hide();
+        console.log(e);
+      });
+
+    },
+
+    update_template: function(event, name){
+      this.template = event.val;
+    },
+
+    update_template_data: function(event, name){
+      this.$set(this.template_data[name], event.name, event.val);
+      this.errors[name] = 0
+      // this.template_data[name][event.name] = event.val;
+    },
+
+    validate_email:function(){
+      var vm = this;
+      var valid = true;
+      switch(vm.template){
+        case 'Booked In':
+
+          valid = vm.template_data['Booked In'].price != 'price'? valid : false;
+          valid = vm.template_data['Booked In'].clinic != 'clinic'? valid : false;
+          var valid_price = vm.template_data['Booked In'].price != 'price'? true : false;
+          var valid_clinic = vm.template_data['Booked In'].clinic != 'clinic'? true : false;
+
+          if(!valid_price){
+            this.errors['Booked In'].price = 1;
+            alert('Please set dentists consultation price inside a template');
+          }else{
+            this.errors['Booked In'].price = 0;
+          }
+
+          if(!valid_clinic){
+            this.errors['Booked In'].clinic = 1;
+            alert('Please select a clinic in template');
+          }else{
+            this.errors['Booked In'].clinic = 0;
+          }
+
+          return valid;
+          break;
+        default:
+          return valid;
+          break;
+      }
+    }
+  },
+
+
+  template: '#email-popup-tmpl',
+
+})
+Vue.component('sent-email-view', {
+  data: function(){
+    return {
+      show: false,
+      template: '',
+      log: {
+        template_name: '',
+      },
+
+      template_data:{
+        'Booked In':{
+          to: '',
+          subject: 'Your Ruhdental Book In',
+          from: theme_user_email,
+          template: 'booked-in',
+          template_name: 'Booked In Template',
+          price: 'price',
+          patient_name: '',
+          clinic: 'clinic',
+          specialists_name: '',
+          lead_id: '',
+        },
+
+        'Smile Trial': {
+          to: '',
+          template_name: 'Smile Trial Template',
+          subject: 'Your Smile Trial Offer',
+          from: theme_user_email,
+          template: 'smile-trial',
+          patient_name: '',
+          specialists_name: '',
+          lead_id: '',
+        },
+
+        'Teeth Whitening': {
+          to: '',
+          template_name: 'Teeth Whitening Template',
+          subject: 'Your Teeth Whitening Offer',
+          from: theme_user_email,
+          template: 'smile-trial',
+          patient_name: '',
+          specialists_name: '',
+          lead_id: '',
+        },
+      },
+
+      errors:{
+        template: 0,
+        email_from: 0,
+        'Booked In': {
+          price: 0,
+          clinic: 0,
+        },
+      },
+    }
+  },
+
+  watch:{
+    show:function(val){
+
+      if(val){
+        var vm = this;
+        Vue.nextTick(function(){
+          switch(vm.log.template_name ){
+            case "Booked In":
+             vm.$refs.clinics_select.set_value('selected',  vm.log.posted_data.clinic);
+             vm.$refs.prices_select.set_value('selected',  vm.log.posted_data.price);
+             break;
+          }
+        });
+      };
+    },
+  },
+
+  computed:{
+    patient_name: function(){
+      return this.log.posted_data.patient_name;
+    },
+    clinic: function(){
+      return this.log.posted_data.clinic;
+    },
+    price: function(){
+      return this.log.posted_data.price;
+    },
+
+    specialists_name: function(){
+      return this.log.posted_data.specialists_name;
+    },
+
+    select_data: function(){
+      return {
+        templates : [
+         'Booked In',
+         'Smile Trial',
+         'Teeth Whitening'
+         ],
+
+        prices: [
+          '£50',
+          '£100',
+          '£150',
+          '£200',
+          '£250',
+          '£300',
+        ],
+
+        clinics: [
+          'London Fleet Street',
+          'London Notting Hill',
+          'Manchester',
+        ],
+      };
+    },
+  },
+
+  methods:{
+    update_template_data: function(event, name){
+      this.$set(this.template_data[name], event.name, event.val);
+    },
+  },
+
+  template: '#email-view-tmpl',
+
+});
+wait_block2 = new Vue({
+  el: '#wait-block2',
+
+  data: {
+    class: '',
+    text: '',
+  },
+
+  computed:{
+    show_class: function(){
+      return this.class;
+    },
+
+    wait_text: function(){
+      return this.text;
+    },
+  },
+
+  methods: {
+    show: function(){
+      this.text = 'Please wait';
+      this.class = 'shown';
+      console.log(this.class)
+    },
+
+    hide: function(text){
+      this.text = '';
+      this.class = '';
+    }
+  }
+});
+if (
+  document.getElementById("list-app") &&
+  "undefined" != typeof is_lead_list_2
+) {
+  list_app = new Vue({
+    el: "#list-app",
+
+    data: {
+      filter_data: dashboard_filter_data,
+
+      filters: {
+        clinics: "All Clinics",
+        treatments: "All Treatments",
+        campaigns: "All Campaigns",
+        sources: "All Sources",
+        team: "All Team",
+        dentists: "All Dentists",
+        tags: "All Tags",
+      },
+
+      filters_selected: [],
+
+      leads: dashboard_leads_data,
+      stages: stages,
+      by_phones: [],
+      by_phones_data: false,
+      request_completed: false,
+      // sortby: false,
+      sortby: "Recently Updated",
+
+      overdue_checked: false,
+      not_overdue_checked: false,
+      overdue_only_checked: false,
+      show_overdue_only: false,
+      show_not_read_only: false,
+      show_list: true,
+      search_value: "",
+    },
+
+    watch: {
+      by_phones_data: function (val) {
+        var vm = this;
+        if (vm.$refs.single_lead.visible) {
+          var phone = vm.$refs.single_lead.lead_data.meta.patient_data.phone;
+
+          if (phone) {
+            phone = phone.replace("+44", "0");
+            vm.$refs.single_lead.text_messages =
+              val && "undefined" !== typeof val[phone] ? val[phone] : [];
+          }
+        }
+      },
+
+      "filters.clinics": function (val) {
+        Cookie.set("lead_list_filter2", JSON.stringify(this.filters));
+      },
+
+      "filters.treatments": function (val) {
+        Cookie.set("lead_list_filter2", JSON.stringify(this.filters));
+      },
+
+      "filters.campaigns": function (val) {
+        Cookie.set("lead_list_filter2", JSON.stringify(this.filters));
+      },
+
+      "filters.sources": function (val) {
+        Cookie.set("lead_list_filter2", JSON.stringify(this.filters));
+      },
+
+      "filters.team": function (val) {
+        Cookie.set("lead_list_filter2", JSON.stringify(this.filters));
+      },
+
+      "filters.dentists": function (val) {
+        Cookie.set("lead_list_filter2", JSON.stringify(this.filters));
+      },
+
+      sortby: function (val) {
+        console.log(val);
+      },
+
+      "filters.tags": function (val) {
+        Cookie.set("lead_list_filter2", JSON.stringify(this.filters));
+      },
+    },
+
+    beforeMount: function () {
+      this.update_filter_from_cookies();
+    },
+
+    mounted: function () {
+      var vm = this;
+
+      vm.check_text_messages();
+
+      var filters_selected = Cookie.get("filters_selected");
+
+      if (filters_selected) {
+        this.filters_selected = JSON.parse(filters_selected);
+      }
+
+      vm.$nextTick(function () {
+        setInterval(function () {
+          vm.check_text_messages();
+        }, 60000);
+        vm.adjust_sizes();
+        vm.$el.classList.add("init");
+        window.addEventListener(
+          "resize",
+          function () {
+            vm.adjust_sizes();
+          },
+          true
+        );
+
+        vm.$forceUpdate();
+      });
+    },
+
+    computed: {
+      not_read_count: function () {
+        var count = 0;
+
+        if (!this.leads_by_column) {
+          return 0;
+        }
+
+        for (var id in this.leads_by_column) {
+          count += this.leads_by_column[id].filter((e) => {
+            return e.show_message_alert_him && e.meta.disable_sms == 0;
+          }).length;
+        }
+
+        return count;
+      },
+
+      alarms: function () {
+        return {
+          class: "",
+          class_overdue: "",
+          total: 0,
+          overdue: 0,
+        };
+      },
+
+      get_convertion: function () {
+        var vm = this;
+
+        return function (col_id) {
+          var leads_total = 0;
+          var leads_column_total = 0;
+
+          var column_number = this.visible_stages.findIndex((e) => {
+            return e.name == col_id;
+          });
+
+          if (col_id == failed_lead_name) {
+            for (id in this.leads_by_column) {
+              leads_total += this.leads_by_column[id].length;
+            }
+          } else {
+            for (var i = 0; i <= column_number; i++) {
+              var _col_id = this.visible_stages[i].name;
+              leads_total +=
+                _col_id != failed_lead_name &&
+                "undefined" !== typeof this.leads_by_column[_col_id]
+                  ? this.leads_by_column[_col_id].length
+                  : 0;
+            }
+          }
+
+          if (
+            "undefined" !== typeof this.leads_by_column[col_id] &&
+            leads_total > 0
+          ) {
+            leads_column_total = this.leads_by_column[col_id].length;
+
+            var val = (leads_column_total / leads_total) * 100;
+            return val.toFixed(2);
+          } else {
+            return 0;
+          }
+        };
+      },
+
+      leads_by_column: function () {
+        var vm = this;
+
+        var stages =
+          "object" == typeof vm.stages ? Object.values(vm.stages) : vm.stages;
+
+        var leads = Object.fromEntries(
+          stages.map(function (el) {
+            return [el.name, []];
+          })
+        );
+
+        for (var lead_stage in leads) {
+          var stage_data = stages.filter((el) => {
+            return el.name == lead_stage;
+          });
+
+          leads[lead_stage] = vm.leads_filtered.filter(function (el) {
+            return el.lead_stage == lead_stage;
+          });
+
+          switch (vm.sortby) {
+            case "Recent Messages":
+              leads[lead_stage].sort(vm.sort_by_sms);
+              break;
+            case "Date Added":
+              leads[lead_stage].sort(vm.sort_by_date_added);
+              break;
+            case "Recently Updated":
+              leads[lead_stage].sort(vm.sort_by_date);
+              break;
+          }
+        }
+
+        return leads;
+      },
+
+      /**
+       * select visible leads according to filters, overdue and only messages parameters
+       *
+       */
+      leads_filtered: function () {
+        return this.get_leads_filtered();
+      },
+
+      overdue_data: function () {
+        var visible_stage_names = this.visible_stages.map((el) => {
+          return el.name;
+        });
+
+        var leads = this.leads_filtered.filter((el) => {
+          return visible_stage_names.indexOf(el.lead_stage) >= 0;
+        });
+
+        var leads_reminder = leads.filter((el) => {
+          return !!el.meta.reminder;
+        });
+
+        var now = new Date();
+
+        var leads_overdue = leads_reminder.filter((el) => {
+          return now > new Date(el.meta.reminder);
+        });
+
+        var leads_not_overdue = leads_reminder.filter((el) => {
+          return now < new Date(el.meta.reminder);
+        });
+
+        return {
+          reminder: leads_reminder.length,
+          overdue: leads_overdue.length,
+          not_overdue: leads_not_overdue.length,
+        };
+      },
+
+      sort_options: function () {
+        return ["Recent Messages", "Date Added", "Recently Updated"];
+      },
+
+      stages_reception: function () {
+        var stages =
+          "object" == typeof this.stages
+            ? Object.values(this.stages)
+            : this.stages;
+
+        return stages.filter((el) => {
+          return el.reception == 1;
+        });
+      },
+
+      stages_tco: function () {
+        var stages =
+          "object" == typeof this.stages
+            ? Object.values(this.stages)
+            : this.stages;
+
+        return stages.filter((el) => {
+          return el.tco == 1;
+        });
+      },
+
+      visible_stages: function () {
+        var stages =
+          "object" == typeof this.stages
+            ? Object.values(this.stages)
+            : this.stages;
+
+        switch (list_type) {
+          case "reception":
+            return stages.filter((el) => {
+              return el.reception == 1;
+            });
+            break;
+          case "tco":
+            return stages.filter((el) => {
+              return el.tco == 1;
+            });
+            break;
+          default:
+            return stages;
+            break;
+        }
+      },
+    },
+
+    methods: {
+      add_leads: function (leads) {
+        var current_leads_ids = this.leads.map((e) => {
+          return e.ID;
+        });
+
+        leads = leads.filter((el) => {
+          return current_leads_ids.indexOf(el.ID) < 0;
+        });
+
+        this.leads = this.leads.concat(leads);
+      },
+
+      adjust_sizes: function () {
+        var vm = this;
+        jQuery(vm.$refs.column_container).removeAttr("style");
+
+        jQuery(".horizontal-scroll").removeAttr("style");
+        jQuery(".horizontal-scroll > .row").removeAttr("style");
+        jQuery(".horizontal-scroll .leads-column").removeAttr("style");
+        jQuery(".horizontal-scroll .leads-column__body").removeAttr("style");
+
+        var heigth =
+          jQuery(".site-inner").height() -
+          jQuery(".filter-container").height() -
+          28;
+
+        var width = vm.visible_stages.length * 300;
+
+        // set width of columns' container to avoid line breaks
+        jQuery(vm.$refs.column_container).css({
+          "min-width": width + "px",
+        });
+
+        if (width < jQuery(window).width()) {
+          var margin = (jQuery(window).width() - width) / 2;
+          jQuery(vm.$refs.column_container).css({
+            "margin-left": margin + "px",
+          });
+        }
+
+        // set height of s scroll block to fit it to the page size
+        jQuery(".horizontal-scroll").css({
+          "min-height": heigth + "px",
+          "max-height": heigth + "px",
+        });
+        jQuery(".horizontal-scroll > .row").css({
+          "min-height": heigth + "px",
+          "max-height": heigth + "px",
+        });
+        jQuery(".horizontal-scroll .leads-column").css({
+          "min-height": heigth + "px",
+          "max-height": heigth + "px",
+        });
+        jQuery(".horizontal-scroll .leads-column__body").css({
+          height: heigth - 68 + "px",
+          "max-height": heigth - 68 + "px",
+        });
+      },
+      /**
+       * discards all changes of filters;
+       */
+      clear_filters: function () {
+        var filters = {
+          clinics: "All Clinics",
+          treatments: "All Treatments",
+          campaigns: "All Campaigns",
+          sources: "All Sources",
+          team: "All Team",
+          dentists: "All Dentists",
+          tags: "All Tags",
+        };
+
+        for (var filter_name of this.filters_selected) {
+          console.log(filter_name);
+          this.$refs[filter_name][0].set_value(
+            "selected",
+            filters[filter_name]
+          );
+        }
+      },
+
+      /**
+       * gets smss data from twilio
+       */
+      check_text_messages: function () {
+        var vm = this;
+
+        if ("undefined" == typeof sms_data) {
+          return;
+        }
+
+        var data = {
+          sms_data: sms_data,
+          phone: "all",
+        };
+
+        jQuery
+          .ajax({
+            url: WP_URLS.theme_url + "/messaging/twilio_update_msg.php",
+            type: "POST",
+            dataType: "json",
+            data: data,
+          })
+
+          .done(function (e) {
+            console.log(e);
+            if (!e.error) {
+              vm.by_phones = e.by_phones;
+              vm.by_phones_data = e.by_phones_data;
+              console.log(e);
+              Vue.nextTick(function () {
+                vm.$forceUpdate();
+              });
+            }
+          })
+
+          .fail(function () {})
+
+          .always(function (e) {
+            vm.request_completed = true;
+
+            clog("check_msg");
+            clog(e);
+          });
+      },
+
+      /**
+       * gets filter value by filter name.
+       * gets data from cookie.
+       */
+      get_filter_value: function (filter_name) {
+        var lead_list_filter = Cookie.get("lead_list_filter2");
+
+        if (lead_list_filter) {
+          lead_list_filter = JSON.parse(lead_list_filter);
+          return lead_list_filter[filter_name];
+        } else {
+          return this.filter_data[filter_name][0];
+        }
+      },
+
+      get_filter_options: function (filter_name) {
+        return this.filter_data[filter_name];
+      },
+
+      get_leads_filtered: function () {
+        var vm = this;
+
+        // add message data
+        var leads = vm.leads.map((el) => {
+          if (!el.meta.patient_data.phone) {
+            return el;
+          }
+
+          var phone = el.meta.patient_data.phone.replace("+44", "0");
+
+          if ("undefined" != typeof vm.by_phones_data[phone]) {
+            var msgs = vm.by_phones_data[phone];
+            var type = msgs[msgs.length - 1].type;
+
+            el.show_message_alert_him = type === "him" ? true : false; // by him
+            el.show_message_alert = type === "him" ? false : true; // by us
+            // console.group(phone)
+            // console.log(strip(el.meta.patient_data.name))
+            // console.log(strip(msgs))
+            // console.log(strip(type))
+            // console.log(strip(el.show_message_alert))
+            // console.log(strip(el.show_message_alert_him))
+            // console.log(strip(el))
+            // console.groupEnd()
+          }
+
+          return el;
+        });
+
+        var now = new Date();
+
+        leads = leads.filter(function (el) {
+          var validated = true;
+          var filter_data = strip(el.filter_data2);
+          var now = new Date();
+
+          // filter by search name
+
+          if (!el.meta.patient_data.name && !el.meta.patient_data.email) {
+            return false;
+          }
+
+          if (el.meta.patient_data.name) {
+            validated =
+              vm.search_value.length > 2 &&
+              el.meta.patient_data.name.toLowerCase().indexOf(vm.search_value) <
+                0
+                ? false
+                : validated;
+          }
+
+          // show reminders only
+
+          if (vm.show_overdue_only && !el.meta.reminder) {
+            validated = false;
+          }
+
+          var overdue_date = new Date(el.meta.reminder);
+
+          if (
+            vm.not_overdue_checked &&
+            (!el.meta.reminder ||
+              el.meta.reminder == "false" ||
+              overdue_date < now)
+          ) {
+            validated = false;
+          }
+
+          if (
+            vm.overdue_only_checked &&
+            (!el.meta.reminder ||
+              el.meta.reminder == "false" ||
+              overdue_date > now)
+          ) {
+            validated = false;
+          }
+
+          // show only with latest sms from clients
+          if (
+            vm.show_not_read_only &&
+            (!el.show_message_alert_him || parseInt(el.meta.disable_sms) == 1)
+          ) {
+            validated = false;
+          }
+
+          // show only filter's matches
+          for (var filter_id in vm.filters) {
+            if (vm.filters[filter_id].toLowerCase().indexOf("all ") == 0) {
+              continue;
+            }
+
+            if (!filter_data[filter_id].length) {
+              return false;
+            }
+
+            validated =
+              filter_data[filter_id].indexOf(vm.filters[filter_id]) < 0
+                ? false
+                : validated;
+          }
+          return validated;
+        });
+
+        return leads;
+      },
+
+      open_lead_cb: function (data) {
+        var vm = this;
+        var lead = strip(
+          this.leads.filter((el) => {
+            return el.ID == data.lead_id;
+          })[0]
+        );
+
+        vm.show_list = false;
+        vm.$refs.single_lead.lead_data = lead;
+
+        Vue.nextTick(function () {
+          vm.$refs.single_lead.visible = true;
+          var phone = lead.meta.patient_data.phone;
+          if (phone) {
+            phone = phone.replace("+44", "0");
+
+            if (!vm.by_phones_data) {
+              vm.$refs.single_lead.text_messages = false;
+            } else {
+              vm.$refs.single_lead.text_messages =
+                "undefined" !== typeof vm.by_phones_data[phone]
+                  ? vm.by_phones_data[phone]
+                  : [];
+            }
+          }
+          console.log(lead);
+        });
+      },
+
+      get_billed_this_period: function (lead) {
+        var total = 0;
+
+        if ("undefined" !== typeof lead.meta.treatment_value.billed) {
+          var value = lead.meta.treatment_value.billed;
+
+          if (value) {
+            total += get_sum_from_price(value);
+          }
+        }
+        return total;
+      },
+
+      get_billed_value: function (lead) {
+        var date_from = new Date(_from2);
+        var date_to = new Date(_to2);
+
+        // console.log(date_to);
+
+        billed_total = 0;
+
+        if ("undefined" !== typeof lead.meta.start_date) {
+          var billed_start = new Date(lead.meta.start_date);
+
+          var count = count_billed_time(billed_start, date_from, date_to);
+
+          if (
+            "undefined" !== typeof lead.meta.treatment_value.mounthly &&
+            !isNaN(lead.meta.treatment_value.mounthly)
+          ) {
+            billed_total +=
+              count * get_sum_from_price(lead.meta.treatment_value.mounthly);
+          }
+        }
+        return billed_total;
+      },
+
+      load_csv: function (data) {
+        var formatted_data = [];
+
+        var filters = [];
+
+        for (var j in this.filters) {
+          if (this.filters[j].match("All")) {
+          } else {
+            filters.push(this.filters[j]);
+          }
+        }
+
+        filters = filters.length == 0 ? ["No filters"] : filters;
+
+        filename =
+          jQuery(".range-datepicker__text").text() + "_" + filters.join("-");
+
+        filename = filename.split(" ").join("_");
+
+        if (jQuery(".search__field").val()) {
+          filename += "__searched_for%" + jQuery(".search__field").val();
+        }
+
+        var column_data = strip(this.leads_by_column[data.column]);
+
+        for (var lead_id in column_data) {
+          var billed =
+            this.get_billed_this_period(column_data[lead_id]) +
+            this.get_billed_value(column_data[lead_id]);
+
+          var dentists = column_data[lead_id].meta.treatment_data
+            ? column_data[lead_id].meta.treatment_data
+                .map((_data_map) => {
+                  return _data_map["dentist"];
+                })
+                .filter((_data_filter) => {
+                  return _data_filter;
+                })
+                .join("; ")
+            : "";
+
+          var notes_reception = "";
+          var notes_tco = "";
+
+          if (typeof column_data[lead_id].meta.lead_notes == "object") {
+            notes_reception = column_data[lead_id].meta.lead_notes
+              .filter((_notes) => {
+                return _notes["show"] == 1;
+              })
+              .map((_notes) => {
+                return _notes["text"];
+              });
+            notes_reception = JSON.stringify(notes_reception);
+          }
+
+          if (typeof column_data[lead_id].meta.lead_notes_tco == "object") {
+            notes_tco = column_data[lead_id].meta.lead_notes_tco
+              .filter((_notes) => {
+                return _notes["show"] == 1;
+              })
+              .map((_notes) => {
+                return _notes["text"];
+              });
+            notes_tco = JSON.stringify(notes_tco);
+          }
+
+          var temp = {
+            name: column_data[lead_id].meta.patient_data.name,
+            treatment: column_data[lead_id].meta.patient_data.treatment,
+            clinic: column_data[lead_id].meta.patient_data.clinic,
+            campaign: column_data[lead_id].meta.patient_data.campaign
+              ? column_data[lead_id].meta.patient_data.campaign
+              : "",
+            dentists: dentists,
+            notes_reception: notes_reception,
+            notes_tco: notes_tco,
+            proposed:
+              "£" +
+              formatMoney(
+                column_data[lead_id].meta.treatment_value.value,
+                2,
+                ".",
+                ","
+              ),
+            billed: "£" + formatMoney(billed, 2, ".", ","),
+          };
+
+          var temp_arr = [];
+
+          for (var i in temp) {
+            var _temp = temp[i];
+
+            if (typeof _temp == "array") {
+              _temp = _temp.join("; ");
+            } else if (typeof _temp == "object") {
+              _temp = Object.values(_temp).join("; ");
+            }
+
+            var reg = new RegExp('[\n|,|"]');
+
+            if (_temp && _temp.match("/\r\n|\n|\r|,/gm")) {
+            }
+
+            var _t = _temp
+              ? '"' +
+                _temp
+                  .split("\n")
+                  .join(" ")
+                  .split('"')
+                  .join(" ")
+                  .split("#")
+                  .join(" ") +
+                '"'
+              : "none";
+
+            temp_arr.push(_t);
+          }
+
+          formatted_data.push(temp_arr);
+        }
+
+        var csvContent =
+          "data:text/csv;charset=utf-8,name,treatment,clinic,campaign,dentists,notes_reception,notes_tco,proposed,billed" +
+          "\r\n" +
+          formatted_data.map((e) => e.join(",")).join("\r\n");
+
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename + ".csv");
+        document.body.appendChild(link); // Required for FF
+
+        link.click();
+      },
+
+      // fires when filter select changes
+      run_filter_list: function (data) {
+        this.filters[data.name] = data.val;
+      },
+
+      run_search: function (search) {
+        //console.log('run search');
+        this.search_value = search.toLowerCase();
+      },
+
+      sort_by_date: function (lead_a, lead_b) {
+        var date_lead_a = new Date(lead_a.post_modified);
+        var date_lead_b = new Date(lead_b.post_modified);
+
+        if (date_lead_a === date_lead_b) {
+          return 0;
+        }
+        return date_lead_a > date_lead_b ? -1 : 1;
+      },
+
+      sort_by_date_added: function (lead_a, lead_b) {
+        var date_lead_a = new Date(lead_a.post_date);
+        var date_lead_b = new Date(lead_b.post_date);
+
+        if (date_lead_a === date_lead_b) {
+          return 0;
+        }
+        return date_lead_a > date_lead_b ? -1 : 1;
+      },
+
+      sort_by_sms: function (lead_a, lead_b) {
+        if (
+          (lead_a.show_message_alert_him &&
+            lead_b.show_message_alert_him &&
+            lead_b.show_message_alert &&
+            lead_a.show_message_alert) ||
+          (!lead_a.show_message_alert_him &&
+            !lead_b.show_message_alert_him &&
+            !lead_b.show_message_alert &&
+            !lead_a.show_message_alert)
+        ) {
+          return 0;
+        }
+        if (lead_a.show_message_alert_him && !lead_b.show_message_alert_him) {
+          return -1;
+        }
+        if (!lead_a.show_message_alert_him && lead_b.show_message_alert_him) {
+          return 1;
+        }
+        if (lead_a.show_message_alert && !lead_b.show_message_alert) {
+          return -1;
+        }
+        if (!lead_a.show_message_alert && lead_b.show_message_alert) {
+          return 1;
+        }
+      },
+
+      /**
+       * get filter data from cookies if exists
+       */
+      update_filter_from_cookies: function () {
+        var lead_list_filter = Cookie.get("lead_list_filter2");
+        if (lead_list_filter) {
+          this.filters = JSON.parse(lead_list_filter);
+        }
+      },
+
+      // fires update action when daterange is changed
+      update_leads_by_dates: function (data) {
+        console.log(data);
+
+        this.show_not_read_only = false;
+        this.show_overdue_only = false;
+        var vm = this;
+        data.get_previous_data = 0;
+
+        Cookie.set("list_data_settings", JSON.stringify(data));
+
+        data.action = "get_leads_by_dates";
+
+        wait_block.show();
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: "POST",
+          dataType: "json",
+          data: data,
+
+          complete: function (xhr, textStatus) {
+            //called when complete
+            wait_block.hide();
+          },
+
+          success: function (data, textStatus, xhr) {
+            console.log(data);
+
+            vm.clear_filters();
+            vm.leads = data.leads;
+            vm.filter = data.filter_data;
+          },
+
+          error: function (xhr, textStatus, errorThrown) {
+            console.log("error");
+            console.log(errorThrown);
+            console.log(xhr);
+          },
+        });
+      },
+
+      update_order_status_on_drag_cb: function (data) {
+        console.log(data);
+
+        var vm = this;
+
+        var index = this.leads.findIndex((el) => {
+          return data.item_id == el.ID;
+        });
+
+        if (index < 0) {
+          return;
+        }
+
+        if (failed_stage_name.indexOf(this.leads[index].lead_stage) >= 0) {
+          this.$set(this.leads[index], "is_failed", "yes");
+        } else {
+          this.$set(this.leads[index], "is_failed", "no");
+        }
+
+        if (converted_stages.indexOf(this.leads[index].lead_stage) >= 0) {
+          this.$set(this.leads[index], "is_converted", "yes");
+        } else {
+          this.$set(this.leads[index], "is_converted", "no");
+        }
+
+        var fmt = new DateFormatter();
+        var today = new Date();
+
+        this.leads[index].post_modified = fmt.formatDate(today, "Y-m-d H:i:s");
+
+        var lead_stage_log2 = strip(this.leads[index].meta.lead_stage_log2);
+
+        lead_stage_log2.push({
+          stage: this.leads[index].lead_stage,
+          date: fmt.formatDate(today, "Y-m-d H:i:s"),
+          by: theme_user_name,
+        });
+
+        this.$set(
+          this.leads[index]["meta"],
+          "lead_stage_log2",
+          lead_stage_log2
+        );
+
+        var data_post = {
+          action: "update_leads_list",
+          post_id: this.leads[index].ID,
+          list_id: this.leads[index].lead_stage,
+        };
+
+        if (!vm.leads[index]["meta"].reminder) {
+          vm.$refs.alert_alarm.show = true;
+          vm.$refs.alert_alarm.index = index;
+          vm.$refs.alert_alarm.ID = vm.leads[index].ID;
+        }
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: "POST",
+          dataType: "json",
+          data: data_post,
+          complete: function (xhr, textStatus) {
+            //called when complete
+          },
+
+          success: function (data, textStatus, xhr) {
+            console.log(data);
+            //console.groupEnd('---');
+          },
+
+          error: function (xhr, textStatus, errorThrown) {
+            //console.log('error');
+            //console.log(errorThrown);
+            //console.groupEnd();
+          },
+        });
+      },
+
+      update_filters_selected: function (event) {
+        console.log(event);
+
+        var filters = Object.values(this.filters_selected);
+
+        var index = filters.indexOf(event.val);
+
+        if (index < 0) {
+          filters.push(event.val);
+        } else {
+          filters.splice(index, 1);
+        }
+
+        this.$set(this, "filters_selected", filters);
+
+        Cookie.set("filters_selected", JSON.stringify(filters));
+      },
+
+      sort_leads: function (data) {
+        if (data.val) {
+          this.sortby = data.val;
+        }
+      },
+
+      update_reminder_cb: function (event) {
+        this.$set(this.leads[event.index].meta, "reminder", event.reminder);
+      },
+
+      resert_reminder_cb: function (event) {
+        console.log(event);
+
+        var vm = this;
+        this.$set(this.leads[event.index], "lead_stage", "New");
+
+        var data_post = {
+          action: "update_leads_list",
+          post_id: event.ID,
+          list_id: "",
+        };
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: "POST",
+          dataType: "json",
+          data: data_post,
+
+          complete: function (xhr, textStatus) {},
+
+          success: function (data, textStatus, xhr) {
+            console.log(data);
+            //console.groupEnd('---');
+          },
+
+          error: function (xhr, textStatus, errorThrown) {
+            //console.log('error');
+            //console.log(errorThrown);
+            //console.groupEnd();
+          },
+        });
+      },
+    },
+  });
+}
+Vue.component('comp-single-lead', {
+  data: function(){
+    return {
+      visible: false,
+      failed_reasons: failed_reasons,
+      failed_reason_text: '',
+      lead_data: {
+        phone_count: 0,
+        message_count: 0,
+        phone_count_tco: 0,
+        message_count_tco: 0,
+        meta: {
+          treatment_value: {
+            billed    : 0,
+            value     : 0,
+            terms     : '',
+            mounthly  : '',
+            date_end : '',
+          },
+          reminder: '',
+          specialists_assigned: false,
+          specialists_assigned_tco: false,
+          tco_data: {
+            'digital' : false,
+            'tco' : false,
+            'dentist' : false,
+            'attended' : false,
+            'fta_cancelled' : false,
+            'tax' : false,
+          },
+          patient_data: {
+            name: '',
+            phone: '',
+            email: '',
+            source: '',
+            treatment: '',
+            clinic: '',
+            campaign: '',
+          },
+          failed_reason:{
+            text: '',
+            reason: '',
+            author: '',
+            date: '',
+          },
+          treatment_data: [],
+        },
+      },
+      balance: 0,
+      enquery_notes_count: 1,
+      tco_notes_count: 1,
+      text_messages_to_show: 2,
+      note_text: '',
+      note_text_tco : '',
+      file_changed   : '',
+      new_file  : '',
+      specialists_data: specialists_data,
+      requre_save: true,
+      // requre_save: false,
+      show_confirmation_popup: false,
+      text_messages: false,
+      message_to_client: '',
+      sms_data: sms_data,
+    };
+  },
+
+  watch: {
+    'lead_data.meta.email_log':function(val){
+      // console.log(val);
+      this.save_parent_meta(this.lead_data.ID, val, 'email_log', true);
+    },
+
+    'lead_data.meta.reminder':function(val){
+      console.log(val);
+    },
+
+    'lead_data.lead_stage': function(val){
+      if(failed_stage_name.indexOf(val) >=0){
+        this.$set(this.lead_data, 'is_failed', 'yes');
+      }else{
+        this.$set(this.lead_data, 'is_failed', 'no');
+      }
+
+      if(converted_stages.indexOf(val) >=0){
+        this.$set(this.lead_data, 'is_converted', 'yes');
+      }else{
+        this.$set(this.lead_data, 'is_converted', 'no');
+      }
+    },
+
+    'lead_data.meta.patient_data.name': function(){
+      jQuery('input[name=name]').removeClass('error');
+    },
+
+    'lead_data.meta.patient_data.phone': function(){
+      jQuery('input[name=phone]').removeClass('error');
+    },
+
+    'lead_data.meta.patient_data.email': function(val){
+      jQuery('input[name=email]').removeClass('error');
+    },
+
+    show_confirmation_popup: function(val){
+      if(val){
+        this.$refs.popup._stage = this.lead_data.lead_stage;
+        this.$refs.popup.show_confirmation_popup = true;
+      }
+    },
+
+    text_messages_to_show: function(val){
+      if(val > 2){
+        Vue.nextTick(function(){
+          jQuery('._messages')[0].scrollTop = jQuery('._messages')[0].scrollHeight;
+        })
+      }
+    },
+
+    note_text: function(){
+      this.$refs.note_textarea.style.height = '';
+      this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+    },
+
+    note_text_tco: function(){
+      this.$refs.note_textarea_tco.style.height = '';
+      this.$refs.note_textarea_tco.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+    },
+
+    visible: function(show){
+      var vm = this;
+
+      if(show){
+        this.treatment_data_selects();
+        this.requre_save  = true;
+        // this.requre_save  = false;
+      }else{
+        this.enquery_notes_count  = 1;
+        this.tco_notes_count  = 1;
+        this.note_text  = '';
+        this.note_text_tco   = '';
+        this.files_updated   = '';
+        this.file_changed     = '';
+        this.specialists_data  = specialists_data;
+        this.requre_save  = true;
+        // this.requre_save  = false;
+        this.show_confirmation_popup  = false;
+      }
+    },
+
+
+      'lead_data.meta.treatment_value.billed': function(val){
+
+        var balance = get_sum_from_price(this.lead_data.meta.treatment_value.value) - get_sum_from_price(this.lead_data.meta.treatment_value.billed);
+
+
+        this.lead_data.meta.treatment_value.terms = get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 'Full Payment' :  '12 Months';
+
+        this.lead_data.meta.treatment_value.mounthly =  get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 0 : balance/12;
+        this.balance = formatMoney(balance,2, '.',',');
+      },
+
+
+      'lead_data.meta.treatment_value.value': function(val){
+
+        var balance = get_sum_from_price(this.lead_data.meta.treatment_value.value) - get_sum_from_price(this.lead_data.meta.treatment_value.billed);
+
+        this.lead_data.meta.treatment_value.terms = get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 'Full Payment' :  '12 Months';
+
+        this.lead_data.meta.treatment_value.mounthly =  get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 0 : balance/12;
+        this.balance = formatMoney(balance,2, '.',',');
+      },
+  },
+
+  computed: {
+     balance   : function(){
+        return '';
+     },
+
+     deactivate_text: function(){
+       return this.lead_data.meta.deactivated_lead ==='yes'? 'Activate' : 'Deactivate';
+     },
+
+     disable_sms: function(){
+       return typeof(this.lead_data.meta.disable_sms) != 'undefined' && this.lead_data.meta.disable_sms == 1;
+     },
+
+     email_log:function(){
+
+      if('undefined' == typeof(this.lead_data.meta.email_log)){
+        return [];
+      }
+
+      var logs = this.lead_data.meta.email_log.map(e=>{
+        var date = new Date(e.date);
+        var fmt  = new DateFormatter();
+        e.date_formatted =  fmt.formatDate(date, 'F d Y') + ' at ' + fmt.formatDate(date, 'H:ia');
+
+        // console.log();
+
+        return e;
+      });
+
+
+       return logs;
+     },
+
+
+      enquery_notes_c: function(){
+        var notes = this.lead_data.meta.lead_notes;
+        var notes_c = [];
+        var counter = 0;
+
+        if(!notes){
+          return notes_c;
+        }
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1 && counter < this.enquery_notes_count){
+              note.key =  notes.length -1 - id;
+              notes_c.push(note);
+              counter++;
+           }
+        }
+
+        return notes_c;
+      },
+
+
+      enquery_notes_count_c: function(){
+        var counter = 0;
+        var notes = this.lead_data.meta.lead_notes;
+
+        if(!notes){
+          return counter;
+        }
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1){
+              counter++;
+           }
+        }
+
+        return counter;
+      },
+
+
+      file_is_prepared: function(){
+        return this.new_file.length > 0
+      },
+
+
+      files_updated: function(){
+        return this.lead_data.meta.lead_files;
+      },
+
+
+      get_treatment_value: function(){
+        return this.lead_data.meta.treatment_value.value;
+      },
+
+
+      get_billed_value: function(){
+        return this.lead_data.meta.treatment_value.billed;
+      },
+
+      get_terms_count: function(){
+        $return = 1;
+        switch(this.lead_data.meta.treatment_value.terms){
+          case '12 Months':
+             $return = 12;
+            break;
+          case '18 Months':
+             $return = 18;
+            break;
+          case '24 Months':
+             $return = 24;
+            break;
+          case '36 Months':
+             $return = 36;
+            break;
+          case '48 Months':
+             $return = 48;
+            break;
+          default:
+             $return = 1;
+            break;
+        }
+
+        return  $return;
+      },
+
+      journey_data: function(){
+        return {
+          'Straighter Teeth' : {
+            text: 'I want to fix the alignment of my smile',
+            icon: '<svg class="icon svg-icon-teeth"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-teeth"></use></svg>',
+          },
+          'Whiter Teeth' : {
+            text: 'I’d like my teeth to shine brighter',
+            icon: '<svg class="icon svg-icon-whiter"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-whiter"></use></svg>',
+          },
+          'Healthier Teeth' : {
+            text: 'I would like an examination and/or hygiene',
+            icon: '<svg class="icon svg-icon-helthier"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-helthier"></use></svg>',
+          },
+          'Complete Smile Makeover' : {
+            text: 'I want to transform my smile entirely',
+            icon: '<svg class="icon svg-icon-smiler"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-smiler"></use></svg>',
+          },
+        };
+      },
+
+
+      lead_status:function(){
+        if(this.lead_data.is_converted == 'yes'){
+          return {
+            text: 'Converted Lead',
+            class: 'converted',
+          }
+
+        }else if (this.lead_data.is_failed == 'yes'){
+          return {
+            text: 'Failed Lead',
+            class: 'failed',
+          }
+        }else{
+          return {
+            text: 'Opened Lead',
+            class: 'opened',
+          }
+        }
+      },
+
+
+      monthly_payment: function(){
+        var billed = get_sum_from_price(this.get_billed_value);
+        var summ = (get_sum_from_price(this.get_treatment_value) - get_sum_from_price(this.get_billed_value))/this.get_terms_count;
+        summ = summ.toFixed(2);
+        this.lead_data.meta.treatment_value.mounthly = summ;
+        return   '£'+ formatMoney(summ, 2, ".", ",");
+      },
+
+
+
+      messages_count: function(){
+        return parseInt(this.lead_data.message_count);
+      },
+
+      messages_left : function(){
+        return Math.max(0, 3 - this.lead_data.message_count);
+      },
+
+      messages_tco: function(){
+         return parseInt(this.lead_data.message_count_tco);
+      },
+
+      patient_data : function(){
+        return 0;
+      },
+
+      phones_left : function(){
+        return Math.max(0, 3 - parseInt(this.lead_data.phone_count));
+      },
+
+      phones_count: function(){
+        return parseInt(this.lead_data.phone_count);
+      },
+
+      phones_tco: function(){
+        return parseInt(this.lead_data.phone_count_tco);
+      },
+
+      select_data: function(){
+        return {
+          clinics: clinics,
+          sources: theme_leads_sources,
+          campaigns: campaigns,
+          treatments: treatments,
+          specialists: specialists,
+          specialists_tco: specialists_tco,
+          payment_methods: payment_methods,
+          available_dentists: available_dentists,
+          tags_cloud: tags_cloud,
+          confidence: [ 'Not at all', 'Slightly', 'A lot'],
+          checkup: ['Never', 'Occassionally', 'Regularly'],
+          had_cosmetic: ['Whitening', 'Veneers', 'Bonding', 'Other'],
+          how_ever: ['Fixed Braces', 'Aligners', 'None', 'Other'],
+        };
+      },
+
+      show_clear_reminder:function(){
+        return this.lead_data.meta.reminder && (failed_stage_name.indexOf(this.lead_data.lead_stage) >= 0 || converted_stages.indexOf(this.lead_data.lead_stage) >= 0);
+      },
+
+      tco_notes_c : function(){
+        var notes = this.lead_data.meta.lead_notes_tco;
+        var notes_c = [];
+        var counter = 0;
+
+        if(!notes){
+          return notes_c;
+        }
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1 && counter < this.tco_notes_count){
+              note.key =  notes.length -1 - id;
+              notes_c.push(note);
+              counter++;
+           }
+        }
+
+        return notes_c;
+      },
+
+      tco_notes_count_c : function(){
+        var counter = 0;
+        var notes = this.lead_data.meta.lead_notes_tco;
+
+        if(!notes){
+          return counter;
+        }
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1){
+              counter++;
+           }
+        }
+
+        return counter;
+      },
+
+      text_messages_shown: function(){
+        if(this.text_messages_to_show  == 2 && this.text_messages.length > 2){
+          var messages = [];
+          for(var i = 2; i > 0 ; i--){
+          messages.push(this.text_messages[this.text_messages.length - i]);
+          }
+          return messages;
+        }else{
+          return this.text_messages;
+        }
+      },
+
+      treatment_data  : function(){
+        return this.lead_data.meta.treatment_data? this.lead_data.meta.treatment_data : [];
+      },
+
+      visible_specialists: function(){
+        var ids = [];
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned)){
+          for(var _id in this.lead_data.meta.specialists_assigned){
+             if(this.lead_data.meta.specialists_assigned[_id] == 'yes'){
+               ids.push( parseInt(_id) );
+             }
+          }
+        }
+
+        var data =  Object.values(specialists_data).filter(el =>{
+          return ids.indexOf( el.user_id ) >=0;
+        });
+
+        return data;
+      },
+
+      visible_specialists_tco: function(){
+        var ids = [];
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned_tco)){
+          for(var _id in this.lead_data.meta.specialists_assigned_tco){
+             if(this.lead_data.meta.specialists_assigned_tco[_id] == 'yes'){
+              ids.push( parseInt(_id) );
+             }
+          }
+        }
+
+        var data =  Object.values(specialists_data).filter(el =>{
+          return ids.indexOf( el.user_id ) >=0;
+        });
+
+        return data;
+      },
+
+      visible_specialists_show_select: function(){
+        return true;
+        if(!this.lead_data.meta.specialists_assigned){
+          return true;
+        }
+        var id = -1;
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned)){
+
+          for(var _id in this.lead_data.meta.specialists_assigned){
+             if(this.lead_data.meta.specialists_assigned[_id] == 'yes'){
+              id = _id;
+             }
+          }
+        }
+
+        var _class =  parseInt(id) > 0? false: true;
+
+        return _class;
+
+      },
+
+      visible_specialists_show_select_tco: function(){
+        return true;
+        if(!this.lead_data.meta.specialists_assigned_tco){
+          return true;
+        }
+        var id = -1;
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned_tco)){
+
+          for(var _id in this.lead_data.meta.specialists_assigned_tco){
+             if(this.lead_data.meta.specialists_assigned_tco[_id] == 'yes'){
+              id = _id;
+             }
+          }
+        }
+        var _class =  parseInt(id) > 0? false: true;
+        return _class;
+      },
+  },
+
+  mounted: function(){
+    var vm = this;
+
+    Vue.nextTick(function(){
+      vm.$forceUpdate();
+    })
+  },
+
+  methods: {
+
+    add_note: function(type){
+      type = 'undefined' !== typeof(type)? type : 'enquery';
+
+      if(!this.note_text && type == 'enquery'){
+        alert('Please enter some text');
+        return false;
+      }else  if(!this.note_text_tco && type == 'tco'){
+        alert('Please enter some text');
+        return false;
+      }
+
+      var date = new Date();
+      var fmt  = new DateFormatter();
+      var date_formatted =  fmt.formatDate(date, 'F d Y') + ' at ' + fmt.formatDate(date, 'H:i');
+
+      var new_note = {
+        'date'       : date_formatted,
+        'user_name'  : this.lead_data.user_name,
+        'user_id'    : this.lead_data.user_id,
+        'text'       : (type== 'enquery')? this.note_text : this.note_text_tco,
+        'is_manager' : is_manager,
+        'done'       : 'no',
+        'show'       : 1,
+      };
+
+      if(type == 'enquery'){
+
+        if(!this.lead_data.meta.lead_notes || this.lead_data.meta.lead_notes == 'false'){
+          this.$set(this.lead_data.meta, 'lead_notes', []);
+        }
+
+        this.lead_data.meta.lead_notes.push(new_note);
+        this.note_text = '';
+        this.$refs.note_textarea.style.height = '';
+        this.save_lead_meta('lead_notes', 'lead_notes');
+      }else if (type =='tco'){
+
+        if(!this.lead_data.meta.lead_notes_tco || this.lead_data.meta.lead_notes_tco == 'false'){
+          this.$set(this.lead_data.meta, 'lead_notes_tco', []);
+        }
+
+        this.lead_data.meta.lead_notes_tco.push(new_note);
+        this.note_text_tco = '';
+        this.$refs.note_textarea_tco.style.height = '';
+        this.save_lead_meta('lead_notes_tco', 'lead_notes_tco');
+      }
+    },
+
+
+    add_treatment_dentist: function(){
+      this.lead_data.meta.treatment_data.push({
+        'treatment': '',
+        'dentist': '',
+        'billed' : 0,
+        'payment_method': ''
+      });
+
+      var vm = this;
+      Vue.nextTick(function(){
+
+       var select_id = vm.lead_data.meta.treatment_data.length - 1;
+
+        if(is_dentist === 'yes'){
+          vm.$refs['select_dentist'][select_id].set_value('selected', dentist_name);
+        }
+      })
+
+      this.requre_save = true;
+    },
+
+    add_enquery:function(){
+      var treatments = Object.values(this.lead_data.meta.patient_data.treatment);
+      treatments.push(' ');
+      this.$set(this.lead_data.meta.patient_data, 'treatment',treatments);
+    },
+
+
+    assign_specialist: function(){
+      // this.selected_specialist = false;
+      // this.save_sepcialists_meta();
+    },
+
+
+    change_image_uploaded_cb:function(event, name){
+      var path = this.lead_data.meta.online_journey.dropbox_path + event.file.name;
+      this.upload_image_to_dropbox(event.file, path, name);
+    },
+
+    change_stage_popup_cb:function(data){
+
+      var vm = this;
+
+      if(this.lead_data.lead_stage != data.stage){
+        var fmt = new DateFormatter();
+        var today = new Date();
+
+        var lead_stage_log2 = strip(this.lead_data.meta.lead_stage_log2);
+        lead_stage_log2.push({'stage' : data.stage, 'date' : fmt.formatDate(today, 'Y-m-d H:i:s'), by: theme_user_name})
+        this.$set(this.lead_data.meta, 'lead_stage_log2', lead_stage_log2);
+
+        this.save_lead_meta('lead_stage_log2', 'lead_stage_log2');
+      }
+
+
+      Vue.nextTick(function(){
+        vm.lead_data.lead_stage = data.stage;
+
+        if(!vm.lead_data.meta.reminder && (failed_stage_name.indexOf(data.stage) < 0 && converted_stages.indexOf(data.stage) < 0)){
+          vm.$refs.alert_alarm.show = true;
+          vm.$refs.alert_alarm.ID = vm.lead_data.ID;
+          return;
+        }
+
+        vm.save_lead_meta(false);
+      })
+    },
+
+    deactivate_lead: function(){
+
+      wait_block.show();
+      var vm = this;
+      var data = {
+        action: 'deactivate_lead',
+        value: this.lead_data.meta.deactivated_lead == 'no'? 'yes': 'no',
+        lead_id: this.lead_data.ID,
+      };
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+      })
+
+      .done(function(e) {
+        console.log("success");
+        vm.lead_data.meta
+        vm.$set( vm.lead_data.meta, 'deactivated_lead', data.value);
+      })
+      .fail(function(e) {
+        console.log("error");
+      })
+      .always(function(e) {
+
+        wait_block.hide();
+        console.log(e);
+      });
+
+    },
+
+    do_delete_or_return: function(){
+      this.deleting_lead = true;
+      var vm = this;
+
+      wait_block.show();
+
+
+      if(parseInt(this.lead_data.lead_id) === -1){
+        wait_block.hide();
+      }else{
+        var data = {
+          action  : 'delete_lead',
+          lead_id : parseInt(this.lead_data.ID),
+        };
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+           clog(xhr)
+        },
+
+        success: function(data, textStatus, xhr) {
+          if('undefined' != typeof(data.redirect)){
+            // location.href = data.redirect;
+          }
+
+          var index =  vm.$parent.leads.findIndex(el =>{
+            return el.ID == vm.lead_data.ID;
+          })
+          vm.$parent.leads.splice(index,1);
+          vm.visible = false;
+          vm.$parent.show_list = true
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          clog(xhr);
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+      }
+    },
+
+
+    delete_note: function(key , type){
+      type = 'undefined' !== typeof(type)? type : 'enquery';
+
+     if(type == 'enquery'){
+        key = this.lead_data.meta.lead_notes.length - key - 1;
+        this.lead_data.meta.lead_notes[key].show = 0;
+        this.save_lead_meta('lead_notes', 'lead_notes');
+      }
+     if(type == 'tco'){
+        key = this.lead_data.meta.lead_notes_tco.length - key - 1;
+        this.lead_data.meta.lead_notes_tco[key].show = 0;
+        this.save_lead_meta('lead_notes_tco', 'lead_notes_tco');
+      }
+    },
+
+
+    exec_save: function(){
+        if(this.requre_save){
+          this.show_confirmation_popup = true;
+        }
+    },
+
+    update_reminder_cb: function(event){
+      console.log(event);
+      this.lead_data.meta.reminder = event.reminder;
+      this.$refs.reminder.value = event.reminder;
+
+      var vm = this;
+
+      Vue.nextTick(function(){
+         vm.save_lead_meta(false);
+      })
+    },
+
+    get_tag_match: function(tag){
+      var tags = 'undefined' != typeof(this.lead_data.meta.tags_cloud)? this.lead_data.meta.tags_cloud : [];
+
+      var result = !(tags.indexOf(tag) < 0);
+
+      return result;
+    },
+
+    go_back_to_list: function(){
+      this.visible = false;
+      this.$parent.show_list = true;
+    },
+
+
+    mark_note_done: function(key, val, type){
+      type = 'undefined' !== typeof(type)? type : 'enquery';
+
+      if(type == 'enquery'){
+        key = this.lead_data.meta.lead_notes.length - key - 1;
+        this.lead_data.meta.lead_notes[key].done = val;
+        this.save_lead_meta('lead_notes', 'lead_notes');
+      }
+      if(type == 'tco'){
+        key = this.lead_data.meta.lead_notes_tco.length - key - 1;
+        this.lead_data.meta.lead_notes_tco[key].done = val;
+        this.save_lead_meta('lead_notes_tco', 'lead_notes_tco');
+      }
+    },
+
+
+    price_to_value: function(ref){
+      var summ = (!!this.lead_data.meta.treatment_value.value)? this.lead_data.meta.treatment_value.value : 0;
+
+      switch(ref){
+        case 'price_input_field':
+          var summ = (!!this.lead_data.meta.treatment_value.value)? this.lead_data.meta.treatment_value.value : 0;
+          break;
+        case 'input_billed':
+          var summ = (!!this.lead_data.meta.treatment_value.billed)? this.lead_data.meta.treatment_value.billed : 0;
+          break;
+      }
+      summ = get_sum_from_price(summ);
+      this.$refs[ref].set_value(summ);
+    },
+
+
+    remove_specialist: function(user_id,type){
+      if(window.confirm("Confirm unassigning " + name + " from this lead")){
+          switch(type){
+            case 'tco':
+              this.lead_data.meta.specialists_assigned_tco[user_id] = 'no';
+              break;
+            default:
+              this.lead_data.meta.specialists_assigned[user_id] = 'no';
+              break;
+          }
+
+          this.save_specialists_meta();
+       }
+    },
+
+
+    save_specialists_meta: function(){
+      var meta     = {};
+      var meta_tco = {};
+
+      for(id in specialists_data){
+        meta[specialists_data[id].user_id] = this.lead_data.meta.specialists_assigned[specialists_data[id].user_id]? this.lead_data.meta.specialists_assigned[specialists_data[id].user_id]:'no';
+        meta_tco[specialists_data[id].user_id] = this.lead_data.meta.specialists_assigned_tco[specialists_data[id].user_id]? this.lead_data.meta.specialists_assigned_tco[specialists_data[id].user_id]:'no';;
+      }
+
+      var data = {
+        meta: {
+          lead_specialists: meta,
+          lead_specialists_tco: meta_tco,
+        },
+        action                : 'update_lead_specialist_meta',
+        lead_data             : this.lead_data,
+        nonce                 : jQuery('[name=lead_data]').val(),
+      };
+
+      data.lead_data.lead_id = this.lead_data.ID;
+
+      var vm = this;
+      wait_block.show();
+
+      this.save_parent_meta(this.lead_data.ID, meta, 'specialists_assigned', true);
+      this.save_parent_meta(this.lead_data.ID, meta_tco, 'specialists_assigned_tco', true);
+
+      var fmt = new DateFormatter();
+      var today = new Date();
+
+      this.save_parent_meta(this.lead_data.ID,  fmt.formatDate(today, 'Y-m-d H:i:s'), 'post_modified',  false)
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+        },
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+    },
+
+
+    save_lead_meta: function(key_meta, key_this){
+      var vm = this;
+
+      if (vm.deleting_lead){
+        return;
+      }
+
+      if(typeof(key_meta) !== 'string'){
+        var meta = {
+          patient_data          : this.lead_data.meta.patient_data,
+          treatment_data        : this.lead_data.meta.treatment_data,
+          treatment_value       : this.lead_data.meta.treatment_value,
+          treatment_coordinator : this.lead_data.meta.treatment_coordinator,
+          lead_notes            : this.lead_data.meta.lead_notes,
+          lead_notes_tco        : this.lead_data.meta.lead_notes_tco,
+          reminder              : this.lead_data.meta.reminder,
+          text_messages         : this.lead_data.meta.text_messages,
+          tco_data              : this.lead_data.meta.tco_data,
+          lead_stage            : this.lead_data.lead_stage,
+          failed_reason         : this.lead_data.meta.failed_reason,
+          tags_cloud            : this.lead_data.meta.tags_cloud,
+        };
+
+        if('undefined' !== typeof( this.lead_data.meta.online_journey)){
+          meta.online_journey = this.lead_data.meta.online_journey;
+        }
+      }else{
+        var  meta = {};
+        meta[key_meta] = this.lead_data.meta[key_this];
+      }
+
+      var posted_data = {
+        confirmed: 0,
+        meta: meta,
+        action                : 'update_lead_meta',
+        lead_data             : { lead_id: this.lead_data.ID },
+        nonce                 : jQuery('[name=lead_data]').val(),
+      };
+
+      var no_popup_keys = [
+        'tco_data',
+        'lead_notes',
+        'lead_notes_tco',
+        'text_messages',
+        'tags_cloud',
+        'failed_reason',
+      ];
+
+
+      if((!this.lead_data.meta.patient_data.name || !this.lead_data.meta.patient_data.phone || !this.lead_data.meta.patient_data.email || !this.lead_data.meta.patient_data.treatment)){
+
+        if(!this.lead_data.meta.patient_data.phone){
+          alert('Please add phone')
+          jQuery('input[name=phone]').addClass('error');
+        }
+
+        if(!this.lead_data.meta.patient_data.name){
+          alert('Please add patient fine')
+          jQuery('input[name=name]').addClass('error');
+        }
+
+        if(!this.lead_data.meta.patient_data.email){
+          alert('Please add email')
+          jQuery('input[name=email]').addClass('error');
+        }
+
+        if(!this.lead_data.meta.patient_data.treatment){
+          alert('Please add patient treatment')
+          this.$refs.treatments_select.$el.classList.add('error')
+        }
+
+        return false;
+      }
+
+      if('undefined' != typeof(this.lead_data.is_failed) && 'yes' == this.lead_data.is_failed && !this.lead_data.meta.failed_reason.reason){
+
+        if(!this.lead_data.meta.failed_reason.reason){
+          alert('Please select a failed lead reason')
+          this.$refs.failed_reasons_select.$el.classList.add('error')
+        }
+
+        return false;
+      }
+
+      var vm = this;
+
+      var no_block_keys = [
+        'tco_data',
+        'lead_notes',
+        'lead_notes_tco',
+        'text_messages',
+        'failed_reason',
+        'disable_sms',
+      ];
+
+      if( no_block_keys.indexOf(key_meta) < 0){
+        wait_block.show();
+      }
+
+      for(var _id in meta){
+        if(_id != 'lead_stage'){
+          this.save_parent_meta(this.lead_data.ID, meta[_id], _id, true);
+        }else{
+          this.save_parent_meta(this.lead_data.ID, meta[_id], _id, false);
+        }
+      }
+
+      var filter_data = {
+          clinics:    [this.lead_data.meta.patient_data.clinic],
+          treatments: this.lead_data.meta.patient_data.treatment,
+          campaigns:  [this.lead_data.meta.patient_data.campaign],
+          sources:    [this.lead_data.meta.patient_data.source],
+          tags:       this.lead_data.meta.tags_cloud,
+      };
+
+      for(var _filter_data in filter_data){
+        var value = filter_data[_filter_data];
+
+        var index = vm.$parent.leads.findIndex(el=>{return el.ID == vm.lead_data.ID});
+        vm.$parent.$set(vm.$parent.leads[index].filter_data, _filter_data, value);
+        vm.$parent.$set(vm.$parent.leads[index].filter_data2, _filter_data, value);
+      }
+
+
+      var fmt = new DateFormatter();
+      var today = new Date();
+
+      this.save_parent_meta(this.lead_data.ID,  fmt.formatDate(today, 'Y-m-d H:i:s'), 'post_modified',  false)
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: posted_data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+           // vm.requre_save = false;
+           vm.requre_save = true;
+           vm.show_confirmation_popup = false;
+        },
+
+        success: function(data, textStatus, xhr) {
+           console.log(data);
+
+          // if(data.reload){
+          //   location.href = data.url;
+          //   // wait_block.show();
+          // }
+
+          // jQuery('.button-create span').text('Save Changes');
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+
+            if(response_text.data[0] === 'name was found'){
+              var confirm = window.confirm("Are you sure you want to add lead for " + vm.patient_data.name +'? Lead for patient with this name already exists');
+
+              // console.log(confirm);
+
+              if(confirm){
+                posted_data.confirmed= 1;
+                wait_block.show();
+                vm.second_request(posted_data)
+              }
+
+            }else{
+              alert(response_text.data[0]);
+            }
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+    },
+
+
+    save_new_stage: function(){
+
+      if(this.lead_data.lead_stage === this.lead_data.lead_stage_prev){
+        this.show_confirmation_popup = false;
+        return true;
+      }
+
+      var list_id_prev  = this.lead_data.lead_stage_prev;
+      var list_id       = this.lead_data.lead_stage ;
+      var user_name     = this.lead_data.user_name;
+      var user_id       = this.lead_data.user_id;
+      var post_id       = this.lead_data.ID;
+
+      jQuery(document.body).trigger('update_lead_log', {
+        post_id: post_id,
+        list_id_prev: list_id_prev,
+        list_id_new: list_id,
+        user_name: user_name ,
+        user_id:   user_id ,
+        event: 'stage_changed'
+      });
+
+      jQuery(document.body).trigger('save_dragged_item', {post_id: post_id, list_id: list_id})
+
+      this.show_confirmation_popup = false;
+    },
+
+
+    second_request: function(posted_data){
+      var vm = this;
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: posted_data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+        },
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+          vm.$refs.lead_id_input.set_value(data.post_id);
+          jQuery('.button-create span').text('Save Changes');
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            // console.log(xhr);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+    },
+
+     /**
+     * show popup component
+     * popup contains options to select html email templates and address email to a person
+     */
+    show_email_popup_template:function(){
+      this.$set(this.$refs.email_popup_template, 'email_to', this.lead_data.meta.patient_data.email);
+
+      this.$set(this.$refs.email_popup_template, 'lead_id', this.lead_data.ID);
+
+      this.$set(this.$refs.email_popup_template, 'patient_name', this.lead_data.meta.patient_data.name);
+      this.$set(this.$refs.email_popup_template, 'specialists_name', theme_user_name);
+
+      this.$set(this.$refs.email_popup_template, 'show', true);
+    },
+
+
+    treatment_data_selects: function(){
+      var vm = this;
+      var total = 0;
+
+      if(!vm.lead_data.meta.treatment_data){
+      }
+
+      for(var id in vm.lead_data.meta.treatment_data){
+       var select_id = id;
+       var data = vm.lead_data.meta.treatment_data[id];
+
+       var props =  {
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          icon: icons_selects['human'],
+          options: available_dentists,
+          selected: data['dentist'],
+        };
+
+        for( var i in props){
+          vm.$refs['select_dentist'][select_id].set_value(i, props[i]);
+        }
+
+
+       vue_select_components.push(vm.$refs['select_dentist'][select_id]);
+
+       var props =  {
+          icon: icons_selects['treatments'],
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: treatments,
+          selected: data['treatment']
+        };
+
+        for( var i in props){
+          vm.$refs['select_treatment'][select_id].set_value(i, props[i]);
+        }
+
+        vue_select_components.push(vm.$refs['select_treatment'][select_id]);
+
+       var props =  {
+          icon: icons_selects['currency'],
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: payment_methods,
+          selected: data['payment_method']? data['payment_method']: 'Payment Method',
+        };
+
+        for( var i in props){
+          vm.$refs['select_payment_method'][select_id].set_value(i, props[i]);
+        }
+
+
+        vue_select_components.push(vm.$refs['select_payment_method'][select_id]);
+        vm.$refs.select_billed[select_id].set_value( data['billed']);
+
+
+        total += get_sum_from_price(data['billed']);
+      }
+
+      if(!vm.lead_data.meta.treatment_value){
+        vm.$set(vm.lead_data.meta, 'treatment_value', {});
+      }
+       vm.$set(vm.lead_data.meta.treatment_value, 'value', total);
+    },
+
+
+    toggle_sms_show:function(){
+      var disable_sms = 'undefined' != typeof(this.lead_data.meta.disable_sms) && this.lead_data.meta.disable_sms == 1;
+
+      disable_sms = disable_sms ? 0 : 1;
+
+      this.$set(this.lead_data.meta, 'disable_sms', disable_sms);
+      this.save_parent_meta(this.lead_data.ID, disable_sms, 'disable_sms', true);
+      this.save_lead_meta('disable_sms','disable_sms');
+    },
+
+
+    update_treatment_data: function(e, key){
+      if(typeof(e.val)  !== 'undefined'){
+        this.lead_data.meta.treatment_data[key][e.name] = e.val;
+
+        var total = 0;
+
+        for(var id in this.lead_data.meta.treatment_data){
+          total += get_sum_from_price(this.lead_data.meta.treatment_data[id].billed);
+        }
+
+        this.$set(this.lead_data.meta.treatment_value, 'value', '£' + formatMoney(total,2, '.',','));
+
+        this.requre_save = true;
+      }
+    },
+
+
+    update_dates: function(){
+      // console.log(this);
+    },
+
+
+    update_lead: function(data, key,id){
+      if('object' === typeof(data)){
+        if(key === 'treatment_coordinator' && data.name === 'specialist' ){
+          if('undefined' === typeof(this.lead_data.meta[key][data.name])){
+            this.lead_data.meta[key][data.name] = []
+          }
+
+          if(this.lead_data.meta[key][data.name].indexOf(data.val) < 0){
+            this.lead_data.meta[key][data.name].push(data.val);
+          }else{
+            var ind = this.lead_data.meta[key][data.name].indexOf(data.val);
+            this.lead_data.meta[key][data.name].splice(ind, 1);
+          }
+        }else if(key === 'treatment_value' && data.name === 'treatment' ){
+          if('undefined' === typeof(this.lead_data.meta[key][data.name])){
+            this.lead_data.meta[key][data.name] = []
+          }
+          if(this.lead_data.meta[key][data.name].indexOf(data.val) < 0){
+            this.lead_data.meta[key][data.name].push(data.val);
+          }else{
+            var ind = this.lead_data.meta[key][data.name].indexOf(data.val);
+            this.lead_data.meta[key][data.name].splice(ind, 1);
+          }
+        }else if(data.name === 'treatment' ){
+          // console.log(data);
+          // console.log(key);
+          // console.log(id);
+          this.$set(this.lead_data.meta[key][data.name], id, data.val);
+        }else{
+          switch( typeof(this.lead_data.meta[key])){
+            case 'object':
+                this.$set(this.lead_data.meta[key], data.name, data.val);
+              break;
+            default:
+                this.$set(this.lead_data.meta, key, data.val);
+              break;
+          }
+        }
+
+        this.requre_save = true;
+        var vm = this;
+
+        Vue.nextTick(function(){
+          vm.$forceUpdate();
+        });
+      }
+    },
+
+
+    update_lead_stage: function(data, key){
+      this.lead_data.lead_stage_prev = this.lead_data.lead_stage ;
+      this.lead_data.lead_stage = data.val;
+
+
+       var fmt = new DateFormatter();
+       var today = new Date();
+
+       var lead_stage_log2 = strip(this.lead_data.meta.lead_stage_log2);
+       lead_stage_log2.push({'stage' : data.val, 'date' : fmt.formatDate(today, 'Y-m-d H:i:s'), by: theme_user_name})
+       this.$set(this.lead_data.meta, 'lead_stage_log2', lead_stage_log2);
+    },
+
+
+    update_specialists: function(event, type){
+
+      if('undefined' !== typeof(event.val) ){
+        if(this.lead_data.ID < 0){
+          alert('Create lead before assigning it to a specialist, please');
+          return false;
+        };
+
+        var data =  Object.values(specialists_data).filter(el =>{
+          return el.name == event.val})[0];
+        var do_save = false;
+
+        switch(type){
+          case 'tco':
+            if(!this.lead_data.meta.specialists_assigned_tco){
+              this.lead_data.meta.specialists_assigned_tco = {};
+            }
+
+            if(this.lead_data.meta.specialists_assigned_tco[data.user_id] !== 'yes'){
+              this.$set( this.lead_data.meta.specialists_assigned_tco, data.user_id, 'yes');
+              do_save = true;
+            }
+
+            this.$refs.lead_specialissts_select_tco.selected = '';
+            break;
+
+          default:
+            if(!this.lead_data.meta.specialists_assigned){
+              this.lead_data.meta.specialists_assigned = {};
+            }
+             if(this.lead_data.meta.specialists_assigned[data.user_id] !== 'yes'){
+              this.$set( this.lead_data.meta.specialists_assigned, data.user_id, 'yes');
+              do_save = true;
+            }
+
+            this.$refs.lead_specialissts_select.selected = '';
+            break;
+        };
+
+
+         if(do_save){
+          var values  = Object.values(this.$parent.filter_data.team);
+
+          if(values.indexOf(data.name) < 0){
+            values.push(data.name);
+            this.$parent.$set(this.$parent.filter_data, 'team', values );
+
+          }
+
+          var lead_index = this.$parent.leads.findIndex(e=>{return e.ID == this.lead_data.ID});
+          var team_filter_data = Object.values(this.$parent.leads[lead_index].filter_data.team);
+          var team_filter_data2 = Object.values(this.$parent.leads[lead_index].filter_data2.team);
+
+          team_filter_data.push(data.name);
+          team_filter_data2.push(data.name);
+
+          this.$parent.$set(this.$parent.leads[lead_index]['filter_data2'], 'team', team_filter_data2);
+          this.$parent.$set(this.$parent.leads[lead_index]['filter_data'], 'team', team_filter_data);
+
+          this.save_specialists_meta();
+         }
+      };
+    },
+
+    upload_image_to_dropbox: function(file, path, name){
+      var vm = this;
+
+      var data = JSON.stringify({
+        "path": path,
+        "mode": "add",
+        "autorename": true,
+        "mute": false,
+        "strict_conflict": false
+      });
+
+      var xhr = new XMLHttpRequest();
+      var vm = this;
+
+      wait_block.show();
+
+      xhr.addEventListener("readystatechange", function () {
+
+        if (this.readyState === 4) {
+         wait_block.hide();
+          var data = JSON.parse(this.responseText);
+          vm.lead_data.meta.online_journey[name] = data.path_display;
+        }
+
+      });
+
+      xhr.open("POST", "https://content.dropboxapi.com/2/files/upload");
+      xhr.setRequestHeader("authorization", "Bearer "+ online_journey_settings.token);
+      xhr.setRequestHeader("Dropbox-API-Arg", data);
+      xhr.setRequestHeader("content-type", "application/octet-stream");
+
+      xhr.upload.onprogress = function(event) {
+        // var progress = parseInt((parseInt(event.loaded) / parseInt(event.total) )* 100);
+        // item.show_progress(progress);
+      };
+
+      xhr.send(file);
+    },
+
+
+    value_to_price: function(ref){
+      switch(ref){
+        case 'price_input_field':
+          var summ = '£' + formatMoney(this.lead_data.meta.treatment_value.value,2, '.',',');
+          break;
+        case 'input_billed':
+          var summ = '£' + formatMoney(this.lead_data.meta.treatment_value.billed,2, '.',',');
+          break;
+      }
+       this.$refs[ref].set_value(summ);
+    },
+
+
+    load_file: function(){
+      // console.log('load_file');
+
+      wait_block.show();
+
+      var file_pierces = this.$refs.file_input.value.split('\\');
+      var file_name = file_pierces[file_pierces.length-1];
+      var file = jQuery(this.$refs.file_input).prop('files')[0];
+      var fd   = new FormData();
+
+      var vm = this;
+
+      fd.append('file',file);
+      fd.append('lead_id',this.lead_data.ID);
+      fd.append('user_name','unknown');
+      fd.append('action', 'upload_new_document');
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: fd,
+
+        complete: function(xhr, textStatus) {
+          vm.new_file = '';
+          wait_block.hide();
+        },
+
+        success: function(data, textStatus, xhr) {
+          vm.lead_data.meta.lead_files.push(data.file_data);
+          vm.save_parent_meta(vm.lead_data.ID, vm.lead_data.meta.lead_files, 'lead_files', true);
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+         }
+      })
+    },
+
+
+    remove_file: function(file_id){
+      var vm = this;
+
+      if(window.confirm("Confirm deleting file " + this.files[file_id].name)){
+
+        var file_data = vm.files[file_id];
+
+        vm.files.splice(file_id, 1);
+
+        var data = {
+          file_data: file_data,
+          lead_id: vm.lead_data.lead_id,
+          user_name: vm.lead_data.user_name,
+          action: 'delete_file_from_lead',
+        };
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+
+          },
+
+          success: function(data, textStatus, xhr) {
+            // console.log(data);
+          },
+
+          error: function(xhr, textStatus, errorThrown) {
+            if(xhr.status === 418){
+              var response_text = JSON.parse(xhr.responseText);
+              alert(response_text.data[0]);
+            }else{
+              alert(xhr.status + ' ' +errorThrown);
+            }
+          }
+        })
+      }
+    },
+
+    do_file_changed: function(){
+      var file_pierces = this.$refs.file_input.value.split('\\');
+      var file_name = file_pierces[file_pierces.length-1];
+      this.new_file = file_name;
+    },
+
+    change_phone: function(action){
+      var phone = this.lead_data.phone_count;
+
+      if(action === 'add'){
+        phone++;
+      }
+
+      if(action === 'remove'){
+        phone--;
+      }
+
+      phone = Math.max(0, phone);
+      this.lead_data.phone_count = Math.min(3, phone);
+
+      this.save_parent_meta(this.lead_data.ID, this.lead_data.phone_count, 'phone_count');
+
+      var data = {
+        lead_id: this.lead_data.ID,
+        count: this.lead_data.phone_count,
+        action: 'save_phones_count',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+         },
+      })
+    },
+
+
+    change_message: function(action){
+      var messages = this.lead_data.message_count;
+      if(action === 'add'){
+        messages++;
+      }
+
+      if(action === 'remove'){
+        messages--;
+      }
+
+      messages = Math.max(0, messages);
+      this.lead_data.message_count = Math.min(3, messages);
+
+      this.save_parent_meta(this.lead_data.ID, this.lead_data.message_count, 'message_count');
+
+      var data = {
+        lead_id: this.lead_data.ID,
+        count:   this.lead_data.message_count,
+        action:  'save_messages_count',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+        },
+      })
+    },
+
+
+    save_parent_meta: function(item_id, value, param, meta){
+      var vm = this;
+      var index = vm.$parent.leads.findIndex(el=>{return item_id == el.ID});
+      if(meta){
+        vm.$parent.$set(vm.$parent.leads[index]['meta'], param, value);
+      }else{
+        vm.$parent.$set(vm.$parent.leads[index], param, value);
+      }
+    },
+
+    change_phone_tco: function(action){
+      var vm= this;
+      switch(action){
+        case 'add':
+         vm.lead_data.phone_count_tco = 1;
+         break;
+        case 'remove':
+         vm.lead_data.phone_count_tco = 0;
+         break;
+      }
+
+      this.save_parent_meta(this.lead_data.ID, this.lead_data.phone_count_tco, 'phone_count_tco');
+
+      var data = {
+        lead_id: vm.lead_data.ID,
+        count: vm.lead_data.phones_tco,
+        action: 'save_phones_count_tco',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+
+        },
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+         },
+
+        error: function(xhr, textStatus, errorThrown) {
+
+        }
+      })
+    },
+
+    change_message_tco: function(action){
+      var vm= this;
+      switch(action){
+        case 'add':
+         vm.lead_data.message_count_tco = 1;
+         break;
+        case 'remove':
+         vm.lead_data.message_count_tco = 0;
+         break;
+      }
+
+      this.save_parent_meta(this.lead_data.ID, this.lead_data.message_count_tco, 'message_count_tco');
+
+      var data = {
+        lead_id: this.lead_data.ID,
+        count: this.lead_data.message_count_tco,
+        action: 'save_messages_count_tco',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+
+        },
+      })
+    },
+
+
+    clear_reminder: function(){
+      this.lead_data.meta.reminder = '';
+    },
+
+
+    /**
+    * show single lead on click on a lead item on a list
+    */
+    show_single_lead: function(id){
+      clog(id, 0 , 1);
+    },
+
+    close_tab: function(){
+      window.close();
+    },
+
+    send_text_message: function(){
+      var phone = this.lead_data.meta.patient_data.phone;
+      var vm = this;
+
+
+      if(!phone || phone.length < 4){
+        alert('phone not set');
+        return;
+      }
+
+      if(!this.message_to_client ){
+        alert('Type a message, please');
+        return;
+      }
+
+      if(!this.sms_data ){
+        alert('Messaging center is not configured');
+        return;
+      }
+
+      var data = {
+        sms_data: this.sms_data,
+        phone: phone,
+        text: this.message_to_client,
+      };
+
+      // vm.message_to_client = '';
+
+
+      jQuery.ajax({
+        url: WP_URLS.theme_url+"/messaging/twilio_send.php",
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+      })
+
+      .done(function(e) {
+        if(e.error){
+          alert(e.error);
+        }else{
+         var date_sent = moment().format('MMM Do YY, h:mm:ss a');
+
+         if(vm.text_messages){
+            vm.text_messages.push({
+              'body'      :  vm.message_to_client,
+              'date_sent' : date_sent,
+              'type'      : 'we',
+              'status'    : 'sent',
+            });
+
+          vm.save_lead_meta('text_messages', 'text_messages');
+          }
+
+          vm.message_to_client = '';
+
+          Vue.nextTick(function(){
+            jQuery('._messages')[0].scrollTop = jQuery('._messages')[0].scrollHeight;
+          })
+        }
+      })
+
+      .fail(function() {
+      })
+
+      .always(function(e) {
+        console.log(e);
+      });
+    },
+
+
+    update_text_messages: function(){
+      if (this.deleting_lead){
+        return;
+      }
+
+      var phone = this.patient_data.phone;
+      var vm = this;
+
+      var data = {
+        sms_data: this.sms_data,
+        phone: phone,
+      };
+
+      jQuery.ajax({
+        url: WP_URLS.theme_url+"/messaging/twilio_update_msg.php",
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+      })
+
+      .done(function(e) {
+        if(e.error){
+          alert(e.error);
+        }else{
+
+          if (vm.deleting_lead){
+            return;
+          }
+
+          vm.text_messages = e.messages;
+          vm.save_lead_meta('text_messages', 'text_messages');
+          vm.intial_load = false;
+
+          if(vm.text_messages.length < e.messages.length){
+            if(! vm.intial_load ){
+              var message = e.messages[e.messages.length-1];
+            }
+          }
+
+        }
+      })
+
+      .fail(function() {
+      })
+
+      .always(function(e) {
+        jQuery('._messages').removeClass('hidden');
+        jQuery('.preloader-messages').addClass('hidden');
+      });
+    },
+
+    update_failed_reasons: function(e){
+      this.$set(this.lead_data.meta.failed_reason, 'reason', e.val);
+      this.save_lead_meta('failed_reason', 'failed_reason');
+    },
+
+    update_tags_cloud: function(tag){
+      var tags = 'undefined' != typeof(this.lead_data.meta.tags_cloud)? this.lead_data.meta.tags_cloud : [];
+
+      var position = tags.indexOf(tag);
+
+      if(position < 0 ){
+        tags.push(tag);
+      }else{
+        tags.splice(position, 1);
+      }
+
+      this.$set(this.lead_data.meta, 'tags_cloud', tags);
+    },
+
+    show_sent_email:function(data){
+      console.log(data);
+      this.$refs.sent_email_view.show = true;
+      this.$refs.sent_email_view.log = data;
+    },
+
+    submit_failed_note: function(){
+      if(this.failed_reason_text){
+        var date = new Date();
+        var fmt  = new DateFormatter();
+        this.$set(this.lead_data.meta.failed_reason, 'text', this.failed_reason_text);
+        this.$set(this.lead_data.meta.failed_reason, 'author', theme_user_name);
+        this.$set(this.lead_data.meta.failed_reason, 'date', fmt.formatDate(date, 'd F Y') + ' at ' + fmt.formatDate(date, 'H:i'));
+        this.save_lead_meta('failed_reason', 'failed_reason');
+        var vm = this;
+        Vue.nextTick(function(){
+          vm.failed_reason_text = '';
+        });
+      }
+    },
+
+    clear_failed_reason: function(){
+      this.$set(this.lead_data.meta.failed_reason, 'text', '');
+      this.$set(this.lead_data.meta.failed_reason, 'author', '');
+      this.$set(this.lead_data.meta.failed_reason, 'date', '');
+      this.save_lead_meta('failed_reason', 'failed_reason');
+    },
+
+    convert_date: function(date){
+      var date = new Date(date);
+      var fmt  = new DateFormatter();
+      return  fmt.formatDate(date, 'd F Y') + ' at ' + fmt.formatDate(date, 'H:i');
+    },
+
+    date_difference: function(key){
+
+      if('undefined' == typeof(this.lead_data.meta.lead_stage_log2)){
+        return false;
+      }
+
+      if((key + 1) < this.lead_data.meta.lead_stage_log2.length){
+
+       $start_date = ( key == -1)? this.lead_data.post_date : this.lead_data.meta.lead_stage_log2[key].date;
+
+       $start_date = new Date($start_date);
+       $end_date = new Date(this.lead_data.meta.lead_stage_log2[key+1].date);
+
+       var diff_minutes = DateDiff.inMinutes($start_date, $end_date );
+       var diff_days  = DateDiff.inDays($start_date,$end_date );
+       var diff_hours  = DateDiff.inHours($start_date, $end_date );
+
+       return  diff_days > 0? 'Passed '+ diff_days +'d' : diff_hours > 0?  'Passed '+ diff_hours +'h' :  diff_minutes > 0 ? 'Passed '+ diff_minutes +'min' : 'Less than a minute';
+
+      }else{
+        return false;
+      }
+    },
+  },
+
+  template: '#lead-single-tmpl',
+
+})
+Vue.component('comp-new-lead', {
+  data: function(){
+    return {
+      visible: false,
+      lead_data: {
+        phone_count: 0,
+        message_count: 0,
+        phone_count_tco: 0,
+        message_count_tco: 0,
+        meta: {
+          treatment_value: {
+            billed    : 0,
+            value     : 0,
+            terms     : '',
+            mounthly  : '',
+            date_end : '',
+          },
+
+          reminder: '',
+          specialists_assigned: false,
+          specialists_assigned_tco: false,
+          tco_data: {
+            'digital' : false,
+            'tco' : false,
+            'dentist' : false,
+            'attended' : false,
+            'fta_cancelled' : false,
+            'tax' : false,
+          },
+
+          patient_data: {
+            name: '',
+            phone: '',
+            email: '',
+            source: '',
+            treatment: [''],
+            clinic: '',
+            campaign: '',
+          },
+          treatment_data: [],
+        },
+      },
+      balance: 0,
+      enquery_notes_count: 1,
+      tco_notes_count: 1,
+      text_messages_to_show: 2,
+      note_text: '',
+      note_text_tco : '',
+      file_changed   : '',
+      new_file  : '',
+      specialists_data: specialists_data,
+      requre_save: false,
+      show_confirmation_popup: false,
+      text_messages: false,
+      message_to_client: '',
+    };
+  },
+
+  watch: {
+    show_confirmation_popup: function(){
+      this.$refs.popup._stage = this.lead_data.lead_stage;
+      this.$refs.popup.show_confirmation_popup = true;
+    },
+
+    text_messages_to_show: function(val){
+      if(val > 2){
+        Vue.nextTick(function(){
+          jQuery('._messages')[0].scrollTop = jQuery('._messages')[0].scrollHeight;
+        })
+      }
+    },
+    'lead_data.meta.patient_data.name': function(){
+      jQuery('input[name=name]').removeClass('error');
+    },
+
+    'lead_data.meta.patient_data.phone': function(){
+      jQuery('input[name=phone]').removeClass('error');
+    },
+
+    'lead_data.meta.patient_data.email': function(){
+      jQuery('input[name=email]').removeClass('error');
+    },
+
+    note_text: function(){
+      this.$refs.note_textarea.style.height = '';
+      this.$refs.note_textarea.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+    },
+
+    note_text_tco: function(){
+      this.$refs.note_textarea_tco.style.height = '';
+      this.$refs.note_textarea_tco.style.height = this.$refs.note_textarea.scrollHeight + 'px';
+    },
+
+    visible: function(show){
+      var vm = this;
+
+      console.log('visible')
+
+      if(show){
+        this.treatment_data_selects();
+        this.requre_save  = false;
+      }else{
+        this.enquery_notes_count  = 1;
+        this.tco_notes_count  = 1;
+        this.note_text  = '';
+        this.note_text_tco   = '';
+        this.files_updated   = '';
+        this.file_changed     = '';
+        this.specialists_data  = specialists_data;
+        this.requre_save  = false;
+        this.show_confirmation_popup  = false;
+
+        var lead_data = {
+            phone_count: 0,
+            message_count: 0,
+            phone_count_tco: 0,
+            message_count_tco: 0,
+            meta: {
+              treatment_value: {
+                billed    : 0,
+                value     : 0,
+                terms     : '',
+                mounthly  : '',
+                date_end : '',
+              },
+
+              reminder: '',
+              specialists_assigned: false,
+              specialists_assigned_tco: false,
+              tco_data: {
+                'digital' : false,
+                'tco' : false,
+                'dentist' : false,
+                'attended' : false,
+                'fta_cancelled' : false,
+                'tax' : false,
+              },
+
+              patient_data: {
+                name: '',
+                phone: '',
+                email: '',
+                source: '',
+                treatment: '',
+                clinic: '',
+                campaign: '',
+              },
+              treatment_data: [],
+            },
+          };
+
+          this.$set(this, 'lead_data', lead_data);
+      }
+    },
+
+
+      'lead_data.meta.treatment_value.billed': function(val){
+
+        var balance = get_sum_from_price(this.lead_data.meta.treatment_value.value) - get_sum_from_price(this.lead_data.meta.treatment_value.billed);
+
+
+        this.lead_data.meta.treatment_value.terms = get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 'Full Payment' :  '12 Months';
+
+        this.lead_data.meta.treatment_value.mounthly =  get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 0 : balance/12;
+        this.balance = formatMoney(balance,2, '.',',');
+      },
+
+
+      'lead_data.meta.treatment_value.value': function(val){
+
+        var balance = get_sum_from_price(this.lead_data.meta.treatment_value.value) - get_sum_from_price(this.lead_data.meta.treatment_value.billed);
+
+        this.lead_data.meta.treatment_value.terms = get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 'Full Payment' :  '12 Months';
+
+        this.lead_data.meta.treatment_value.mounthly =  get_sum_from_price(this.lead_data.meta.treatment_value.value) === get_sum_from_price(this.lead_data.meta.treatment_value.billed)? 0 : balance/12;
+        this.balance = formatMoney(balance,2, '.',',');
+      },
+  },
+
+  computed: {
+      text_messages_shown: function(){
+        if(this.text_messages_to_show  == 2 && this.text_messages.length > 2){
+          var messages = [];
+          for(var i = 2; i > 0 ; i--){
+          messages.push(this.text_messages[this.text_messages.length - i]);
+          }
+          return messages;
+        }else{
+          return this.text_messages;
+        }
+      },
+
+      file_is_prepared: function(){
+        return this.new_file.length > 0
+      },
+
+      files_updated: function(){
+        return this.lead_data.meta.lead_files;
+      },
+
+      get_treatment_value: function(){
+        return this.lead_data.meta.treatment_value.value;
+      },
+
+      get_billed_value: function(){
+        return this.lead_data.meta.treatment_value.billed;
+      },
+
+      get_terms_count: function(){
+        $return = 1;
+        switch(this.lead_data.meta.treatment_value.terms){
+          case '12 Months':
+             $return = 12;
+            break;
+          case '18 Months':
+             $return = 18;
+            break;
+          case '24 Months':
+             $return = 24;
+            break;
+          case '36 Months':
+             $return = 36;
+            break;
+          case '48 Months':
+             $return = 48;
+            break;
+          default:
+             $return = 1;
+            break;
+        }
+
+        return  $return;
+      },
+
+      monthly_payment: function(){
+        var billed = get_sum_from_price(this.get_billed_value);
+        var summ = (get_sum_from_price(this.get_treatment_value) - get_sum_from_price(this.get_billed_value))/this.get_terms_count;
+        summ = summ.toFixed(2);
+        this.lead_data.meta.treatment_value.mounthly = summ;
+        return   '£'+ formatMoney(summ, 2, ".", ",");
+      },
+
+      select_data: function(){
+        return {
+          clinics: clinics,
+          sources: theme_leads_sources,
+          campaigns: campaigns,
+          treatments: treatments,
+          specialists: specialists,
+          specialists_tco: specialists_tco,
+          payment_methods: payment_methods,
+          available_dentists: available_dentists,
+        };
+      },
+
+      lead_status:function(){
+        if(this.lead_data.is_converted == 'yes'){
+          return {
+            text: 'Converted Lead',
+            class: 'converted',
+          }
+
+        }else if (this.lead_data.is_failed == 'yes'){
+          return {
+            text: 'Failed Lead',
+            class: 'failed',
+          }
+        }else{
+          return {
+            text: 'Opened Lead',
+            class: 'opened',
+          }
+        }
+      },
+
+      messages_left : function(){
+        return Math.max(0, 3 - this.lead_data.message_count);
+      },
+
+      phones_left : function(){
+        return Math.max(0, 3 - parseInt(this.lead_data.phone_count));
+      },
+
+      phones_count: function(){
+        return parseInt(this.lead_data.phone_count);
+      },
+
+      messages_count: function(){
+        return parseInt(this.lead_data.message_count);
+      },
+
+      visible_specialists: function(){
+        var id = -1;
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned)){
+
+          for(var _id in this.lead_data.meta.specialists_assigned){
+             if(this.lead_data.meta.specialists_assigned[_id] == 'yes'){
+              id = parseInt(_id);
+             }
+          }
+        }
+
+        if(id < 0){
+          return [];
+        }
+
+        var data =  Object.values(specialists_data).filter(el =>{
+          return el.user_id == id});
+
+        return data;
+      },
+
+      visible_specialists_tco: function(){
+        var id = -1;
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned_tco)){
+
+          for(var _id in this.lead_data.meta.specialists_assigned_tco){
+             if(this.lead_data.meta.specialists_assigned_tco[_id] == 'yes'){
+              id = parseInt(_id);
+             }
+          }
+        }
+
+        if(id < 0){
+          return [];
+        }
+
+        var data =  Object.values(specialists_data).filter(el =>{
+          return el.user_id == id});
+
+        return data;
+      },
+
+      treatment_data  : function(){
+        return this.lead_data.meta.treatment_data? this.lead_data.meta.treatment_data : [];
+      },
+
+      balance   : function(){
+        return '';
+      },
+
+      enquery_notes_c: function(){
+        var notes = this.lead_data.meta.lead_notes;
+        var notes_c = [];
+        var counter = 0;
+
+        if(!notes){
+          return notes_c;
+        }
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1 && counter < this.enquery_notes_count){
+              note.key =  notes.length -1 - id;
+              notes_c.push(note);
+              counter++;
+           }
+        }
+
+        return notes_c;
+      },
+
+      tco_notes_c : function(){
+        var notes = this.lead_data.meta.lead_notes_tco;
+        var notes_c = [];
+        var counter = 0;
+
+        if(!notes){
+          return notes_c;
+        }
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1 && counter < this.tco_notes_count){
+              note.key =  notes.length -1 - id;
+              notes_c.push(note);
+              counter++;
+           }
+        }
+
+        return notes_c;
+      },
+
+      enquery_notes_count_c: function(){
+        var counter = 0;
+        var notes = this.lead_data.meta.lead_notes;
+
+        if(!notes){
+          return counter;
+        }
+
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1){
+              counter++;
+           }
+        }
+
+        return counter;
+      },
+
+      tco_notes_count_c : function(){
+        var counter = 0;
+        var notes = this.lead_data.meta.lead_notes_tco;
+
+        if(!notes){
+          return counter;
+        }
+        for (var id = notes.length -1; id >= 0;  id--) {
+          var note = notes[id];
+
+           if(note.show == 1){
+              counter++;
+           }
+        }
+
+        return counter;
+      },
+
+      phones_tco: function(){
+        return parseInt(this.lead_data.phone_count_tco);
+      },
+
+      messages_tco: function(){
+         return parseInt(this.lead_data.message_count_tco);
+      },
+
+      patient_data : function(){
+        return 0;
+      },
+
+      visible_specialists_show_select: function(){
+        if(!this.lead_data.meta.specialists_assigned){
+          return true;
+        }
+        var id = -1;
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned)){
+
+          for(var _id in this.lead_data.meta.specialists_assigned){
+             if(this.lead_data.meta.specialists_assigned[_id] == 'yes'){
+              id = _id;
+             }
+          }
+        }
+
+        var _class =  parseInt(id) > 0? false: true;
+
+        return _class;
+
+      },
+
+      visible_specialists_show_select_tco: function(){
+        if(!this.lead_data.meta.specialists_assigned_tco){
+          return true;
+        }
+        var id = -1;
+
+        if('object' == typeof(this.lead_data.meta.specialists_assigned_tco)){
+
+          for(var _id in this.lead_data.meta.specialists_assigned_tco){
+             if(this.lead_data.meta.specialists_assigned_tco[_id] == 'yes'){
+              id = _id;
+             }
+          }
+        }
+        var _class =  parseInt(id) > 0? false: true;
+        return _class;
+      },
+  },
+
+  mounted: function(){
+    var vm = this;
+
+    Vue.nextTick(function(){
+      vm.$forceUpdate();
+    })
+  },
+
+  methods: {
+    go_back_to_list: function(){
+      this.visible = false;
+      this.$parent.show_list = true;
+    },
+
+
+    add_enquery:function(){
+      var treatments = Object.values(this.lead_data.meta.patient_data.treatment);
+      treatments.push(' ');
+
+      this.$set(this.lead_data.meta.patient_data, 'treatment',treatments);
+    },
+
+
+
+    update_treatment_data: function(e, key){
+      if(typeof(e.val)  !== 'undefined'){
+        this.lead_data.meta.treatment_data[key][e.name] = e.val;
+
+        var total = 0;
+
+        for(var id in this.lead_data.meta.treatment_data){
+          total += get_sum_from_price(this.lead_data.meta.treatment_data[id].billed);
+        }
+
+        this.$set(this.lead_data.meta.treatment_value, 'value', '£' + formatMoney(total,2, '.',','));
+
+        this.requre_save = true;
+      }
+    },
+
+    add_treatment_dentist: function(){
+      this.lead_data.meta.treatment_data.push({
+        'treatment': '',
+        'dentist': '',
+        'billed' : 0,
+        'payment_method': ''
+      });
+
+      var vm = this;
+      Vue.nextTick(function(){
+
+       var select_id = vm.lead_data.meta.treatment_data.length - 1;
+
+        if(is_dentist === 'yes'){
+          vm.$refs['select_dentist'][select_id].set_value('selected', dentist_name);
+        }
+      })
+
+      this.requre_save = true;
+    },
+
+    price_to_value: function(ref){
+      var summ = (!!this.lead_data.meta.treatment_value.value)? this.lead_data.meta.treatment_value.value : 0;
+
+      switch(ref){
+        case 'price_input_field':
+          var summ = (!!this.lead_data.meta.treatment_value.value)? this.lead_data.meta.treatment_value.value : 0;
+          break;
+        case 'input_billed':
+          var summ = (!!this.lead_data.meta.treatment_value.billed)? this.lead_data.meta.treatment_value.billed : 0;
+          break;
+      }
+      summ = get_sum_from_price(summ);
+      this.$refs[ref].set_value(summ);
+    },
+
+    update_dates: function(){
+      // console.log(this);
+    },
+
+    value_to_price: function(ref){
+      switch(ref){
+        case 'price_input_field':
+          var summ = '£' + formatMoney(this.lead_data.meta.treatment_value.value,2, '.',',');
+          break;
+        case 'input_billed':
+          var summ = '£' + formatMoney(this.lead_data.meta.treatment_value.billed,2, '.',',');
+          break;
+      }
+       this.$refs[ref].set_value(summ);
+    },
+
+    treatment_data_selects: function(){
+      var vm = this;
+      var total = 0;
+
+      if(!vm.lead_data.meta.treatment_data){
+      }
+
+      for(var id in vm.lead_data.meta.treatment_data){
+       var select_id = id;
+       var data = vm.lead_data.meta.treatment_data[id];
+
+       var props =  {
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          icon: icons_selects['human'],
+          options: available_dentists,
+          selected: data['dentist'],
+        };
+
+        for( var i in props){
+          vm.$refs['select_dentist'][select_id].set_value(i, props[i]);
+        }
+
+
+       vue_select_components.push(vm.$refs['select_dentist'][select_id]);
+
+       var props =  {
+          icon: icons_selects['treatments'],
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: treatments,
+          selected: data['treatment']
+        };
+
+        for( var i in props){
+          vm.$refs['select_treatment'][select_id].set_value(i, props[i]);
+        }
+
+        vue_select_components.push(vm.$refs['select_treatment'][select_id]);
+
+       var props =  {
+          icon: icons_selects['currency'],
+          isExpanded: '',
+          isSelected: [],
+          isHiddenSelect: true,
+          isHiddenImitation: false,
+          options: payment_methods,
+          selected: data['payment_method']? data['payment_method']: 'Payment Method',
+        };
+
+        for( var i in props){
+          vm.$refs['select_payment_method'][select_id].set_value(i, props[i]);
+        }
+
+
+        vue_select_components.push(vm.$refs['select_payment_method'][select_id]);
+        vm.$refs.select_billed[select_id].set_value( data['billed']);
+
+
+        total += get_sum_from_price(data['billed']);
+      }
+
+      if(!vm.lead_data.meta.treatment_value){
+        vm.$set(vm.lead_data.meta, 'treatment_value', {});
+      }
+       vm.$set(vm.lead_data.meta.treatment_value, 'value', total);
+    },
+
+    change_stage_popup_cb:function(data){
+      this.lead_data.lead_stage = data.stage;
+    },
+
+    save_lead_meta: function(key_meta, key_this){
+      var vm = this;
+
+      var meta = {
+        patient_data          : this.lead_data.meta.patient_data,
+        treatment_data        : this.lead_data.meta.treatment_data,
+        treatment_value       : this.lead_data.meta.treatment_value,
+        treatment_coordinator : this.lead_data.meta.treatment_coordinator,
+        lead_notes            : this.lead_data.meta.lead_notes,
+        lead_notes_tco        : this.lead_data.meta.lead_notes_tco,
+        reminder              : this.lead_data.meta.reminder,
+        text_messages         : this.lead_data.meta.text_messages,
+        tco_data              : this.lead_data.meta.tco_data,
+      };
+
+
+      var posted_data = {
+        confirmed: 0,
+        meta: meta,
+        action                : 'update_lead_meta',
+        lead_data             : { lead_id: -1 },
+        nonce                 : jQuery('[name=lead_data]').val(),
+      };
+
+      if( !this.lead_data.meta.patient_data.name || !this.lead_data.meta.patient_data.phone || !this.lead_data.meta.patient_data.email || !this.lead_data.meta.patient_data.treatment ){
+
+        if(!this.lead_data.meta.patient_data.phone){
+          jQuery('input[name=phone]').addClass('error');
+        }
+
+        if(!this.lead_data.meta.patient_data.name){
+          jQuery('input[name=name]').addClass('error');
+        }
+
+        if(!this.lead_data.meta.patient_data.email){
+          jQuery('input[name=email]').addClass('error');
+        }
+
+        if(!this.lead_data.meta.patient_data.treatment){
+          this.$refs.treatments_select.$el.classList.add('error')
+        }
+
+
+        return false;
+      }
+
+      var vm = this;
+      wait_block.show();
+      var fmt = new DateFormatter();
+      var today = new Date();
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: posted_data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+           vm.requre_save = false;
+        },
+
+        success: function(data, textStatus, xhr) {
+
+          if(data.exist_leads){
+            vm.$refs.exist_popup.name  = posted_data.meta.patient_data.name;
+            vm.$refs.exist_popup.phone = posted_data.meta.patient_data.phone;
+            vm.$refs.exist_popup.email = posted_data.meta.patient_data.email;
+            vm.$refs.exist_popup.leads = data.leads;
+            vm.$refs.exist_popup.leads = data.leads;
+            vm.$refs.exist_popup.posted_data = posted_data;
+            vm.$refs.exist_popup.show = true;
+
+            for(var lead of data.leads){
+              var lead_id = lead.ID;
+              var index = vm.$parent.leads.findIndex(el =>{
+                return lead_id == el.ID;
+              })
+
+              if(index < 0){
+                vm.$parent.leads.push(lead)
+              }
+
+            }
+            return;
+          }
+
+          if(data.post_id > 0){
+            vm.$parent.add_leads(data.new_leads);
+            vm.visible = false;
+            Vue.nextTick(function(){
+              vm.$parent.open_lead_cb({lead_id: data.post_id});
+            });
+          }
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+
+            if(response_text.data[0] === 'name was found'){
+              var confirm = window.confirm("Are you sure you want to add lead for " + vm.patient_data.name +'? Lead for patient with this name already exists');
+
+              // console.log(confirm);
+
+              if(confirm){
+                posted_data.confirmed= 1;
+                wait_block.show();
+                vm.second_request(posted_data)
+              }
+
+            }else{
+              alert(response_text.data[0]);
+            }
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+    },
+
+    open_lead_cb: function(data){
+      var vm = this;
+       vm.visible = false;
+       Vue.nextTick(function(){
+         vm.$parent.open_lead_cb(data);
+       });
+    },
+
+    exec_second_request : function(data){
+      var vm = this;
+      var posted_data = strip(data.posted_data);
+      posted_data.confirmed= 1;
+      wait_block.show();
+      vm.second_request(posted_data)
+    },
+
+    second_request: function(posted_data){
+      var vm = this;
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: posted_data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+        },
+
+        success: function(data, textStatus, xhr) {
+           if(data.post_id > 0){
+             vm.$parent.add_leads(data.new_leads);
+             vm.visible = false;
+             Vue.nextTick(function(){
+               vm.$parent.open_lead_cb({lead_id: data.post_id});
+             });
+           }
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            // console.log(xhr);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+    },
+
+    update_lead: function(data, key, id){
+
+      if('object' === typeof(data)){
+        if(key === 'treatment_coordinator' && data.name === 'specialist' ){
+          if('undefined' === typeof(this.lead_data.meta[key][data.name])){
+            this.lead_data.meta[key][data.name] = []
+          }
+
+          if(this.lead_data.meta[key][data.name].indexOf(data.val) < 0){
+            this.lead_data.meta[key][data.name].push(data.val);
+          }else{
+            var ind = this.lead_data.meta[key][data.name].indexOf(data.val);
+            this.lead_data.meta[key][data.name].splice(ind, 1);
+          }
+
+        }else if(key === 'treatment_value' && data.name === 'treatment' ){
+          if('undefined' === typeof(this.lead_data.meta[key][data.name])){
+            this.lead_data.meta[key][data.name] = []
+          }
+          if(this.lead_data.meta[key][data.name].indexOf(data.val) < 0){
+            this.lead_data.meta[key][data.name].push(data.val);
+          }else{
+            var ind = this.lead_data.meta[key][data.name].indexOf(data.val);
+            this.lead_data.meta[key][data.name].splice(ind, 1);
+          }
+        }else if(data.name === 'treatment' ){
+          this.$set(this.lead_data.meta[key][data.name], id, data.val);
+        }else{
+          if('object' === typeof(this.lead_data.meta[key])){
+            this.$set(this.lead_data.meta[key], data.name, data.val);
+          }
+          if('string' === typeof(this.lead_data.meta[key])){
+            this.$set(this.lead_data.meta, key, data.val);
+          }
+        }
+
+        this.requre_save = true;
+        var vm = this;
+
+        Vue.nextTick(function(){
+          vm.$forceUpdate();
+        });
+      }
+    },
+
+    update_lead_stage: function(data, key){
+      this.lead_data.lead_stage_prev = this.lead_data.lead_stage ;
+      this.lead_data.lead_stage = data.val;
+    },
+
+    save_new_stage: function(){
+
+      if(this.lead_data.lead_stage === this.lead_data.lead_stage_prev){
+        this.show_confirmation_popup = false;
+        return true;
+      }
+
+      var list_id_prev  = this.lead_data.lead_stage_prev;
+      var list_id       = this.lead_data.lead_stage ;
+      var user_name     = this.lead_data.user_name;
+      var user_id       = this.lead_data.user_id;
+      var post_id       = this.lead_data.ID;
+
+      jQuery(document.body).trigger('update_lead_log', {
+        post_id: post_id,
+        list_id_prev: list_id_prev,
+        list_id_new: list_id,
+        user_name: user_name ,
+        user_id:   user_id ,
+        event: 'stage_changed'
+      });
+
+      jQuery(document.body).trigger('save_dragged_item', {post_id: post_id, list_id: list_id})
+
+      this.show_confirmation_popup = false;
+    },
+
+    do_delete_or_return: function(url){
+      this.deleting_lead = true;
+      wait_block.show();
+
+      if(parseInt(this.lead_data.lead_id) === -1){
+        wait_block.hide();
+        location.href = url;
+      }else{
+        var data = {
+          action  : 'delete_lead',
+          lead_id : parseInt(this.lead_data.lead_id),
+          nonce   : jQuery('[name=lead_data]').val(),
+          url     : url,
+        };
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+           clog(xhr)
+        },
+
+        success: function(data, textStatus, xhr) {
+          if('undefined' != typeof(data.redirect)){
+            window.close();
+            // location.href = data.redirect;
+          }
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          clog(xhr);
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+      }
+    },
+
+    add_note: function(type){
+      type = 'undefined' !== typeof(type)? type : 'enquery';
+
+      if(!this.note_text && type == 'enquery'){
+        alert('Please enter some text');
+        return false;
+      }else  if(!this.note_text_tco && type == 'tco'){
+        alert('Please enter some text');
+        return false;
+      }
+
+      var date = new Date();
+      var fmt  = new DateFormatter();
+      var date_formatted =  fmt.formatDate(date, 'F d Y') + ' at ' + fmt.formatDate(date, 'H:i');
+
+      var new_note = {
+        'date'       : date_formatted,
+        'user_name'  : this.lead_data.user_name,
+        'user_id'    : this.lead_data.user_id,
+        'text'       : (type== 'enquery')? this.note_text : this.note_text_tco,
+        'is_manager' : is_manager,
+        'done'       : 'no',
+        'show'       : 1,
+      };
+
+      if(type == 'enquery'){
+
+        if(!this.lead_data.meta.lead_notes){
+          this.$set(this.lead_data.meta, 'lead_notes', []);
+        }
+
+        this.lead_data.meta.lead_notes.push(new_note);
+        this.note_text = '';
+        this.$refs.note_textarea.style.height = '';
+      }else if (type =='tco'){
+
+        if(!this.lead_data.meta.lead_notes_tco){
+          this.$set(this.lead_data.meta, 'lead_notes_tco', []);
+        }
+
+        this.lead_data.meta.lead_notes_tco.push(new_note);
+        this.note_text_tco = '';
+        this.$refs.note_textarea_tco.style.height = '';
+      }
+    },
+
+    delete_note: function(key , type){
+      type = 'undefined' !== typeof(type)? type : 'enquery';
+
+     if(type == 'enquery'){
+        key = this.lead_data.meta.lead_notes.length - key - 1;
+        this.lead_data.meta.lead_notes[key].show = 0;
+      }
+     if(type == 'tco'){
+        key = this.lead_data.meta.lead_notes_tco.length - key - 1;
+        this.lead_data.meta.lead_notes_tco[key].show = 0;
+      }
+    },
+
+    mark_note_done: function(key, val, type){
+      type = 'undefined' !== typeof(type)? type : 'enquery';
+
+      if(type == 'enquery'){
+        key = this.lead_data.meta.lead_notes.length - key - 1;
+        this.lead_data.meta.lead_notes[key].done = val;
+      }
+      if(type == 'tco'){
+        key = this.lead_data.meta.lead_notes_tco.length - key - 1;
+        this.lead_data.meta.lead_notes_tco[key].done = val;
+      }
+    },
+
+    update_specialists: function(event, type){
+      if('undefined' !== typeof(event.val) ){
+        if(this.lead_data.ID < 0){
+          alert('Create lead before assigning it to a specialist, please');
+          return false;
+        };
+
+        var data =  Object.values(specialists_data).filter(el =>{
+          return el.name == event.val})[0];
+
+        switch(type){
+          case 'tco':
+          this.lead_data.meta.specialists_assigned_tco[data.user_id] = 'yes';
+            break;
+          default:
+            this.lead_data.meta.specialists_assigned[data.user_id] = 'yes';
+            break;
+        };
+      };
+    },
+
+    assign_specialist: function(){
+      // this.selected_specialist = false;
+      // this.save_sepcialists_meta();
+    },
+
+    remove_specialist: function(name){
+      if(window.confirm("Confirm unassigning " + name + " from this lead")){
+          var ids = this.visible_specialists.map(el=>{return el.user_id});
+
+          for( var id of ids){
+            this.lead_data.meta.specialists_assigned[id] = 'no';
+            this.lead_data.meta.specialists_assigned_tco[id] = 'no';
+          }
+
+        // this.specialists_data[name].show = 'no';
+        // this.specialists_data[name].show_tco = 'no';
+        // this.save_specialists_meta();
+
+        // jQuery(document.body).trigger('update_lead_log', {
+        //   post_id     : parseInt(this.lead_data.lead_id),
+        //   nonce       : jQuery('[name=lead_data]').val(),
+        //   user_name   : this.lead_data.user_name,
+        //   user_id     : this.lead_data.user_id,
+        //   event       : 'specialist_updated',
+        //   text: 'Unassined from ' +  name + ' by ' + this.lead_data.user_name,
+        // })
+      }
+    },
+
+    save_specialists_meta: function(){
+      var meta     = {};
+      var meta_tco = {};
+
+      for(id in specialists_data){
+        meta[specialists_data[id].user_id] = specialists_data[id].show;
+      }
+      for(id in specialists_data){
+        meta_tco[specialists_data[id].user_id] = specialists_data[id].show_tco;
+      }
+
+      var data = {
+        meta: {
+          lead_specialists: meta,
+          lead_specialists_tco: meta_tco,
+        },
+        action                : 'update_lead_meta',
+        lead_data             : this.lead_data,
+        nonce                 : jQuery('[name=lead_data]').val(),
+      };
+
+      var vm = this;
+      wait_block.show();
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+           wait_block.hide();
+        },
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+          vm.$refs.lead_id_input.set_value(data.post_id);
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+        }
+      })
+    },
+
+
+    load_file: function(){
+      // console.log('load_file');
+
+      wait_block.show();
+
+      var file_pierces = this.$refs.file_input.value.split('\\');
+      var file_name = file_pierces[file_pierces.length-1];
+      var file = jQuery(this.$refs.file_input).prop('files')[0];
+      var fd   = new FormData();
+
+      var vm = this;
+
+      fd.append('file',file);
+      fd.append('lead_id',this.lead_data.ID);
+      fd.append('user_name','unknown');
+      fd.append('action', 'upload_new_document');
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: fd,
+
+        complete: function(xhr, textStatus) {
+          vm.new_file = '';
+          wait_block.hide();
+        },
+
+        success: function(data, textStatus, xhr) {
+          vm.lead_data.meta.lead_files.push(data.file_data);
+        },
+
+        error: function(xhr, textStatus, errorThrown) {
+          if(xhr.status === 418){
+            var response_text = JSON.parse(xhr.responseText);
+            alert(response_text.data[0]);
+          }else{
+            alert(xhr.status + ' ' +errorThrown);
+          }
+         }
+      })
+    },
+
+
+    remove_file: function(file_id){
+      var vm = this;
+
+      if(window.confirm("Confirm deleting file " + this.files[file_id].name)){
+
+        var file_data = vm.files[file_id];
+
+        vm.files.splice(file_id, 1);
+
+        var data = {
+          file_data: file_data,
+          lead_id: vm.lead_data.lead_id,
+          user_name: vm.lead_data.user_name,
+          action: 'delete_file_from_lead',
+        };
+
+        jQuery.ajax({
+          url: WP_URLS.wp_ajax_url,
+          type: 'POST',
+          data: data,
+
+          complete: function(xhr, textStatus) {
+
+          },
+
+          success: function(data, textStatus, xhr) {
+            // console.log(data);
+          },
+
+          error: function(xhr, textStatus, errorThrown) {
+            if(xhr.status === 418){
+              var response_text = JSON.parse(xhr.responseText);
+              alert(response_text.data[0]);
+            }else{
+              alert(xhr.status + ' ' +errorThrown);
+            }
+          }
+        })
+      }
+    },
+
+    do_file_changed: function(){
+      var file_pierces = this.$refs.file_input.value.split('\\');
+      var file_name = file_pierces[file_pierces.length-1];
+      this.new_file = file_name;
+
+      console.log(file_name)
+    },
+
+    change_phone: function(action){
+      var phone = this.lead_data.phone_count;
+
+      if(action === 'add'){
+        phone++;
+      }
+
+      if(action === 'remove'){
+        phone--;
+      }
+
+      phone = Math.max(0, phone);
+      this.lead_data.phone_count = Math.min(3, phone);
+
+
+      var data = {
+        lead_id: this.lead_data.ID,
+        count: this.lead_data.phone_count,
+        action: 'save_phones_count',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+         },
+      })
+    },
+
+
+    change_message: function(action){
+      var messages = this.lead_data.message_count;
+      if(action === 'add'){
+        messages++;
+      }
+
+      if(action === 'remove'){
+        messages--;
+      }
+
+      messages = Math.max(0, messages);
+      this.lead_data.message_count = Math.min(3, messages);
+
+
+      var data = {
+        lead_id: this.lead_data.ID,
+        count:   this.lead_data.message_count,
+        action:  'save_messages_count',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+        },
+      })
+    },
+
+    change_phone_tco: function(action){
+      var vm= this;
+      switch(action){
+        case 'add':
+         vm.lead_data.phone_count_tco = 1;
+         break;
+        case 'remove':
+         vm.lead_data.phone_count_tco = 0;
+         break;
+      }
+
+      var data = {
+        lead_id: vm.lead_data.ID,
+        count: vm.lead_data.phones_tco,
+        action: 'save_phones_count_tco',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+
+        },
+
+        success: function(data, textStatus, xhr) {
+          // console.log(data);
+         },
+
+        error: function(xhr, textStatus, errorThrown) {
+
+        }
+      })
+    },
+
+    change_message_tco: function(action){
+      var vm= this;
+      switch(action){
+        case 'add':
+         vm.lead_data.message_count_tco = 1;
+         break;
+        case 'remove':
+         vm.lead_data.message_count_tco = 0;
+         break;
+      }
+
+
+      var data = {
+        lead_id: this.lead_data.ID,
+        count: this.lead_data.message_count_tco,
+        action: 'save_messages_count_tco',
+      }
+
+      jQuery.ajax({
+        url: WP_URLS.wp_ajax_url,
+        type: 'POST',
+        data: data,
+
+        complete: function(xhr, textStatus) {
+
+        },
+      })
+    },
+
+
+    clear_reminder: function(){
+      this.lead_data.meta.reminder = '';
+    },
+
+
+    /**
+    * show single lead on click on a lead item on a list
+    */
+    show_single_lead: function(id){
+      clog(id, 0 , 1);
+    },
+
+    close_tab: function(){
+      window.close();
+    },
+
+    send_text_message: function(){
+      var phone = this.patient_data.phone;
+      var vm = this;
+
+
+
+      if(!phone || phone.length < 4){
+        alert('phone not set');
+        return;
+      }
+
+      if(!this.message_to_client ){
+        alert('Type a message, please');
+        return;
+      }
+
+      if(!this.sms_data ){
+        alert('Messaging center is not configured');
+        return;
+      }
+
+      var data = {
+        sms_data: this.sms_data,
+        phone: phone,
+        text: this.message_to_client,
+      };
+
+
+      jQuery.ajax({
+        url: WP_URLS.theme_url+"/messaging/twilio_send.php",
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+      })
+
+      .done(function(e) {
+        if(e.error){
+          alert(e.error);
+        }else{
+          var date = new Date();
+          var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours() ;
+
+          var day = date.getDate() < 10 ? '0'+date.getDate() : date.getDate();
+
+          var ant = date.getHours() > 12 ? 'pm' : 'am';
+
+          var date_sent = months[date.getMonth()] + ' ' + day+ ' '+date.getFullYear() + ' '+ hours+':' + date.getMinutes() + ant;
+
+
+          vm.text_messages.push({
+            'body'      :  vm.message_to_client,
+            'date_sent' : date_sent,
+            'type'      : 'we',
+            'status'    : 'sent',
+          });
+
+          vm.message_to_client = '';
+
+          Vue.nextTick(function(){
+            jQuery('._messages')[0].scrollTop = jQuery('._messages')[0].scrollHeight;
+          })
+        }
+      })
+
+      .fail(function() {
+      })
+
+      .always(function(e) {
+        console.log(e);
+      });
+    },
+
+
+    update_text_messages: function(){
+      if (this.deleting_lead){
+        return;
+      }
+
+      var phone = this.patient_data.phone;
+      var vm = this;
+
+      var data = {
+        sms_data: this.sms_data,
+        phone: phone,
+      };
+
+      jQuery.ajax({
+        url: WP_URLS.theme_url+"/messaging/twilio_update_msg.php",
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+      })
+
+      .done(function(e) {
+        if(e.error){
+          alert(e.error);
+        }else{
+
+          if (vm.deleting_lead){
+            return;
+          }
+
+          vm.text_messages = e.messages;
+          vm.intial_load = false;
+
+          if(vm.text_messages.length < e.messages.length){
+            if(! vm.intial_load ){
+              var message = e.messages[e.messages.length-1];
+            }
+          }
+
+        }
+      })
+
+      .fail(function() {
+      })
+
+      .always(function(e) {
+        jQuery('._messages').removeClass('hidden');
+        jQuery('.preloader-messages').addClass('hidden');
+      });
+    }
+  },
+
+
+
+  template: '#lead-new-tmpl',
+
+})
+Vue.component('confirmation-popup', {
+  data: function(){
+    return {
+      stage: '',
+      show_confirmation_popup: false,
+      stages: stages_all,
+    };
+  },
+
+  props:['_stage'],
+
+  watch:{
+    show_confirmation_popup: function(show){
+      if(show){
+      }
+
+      if(!show){
+        this.$parent.show_confirmation_popup = false;
+      }
+    },
+
+    _stage:function(val){
+      this.stage = val;
+      this.$refs.lead_stage_select2.set_value('selected', val);
+    },
+  },
+
+  computed:{
+    _stages: function(){
+      return Object.values(this.stages).map(e=>{return e.name});
+    }
+  },
+
+  mounted:function(){
+    // this.$refs.lead_stage_select2.set_value('options', this._stages);
+  },
+
+  methods:{
+    update_lead_stage: function(data){
+      this.$parent.show_confirmation_popup = false;
+      this.stage = data.val;
+    },
+
+    save_new_stage: function(){
+      this.show_confirmation_popup = false;
+      this.$emit('change_stage_popup',{stage: this.stage});
+    },
+  },
+
+  template: '#lead-single-popup-tmpl',
+});
+function formatMoney(number, decPlaces, decSep, thouSep) {
+  decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
+  decSep = typeof decSep === "undefined" ? "." : decSep;
+  thouSep = typeof thouSep === "undefined" ? "," : thouSep;
+  var sign = number < 0 ? "-" : "";
+  var i = String(parseInt(number = Math.abs(Number(number) || 0).toFixed(decPlaces)));
+  var j = (j = i.length) > 3 ? j % 3 : 0;
+
+  var reverted_i = reverseString(i);
+  var numbers = reverted_i.match(/.{1,3}/g);
+
+  numbers.reverse();
+
+  for(id in numbers){
+    numbers[id] =  reverseString(numbers[id]);
+  }
+
+  return sign +
+    numbers.join(thouSep)+
+    (decPlaces ? decSep + Math.abs(number - i).toFixed(decPlaces).slice(2) : "");
+}
+
+function reverseString(str) {
+    var splitString = str.split("");
+    var reverseArray = splitString.reverse();
+    var joinArray = reverseArray.join(""); // "olleh"
+
+    return joinArray; // "olleh"
+}
+
+function goBack() {
+  window.history.back();
+}
+
+
+function get_sum_from_price(sum){
+  if(typeof(sum) === 'undefined'){
+    return 0;
+  }
+
+  if(isNaN(sum) && 'string' !== typeof(sum)){
+    return 0;
+  }
+
+  if(!sum){
+    return 0;
+  }
+
+
+  if(sum === 0){
+    return 0;
+  }
+
+
+  if((sum) === 'undefined'){
+    return 0;
+  }
+
+  if(typeof(sum) === 'string'){
+    var exp = new RegExp("\\D", "gi");
+    var pierces = sum.split('.');
+    var summ = pierces[0].replace(exp, '');
+
+    return parseFloat(summ);
+  }
+
+  if(typeof(sum) === 'number'){
+    return sum;
+  }
+
+  return 0;
+}
+
+
+
+function clog(content, label, debug){
+  if('undefined' === typeof(theme_debug)){
+    return;
+  }
+
+  if('undefined' !== typeof(debug_vue) && 'undefined' !== typeof(debug) &&  debug){
+    if('undefined' !== typeof(label) && 0 !== label){
+      debug_vue.log(content,label);
+    }
+    else{
+      debug_vue.log(content);
+    }
+  }
+
+  if('undefined' !== typeof(label) && 0 !== label){
+    console.group(label);
+  }
+
+  console.log(content);
+
+  if('undefined' !== typeof(label) || 0 === label){
+    console.groupEnd();
+  }
+}
+
+function strlog(content, color , label){
+  if('undefined' === typeof(theme_debug)){
+    return;
+  }
+
+  var template = '';
+
+  switch(color){
+    case 'red':
+      template = '\x1b[31m %s ';
+      break;
+    case 'green':
+      template = '\x1b[32m %s ';
+      break;
+    case 'blue':
+      template = '\x1b[34m %s ';
+      break;
+    default:
+      template = '\x1b[34m %s ';
+      break;
+  }
+
+
+
+  if('undefined' != typeof(label)){
+    template = '\x1b[0m%s' + template + '\x1b[0m';
+    console.log(template, label, content);
+    // console.log('\x1b[0m%s\x1b[31m %s \x1b[0m' , time_str, err.message );
+  }else{
+    console.log(template, content);
+  }
+
+}
+
+
+function strip(val){
+  return JSON.parse(JSON.stringify(val));
+}
+
+function open_new_lead(){
+  list_app.show_list = false;
+  list_app.$refs.single_lead.visible= false;
+  list_app.$refs.new_lead.visible= true;
+}
+
+
+
+
+var DateDiff = {
+
+    inMinutes: function(d1, d2) {
+        var t2 = d2.getTime();
+        var t1 = d1.getTime();
+
+        return parseInt((t2-t1)/(60*1000));
+    },
+
+
+    inHours: function(d1, d2) {
+        var t2 = d2.getTime();
+        var t1 = d1.getTime();
+
+        return parseInt((t2-t1)/(3600*1000));
+    },
+
+    inDays: function(d1, d2) {
+        var t2 = d2.getTime();
+        var t1 = d1.getTime();
+
+        return parseInt((t2-t1)/(24*3600*1000));
+    },
+
+    inWeeks: function(d1, d2) {
+        var t2 = d2.getTime();
+        var t1 = d1.getTime();
+
+        return parseInt((t2-t1)/(24*3600*1000*7));
+    },
+
+    inMonths: function(d1, d2) {
+        var d1Y = d1.getFullYear();
+        var d2Y = d2.getFullYear();
+        var d1M = d1.getMonth();
+        var d2M = d2.getMonth();
+
+        return (d2M+12*d2Y)-(d1M+12*d1Y);
+    },
+
+    inYears: function(d1, d2) {
+        return d2.getFullYear()-d1.getFullYear();
+    }
 }
 console.timeEnd('all script');

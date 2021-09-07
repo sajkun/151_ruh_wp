@@ -106,6 +106,7 @@
          :_leads = "leads_by_column[data.name]"
          v-on:update_order_status_on_drag = update_order_status_on_drag_cb
          v-on:open_lead = "open_lead_cb"
+         v-on:load_csv_emit = "load_csv"
         ></list-column>
 
         <?php else: ?>
@@ -117,6 +118,7 @@
          :_leads = "leads_by_column[data.name]"
          v-on:update_order_status_on_drag = update_order_status_on_drag_cb
          v-on:open_lead = "open_lead_cb"
+         v-on:load_csv_emit = "load_csv"
         ></list-column-tco>
         <?php endif ?>
       </div>

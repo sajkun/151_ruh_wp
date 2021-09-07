@@ -844,9 +844,6 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
             </ul>
           </div>
         </div>
-
-
-
       </div><!-- col-12 col-lg-4 -->
     </div><!-- row -->
   </div><!-- container -->

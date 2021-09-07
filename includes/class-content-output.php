@@ -1257,6 +1257,9 @@ class theme_content_output{
       'Too expensive',
       'Shopping around',
       'Not interested',
+      'Fta',
+      'Duplicate',
+      'Patient cancelled appointment',
       'Other',
     );
 
