@@ -10571,6 +10571,7 @@ if (
           var temp = {
             name: column_data[lead_id].meta.patient_data.name,
             phone: column_data[lead_id].meta.patient_data.phone,
+            email: column_data[lead_id].meta.patient_data.email,
             treatment: column_data[lead_id].meta.patient_data.treatment,
             clinic: column_data[lead_id].meta.patient_data.clinic,
             campaign: column_data[lead_id].meta.patient_data.campaign
@@ -10625,7 +10626,7 @@ if (
         }
 
         var csvContent =
-          "data:text/csv;charset=utf-8,name,phone,treatment,clinic,campaign,dentists,notes_reception,notes_tco,proposed,billed" +
+          "data:text/csv;charset=utf-8,name,phone,email,treatment,clinic,campaign,dentists,notes_reception,notes_tco,proposed,billed" +
           "\r\n" +
           formatted_data.map((e) => e.join(",")).join("\r\n");
 
