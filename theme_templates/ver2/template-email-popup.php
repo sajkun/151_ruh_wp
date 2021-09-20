@@ -52,6 +52,10 @@ echo '<script type="text/x-template" id="email-popup-tmpl">';
       <div v-if="template == 'Teeth Whitening'">
         <?php echo print_theme_template_part('teeth-whitening', 'email-components'); ?>
       </div>
+
+      <div v-if="template == 'Orthodontic Consultation'">
+        <?php echo print_theme_template_part('orthodontic-consultation', 'email-components'); ?>
+      </div>
     </div>
 
     <div class="email-popup__footer">
