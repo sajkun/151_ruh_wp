@@ -22,6 +22,12 @@ echo '<script type="text/x-template" id="email-view-tmpl">';
       <div v-if="log.template_name == 'Teeth Whitening'">
         <?php echo print_theme_template_part('teeth-whitening', 'email-components'); ?>
       </div>
+      <div v-if="log.template_name == 'Orthodontic Consultation'">
+        <?php echo print_theme_template_part('orthodontic-consultation', 'email-components'); ?>
+      </div>
+      <div v-if="log.template_name == 'Treatment Options'">
+        <?php echo print_theme_template_part('treatment-options', 'email-components'); ?>
+      </div>
     </div>
 
     <div class="email-popup__footer">

@@ -13,7 +13,7 @@
         </td>
       </tr>
     </table>
-
+  <div class="spacer-h-20"></div>
     <table class="text-block" role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         <td>
@@ -114,33 +114,6 @@
     </table>
 
     <div class="spacer-h-30"></div>
-
-    <div class="links-block">
-      <table class=""  role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr>
-          <td class="first">
-            <a href="https://ruhdental.com/"  target="_blank">
-              <img src="<?php echo THEME_URL; ?>/assets/images/letter/tooth-icon.png" alt="" class="icon-image" width="28" height="28">
-              Treatments
-            </a>
-
-          </td>
-          <td class="middle">
-            <a href="https://ruhdental.com/smile-stories/"  target="_blank">
-              <img src="<?php echo THEME_URL; ?>/assets/images/letter/camera-icon.png" alt="" class="icon-image" width="28" height="28">
-              Smile Stories
-            </a>
-
-          </td>
-          <td class="last">
-            <a href="https://ruhdental.com/pricing/"  target="_blank">
-              <img src="<?php echo THEME_URL; ?>/assets/images/letter/price-icon.png" alt="" class="icon-image" width="28" height="28">
-             Price List
-            </a>
-          </td>
-        </tr>
-      </table>
-    </div>
 
     <table class="black-block"  role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>

@@ -9517,7 +9517,7 @@ Vue.component("email-popup-template", {
         "Smile Trial": {
           to: "",
           template_name: "Smile Trial",
-          subject: "Your Smile Trial Offer",
+          subject: "Your Ruhdental Smile Trial Offer",
           from: theme_user_email,
           template: "smile-trial",
           patient_name: "",
@@ -9528,12 +9528,112 @@ Vue.component("email-popup-template", {
         "Teeth Whitening": {
           to: "",
           template_name: "Teeth Whitening",
-          subject: "Your Teeth Whitening Offer",
+          subject: "Your Ruhdental Teeth Whitening Offer",
           from: theme_user_email,
           template: "teeth-whitening",
           patient_name: "",
           specialists_name: "",
           lead_id: "",
+        },
+
+        "Treatment Options": {
+          to: "",
+          template_name: "Treatment Options",
+          subject: "Your Ruhdental Treatment Options",
+          from: theme_user_email,
+          template: "treatment-options",
+          patient_name: "",
+          specialists_name: "",
+          lead_id: "",
+          invisalign: {
+            show: 1,
+            doctors: "",
+            price: 3800,
+          },
+          braces: {
+            show: 1,
+            doctors: "",
+            title: "Fixed Braces",
+            items: [
+              {
+                title: "Consultation",
+                price: 85,
+                description: "",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Metal Braces",
+                price: 5000,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+              {
+                title: "Clear Braces",
+                price: 5500,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+              {
+                title: "Incognito Braces",
+                price: 8950,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+            ],
+          },
+          whitening: {
+            show: 1,
+            doctors: "",
+            title: "Teeth Whitening",
+            items: [
+              {
+                title: "Zoom Teeth Whitening",
+                price: 350,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+              {
+                title: "Metal Braces",
+                price: 775,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+            ],
+          },
+          composite: {
+            show: 1,
+            doctors: "",
+            title: "Composite Options",
+            items: [
+              {
+                title: "Direct Composite Veneers",
+                price: 375,
+                description: "price per tooth",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Composite Edge Bonding",
+                price: 275,
+                description: "price per tooth",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Lab Made Procelain Veneers",
+                price: 875,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+            ],
+          },
         },
 
         "Orthodontic Consultation": {
@@ -9649,6 +9749,21 @@ Vue.component("email-popup-template", {
   },
 
   computed: {
+    treatment_options_number: function () {
+      return {
+        invisalign: 1,
+        braces: this.template_data["Treatment Options"].invisalign.show + 1,
+        whitening:
+          this.template_data["Treatment Options"].invisalign.show +
+          this.template_data["Treatment Options"].braces.show +
+          1,
+        composite:
+          this.template_data["Treatment Options"].invisalign.show +
+          this.template_data["Treatment Options"].braces.show +
+          this.template_data["Treatment Options"].whitening.show +
+          1,
+      };
+    },
     select_data: function () {
       return {
         templates: [
@@ -9656,6 +9771,7 @@ Vue.component("email-popup-template", {
           "Smile Trial",
           "Teeth Whitening",
           "Orthodontic Consultation",
+          "Treatment Options",
         ],
 
         prices: ["£50", "£100", "£150", "£200", "£250", "£300"],
@@ -9677,10 +9793,6 @@ Vue.component("email-popup-template", {
       var vm = this;
       vm.errors.template = !vm.template;
       vm.errors.email_from = !vm.email_from;
-
-      console.log(this.template_data[this.template]);
-
-      return;
 
       if (!vm.template || !vm.email_from) {
         return;

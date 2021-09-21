@@ -31,18 +31,9 @@ if ( ! defined( 'ABSPATH' ) ) {
               >
             </div>
           </td>
-          <td>
-            <img
-              src="<?php echo THEME_URL; ?>/assets/images/letter/h1.jpg"
-              class="full-image"
-              alt=""
-              width="273"
-              height="313"
-            />
-          </td>
         </tr>
       </table>
-
+<div class="spacer-h-20"></div>
       <table
         class="text-block"
         role="presentation"
@@ -464,7 +455,7 @@ if ( ! defined( 'ABSPATH' ) ) {
           </td>
           <td class="cell right">
             <span class="from">£</span>
-            <input type="text" class="price" v-model='template_data["Orthodontic Consultation"].fixed_braces.consultation.price' />
+            <input type="text" class="price" v-model='template_data["Orthodontic Consultation"].fixed_braces.consultation.price' /></span>
           </td>
           <td class="remove-cell">
 
