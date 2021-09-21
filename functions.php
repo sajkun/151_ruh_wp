@@ -31,7 +31,7 @@ class velesh_init_theme{
   /* main script location  */
   public $main_script = '/assets/script/main.min36.js';
 
-  public $main_script_spa = '/assets/script/main.spa.min35.js';
+  public $main_script_spa = '/assets/script/main.spa.min36.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
