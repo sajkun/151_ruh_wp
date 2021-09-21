@@ -60,6 +60,10 @@ echo '<script type="text/x-template" id="email-popup-tmpl">';
       <div v-if="template == 'Treatment Options'">
         <?php echo print_theme_template_part('treatment-options', 'email-components'); ?>
       </div>
+
+      <div v-if="template == 'Digital Consultation'">
+        <?php echo print_theme_template_part('digital-consultation', 'email-components'); ?>
+      </div>
     </div>
 
     <div class="email-popup__footer">

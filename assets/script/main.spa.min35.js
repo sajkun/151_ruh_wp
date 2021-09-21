@@ -9702,6 +9702,114 @@ Vue.component("email-popup-template", {
             },
           },
         },
+
+        "Digital Consultation": {
+          to: "",
+          template_name: "Digital Consultation",
+          subject: "Your Ruhdental Digital Consultation",
+          from: theme_user_email,
+          template: "digital-consultation",
+          patient_name: "",
+          specialists_name: "",
+          lead_id: "",
+          dentist_summary: "",
+          dentist: "",
+          stage_1: {
+            title: "Stabilising Dental Health",
+            items: [
+              {
+                title: "Exam with Xrays",
+                price: 85,
+                description: "",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Hygiene Appointment",
+                price: 105,
+                description: "",
+                from: "",
+                show: 1,
+              },
+            ],
+          },
+          stage_2: {
+            title: "Alignment of the Teeth ",
+            items_opt_1: [
+              {
+                title: "Consultation",
+                price: 95,
+                description: "",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Metal",
+                price: 5000,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+              {
+                title: "Clear",
+                price: 5000,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+              {
+                title: "Incognito",
+                price: 8950,
+                description: "",
+                from: "from",
+                show: 1,
+              },
+            ],
+            items_opt_2: [
+              {
+                title: "Invisalign Full",
+                price: 3800,
+                description: "",
+                from: "",
+                show: 1,
+              },
+            ],
+          },
+          stage_3: {
+            title: "Cosmetic Dentistry",
+            summary: "",
+            items: [
+              {
+                title: "Exam/Consultation",
+                price: 85,
+                description: "",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Zoom Tooth Whitening",
+                price: 350,
+                description: "",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Enlighten Tooth Whitening",
+                price: 775,
+                description: "",
+                from: "",
+                show: 1,
+              },
+              {
+                title: "Direct Composite Bonding",
+                price: 375,
+                description: "price per tooth",
+                from: "",
+                show: 1,
+              },
+            ],
+          },
+        },
       },
     };
   },
@@ -9772,6 +9880,7 @@ Vue.component("email-popup-template", {
           "Teeth Whitening",
           "Orthodontic Consultation",
           "Treatment Options",
+          "Digital Consultation",
         ],
 
         prices: ["£50", "£100", "£150", "£200", "£250", "£300"],

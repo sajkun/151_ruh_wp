@@ -11762,15 +11762,19 @@ input.error {
 
 .letter-body {
   display: block;
-  max-width: 600px;
+  max-width: 546px;
   background: #fff;
   margin: 0 auto;
-  padding: 25px;
+  padding: 5px;
+}
+
+.letter-body table {
+  width: 100%;
 }
 
 .letter-welcome-screen {
   border-collapse: collapse;
-  table-layout: fixed;
+  overflow: hidden;
 }
 
 .letter-welcome-screen .logo-image {
@@ -11787,22 +11791,33 @@ input.error {
   display: block;
 }
 
-.letter-welcome-screen__col {
-  background: #000;
-  padding: 34px 20px 0 40px;
-  height: 242px;
+.letter-welcome-screen .image-holder {
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  aspect-ratio: 273/313;
+  position: relative;
 }
 
-.email-preview-block .letter-welcome-screen__col {
-  height: 276px;
+.letter-welcome-screen__col {
+  background: #000;
+  padding: 34px 20px 30px 40px;
+  line-height: 1.2;
 }
 
 .letter-welcome-screen td {
+  overflow: hidden;
   vertical-align: top;
+  line-height: 0;
 }
 
 .letter-welcome-screen .full-image {
-  display: block;
+  line-height: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  float: left;
 }
 
 .letter-welcome-screen .package {
@@ -11826,7 +11841,6 @@ input.error {
 }
 
 .text-block {
-  padding: 0 45px;
   color: #1a1c1a;
   font-family: "Helvetica Neue", sans-serif;
   font-size: 13px;
@@ -11839,7 +11853,7 @@ input.error {
 }
 
 .text-block td {
-  padding: 0 0 20px;
+  padding: 0 45px 20px;
 }
 
 .text-block > *,
@@ -11939,8 +11953,20 @@ input.error {
 }
 
 .grey-block-option {
-  padding: 30px 15px 20px;
   background-color: #6c675a;
+}
+
+.grey-block-option tr td {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.grey-block-option tr:first-child td {
+  padding: 30px 15px 0;
+}
+
+.grey-block-option tr:last-child td {
+  padding: 0 15px 20px;
 }
 
 .grey-block-option .title {
@@ -11988,7 +12014,23 @@ input.error {
 
 .links-block {
   background-color: #ded5bf;
+}
+
+.links-block td {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.links-block td:only-child {
   padding: 20px 44px;
+}
+
+.links-block td:last-child {
+  padding-right: 44px;
+}
+
+.links-block td:first-child {
+  padding-left: 44px;
 }
 
 .links-block .icon-image {
@@ -12028,9 +12070,25 @@ input.error {
 }
 
 .black-block {
-  padding: 20px 44px;
   background-color: #1a1c1a;
   border-bottom: 1px solid #2b2d2b;
+}
+
+.black-block td {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.black-block td:only-child {
+  padding: 20px 44px;
+}
+
+.black-block td:last-child {
+  padding-right: 44px;
+}
+
+.black-block td:first-child {
+  padding-left: 44px;
 }
 
 .black-block .label {
@@ -12301,6 +12359,7 @@ input.error {
 .list-table td {
   padding: 5px 0;
   width: 45%;
+  color: #504b40;
 }
 
 .list-table td.margin {
@@ -12349,6 +12408,7 @@ input.error {
 }
 
 .pricing-table .from {
+  color: #1a1c1a;
   font-family: serif;
   font-size: 12px;
   vertical-align: middle;
@@ -12380,6 +12440,113 @@ input.error {
 
 .pricing-table .remove-cell {
   padding: 0 10px;
+}
+
+.pricing-table-no-color .margin {
+  width: 30px;
+}
+
+.pricing-table-no-color .service-name {
+  margin: 0;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: sans-serif;
+}
+
+.pricing-table-no-color .cell {
+  padding: 20px 0;
+  border-bottom: 1px solid #eeeded;
+}
+
+.pricing-table-no-color .cell-2 {
+  padding: 20px 0;
+}
+
+.pricing-table-no-color .right {
+  text-align: right;
+  vertical-align: middle;
+}
+
+.pricing-table-no-color .title {
+  display: block;
+  margin: 0 0 5px;
+  color: #052116;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.pricing-table-no-color .text {
+  display: block;
+  margin: 0;
+  color: #1a1c1a;
+  font-size: 13px;
+  border: 0;
+  outline: 0;
+}
+
+.pricing-table-no-color .single-line {
+  text-align: center;
+  font-size: 12px;
+  color: #504b40;
+  margin: 0;
+}
+
+.pricing-table-no-color input {
+  border: 0;
+  background: transparent;
+  outline: 0;
+}
+
+.pricing-table-no-color input.single-line {
+  width: 100%;
+  text-align: center;
+  border-bottom: 2px dashed #cbd5e3;
+}
+
+.pricing-table-no-color input.price {
+  width: 80px;
+  display: inline-block;
+}
+
+.pricing-table-no-color .from {
+  color: #1a1c1a;
+  font-family: serif;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.pricing-table-no-color .price {
+  font-family: serif;
+  font-size: 30px;
+  color: #c29265;
+  display: inline;
+  vertical-align: middle;
+  text-align: right;
+  border-bottom: 2px dashed #cbd5e3;
+}
+
+.pricing-table-no-color .remove {
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background-color: #ef6262;
+  color: #fff;
+  line-height: 18px;
+  text-align: center;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.pricing-table-no-color .remove-cell {
+  padding: 0 10px;
+}
+
+.hr {
+  margin: 20px 0 40px;
+  height: 1px;
+  background-color: #eeeded;
 }
 
 .lingual-braces-block {
@@ -12434,4 +12601,47 @@ input.error {
   line-height: 20px;
   color: #504b40;
   margin: 0;
+}
+
+table .tag-option {
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 8px;
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 4px 10px;
+  background-color: #b2a687;
+}
+
+table .list-imitation {
+  margin: 20px 0;
+  color: #1a1c1a;
+  font-size: 13px;
+  line-height: 24px;
+}
+
+table .textarea {
+  width: 100%;
+  box-shadow: 0 0 4px #5769ff;
+  border-radius: 5px;
+  border: 1px solid #5769ff;
+  background-color: #ffffff;
+  font-size: 13px;
+  color: #1a1c1a;
+  padding: 15px;
+}
+
+table span.text {
+  color: #504b40;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+table .marked-text {
+  padding: 4px 5px;
+  display: block;
+  color: #504b40;
+  font-size: 12px;
+  line-height: 20px;
+  background-color: #ded5bf;
 }

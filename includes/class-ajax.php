@@ -100,6 +100,18 @@ if(!class_exists('theme_ajax_action')){
 
 
     public static function send_email_cb(){
+      $to = $_POST['to'];
+      $from = $_POST['from'];
+      $subject = $_POST['subject'];
+
+      $headers  = 'MIME-Version: 1.0' . "\r\n";
+      $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+      // Create email headers
+      $headers .= 'From: '.$from."\r\n".
+          'Reply-To: '.$from."\r\n" .
+          'X-Mailer: PHP/' . phpversion();
+
       $lead_id = (int)$_POST['lead_id'];
 
       $email_log = get_post_meta($lead_id, '_email_log', true);
@@ -117,25 +129,11 @@ if(!class_exists('theme_ajax_action')){
         'date'             => $date->format('Y-m-d H:i:sP'),
       );
 
-      // $email_log = [];
-
       if(!update_post_meta( $lead_id, '_email_log', $email_log)){
         add_post_meta( $lead_id, '_email_log', $email_log);
       }
 
       $email_log = get_post_meta($lead_id, '_email_log', true);
-
-      $to = $_POST['to'];
-      $from = $_POST['from'];
-      $subject = $_POST['subject'];
-
-      $headers  = 'MIME-Version: 1.0' . "\r\n";
-      $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-      // Create email headers
-      $headers .= 'From: '.$from."\r\n".
-          'Reply-To: '.$from."\r\n" .
-          'X-Mailer: PHP/' . phpversion();
 
       $args = $_POST;
 
@@ -146,14 +144,14 @@ if(!class_exists('theme_ajax_action')){
       echo print_theme_template_part($args['template'], 'emails', $args);
       $message = ob_get_contents();
       ob_get_clean();
-      wp_send_json(array(
-        'post' => $_POST,
-        'email_log' => $email_log,
-        'message' => $message,
-        'response' => 'Your mail has been sent successfully.',
-      ));
 
       if(mail($to, $subject, $message, $headers)){
+        wp_send_json(array(
+          'post' => $_POST,
+          'email_log' => $email_log,
+          'message' => $message,
+          'response' => 'Your mail has been sent successfully.',
+        ));
       } else{
         wp_send_json_error();
       }
