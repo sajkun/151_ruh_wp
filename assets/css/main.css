@@ -4038,7 +4038,7 @@ html {
 }
 
 .checkbox-imitation__view:after {
-  content: '';
+  content: "";
   position: absolute;
   opacity: 0;
   width: 10px;
@@ -4066,7 +4066,7 @@ html {
   border: 1px solid #e1e6eb;
   background-color: #fff;
   color: #3b3f45;
-  font-family: HelveticaFont_,sans-serif;
+  font-family: HelveticaFont_, sans-serif;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -4097,7 +4097,7 @@ html {
   height: 38px;
   line-height: 38px;
   cursor: pointer;
-  transition: all .2s;
+  transition: all 0.2s;
   text-align: center;
   text-transform: capitalize;
 }
@@ -4113,7 +4113,7 @@ html {
   padding: 15px 25px;
   max-width: 360px;
   width: 100%;
-  border: 1px solid  #eee;
+  border: 1px solid #eee;
   margin: 0 auto;
   text-align: center;
 }
@@ -4188,7 +4188,7 @@ html {
   display: inline-block;
   background: #eee;
   align-self: center;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 @media screen and (min-width: 552px) {
@@ -4204,8 +4204,8 @@ html {
 }
 
 .hold-on__item:nth-child(2) {
-  -webkit-animation: dot-animation 1.5s ease-in .5s infinite normal;
-          animation: dot-animation 1.5s ease-in .5s infinite normal;
+  -webkit-animation: dot-animation 1.5s ease-in 0.5s infinite normal;
+          animation: dot-animation 1.5s ease-in 0.5s infinite normal;
 }
 
 .hold-on__item:nth-child(3) {
@@ -4281,7 +4281,7 @@ html {
   flex: 1;
   border: 0;
   outline: 0 !important;
-  width: calc( 100% - 42px);
+  width: calc(100% - 42px);
   height: 100%;
   background-color: transparent;
 }
@@ -4350,7 +4350,7 @@ html {
 }
 
 .check-imitation .view:after {
-  content: '';
+  content: "";
   width: 10px;
   height: 9px;
   display: block;
@@ -4468,7 +4468,7 @@ html {
   padding: 0 15px;
   line-height: 33px;
   text-align: left;
-  transition: all .1s;
+  transition: all 0.1s;
 }
 
 .dots-container li:not(:last-child) {
@@ -4516,14 +4516,14 @@ html {
   height: 24px;
   line-height: 24px;
   text-align: center;
-  transition: all .1s;
+  transition: all 0.1s;
 }
 
 .tag-cloud__item-action svg {
   font-size: 20px;
   transform: rotateZ(45deg);
   fill: #0177e8;
-  transition: all .1s;
+  transition: all 0.1s;
   display: inline-block;
 }
 
@@ -4558,6 +4558,23 @@ html {
 .cont {
   position: relative;
   min-height: 44px;
+}
+
+.input {
+  width: 100px;
+  height: 46px;
+  line-height: 44px;
+  box-shadow: 0 3px 5px rgba(232, 235, 240, 0.27);
+  border-radius: 5px;
+  border: 1px solid #e0e8f9;
+  background-color: #fff;
+  padding: 0 12px;
+  transition: all 0.1s;
+  outline: 0;
+  color: #003046;
+  font-family: HelveticaFont_, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 /*

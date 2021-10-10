@@ -9507,7 +9507,7 @@ Vue.component("email-popup-template", {
           from: theme_user_email,
           template: "booked-in",
           template_name: "Booked In",
-          price: "price",
+          price: "",
           patient_name: "",
           clinic: "clinic",
           specialists_name: "",
@@ -9898,6 +9898,9 @@ Vue.component("email-popup-template", {
       vm.errors.template = !vm.template;
       vm.errors.email_from = !vm.email_from;
 
+      console.log(this.template_data);
+      return;
+
       if (!vm.template || !vm.email_from) {
         return;
       }
@@ -9956,12 +9959,11 @@ Vue.component("email-popup-template", {
       var valid = true;
       switch (vm.template) {
         case "Booked In":
-          valid =
-            vm.template_data["Booked In"].price != "price" ? valid : false;
+          valid = vm.template_data["Booked In"].price != "" ? valid : false;
           valid =
             vm.template_data["Booked In"].clinic != "clinic" ? valid : false;
           var valid_price =
-            vm.template_data["Booked In"].price != "price" ? true : false;
+            vm.template_data["Booked In"].price != "" ? true : false;
           var valid_clinic =
             vm.template_data["Booked In"].clinic != "clinic" ? true : false;
 
