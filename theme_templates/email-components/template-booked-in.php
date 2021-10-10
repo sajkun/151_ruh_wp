@@ -149,10 +149,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <img src="<?php echo THEME_URL; ?>/assets/images/letter/logo.png" alt="" class="logo-image" width="132"
                     height="21">
 
-                <a href="tel:+440203904765" class="phone-link">
+                <a href="tel:+ 01613488738" class="phone-link">
                     <img src="<?php echo THEME_URL; ?>/assets/images/letter/dialer-icon.png" alt="" width="11"
                         height="15">
-                    +44 (0)20 3904 7655
+                    0161 348 8738
                 </a>
             </td>
         </tr>
