@@ -9525,16 +9525,16 @@ Vue.component("email-popup-template", {
           lead_id: "",
         },
 
-        "Teeth Whitening": {
-          to: "",
-          template_name: "Teeth Whitening",
-          subject: "Your Ruhdental Teeth Whitening Offer",
-          from: theme_user_email,
-          template: "teeth-whitening",
-          patient_name: "",
-          specialists_name: "",
-          lead_id: "",
-        },
+        // "Teeth Whitening": {
+        //   to: "",
+        //   template_name: "Teeth Whitening",
+        //   subject: "Your Ruhdental Teeth Whitening Offer",
+        //   from: theme_user_email,
+        //   template: "teeth-whitening",
+        //   patient_name: "",
+        //   specialists_name: "",
+        //   lead_id: "",
+        // },
 
         "Treatment Options": {
           to: "",
@@ -9874,14 +9874,9 @@ Vue.component("email-popup-template", {
     },
     select_data: function () {
       return {
-        templates: [
-          "Booked In",
-          "Smile Trial",
-          "Teeth Whitening",
-          "Orthodontic Consultation",
-          "Treatment Options",
-          "Digital Consultation",
-        ],
+        templates: Object.values(this.template_data).map((template) => {
+          return template.template_name;
+        }),
 
         prices: ["£50", "£100", "£150", "£200", "£250", "£300"],
 
