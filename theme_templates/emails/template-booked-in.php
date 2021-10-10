@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                             style="border-style: none; box-sizing: inherit; height: 21px; margin: 0 0 30px; width: 132px;">
                         <p
                             style="box-sizing: inherit; color: #fff; display: block; font-family: 'Libre Baskerville',serif; font-size: 33px; margin: 0 0 10px;">
-                            Let’s get you <br style="box-sizing: inherit;">
+                            Let’s get you <br />
                             booked in
                         </p>
                         <span
@@ -41,16 +41,16 @@ if ( ! defined( 'ABSPATH' ) ) {
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     <div " style=" box-sizing: inherit;">
-                        Dear,
+                        Dear, <?php echo $patient_name; ?>
                         <span
                             style="background-color: #fff; border: 1px solid #e1e6eb; border-radius: 5px; box-shadow: 0 1px 6px rgba(0,0,0,.06); box-sizing: inherit; color: #908d8d; display: inline-block; font-family: 'Helvetica Neue',sans-sewrif; font-size: 13px; height: 29px; line-height: 29px; padding: 0 10px;"><?php echo $patient_name; ?></span>
-                        <br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                        <br /><br />
 
-                        Thank you for your enquiry for a dental consultation <br style="box-sizing: inherit;">
+                        Thank you for your enquiry for a dental consultation <br />
                         here at
-                        <?php echo $clinic; ?><br style="box-sizing: inherit;">
-                        I hope that you are well. <br style="box-sizing: inherit;">
-                        <br style="box-sizing: inherit;">
+                        <?php echo $clinic; ?><br />
+                        I hope that you are well. <br />
+                        <br />
 
                         In order to proceed with your booking, we have two options:
                     </div>
@@ -78,9 +78,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <p
                         style="box-sizing: inherit; color: #b2a7a5; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-style: normal; letter-spacing: normal; line-height: 20px; text-align: center;">
                         All of our treatment coordinators are highly skilled in the field
-                        of dentistry and will be <br style="box-sizing: inherit;">
+                        of dentistry and will be <br />
                         able to discuss treatment options best suited to your needs,
-                        approximate price and <br style="box-sizing: inherit;">
+                        approximate price and <br />
                         payment plans. These consultations can be done either in house or
                         via zoom.
                     </p>
@@ -91,11 +91,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <ul style="box-sizing: inherit; display: block; margin: 20px 0 0 120px; padding: 0;">
                         <li
                             style="box-sizing: inherit; color: #c6bba2; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
-                            <span style="box-sizing: inherit; color: #e2e0da;">No obligation consultation</span></li>
+                            <span style="box-sizing: inherit; color: #e2e0da;">No obligation consultation</span>
+                        </li>
                         <li
                             style="box-sizing: inherit; color: #c6bba2; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
                             <span style="box-sizing: inherit; color: #e2e0da;">Understand the treatment options
-                                available</span></li>
+                                available</span>
+                        </li>
                         <li
                             style="box-sizing: inherit; color: #c6bba2; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
                             <span style="box-sizing: inherit; color: #e2e0da;">Understand the finance options and
@@ -106,7 +108,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </tr>
             <tr style="box-sizing: inherit;">
                 <td style="box-sizing: inherit;">
-                    <br style="box-sizing: inherit;">
+                    <br />
                 </td>
             </tr>
         </table>
@@ -145,7 +147,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                         <li
                             style="box-sizing: inherit; color: #c6bba2; font-family: HelveticaFont_,sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
                             <span style="box-sizing: inherit; color: #e2e0da;">Optional Trial Smile included if
-                                requested</span></li>
+                                requested</span>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -160,7 +163,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     We do require £50 as a holding deposit in order to secure your
                     appointment with us at the time of booking. This is refundable if
                     you would decide not to have treatment or we can credit this towards
-                    your treatment plan. <br style="box-sizing: inherit;">
+                    your treatment plan. <br />
                 </td>
             </tr>
             <tr
@@ -168,7 +171,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Please note that you will be with us at the clinic for approximately
                     1 hour whilst your dedicated Treatment Coordinator discusses your
-                    options in detail.<br style="box-sizing: inherit;">
+                    options in detail.<br />
                 </td>
             </tr>
 
@@ -176,7 +179,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Should you wish for me to assist you further kindly let me know and
-                    I will be happy to accommodate you.<br style="box-sizing: inherit;">
+                    I will be happy to accommodate you.<br />
                 </td>
             </tr>
             <tr
@@ -186,7 +189,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <tr
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
-                    Kind Regards,<br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    Kind Regards,<br /><br />
                     <?php echo $specialists_name; ?>
                     Treatment Co-ordinator
                 </td>

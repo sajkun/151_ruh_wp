@@ -35,11 +35,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Dear,
-                    <?php echo $patient_name; ?><br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    <?php echo $patient_name; ?><br /><br />
 
                     I hope this email finds you well. Thank you for sending your enquiry
                     expressing your interest in our trial smile consultation.
-                    <br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    <br /><br />
 
                     A trial smile helps you to see what your smile will look like before
                     going ahead with any treatment
@@ -72,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     sculpted to the teeth to create the desired shape for you. It is a
                     very quick process and can be removed immediately afterwards. Please
                     be aware this can only be done on healthy teeth and gums.
-                    <br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    <br /><br />
 
                     In this appointment you will also see our treatment coordinator who
                     will take a full clinical series of photographs and discuss your
@@ -137,16 +137,16 @@ if ( ! defined( 'ABSPATH' ) ) {
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Should you wish for me to assist you further kindly let me know and
-                    I will be happy to accommodate you.<br style="box-sizing: inherit;">
+                    I will be happy to accommodate you.<br />
                 </td>
             </tr>
 
             <tr
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
-                    Kind Regards,<br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    Kind Regards,<br /><br />
                     <?php echo $specialists_name; ?>
-                    <br style="box-sizing: inherit;">
+                    <br />
                     Treatment Co-ordinator
                 </td>
             </tr>

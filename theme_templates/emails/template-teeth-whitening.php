@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                             style="border-style: none; box-sizing: inherit; height: 21px; margin: 0 0 30px; width: 132px;">
                         <p
                             style="box-sizing: inherit; color: #fff; display: block; font-family: 'Libre Baskerville',serif; font-size: 33px; margin: 0 0 10px;">
-                            Teeth <br style="box-sizing: inherit;">
+                            Teeth <br />
                             Whitening
                         </p>
                         <span
@@ -40,14 +40,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Dear,
                     <?php echo $patient_name;?>
-                    <br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    <br /><br />
 
                     Thank you for enquiring about teeth whitening here at Ruh Dental.
-                    <br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    <br /><br />
 
                     All of the whitening products offered via our clinic have been well
-                    researched and are safe for use in the UK and Europe. <br style="box-sizing: inherit;"><br
-                        style="box-sizing: inherit;">
+                    researched and are safe for use in the UK and Europe. <br /><br style="box-sizing: inherit;">
 
                     We offer two main systems:
                 </td>
@@ -76,9 +75,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <span
                         style="box-sizing: inherit; color: #504b40; font-family: HelveticaFont_,sans-serif; font-size: 12px; line-height: 20px; text-align: center;">Bespoke
                         trays are manufactured following an appointment for
-                        dental impressions to <br style="box-sizing: inherit;">
+                        dental impressions to <br />
                         be taken. From these, you are able to whiten your teeth from the
-                        comfort of your <br style="box-sizing: inherit;">home, or when fits your schedule.</span>
+                        comfort of your <br />home, or when fits your schedule.</span>
                 </td>
             </tr>
             <tr style="box-sizing: inherit;">
@@ -120,11 +119,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <span
                         style="box-sizing: inherit; color: #504b40; font-family: HelveticaFont_,sans-serif; font-size: 12px; line-height: 20px; text-align: center;">Bespoke
                         trays are manufactured following dental impressions.
-                        However, this system <br style="box-sizing: inherit;">
+                        However, this system <br />
                         is a combination system and requires 14 days at-home whitening
-                        followed by a 1 <br style="box-sizing: inherit;">
+                        followed by a 1 <br />
                         hour in chair booster session. Enlighten is the world leading
-                        system at present, and <br style="box-sizing: inherit;">
+                        system at present, and <br />
                         the only system worldwide to guarantee a VITA shade B1.</span>
                 </td>
             </tr>
@@ -169,16 +168,16 @@ if ( ! defined( 'ABSPATH' ) ) {
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Should you wish for me to assist you further kindly let me know and
-                    I will be happy to accommodate you.<br style="box-sizing: inherit;">
+                    I will be happy to accommodate you.<br />
                 </td>
             </tr>
 
             <tr
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
-                    Kind Regards,<br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    Kind Regards,<br /><br />
                     <?php echo $specialists_name;?>
-                    <br style="box-sizing: inherit;">
+                    <br />
                     Treatment Co-ordinator
                 </td>
             </tr>

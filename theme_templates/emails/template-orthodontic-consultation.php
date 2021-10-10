@@ -12,7 +12,7 @@
                             style="border-style: none; box-sizing: inherit; height: 21px; margin: 0 0 30px; width: 132px;">
                         <p
                             style="box-sizing: inherit; color: #fff; display: block; font-family: 'Libre Baskerville',serif; font-size: 33px; margin: 0 0 10px;">
-                            Braces & <br style="box-sizing: inherit;">
+                            Braces & <br />
                             Clear Aligners
                         </p>
                         <span
@@ -33,7 +33,7 @@
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Hi,
                     <?php echo $patient_name;?>
-                    <br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    <br /><br />
 
                     Thank you for expressing your interest in straightening your teeth.
                     Please see below an outline of all the Orthodontic options we
@@ -518,7 +518,7 @@
                             <li
                                 style="box-sizing: inherit; color: #c6bba2; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
                                 <span style="box-sizing: inherit; color: #e2e0da;">Pay as you go (Deposit paid and then
-                                    the rest <br style="box-sizing: inherit;">
+                                    the rest <br />
                                     over the time of treatment using GO CARDLESS)</span>
                             </li>
                         </ul>
@@ -526,7 +526,7 @@
                 </tr>
                 <tr style="box-sizing: inherit;">
                     <td style="box-sizing: inherit;">
-                        <br style="box-sizing: inherit;">
+                        <br />
                     </td>
                 </tr>
             </tbody>
@@ -551,9 +551,9 @@
             <tr
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
-                    Kind Regards,<br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    Kind Regards,<br /><br />
                     <?php echo $specialists_name;?>
-                    <br style="box-sizing: inherit;">
+                    <br />
                     Treatment Co-ordinator
                 </td>
             </tr>

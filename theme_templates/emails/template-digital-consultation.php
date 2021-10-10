@@ -11,8 +11,8 @@
                             style="border-style: none; box-sizing: inherit; height: 21px; margin: 0 0 30px; width: 132px;">
                         <p
                             style="box-sizing: inherit; color: #fff; display: block; font-family: 'Libre Baskerville',serif; font-size: 33px; margin: 0 0 10px;">
-                            Digital <br style="box-sizing: inherit;">
-                            Consultation <br style="box-sizing: inherit;">
+                            Digital <br />
+                            Consultation <br />
                             Report
                         </p>
                         <span
@@ -30,8 +30,8 @@
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
                     Dear,
                     <?php echo $patient_name;?>
-                    <br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
-                    I hope you are well. It was lovely talking to you <br style="box-sizing: inherit;">
+                    <br /><br />
+                    I hope you are well. It was lovely talking to you <br />
                     I have discussed your photographs with your Dentists and he feels
                     that
                 </td>
@@ -209,10 +209,10 @@
                 <td colspan="2" style="box-sizing: inherit;">
                     <p style="box-sizing: inherit; color: #1a1c1a; font-size: 13px; line-height: 24px; margin: 20px 0;">
                         <b style="box-sizing: inherit; font-weight: bolder;"> All of our Orthodontic plans include:</b>
-                        <br style="box-sizing: inherit;">
-                        👉 Brace fitting, removal and all appointments between. <br style="box-sizing: inherit;">
-                        👉 Removable and fixed retainers at the end of treatment. <br style="box-sizing: inherit;">
-                        👉 Home whitening. <br style="box-sizing: inherit;">
+                        <br />
+                        👉 Brace fitting, removal and all appointments between. <br />
+                        👉 Removable and fixed retainers at the end of treatment. <br />
+                        👉 Home whitening. <br />
                     </p>
                 </td>
                 <td style="box-sizing: inherit; width: 30px;" width="30"></td>
@@ -366,15 +366,17 @@
                             <li
                                 style="box-sizing: inherit; color: #c6bba2; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
                                 <span style="box-sizing: inherit; color: #e2e0da;">0% finance over 12 or 18
-                                    months</span></li>
+                                    months</span>
+                            </li>
                             <li
                                 style="box-sizing: inherit; color: #c6bba2; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
                                 <span style="box-sizing: inherit; color: #e2e0da;">Pay upfront and receive a 5%
-                                    discount</span></li>
+                                    discount</span>
+                            </li>
                             <li
                                 style="box-sizing: inherit; color: #c6bba2; font-family: 'Helvetica Neue',sans-serif; font-size: 12px; font-weight: 500; margin: 0 0 15px;">
                                 <span style="box-sizing: inherit; color: #e2e0da;">Pay as you go (Deposit paid and then
-                                    the rest <br style="box-sizing: inherit;">
+                                    the rest <br />
                                     over the time of treatment using GO CARDLESS)</span>
                             </li>
                         </ul>
@@ -382,7 +384,7 @@
                 </tr>
                 <tr style="box-sizing: inherit;">
                     <td style="box-sizing: inherit;">
-                        <br style="box-sizing: inherit;">
+                        <br />
                     </td>
                 </tr>
             </tbody>
@@ -401,9 +403,9 @@
             <tr
                 style="box-sizing: inherit; color: #1a1c1a; font-family: 'Helvetica Neue',sans-serif; font-size: 13px; line-height: 17px; text-align: left;">
                 <td style="box-sizing: inherit; padding: 0 45px 20px;">
-                    Kind Regards,<br style="box-sizing: inherit;"><br style="box-sizing: inherit;">
+                    Kind Regards,<br /><br />
                     <?php echo $specialists_name;?>
-                    <br style="box-sizing: inherit;">
+                    <br />
                     Treatment Co-ordinator
                 </td>
             </tr>
