@@ -98,7 +98,6 @@ if(!class_exists('theme_ajax_action')){
       add_action('wp_ajax_nopriv_test_cb', array($this,'test_cb'));
     }
 
-
     public static function send_email_cb(){
       $to = $_POST['to'];
       $from = $_POST['from'];
@@ -145,7 +144,7 @@ if(!class_exists('theme_ajax_action')){
       $message = ob_get_contents();
       ob_get_clean();
 
-      if(mail($to, $subject, $message, $headers)){
+      if(wp_mail($to, $subject, $message, $headers)){
         wp_send_json(array(
           'post' => $_POST,
           'email_log' => $email_log,

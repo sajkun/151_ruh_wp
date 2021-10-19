@@ -239,6 +239,9 @@ class velesh_init_theme{
     global $pagenow;
     include_once(THEME_PATH.'/includes/helpers.php');
     include_php_from_dir(THEME_PATH.'/includes/');
+    include_once(THEME_PATH . '/phpMailer/Exception.php');
+    include_once(THEME_PATH . '/phpMailer/PHPMailer.php');
+    include_once(THEME_PATH . '/phpMailer/SMTP.php');
   }
 
 
@@ -545,8 +548,8 @@ class velesh_init_theme{
     foreach ($pages  as $id => $page) {
       $selected = (esc_attr( get_option($option_name) ) == $page->ID )? 'selected = "selected"' : '';
       ?>
-        <option <?php echo $selected; ?> value="<?php echo $page->ID ?>"> <?php echo $page->post_title; ?></option>
-      <?php
+<option <?php echo $selected; ?> value="<?php echo $page->ID ?>"> <?php echo $page->post_title; ?></option>
+<?php
     }
     echo '</select>';
   }
@@ -559,7 +562,3 @@ class velesh_init_theme{
 /* init theme*/
 global $theme_init;
 $theme_init = new velesh_init_theme();
-
-
-
-
