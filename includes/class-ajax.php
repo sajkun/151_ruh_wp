@@ -119,10 +119,10 @@ if(!class_exists('theme_ajax_action')){
       $mail = new PHPMailer();
       $mail->IsSMTP();
       $mail->Mailer = "smtp";
-      $mail->SMTPDebug  = 1;  
+      $mail->SMTPDebug  = 0;  
       $mail->SMTPAuth   = TRUE;
-      $mail->SMTPSecure = "tls";
-      $mail->Port       = 587;
+      $mail->SMTPSecure = "ssl";
+      $mail->Port       = 465;
       $mail->Host       = "smtp.gmail.com";
       $mail->Username   = $email_data[$clinic]['email'];
       $mail->Password   = $email_data[$clinic]['password'];
