@@ -122,6 +122,7 @@ if(!class_exists('theme_ajax_action')){
       $mail->SMTPDebug  = 0;  
       $mail->SMTPAuth   = TRUE;
       $mail->SMTPSecure = "ssl";
+      $mail->SMTPAutoTLS = false;
       $mail->Port       = 465;
       $mail->Host       = "smtp.gmail.com";
       $mail->Username   = $email_data[$clinic]['email'];
