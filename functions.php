@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class velesh_init_theme{
 
   /* main style location  */
-  public $main_style = '/assets/css/main.min13.css';
+  public $main_style = '/assets/css/main.min15.css';
 
   /*theme style file slug*/
   public $main_style_slug = 'theme-main-style-dev1';
@@ -29,9 +29,9 @@ class velesh_init_theme{
   public $font = '/assets/fonts/font.css';
 
   /* main script location  */
-  public $main_script = '/assets/script/main.min38.js';
+  public $main_script = '/assets/script/main.min39.js';
 
-  public $main_script_spa = '/assets/script/main.spa.min38.js';
+  public $main_script_spa = '/assets/script/main.spa.min39.js';
 
   /* main script slug */
   public $main_script_slug = 'theme-main-script-dev1';
@@ -239,9 +239,6 @@ class velesh_init_theme{
     global $pagenow;
     include_once(THEME_PATH.'/includes/helpers.php');
     include_php_from_dir(THEME_PATH.'/includes/');
-    include_once(THEME_PATH . '/phpMailer/Exception.php');
-    include_once(THEME_PATH . '/phpMailer/PHPMailer.php');
-    include_once(THEME_PATH . '/phpMailer/SMTP.php');
   }
 
 

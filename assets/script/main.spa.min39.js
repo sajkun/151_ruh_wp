@@ -10189,7 +10189,9 @@ Vue.component('email-popup-template', {
                 })
 
                 .fail(function (e) {
-                    alert(e.data.message)
+                    if ('undefined' != typeof e.data) {
+                        alert(e.data.message)
+                    }
                     console.log('error')
                 })
 

@@ -22,27 +22,22 @@ class theme_user_settings{
 
   public static function custom_user_fields( $user ){
     wp_enqueue_media();
-
-    $photo_id = get_the_author_meta('user_photo_id', $user->ID);
-
-    $image =  wp_get_attachment_url( $photo_id );
-    $image = ($image) ? $image : DUMMY_ADMIN;
+    $clinics = get_option('clinics_list');
     ?>
     <table class="form-table">
     <tr>
-      <th><label for="user_photo_id"><?php esc_html_e( 'User Photo', 'crf' ); ?></label></th>
+      <th><label for="user_clinic"><?php esc_html_e( 'Clinic', 'crf' ); ?></label></th>
       <td>
-
-        <div class="photo-holder" onclick="theme_actions.load_image(this, '.photo-holder', '.photo-id')">
-           <div class="image-placeholder user"><img src="<?php echo $image ?>" alt=""></div>
-           <input type="hidden" class="photo-id" name="user_photo_id" id="user_photo_id" onclick="theme_actions.load_image(this, '.photo-holder', '.photo-id')">
-           <a href="javascript:void(0)" class="button" onclick="theme_actions.load_image(this, '.photo-holder', '.photo-id')">Load Photo</a>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th><label for="user_position"><?php esc_html_e( 'User Position', 'crf' ); ?></label></th>
-      <td><input type="text" name="user_position" id="user_position" value="<?php echo esc_html( get_the_author_meta( 'user_position', $user->ID ) ); ?>" class="regular-text"></td>
+        <select name="user_clinic" id="user_clinic">
+            <option value="none">---Select Clinic ---</option>
+            <?php foreach ($clinics as $key => $c) { 
+               printf('<option value="%s" %s>%s</value>',
+                $c,
+               $c === get_the_author_meta( 'user_clinic', $user->ID )? 'selected="selected"' : '',
+               $c
+            );
+            }?>
+        </select>    
     </tr>
   </table>
 
@@ -56,21 +51,11 @@ class theme_user_settings{
     }
 
 
-    if ( ! empty( $_POST['user_position'] ) ) {
-      if(!update_user_meta( $user_id, 'user_position', $_POST['user_position'] )){
-        add_user_meta( $user_id, 'user_position', $_POST['user_position']);
+    if ( ! empty( $_POST['user_clinic'] ) ) {
+      if(!update_user_meta( $user_id, 'user_clinic', $_POST['user_clinic'] )){
+        add_user_meta( $user_id, 'user_clinic', $_POST['user_clinic']);
       }
     }
-
-    if ( ! empty( $_POST['user_photo_id'] ) ) {
-      if(!update_user_meta( $user_id, 'user_photo_id', $_POST['user_photo_id'] )){
-        add_user_meta( $user_id, 'user_photo_id', $_POST['user_photo_id']);
-      }
-    }
-
-    // echo  $user_id;
-    // print_r( $_POST);
-    // exit();
   }
 }
 

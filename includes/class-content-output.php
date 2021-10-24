@@ -1275,7 +1275,12 @@ class theme_content_output{
      );
     wp_localize_script($theme_init->main_script_slug, 'available_dentists', $available_dentists);
     wp_localize_script($theme_init->main_script_slug, 'available_staff', $available_staff);
-    wp_localize_script($theme_init->main_script_slug, 'theme_user_email', (string)$user->data->user_email  );
+
+    $email_data = get_option('email_data');
+    $clinic =  get_the_author_meta( 'user_clinic', get_current_user_id() );
+    $email = isset($email_data[$clinic])? $email_data [$clinic]['email'] : 'none';
+
+    wp_localize_script($theme_init->main_script_slug, 'theme_user_email', (string)$email );
     wp_localize_script($theme_init->main_script_slug, 'theme_user_id', (string)$user_id );
     wp_localize_script($theme_init->main_script_slug, 'theme_user_name', (string)$user_name );
     wp_localize_script($theme_init->main_script_slug, 'is_lead_list_2', 'yes');

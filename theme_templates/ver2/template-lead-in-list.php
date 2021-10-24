@@ -770,9 +770,12 @@ echo '<script type="text/x-template" id="lead-single-tmpl">';
 
            <div v-if="!email_log">No emails sent yet</div>
 
+
+            <?php if(get_the_author_meta( 'user_clinic', get_current_user_id() ) && 'none' !== get_the_author_meta( 'user_clinic', get_current_user_id() )){ ?>
            <div class="leads-block__form">
              <label class="add-documents" v-on:click="show_email_popup_template"><span> Add New </span><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></label>
           </div>
+          <?php } ?>
         </div>
 
         <div class="leads-block no-overflow" v-if="lead_data.is_failed == 'yes'">

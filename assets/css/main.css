@@ -9589,7 +9589,7 @@ body.admin-bar {
   display: inline-block;
   vertical-align: middle;
   margin-right: 7px;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .button-back span {
@@ -9638,7 +9638,7 @@ body.admin-bar {
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 10px;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .button-create.gray {
@@ -9806,7 +9806,6 @@ body.admin-bar {
   background-color: #9daad0;
   z-index: 1;
   cursor: pointer;
-  display: inline-block;
   float: right;
   height: 18px;
   border-radius: 9px;
@@ -9823,7 +9822,7 @@ body.admin-bar {
   z-index: 10;
   left: 4px;
   top: 4px;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .leads-block__title .switcher.active {
@@ -10159,7 +10158,7 @@ body.admin-bar {
 .leads-block__data td {
   width: auto !important;
   white-space: nowrap;
-  border-bottom: 1px solid  #eff0f3;
+  border-bottom: 1px solid #eff0f3;
   padding-top: 7px;
   padding-bottom: 7px;
 }
@@ -10185,7 +10184,7 @@ body.admin-bar {
 }
 
 .leads-block__form {
-  border-top: 1px solid  #f0f1f4;
+  border-top: 1px solid #f0f1f4;
   padding: 25px 20px 0 30px;
   display: -moz-flex;
   display: -ms-flex;
@@ -10219,13 +10218,12 @@ body.admin-bar {
   color: #fff;
   text-decoration: none;
   display: inline-block;
-  vertical-align: top;
   padding: 0 11px;
   height: 38px;
   line-height: 38px;
   margin-left: 10px;
   cursor: pointer;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .leads-block__form-submit:hover {
@@ -10448,7 +10446,7 @@ body.admin-bar {
   font-family: "HelveticaFont_", sans-serif;
   font-size: 14px;
   font-weight: 500;
-  transition: all .1s;
+  transition: all 0.1s;
 }
 
 .add-documents .icon {
@@ -10515,7 +10513,7 @@ body.admin-bar {
   border: 1px solid #e0e8f9;
   background-color: #ffffff;
   text-align: center;
-  transition: all .3s;
+  transition: all 0.3s;
   cursor: pointer;
 }
 
@@ -10663,7 +10661,7 @@ body.admin-bar {
   border: 1px solid #e0e8f9;
   background-color: #ffffff;
   cursor: pointer;
-  transition: all .3s;
+  transition: all 0.3s;
   position: relative;
   display: inline-block;
   border: 1px solid #e0e8f9 !important;
@@ -10671,7 +10669,7 @@ body.admin-bar {
 
 .button-submit .svg-icon-send,
 .submit-button .svg-icon-send {
-  transition: all .3s;
+  transition: all 0.3s;
   font-size: 13px !important;
   display: inline-block;
   width: 1em !important;
@@ -10809,7 +10807,7 @@ body.admin-bar {
   display: block;
   border-radius: 50%;
   overflow: hidden;
-  border: 1px solid  #eff0f3;
+  border: 1px solid #eff0f3;
 }
 
 .team-leads__photo img {
@@ -10939,7 +10937,7 @@ body.admin-bar {
   line-height: 22px;
   font-size: 16px;
   border-radius: 50%;
-  border: 2px solid  #999;
+  border: 2px solid #999;
   color: #999;
   text-align: center;
   cursor: pointer;
@@ -11009,7 +11007,7 @@ pre {
   left: -2px;
   background-color: #0177e8;
   opacity: 0;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .icon-message-phone:hover .counter {
@@ -11046,7 +11044,7 @@ pre {
   background-color: rgba(0, 0, 0, 0.7);
   visibility: hidden;
   opacity: 0;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .s-popup-wrapper.shown {
@@ -11127,7 +11125,7 @@ pre {
   background-color: #01c58d;
   color: #fff;
   margin: 12px 0 18px;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .s-popup .s-popup-submit:hover {
@@ -11142,7 +11140,7 @@ pre {
   color: #e65571;
   font-weight: 700;
   font-family: "HelveticaFont_", sans-serif;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .s-popup .s-popup-cancel:hover {
@@ -11214,7 +11212,7 @@ pre {
   font-style: normal;
   letter-spacing: normal;
   text-align: left;
-  transition: all .1s;
+  transition: all 0.1s;
   cursor: pointer;
 }
 
@@ -11237,7 +11235,7 @@ pre {
   border-radius: 5px;
   border: 1px solid #cfcfcf;
   background-color: #cfcfcf;
-  transition: all .1s;
+  transition: all 0.1s;
   cursor: pointer;
 }
 
@@ -11270,7 +11268,7 @@ pre {
 }
 
 input.error {
-  border: 1px solid  #f00;
+  border: 1px solid #f00;
 }
 
 .clear-reminder {
@@ -11347,13 +11345,12 @@ input.error {
   color: #fff;
   text-decoration: none;
   display: inline-block;
-  vertical-align: top;
   padding: 0 11px;
   height: 38px;
   line-height: 38px;
   margin-left: 10px;
   cursor: pointer;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 .message-form .button-submit:hover {
@@ -11594,7 +11591,7 @@ input.error {
   right: 0;
   top: 0;
   bottom: 0;
-  z-index: 10;
+  z-index: 100;
   background-color: rgba(193, 196, 198, 0.73);
   display: flex;
   justify-content: center;

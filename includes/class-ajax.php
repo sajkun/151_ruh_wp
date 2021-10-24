@@ -1,9 +1,9 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
 }
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 
 
@@ -99,17 +99,50 @@ if(!class_exists('theme_ajax_action')){
     }
 
     public static function send_email_cb(){
+      require THEME_PATH.'/PHPMailer-master/src/Exception.php';
+      require THEME_PATH.'/PHPMailer-master/src/PHPMailer.php';
+      require THEME_PATH.'/PHPMailer-master/src/SMTP.php';
+
+
+      $email_data = get_option('email_data');
+      $clinic =  get_the_author_meta( 'user_clinic', get_current_user_id() );
+
+      if(!$clinic  || $clinic  === 'none'){
+        wp_send_json_error(array(
+            'message' => 'This user can\'t send emails',
+        ));
+      }
+
       $to = $_POST['to'];
       $from = $_POST['from'];
-      $subject = $_POST['subject'];
+      
+      $mail = new PHPMailer();
+      $mail->IsSMTP();
+      $mail->Mailer = "smtp";
+      $mail->SMTPDebug  = 1;  
+      $mail->SMTPAuth   = TRUE;
+      $mail->SMTPSecure = "tls";
+      $mail->Port       = 587;
+      $mail->Host       = "smtp.gmail.com";
+      $mail->Username   = $email_data[$clinic]['email'];
+      $mail->Password   = $email_data[$clinic]['password'];
+      $mail->IsHTML(true);
+      $mail->AddAddress($to, $_POST['patient_name']);
+      $mail->SetFrom($from, $_POST['specialists_name']);
+      $mail->AddReplyTo($from, $_POST['specialists_name']);
+      // $mail->AddCC("cc-recipient-email@domain", "cc-recipient-name");
+      $mail->Subject =  $_POST['subject'];
+     
+      $args = $_POST;
+      unset($args['template_name']);
+      unset($args['action']);
 
-      $headers  = 'MIME-Version: 1.0' . "\r\n";
-      $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+      ob_start();
+      echo print_theme_template_part($args['template'], 'emails', $args);
+      $content = ob_get_contents();
+      ob_get_clean();
 
-      // Create email headers
-      $headers .= 'From: '.$from."\r\n".
-          'Reply-To: '.$from."\r\n" .
-          'X-Mailer: PHP/' . phpversion();
+      $mail->MsgHTML($content); 
 
       $lead_id = (int)$_POST['lead_id'];
 
@@ -134,20 +167,10 @@ if(!class_exists('theme_ajax_action')){
 
       $email_log = get_post_meta($lead_id, '_email_log', true);
 
-      $args = $_POST;
-
-      unset($args['template_name']);
-      unset($args['action']);
-
-      ob_start();
-      echo print_theme_template_part($args['template'], 'emails', $args);
-      $message = ob_get_contents();
-      ob_get_clean();
-
-      if(wp_mail($to, $subject, $message, $headers)){
+      if( $mail->Send() ){
         wp_send_json(array(
           'post' => $_POST,
-          'email_log' => $email_log,
+          'email_log' => $email_log?: array(),
           'message' => $message,
           'response' => 'Your mail has been sent successfully.',
         ));
