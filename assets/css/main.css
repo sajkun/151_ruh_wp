@@ -11025,6 +11025,12 @@ pre {
   float: right;
 }
 
+.list-counters svg {
+  vertical-align: middle;
+  color: #5769ff;
+  fill: #5769ff;
+}
+
 .list-counters .message-na,
 .list-counters .message-ok {
   margin-left: 7px;

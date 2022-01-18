@@ -19,8 +19,8 @@ if (!defined('ABSPATH')) {
   */
 class velesh_init_theme
 {
-  /* main style location  */
-    public $main_style = '/assets/css/main.min16.css';
+    /* main style location  */
+    public $main_style = '/assets/css/main.min17.css';
 
     /*theme style file slug*/
     public $main_style_slug = 'theme-main-style-dev1';
@@ -345,7 +345,7 @@ class velesh_init_theme
      */
     public function setup_theme()
     {
-    /*Theme translations*/
+        /*Theme translations*/
         load_theme_textdomain('theme-translations', THEME_PATH . '/languages');
 
         /*Menu registrations*/
