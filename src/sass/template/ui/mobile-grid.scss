@@ -1,0 +1,218 @@
+/*
+  Table of Contents
+
+  1. Text alignment
+  2. text alignment vertical 4 flex
+  3.  text alignment horisontal 4 flex
+  4. Spacers
+  5. HIDDEN / VISIBLE
+*/
+
+$resolutions :(
+  'xs' : $break-point-xs,
+  'sm' : $break-point-sm,
+  'md' : $break-point-md,
+  'lg' : $break-point-lg,
+  'xxl' : $break-point-xxl,
+);
+
+  @each $size, $breakpoint in $resolutions{
+
+    @for $i from 0 through 10 {
+     .gutters-#{$size}-#{$i*10}{
+        @media(min-width: $breakpoint){
+          margin-left: - $i * 10px;
+          margin-right: - $i * 10px;
+        }
+
+        [class^=col]{
+          padding-left: $i * 10px;
+          padding-right: $i * 10px;
+        }
+      }
+    }
+  }
+
+  @each $size, $breakpoint in $resolutions{
+
+    @for $i from 0 through 12 {
+     .order-#{$size}-#{$i}{
+        @media(min-width: $breakpoint){
+          order: $i;
+        }
+      }
+    }
+  }
+
+// text alignment
+  .text-center{
+    text-align: center;
+  }
+
+  .text-left{
+    text-align: left;
+  }
+
+  .text-right{
+    text-align: right;
+  }
+
+  @each $size, $breakpoint in $resolutions{
+   .text-left-#{$size}{
+      @media(min-width: $breakpoint){
+        text-align: left;
+      }
+    }
+
+   .text-right-#{$size}{
+      @media(min-width: $breakpoint){
+        text-align: right;
+      }
+    }
+
+   .text-center-#{$size}{
+      @media(min-width: $breakpoint){
+        text-align: center;
+      }
+    }
+  }
+
+// text alignment vertical 4 flex
+
+  .valign-bottom{
+    align-self: flex-end;
+  }
+
+  .valign-top{
+    align-self: flex-start;
+  }
+
+  .valign-center{
+     align-self: center;
+  }
+
+  @each $size, $breakpoint in $resolutions{
+   .valign-bottom-#{$size}{
+      @media(min-width: $breakpoint){
+        align-self:  flex-end;
+      }
+    }
+
+   .valign-top-#{$size}{
+      @media(min-width: $breakpoint){
+        align-self: flex-start;
+      }
+    }
+
+   .valign-center-#{$size}{
+      @media(min-width: $breakpoint){
+        align-self: center;
+      }
+    }
+  }
+
+// text alignment horisontal 4 flex
+
+  // .justify-content-end{
+  //   justify-content: flex-end!important;
+  // }
+
+  // .justify-content-start{
+  //   justify-content: flex-start!important;
+  // }
+
+  // .justify-content-center{
+  //    justify-content: center!important;
+  // }
+
+  // .justify-content-center{
+  //    justify-content: center!important;
+  // }
+
+  @each $size, $breakpoint in $resolutions{
+   .justify-content-end-#{$size}{
+      @media(min-width: $breakpoint){
+        justify-content:  flex-end!important;
+      }
+    }
+
+   .justify-content-start-#{$size}{
+      @media(min-width: $breakpoint){
+        justify-content: flex-start!important;
+      }
+    }
+
+   .justify-content-center-#{$size}{
+      @media(min-width: $breakpoint){
+        justify-content: center!important;
+      }
+    }
+
+   .justify-content-between-#{$size}{
+      @media(min-width: $breakpoint){
+        justify-content: space-between!important;
+      }
+    }
+
+   .justify-content-around-#{$size}{
+      @media(min-width: $breakpoint){
+        justify-content: space-around!important;
+      }
+    }
+  }
+
+// Spacer
+  .spacer-40{
+    height: 40px;
+  }
+
+  .spacer-50{
+    height: 50px;
+  }
+
+  .spacer-sm-50{
+    @media(min-width: $break-point-sm){
+      height: 50px;
+    }
+  }
+
+// HIDDEN / VISIBLE
+  .hidden2{ display: none;}
+  @each $key, $break-point in $resolutions {
+    .hidden-#{$key} {
+      @media(min-width: $break-point){
+        display: none;
+      }
+    }
+
+    .hidden-#{$key}-block {
+      display: block;
+
+      @media(min-width: $break-point){
+        display: none;
+      }
+    }
+
+    .hidden-#{$key}-flex {
+      display: flex;
+
+      @media(min-width: $break-point){
+        display: none;
+      }
+    }
+
+    .visible-block-#{$key},
+    .visible-#{$key} {
+      @media(min-width: $break-point){
+        display: block!important;
+        visibility: visible;
+      }
+    }
+
+    .visible-flex-#{$key} {
+      @media(min-width: $break-point){
+        display: flex!important;
+        visibility: visible;
+      }
+    }
+  }

@@ -1,0 +1,194 @@
+.svg-icon{
+  &-calendar{
+    fill:#838993;
+
+    .range-datepicker &{
+      font-size: 15px;
+      width: 1em;
+      margin-right: 5px;
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+
+  &-clinics{
+    font-size: 13px;
+    width: 1.08em;
+  }
+
+  &-card{
+    .icon-holder &{
+      fill: #01c58d;
+      font-size: 14px;
+      width: 1.21em;
+    }
+  }
+
+  &-leads-lines{
+    .icon-holder &{
+      fill: #01c58d;
+      font-size: 12px;
+      width: 1.42em;
+    }
+
+     .team-perfomance &{
+       margin: 0;
+       font-size: 14px;
+       width: 1.07em;
+       fill: #0177e8;
+       display: inline-block;
+       vertical-align: top;
+     }
+  }
+
+  &-team{
+
+
+    .information-block__header &{
+      fill: #2b2f37;
+      font-size: 20px;
+      width: 0.76em;
+      vertical-align: top;
+
+      &.team{
+        font-size: 22px;
+        vertical-align: -5px;
+        margin-right: 16px;
+
+        @media(min-width:$break-point-lg){
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+
+  &-up{
+    fill:#01c58d;
+
+      .team-perfomance &{
+        position: relative;
+        top: 0;
+        left: 0;
+      }
+
+    .block-comment &{
+      position: absolute;
+      left: 0;
+      top: 6px;
+      font-size: 7px;
+      width: 1.71em;
+    }
+  }
+
+  &-down{
+      fill: #eb0147;
+      position: absolute;
+      left: 0;
+      top: 6px;
+      font-size: 7px;
+      width: 1.71em;
+
+      .team-perfomance &{
+        position: relative;
+        top: 0;
+        left: 0;
+      }
+  }
+
+  &-refresh{
+    fill:#01c58d;
+
+    .block-comment &{
+      position: absolute;
+      left: 0;
+      top: 1px;
+      font-size: 14px;
+      width: 1em;
+    }
+  }
+
+  &-convertions{
+    fill: #2b2f37;
+    vertical-align: top;
+    margin-right: 15px;
+
+    &.convertions{
+      font-size: 23px;
+      vertical-align: -4px;
+
+      @media(min-width:$break-point-lg){
+        margin-left: 17px;
+      }
+    }
+
+     .team-perfomance &{
+       margin: 0;
+       font-size: 14px;
+       width: 1.07em;
+       fill: #01c58d;
+       display: inline-block;
+       vertical-align: top;
+     }
+
+     .leads-column__convertion &{
+        display: inline-block;
+        vertical-align: -3px;
+        margin-right: 5px;
+     }
+  }
+
+  &-bell{
+    fill: #eb0147;
+    vertical-align: -2px;
+    font-size: 14px;
+    width: 1em;
+
+    &.green{
+      fill: #01c58d;
+    }
+
+    .alert &{
+      margin-right: 6px;
+    }
+
+    .lead-preview &{
+      vertical-align: middle;
+    }
+  }
+
+  &-confirm{
+    .lead-preview &{
+      font-size: 12px;
+      width: 1em;
+      vertical-align: middle;
+      margin-left: 1px;
+      margin-right: 5px;
+    }
+  }
+
+  &-trash{
+    .team-leads &{
+      fill: #838993;
+    }
+  }
+}
+
+
+
+
+.icon-sortby{
+    position: absolute;
+    z-index: 1;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 14px;
+
+  svg{
+    font-size: 14px;
+    height: 1em;
+    width: 1em;
+
+  }
+}

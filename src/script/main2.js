@@ -1,0 +1,17 @@
+console.time('all script');
+//= js/classes/cookie.js
+//= js/classes/is_mobile_obj.js
+//= js/assets/velocity.min.js
+//= js/assets/vue.min.js
+//= js/assets/sortable.min.js
+//= js/assets/vuedragable.min.js
+//= js/functions.js
+//= js/on_event.js
+//= js/ready.js
+//= js/convertion-diagram.js
+//= js/daterange.js
+//= js/chart.js
+//= js/drag_n_sort.js
+//= js/vue.js
+//= js/vue/index.js
+console.timeEnd('all script');

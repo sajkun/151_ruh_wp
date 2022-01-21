@@ -1,0 +1,48 @@
+$max: 15;
+
+@for $i from 0 through $max{
+  .spacer-h-#{$i*10}{
+    height: $i*10px;
+  }
+}
+
+@for $i from 0 through $max{
+
+  .spacer-h-xs-#{$i*10}{
+    @media(min-width:$break-point-xs){
+      height: $i*10px;
+    }
+  }
+}
+
+@for $i from 0 through $max{
+  .spacer-h-sm-#{$i*10}{
+    @media(min-width:$break-point-sm){
+      height: $i*10px;
+    }
+  }
+}
+
+@for $i from 0 through $max{
+  .spacer-h-md-#{$i*10}{
+    @media(min-width:$break-point-md){
+      height: $i*10px;
+    }
+  }
+}
+
+@for $i from 0 through $max{
+  .spacer-h-lg-#{$i*10}{
+    @media(min-width:$break-point-lg){
+      height: $i*10px;
+    }
+  }
+}
+
+@for $i from 0 through $max{
+  .spacer-h-xl-#{$i*10}{
+    @media(min-width:$break-point-xl){
+      height: $i*10px;
+    }
+  }
+}

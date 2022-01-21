@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  //= template/head.html
+<body class="page">
+  <div class="site-container">
+    //= template/header.html
+    <main class="site-inner flex">
+
+      <div class="spacer-h-40"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <a href="" class="button-back">
+              <svg class="icon svg-icon-back"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-back"></use> </svg>
+              <span> Back to Leads</span>
+            </a>
+          </div>
+
+          <div class="col-12 col-md-6 text-right-md">
+            <a href="#" class="button-cancel">Cancel</a>
+
+            <a href="#" class="button-create">
+                <svg class="icon svg-icon-ok"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-ok"></use> </svg>
+              <span>Create Lead</span>
+            </a>
+          </div>
+        </div>
+
+
+
+      </div><!-- container-fluid -->
+
+      <div class="spacer-h-30"></div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-4">
+            <div class="leads-block">
+              <form action="" id="patient_data">
+                <h2 class="leads-block__title">Patient Information</h2>
+
+                <div class="leads-block__row">
+                  <div class="leads-block__name">
+                    <input type="text" name="patient_name" placeholder="Enter Name" class="leads-block__input lg">
+                    <span class="leads-block__comment">Added</span>
+                  </div>
+
+                  <table class="leads-block__data">
+                    <tr>
+                      <td>
+                        <svg class="icon svg-icon-phone"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-phone"></use> </svg>
+                      </td>
+                      <td><p class="leads-block__label">Phone</p></td>
+                      <td>
+                        <input type="text" name="phone" placeholder="Add" class="leads-block__input">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <svg class="icon svg-icon-email"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-email"></use> </svg>
+                      </td>
+                      <td><p class="leads-block__label">E-mail</p></td>
+                      <td>
+                        <input type="text" name="email" placeholder="Add" class="leads-block__input">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <svg class="icon svg-icon-sourses"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-sourses"></use> </svg>
+                      </td>
+                      <td><p class="leads-block__label">Source</p></td>
+                      <td>
+                        <input type="text" name="sourse" placeholder="Add" class="leads-block__input">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <svg class="icon svg-icon-tooth"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
+                      </td>
+                      <td><p class="leads-block__label">Treatment</p></td>
+                      <td>
+                        <input type="text" name="treatment" placeholder="Add" class="leads-block__input">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <svg class="icon svg-icon-clinics"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-clinics"></use> </svg>
+                      </td>
+                      <td><p class="leads-block__label">Clinic</p></td>
+                      <td>
+                        <input type="text" name="clinic" placeholder="Add" class="leads-block__input">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <svg class="icon svg-icon-date"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-date"></use> </svg>
+                      </td>
+                      <td><p class="leads-block__label">Date / Time</p></td>
+                      <td>
+                        <input type="text" name="date_time" placeholder="Add" class="leads-block__input">
+                      </td>
+                    </tr>
+                  </table>
+                </div><!-- leads-block__row -->
+              </form>
+            </div><!-- leads-block -->
+
+            <div class="leads-block">
+              <h2 class="leads-block__title">Message Centre</h2>
+
+                <form action="message-form" id="">
+              <div class="leads-block__form">
+                  <textarea name="text" placeholder="Start typing new message…"></textarea>
+                  <button type="submit">
+                    <svg class="icon svg-icon-send"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-send"></use> </svg>
+                  </button>
+              </div>
+                </form>
+            </div><!-- leads-block -->
+          </div><!-- col-12 col-lg-4 -->
+
+          <div class="col-12 col-lg-4">
+            <div class="leads-block">
+              <div class="leads-block__row">
+              <i class="icon-holder">
+                <svg class="icon svg-icon-card"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
+              </i>
+              </div>
+
+              <h2 class="leads-block__title">Proposed Treatment Value</h2>
+              <div class="leads-block__row">
+               <div class="leads-block__price">
+                  <input type="text" name="proposed_price" placeholder="£00.00" class="leads-block__input xxl">
+                </div>
+              </div>
+
+              <div class="leads-block__row">
+                <table class="leads-block__data">
+                  <tr>
+                    <td>
+                      <svg class="icon svg-icon-card green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-card"></use> </svg>
+                    </td>
+                    <td><p class="leads-block__label">Payment Method</p></td>
+                    <td>
+                      <input type="text" name="phone" placeholder="Add" class="leads-block__input sm">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg class="icon svg-icon-tooth green"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-tooth"></use> </svg>
+                    </td>
+                    <td><p class="leads-block__label">Treatment</p></td>
+                    <td>
+                      <input type="text" name="email" placeholder="Add" class="leads-block__input sm">
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div><!-- leads-block -->
+
+            <div class="leads-block">
+              <h2 class="leads-block__title">Treatment Co-Ordinator</h2>
+
+              <div class="leads-block__row">
+                <table class="leads-block__data">
+                  <tr>
+                    <td>
+                      <svg class="icon svg-icon-date"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-date"></use> </svg>
+                    </td>
+                    <td><p class="leads-block__label">Consultation Date</p></td>
+                    <td>
+                      <input type="text" name="consultation_date" placeholder="Add" class="leads-block__input sm">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg class="icon svg-icon-lamp"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-lamp"></use> </svg>
+                    </td>
+                    <td><p class="leads-block__label">Reason for Appt.</p></td>
+                    <td>
+                      <input type="text" name="reason" placeholder="Add" class="leads-block__input sm">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg class="icon svg-icon-leaps"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-leaps"></use> </svg>
+                    </td>
+                    <td><p class="leads-block__label">Dentist Seen</p></td>
+                    <td>
+                      <input type="text" name="phone" placeholder="Add" class="leads-block__input sm">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg class="icon svg-icon-chat"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-chat"></use> </svg>
+                    </td>
+                    <td><p class="leads-block__label">Follow Up</p></td>
+                    <td>
+                      <input type="text" name="phone" placeholder="Add" class="leads-block__input sm">
+                    </td>
+                  </tr>
+
+                </table>
+              </div>
+            </div><!-- leads-block -->
+
+            <div class="leads-block">
+               <h2 class="leads-block__title">Documents</h2>
+
+               <div class="leads-block__row">
+                 <a href="" class="add-documents"><span>Add New </span><svg class="icon svg-icon-dots"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-dots"></use> </svg></a>
+               </div>
+            </div>
+
+            <div class="leads-block">
+               <h2 class="leads-block__title">Notes</h2>
+
+                <form action="message-form" id="">
+                  <div class="leads-block__form">
+
+                  <textarea name="text" placeholder="Add new note…"></textarea>
+                  <button type="submit">
+                    <svg class="icon svg-icon-plus"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-plus"></use> </svg>
+                  </button>
+                  </div>
+                </form>
+            </div>
+
+
+          </div><!-- col-12 col-lg-4 -->
+
+          <div class="col-12 col-lg-4">
+            <div class="leads-block">
+               <h2 class="leads-block__title">Team</h2>
+
+               <div class="leads-block__row">
+
+                <div class="select-imitation fullwidth">
+                  <select name="team" id="">
+                    <option value="1">User 1</option>
+                    <option value="2">User 2</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="leads-block">
+               <h2 class="leads-block__title">Activity</h2>
+
+              <div class="leads-block__row">
+                <ul class="leads-block__activity">
+                  <li>
+                    <i class="state-none icon-activity"></i>
+                    <span class="leads-block__activity-text">No New Activity</span>
+                  </li>
+                </ul>
+              </div>
+          </div><!-- col-12 col-lg-4 -->
+        </div><!-- row -->
+      </div><!-- container -->
+
+      <div class="spacer-h-70"></div>
+
+    </main><!-- site-inner -->
+    //= template/footer.html
+  </div><!-- site-container -->
+</body>
+  <script>
+
+  </script>
+</html>
+
+

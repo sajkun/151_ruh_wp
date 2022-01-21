@@ -1,0 +1,51 @@
+{
+  "name": "151",
+  "version": "1.0.0",
+  "description": "CRM Development",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "velesh",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "gulp-inline-css": "^4.0.0",
+    "gulp-sass": "^5.0.0",
+    "is-plain-object": "^5.0.0",
+    "normalize-scss": "^7.0.1",
+    "owl.carousel": "^2.3.4",
+    "sass": "^1.39.0",
+    "vue-select": "^3.4.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.7",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-cheerio": "^1.0.0",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-css-base64": "^1.3.4",
+    "gulp-cssfont64": "0.0.1",
+    "gulp-imagemin": "^6.1.1",
+    "gulp-notify": "^2.0.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-plumber-notifier": "^0.1.0",
+    "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-rigger": "^0.5.8",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-svg-sprites": "^4.1.2",
+    "gulp-svgmin": "^2.2.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-watch": "^5.0.1",
+    "gulp.spritesmith": "^6.11.0",
+    "imagemin-jpeg-recompress": "^6.0.0",
+    "imagemin-jpegtran": "^6.0.0",
+    "imagemin-pngquant": "^8.0.0",
+    "node-notifier": "^6.0.0",
+    "node-sass": "^4.14.1",
+    "rimraf": "^3.0.0",
+    "through2": "^3.0.1"
+  }
+}

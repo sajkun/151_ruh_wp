@@ -1,0 +1,9 @@
+//= variables/index.js
+//= components/index.js
+//= models/index.js
+//= dashboard/index.js
+//= leads_list/index.js
+//= single_lead/index.js
+//= search/index.js
+//= wait-block/index.js
+//= debug/index.js

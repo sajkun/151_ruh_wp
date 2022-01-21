@@ -1,0 +1,110 @@
+<head>
+  <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3.0, user-scalable=yes">
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" media="all" href="assets/libs/datepicker/daterangepicker.css">
+  <link rel="stylesheet" type="text/css" media="all" href="assets/libs/datetimepicker/build/jquery.datetimepicker.min.css">
+  <link rel="stylesheet" href="assets/css/main.min.css">
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="apple-touch-favicon.png"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+  <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
+  <script defer src="assets/libs/datetimepicker/build/jquery.datetimepicker.full.min.js"></script>
+  <script defer src="assets/libs/datepicker/daterangepicker.js"></script>
+  <script defer src="assets/script/main.js"></script>
+  <script>
+    (function(){
+      function addFont() {
+          var style = document.createElement('style');
+          style.rel = 'stylesheet';
+          document.head.appendChild(style);
+          style.textContent = localStorage.font_project_151;
+      }
+
+      try {
+          if (localStorage.font_project_151) {
+              // The font is in localStorage, we can load it directly
+              addFont();
+          } else {
+              // We have to first load the font file asynchronously
+              var request = new XMLHttpRequest();
+              request.open('GET', 'assets/fonts/fonts.css', true);
+              request.onload = function() {
+                  if (request.status >= 200 && request.status < 400) {
+                      // We save the file in localStorage
+                      localStorage.font_project_151 = request.responseText;
+                      // ... and load the font
+                      addFont();
+                  }
+              }
+              request.send();
+          }
+      } catch(ex) {}
+    }());
+  </script>
+
+  <script>
+        ( function( window, document )
+      {
+        'use strict';
+
+        var file     = 'assets/svg_sprite/symbol_sprite.html',
+          revision = 1;
+
+        if( !document.createElementNS || !document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' ).createSVGRect )
+          return true;
+
+        var isLocalStorage = 'localStorage' in window && window[ 'localStorage' ] !== null,
+          request,
+          data,
+          insertIT = function()
+          {
+            document.body.insertAdjacentHTML( 'afterbegin', data );
+          },
+          insert = function()
+          {
+            if( document.body ) insertIT();
+            else document.addEventListener( 'DOMContentLoaded', insertIT );
+          };
+
+        if( isLocalStorage && localStorage.getItem( 'inlineSVGrev_project_151_2' ) == revision )
+        {
+          data = localStorage.getItem( 'inlineSVGdata_project_151_2' );
+          if( data )
+          {
+            insert();
+            return true;
+          }
+        }
+
+        try
+        {
+          request = new XMLHttpRequest();
+          request.open( 'GET', file, true );
+          request.onload = function()
+          {
+            if( request.status >= 200 && request.status < 400 )
+            {
+              data = request.responseText;
+              insert();
+              if( isLocalStorage )
+              {
+                localStorage.setItem( 'inlineSVGdata_project_151_2',  data );
+                localStorage.setItem( 'inlineSVGrev_project_151_2',   revision );
+              }
+            }
+          }
+          request.send();
+        }
+        catch( e ){}
+
+      }( window, document ) );
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>

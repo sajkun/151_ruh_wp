@@ -1,0 +1,35 @@
+@mixin plh($color:#000, $fSize: 14px, $letter-spacing: 0px,  $lheight: 1em, $fStyle: normal,$fFamily: Arial,  $fWeight:500){
+    &::-webkit-input-placeholder {
+      color:$color;
+      font:$fWeight  $fSize $fFamily;
+      font-style: $fStyle;
+      line-height: $lheight;
+      vertical-align: top;
+      letter-spacing: $letter-spacing;
+    }
+    &::-moz-placeholder{
+      color:$color;
+      font:$fWeight $fSize $fFamily;
+      font-style: $fStyle;
+       line-height: $lheight;
+       vertical-align: top;
+      letter-spacing: $letter-spacing;
+      }/* Firefox 19+ */
+    &:-moz-placeholder{
+      color:$color;
+      font:$fWeight $fSize $fFamily;
+      font-style: $fStyle;
+       line-height: $lheight;
+       vertical-align: top;
+      letter-spacing: $letter-spacing;
+      /* Firefox 18- */
+    }
+    &:-ms-input-placeholder{
+      color:$color;
+      font:$fWeight $fSize $fFamily;
+      font-style: $fStyle;
+      line-height: $lheight;
+      vertical-align: top;
+      letter-spacing: $letter-spacing;
+    }
+}

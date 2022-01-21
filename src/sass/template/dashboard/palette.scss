@@ -1,0 +1,33 @@
+
+$colors : (
+  0 : #ee63d2,
+  1: #3354f6,
+  2: #01c58d,
+  3: #eb0147,
+  4: #f6b82f,
+  5: #d9f7ef,
+  6: #2b2f37,
+  7: #838993,
+  8: #8933f6,
+  9: darken(#ee63d2, 20%),
+  10: darken(#3354f6, 20%),
+  11: darken(#01c58d, 20%),
+  12: darken(#f6b82f, 20%),
+  13: darken(#d9f7ef, 20%),
+  14: darken(#eb0147, 20%),
+  15: darken(#8933f6, 20%),
+  16: darken(#838993, 20%),
+  17: darken(#fce9ee, 20%),
+  18: lighten(#3354f6, 20%),
+  19: lighten(#01c58d, 20%),
+  20: lighten(#eb0147, 20%),
+  21: lighten(#f6b82f, 20%),
+  22: lighten(#ee63d2, 20%),
+);
+
+@each $id, $color  in $colors{
+
+  .color-#{$id}{
+    background-color: $color;
+  }
+}

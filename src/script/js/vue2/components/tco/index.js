@@ -1,0 +1,2 @@
+//= column.js
+//= item.js

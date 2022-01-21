@@ -1,0 +1,17 @@
+.<%=common %> {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  fill: inherit;
+  stroke: inherit;
+}
+
+<% _.forEach(svg, function(svgItem) { %>
+
+  .<%=common %>.<%=svgItem.name%> {
+      font-size: <%= svgItem.height %>px;
+      width: <%= svgItem.width / svgItem.height %>em;
+  }
+
+
+<% }); %>
