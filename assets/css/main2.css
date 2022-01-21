@@ -4038,7 +4038,7 @@ html {
 }
 
 .checkbox-imitation__view:after {
-  content: "";
+  content: '';
   position: absolute;
   opacity: 0;
   width: 10px;
@@ -4350,7 +4350,7 @@ html {
 }
 
 .check-imitation .view:after {
-  content: "";
+  content: '';
   width: 10px;
   height: 9px;
   display: block;
@@ -4575,6 +4575,61 @@ html {
   font-family: HelveticaFont_, sans-serif;
   font-size: 14px;
   font-weight: 500;
+}
+
+.preview-icon {
+  cursor: zoom-in !important;
+}
+
+.journey-popup {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.journey-popup__inner {
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  border-radius: 2rem;
+  box-shadow: 0 0 0 5px #0002;
+  overflow: hidden;
+}
+
+@media (min-width: 1200px) {
+  .journey-popup__inner {
+    max-width: 1000px;
+    max-height: 90vh;
+  }
+}
+
+.journey-popup__inner img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.journey-popup__inner .close {
+  border-radius: 9999rem;
+  background-color: #f00;
+  color: #fff;
+  font-size: 2rem;
+  position: absolute;
+  border: 0;
+  cursor: pointer;
+  right: 10px;
+  top: 10px;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /*

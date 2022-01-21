@@ -6,4 +6,4 @@
 //= popup-exist.js
 //= email-popup-template.js
 //= sent-email-view.js
-
+//= popup-journey-image-view.js
