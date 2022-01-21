@@ -1,64 +1,60 @@
-Vue.component("select-filters-list", {
-  mixins: [select_mixin2],
+Vue.component('select-filters-list', {
+	mixins: [select_mixin2],
 
-  data: function () {
-    return {
-      options2: {
-        // 'date' : {
-        //   title: 'Date',
-        //   icon: icons_selects['calendar'],
-        // },
-        clinics: {
-          title: "Clinics",
-          icon: icons_selects["clinics"],
-        },
+	data: function () {
+		return {
+			options2: {
+				// 'date' : {
+				//   title: 'Date',
+				//   icon: icons_selects['calendar'],
+				// },
+				clinics: {
+					title: 'Clinics',
+					icon: icons_selects['clinics'],
+				},
 
-        treatments: {
-          title: "Treatments",
-          icon: icons_selects["treatments"],
-        },
+				treatments: {
+					title: 'Treatments',
+					icon: icons_selects['treatments'],
+				},
 
-        campaigns: {
-          title: "Campaigns",
-          icon: icons_selects["campaigns"],
-        },
+				campaigns: {
+					title: 'Campaigns',
+					icon: icons_selects['campaigns'],
+				},
 
-        sources: {
-          title: "Sources",
-          icon: icons_selects["sources"],
-        },
+				sources: {
+					title: 'Sources',
+					icon: icons_selects['sources'],
+				},
 
-        team: {
-          title: "Team",
-          icon: icons_selects["team"],
-        },
+				team: {
+					title: 'Team',
+					icon: icons_selects['team'],
+				},
 
-        dentists: {
-          title: "Dentists",
-          icon: icons_selects["dentists"],
-        },
+				dentists: {
+					title: 'Dentists',
+					icon: icons_selects['dentists'],
+				},
 
-        tags: {
-          title: "Tags",
-          icon: icons_selects["tags"],
-        },
-      },
-    };
-  },
+				tags: {
+					title: 'Tags',
+					icon: icons_selects['tags'],
+				},
+			},
+		}
+	},
 
-  watch: {},
+	watch: {},
 
-  mounted: function () {
-    console.log("test");
-  },
+	methods: {
+		change: function () {
+			this.$emit('update_list', { val: this.selected, name: 'select_list' })
+		},
+	},
 
-  methods: {
-    change: function () {
-      this.$emit("update_list", { val: this.selected, name: "select_list" });
-    },
-  },
-
-  template: `
+	template: `
     <div class="select-imitation select-imitation_shift-bottom select-imitation_plus"
        v-click-outside="discard_select"
        v-bind:class="{ expanded: isExpanded}"
@@ -80,4 +76,4 @@ Vue.component("select-filters-list", {
         </ul>
       </div>
     </div>`,
-});
+})

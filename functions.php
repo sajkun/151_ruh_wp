@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 class velesh_init_theme
 {
     /* main style location  */
-    public $main_style = '/assets/css/main.min17.css';
+    public $main_style = '/assets/css/main2.min.css';
 
     /*theme style file slug*/
     public $main_style_slug = 'theme-main-style-dev1';
