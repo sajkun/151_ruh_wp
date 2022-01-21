@@ -10459,6 +10459,10 @@ if (document.getElementById('list-app') && 'undefined' != typeof is_lead_list_2)
 		},
 
 		watch: {
+			online_journey_filter: function (val) {
+				console.log(val)
+			},
+
 			by_phones_data: function (val) {
 				var vm = this
 				if (vm.$refs.single_lead.visible) {
@@ -10565,10 +10569,14 @@ if (document.getElementById('list-app') && 'undefined' != typeof is_lead_list_2)
 			},
 
 			online_journey_count: function () {
-				const leads = this.leads_filtered.filter(lead => {
-					return lead.meta?.online_journey
-				})
-				return leads.length
+				let count = 0
+
+				for (let id in this.leads_by_column) {
+					count += this.leads_by_column[id].filter(lead => {
+						return lead.meta?.online_journey
+					}).length
+				}
+				return count
 			},
 
 			get_convertion: function () {
@@ -11231,6 +11239,7 @@ if (document.getElementById('list-app') && 'undefined' != typeof is_lead_list_2)
 
 				this.show_not_read_only = false
 				this.show_overdue_only = false
+				this.online_journey_filter = false
 				var vm = this
 				data.get_previous_data = 0
 

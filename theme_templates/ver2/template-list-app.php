@@ -83,8 +83,8 @@
                   </path>
                </svg>
             </i> <span class="alert__count">{{online_journey_count}}</span>
-            <div class="checkbox-imitation inline"><label><input type="checkbox" name="show_not_read_only"> <span
-                     class="checkbox-imitation__view" v-model="online_journey_filter"></span></label></div>
+            <div class="checkbox-imitation inline"><label><input type="checkbox" name="online_journey_filter"
+                     v-model="online_journey_filter"> <span class="checkbox-imitation__view"></span></label></div>
          </div>
          <!--***************
          *****
