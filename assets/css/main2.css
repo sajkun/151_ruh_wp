@@ -7142,10 +7142,6 @@ html {
   fill: #01c58d;
 }
 
-.alert .svg-icon-bell {
-  margin-right: 6px;
-}
-
 .lead-preview .svg-icon-bell {
   vertical-align: middle;
 }
@@ -9319,6 +9315,10 @@ body.admin-bar {
   background-color: #ffffff;
   padding: 0 11px;
   line-height: 38px;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  align-items: center;
+  gap: 6px;
 }
 
 .alert__count {
@@ -9326,20 +9326,17 @@ body.admin-bar {
   color: #2b2f37;
   font-weight: 700;
   font-size: 14px;
-  vertical-align: top;
   margin-right: 4px;
 }
 
 .alert__tag {
   border-radius: 12px;
-  height: 24px;
   display: inline-block;
   vertical-align: 0px;
   color: #333;
-  font-size: 11px;
-  line-height: 26px;
+  font-size: small;
+  line-height: 1em;
   font-family: "HelveticaFont_", sans-serif;
-  padding: 1px 12px 0;
   margin-right: 3px;
 }
 
@@ -9348,9 +9345,23 @@ body.admin-bar {
   background-color: #ffc2d3;
 }
 
+.alert .checkbox-imitation label,
 .alert .checkbox-imitation {
-  float: right;
-  margin-top: 5px;
+  display: block;
+  height: 19px;
+  width: 19px;
+}
+
+.alert .checkbox-imitation__view {
+  display: block;
+}
+
+.alert .icon-message-phone {
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .horizontal-scroll {
@@ -9425,7 +9436,7 @@ body.admin-bar {
   background-color: #ffffff;
   padding: 10px 20px;
   margin: 0 0 7px;
-  transition: opacity .3s, 'background-color' .3s;
+  transition: opacity 0.3s, 'background-color' 0.3s;
 }
 
 .lead-preview:hover {
@@ -9505,7 +9516,7 @@ body.admin-bar {
 }
 
 .marked {
-  opacity: .3;
+  opacity: 0.3;
   background: #eee;
 }
 
@@ -9533,7 +9544,7 @@ body.admin-bar {
 #list-app .filter-container {
   opacity: 0;
   visibility: hidden;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 #list-app.init .leads-scroll,
@@ -11020,7 +11031,13 @@ pre {
   background: #01c58d;
 }
 
- {
+.svg-inline-camera {
+  color: #5769ff;
+  fill: #5769ff;
+  vertical-align: middle;
+}
+
+.list-counters {
   white-space: nowrap;
   float: right;
 }

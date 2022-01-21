@@ -3,17 +3,14 @@
 @include normalize();
 @import 'bootstrap-grid';
 
-
 // iclude helpers stiles
 @import 'helpers/mixins';
 @import 'helpers/variables';
 @import 'helpers/template_selectors';
 
-@import 'sprite';
-@import 'svg_sprite';
+@import 'sprites/sprite';
+@import 'sprites/svg_sprite';
 
 //template folders indexes
 @import 'template/index';
 @import 'other/index';
-
-
