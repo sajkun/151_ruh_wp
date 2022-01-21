@@ -1,65 +1,63 @@
 Vue.component('item-tco', {
-    data: function () {
-        return {
-            info: {},
-        }
-    },
+	data: function () {
+		return {
+			info: {},
+		}
+	},
 
-    props: ['_info'],
+	props: ['_info'],
 
-    watch: {
-        _info: function (val) {
-            this.info = val
-        },
-    },
+	watch: {
+		_info: function (val) {
+			this.info = val
+		},
+	},
 
-    beforeMount: function () {
-        this.info = this._info
-        // console.log(strip(this.info));
-    },
+	beforeMount: function () {
+		this.info = this._info
+		// console.log(strip(this.info));
+	},
 
-    computed: {
-        name: function () {
-            return this.info.meta.patient_data.name
-        },
+	computed: {
+		name: function () {
+			return this.info.meta.patient_data.name
+		},
 
-        is_online_journey: function () {
-            return this.info?.meta?.online_journey
-        },
+		is_online_journey: function () {
+			return this.info?.meta?.online_journey
+		},
 
-        time_passed: function () {
-            var now = new Date()
-            var date_received = new Date(this.info.post_date)
+		time_passed: function () {
+			var now = new Date()
+			var date_received = new Date(this.info.post_date)
 
-            return date_difference.construct(date_received, now) + ' ago'
-        },
+			return date_difference.construct(date_received, now) + ' ago'
+		},
 
-        source_text: function () {
-            if (this.info.meta.patient_data.treatment[0]) {
-                return this.info.meta.patient_data.treatment[0]
-            } else if (this.info.meta.patient_data.campaign) {
-                return this.info.meta.patient_data.campaign
-            } else if (this.info.meta.patient_data.source) {
-                return this.info.meta.patient_data.source
-            }
-        },
+		source_text: function () {
+			if (this.info.meta.patient_data.treatment[0]) {
+				return this.info.meta.patient_data.treatment[0]
+			} else if (this.info.meta.patient_data.campaign) {
+				return this.info.meta.patient_data.campaign
+			} else if (this.info.meta.patient_data.source) {
+				return this.info.meta.patient_data.source
+			}
+		},
 
-        overdue: function () {
-            var now = new Date()
-            var reminder_date = new Date(this.info.meta.reminder)
-            return this.info.meta.reminder !== '' && now > reminder_date
-                ? 'yes'
-                : 'no'
-        },
-    },
+		overdue: function () {
+			var now = new Date()
+			var reminder_date = new Date(this.info.meta.reminder)
+			return this.info.meta.reminder !== '' && now > reminder_date ? 'yes' : 'no'
+		},
+	},
 
-    methods: {
-        open_lead: function (data) {
-            this.$emit('open_lead', { lead_id: data })
-        },
-    },
+	methods: {
+		open_lead: function (data) {
+			this.$emit('open_lead', { lead_id: data })
+		},
+	},
 
-    template: `
+	template: `
     <div class="lead-preview" v-on:click = 'open_lead(info.ID)'>
      <div class="clearfix">
       <div class="row justify-content-start">
@@ -79,7 +77,7 @@ Vue.component('item-tco', {
          <span class="lead-preview__sourse">{{source_text}}</span>
           <span class="list-counters">
 
-            <svg v-if="is_online_journey" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.2 2.09L10 5.72V3c0-.55-.45-1-1-1H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V9.28l5.2 3.63c.33.23.8 0 .8-.41v-10c0-.41-.47-.64-.8-.41z"></path></svg>
+            <svg v-if="is_online_journey"  class="icon svg-inline-camera" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.2 2.09L10 5.72V3c0-.55-.45-1-1-1H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V9.28l5.2 3.63c.33.23.8 0 .8-.41v-10c0-.41-.47-.64-.8-.41z"></path></svg>
 
 
             <svg class="icon svg-icon-bell" v-if="info.meta.reminder != '' && overdue == 'yes'" v-bind:title="info.meta.reminder"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-icon-bell"></use> </svg>

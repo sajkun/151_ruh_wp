@@ -1,0 +1,19 @@
+//assets
+@import '_normalize';
+@include normalize();
+@import 'bootstrap-grid';
+
+
+// iclude helpers stiles
+@import 'helpers/mixins';
+@import 'helpers/variables';
+@import 'helpers/template_selectors';
+
+@import 'sprite';
+@import 'svg_sprite';
+
+//template folders indexes
+@import 'template/index';
+@import 'other/index';
+
+

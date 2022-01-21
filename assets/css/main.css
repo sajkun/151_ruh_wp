@@ -11020,6 +11020,11 @@ pre {
   background: #01c58d;
 }
 
+.svg-inline-camera {
+  color: #5769ff;
+  fill: #5769ff;
+}
+
 .list-counters {
   white-space: nowrap;
   float: right;
