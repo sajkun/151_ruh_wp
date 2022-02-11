@@ -44,7 +44,7 @@
     "imagemin-jpegtran": "^6.0.0",
     "imagemin-pngquant": "^8.0.0",
     "node-notifier": "^6.0.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "rimraf": "^3.0.0",
     "through2": "^3.0.1"
   }
