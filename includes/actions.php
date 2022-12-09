@@ -1,5 +1,4 @@
 <?php
-
 function get_data_about_personal()
 {
     $users = get_users([
@@ -18,16 +17,9 @@ function get_data_about_personal()
         ];
     }, $users);
 
-    clog($users_filtered);
-
-    $users_filtered2 = array_filter($users_filtered, function ($user) {
-        return in_array('editor', $user['roles']);
-    });
-
-    clog($users);
-    clog($users_filtered2);
-
-    return array_values($users_filtered2);
+    wp_send_json($users_filtered);
 }
 
 add_action('wp_head', 'get_data_about_personal');
+add_action('wp_ajax_get_data_about_personal', 'get_data_about_personal');
+add_action('wp_ajax_nopriv_get_data_about_personal', 'get_data_about_personal');
