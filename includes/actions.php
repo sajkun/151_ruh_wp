@@ -20,6 +20,6 @@ function get_data_about_personal()
     wp_send_json($users_filtered);
 }
 
-add_action('wp_head', 'get_data_about_personal');
+// add_action('wp_head', 'get_data_about_personal');
 add_action('wp_ajax_get_data_about_personal', 'get_data_about_personal');
 add_action('wp_ajax_nopriv_get_data_about_personal', 'get_data_about_personal');
